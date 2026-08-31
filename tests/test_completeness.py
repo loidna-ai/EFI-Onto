@@ -10,7 +10,7 @@ TARGET 에 도달하면 그 항목은 test_ontology.py 로 옮기고 여기서 �
 """
 import sys, pathlib, warnings, collections
 import pytest
-from rdflib import Graph, Namespace, RDF, RDFS, OWL, URIRef
+from rdflib import Graph, Namespace, RDF, OWL
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
@@ -22,15 +22,12 @@ SCENARIOS = ["PoorContactScenario", "CrushDamageScenario", "PartialDisconnection
 
 # 왼쪽이 현재 허용 한계, 오른쪽이 도달 목표.
 BASELINE = {
-    # 선언된 역할과 계산된 변별력이 어긋나는 규칙. 핵심 단서가 보강 단서보다 약하면
-    # 둘 중 하나가 틀린 것이다. 역할 라벨을 고치거나 더 변별력 있는 핵심 단서를 찾아야 한다.
-    "role_rank_mismatch":        (4, 0),    # |core| < max|supporting| 인 규칙 수
     "min_refuting_per_scenario": (1, 2),    # 시나리오당 반증 규칙 최소 개수
     # 23 → 18 → 13. 남은 13개는 임계값·설계 결정이 있어야 풀린다(정의로 풀리는 것은 소진).
     "unwired_data_properties":  (13, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
-    "morphological_core_rules":  (1, 0),    # core 단서가 형태학적 특징인 규칙 수
 }
-# arc_sequence_rules 는 목표 도달(0 → 3) 후 test_ontology.py 로 이관했다.
+# 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
+#           morphological_core_rules(1→0). 모두 test_ontology.py 의 불변식이 됐다.
 
 
 @pytest.fixture(scope="module")
@@ -44,35 +41,7 @@ def _rules(g):
                q(g.value(r, EFI.indicates)), int(g.value(r, EFI.scoreDelta)))
 
 
-def _ancestors(g, c, seen=None):
-    seen = set() if seen is None else seen
-    for p in g.objects(c, RDFS.subClassOf):
-        if isinstance(p, URIRef) and p not in seen:
-            seen.add(p)
-            _ancestors(g, p, seen)
-    return {q(x) for x in seen}
-
-
-def _is_damage(g, name):
-    return "DamagePattern" in _ancestors(g, EFI[name])
-
-
 # ── 지표 산출 ─────────────────────────────────────────────────────────────
-def role_rank_mismatch(g):
-    """선언된 역할과 계산된 변별력의 어긋남.
-    핵심 단서가 그 가설의 보강 단서보다 약하면 라벨이나 단서 선택이 잘못된 것이다."""
-    import sys, pathlib
-    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
-    import score
-    d = score.deltas(g)
-    by = collections.defaultdict(lambda: {"Core": [], "Supporting": []})
-    for name, sc, _, role in score.rules(g):
-        if role in ("Core", "Supporting"):
-            by[sc][role].append(d[name])
-    return sum(1 for r in by.values() if r["Supporting"]
-               for v in r["Core"] if v < max(r["Supporting"]))
-
-
 def min_refuting_per_scenario(g):
     """결정적 반증(비통전)은 제외한다. 전기 가설 전체에 걸리는 단일 규칙이라
     시나리오별 반증 수단을 갖췄다는 근거가 되지 못한다."""
@@ -97,12 +66,6 @@ def unwired_data_properties(g):
     return out
 
 
-def morphological_core_rules(g):
-    """core 단서가 형태학적 특징이면 사진만으로 가설이 성립한다. P1·C-5 와 충돌한다."""
-    return [(sc, ind) for sc, role, ind, _ in _rules(g)
-            if role == "Core" and _is_damage(g, ind)]
-
-
 # ── 래칫 ──────────────────────────────────────────────────────────────────
 def _ratchet(key, now, better_is_lower=True):
     limit, target = BASELINE[key]
@@ -118,12 +81,6 @@ def _ratchet(key, now, better_is_lower=True):
     warnings.warn(f"[잔여] {key}: {now} (목표 {target})")
 
 
-def test_declared_role_matches_discrimination(g):
-    """A-1 잔여. 가감점은 구조에서 유도되지만 역할 라벨은 여전히 손으로 붙어 있다.
-    핵심이 보강보다 약한 규칙이 남아 있으면 둘 중 하나가 틀린 것이다."""
-    _ratchet("role_rank_mismatch", role_rank_mismatch(g))
-
-
 def test_refutation_rules_are_thin(g):
     """A-2 반증 우선(P3)을 선언했으나 가설당 반증 수단이 하나뿐이다."""
     _ratchet("min_refuting_per_scenario", min_refuting_per_scenario(g), better_is_lower=False)
@@ -136,22 +93,14 @@ def test_data_properties_are_wired(g):
     _ratchet("unwired_data_properties", len(un))
 
 
-def test_core_indicators_are_not_morphology(g):
-    """A-5 core 가 형태면 사진만으로 가설이 선다."""
-    _ratchet("morphological_core_rules", len(morphological_core_rules(g)))
-
-
 if __name__ == "__main__":
     gr = Graph().parse(TTL, format="turtle")
     rows = [
-        ("역할·변별력 어긋남", role_rank_mismatch(gr), "role_rank_mismatch"),
         ("시나리오당 최소 반증 규칙", min_refuting_per_scenario(gr), "min_refuting_per_scenario"),
         ("미연결 데이터 속성", len(unwired_data_properties(gr)), "unwired_data_properties"),
-        ("형태학적 core 규칙", len(morphological_core_rules(gr)), "morphological_core_rules"),
     ]
     print(f"{'지표':26s} {'현재':>6s} {'한계':>6s} {'목표':>6s}")
     for label, now, key in rows:
         limit, target = BASELINE[key]
         print(f"{label:26s} {now:6d} {limit:6d} {target:6d}")
     print("\n미연결 데이터 속성:", ", ".join(unwired_data_properties(gr)))
-    print("형태학적 core:", morphological_core_rules(gr))

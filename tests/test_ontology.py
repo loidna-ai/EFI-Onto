@@ -100,6 +100,36 @@ def test_shared_morphology_scores_zero():
     assert round(score.SUPPORT_MAX * math.log2(score.N / score.N) / math.log2(score.N)) == 0
 
 
+def test_core_is_the_strongest_clue(g):
+    """핵심 단서는 그 가설의 보강 단서보다 약할 수 없다.
+    약하다면 역할 선언이 틀렸거나 더 변별력 있는 단서를 놓친 것이다."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import score, collections
+    d = score.deltas(g)
+    by = collections.defaultdict(lambda: {"Core": [], "Supporting": []})
+    for name, sc, ind, role in score.rules(g):
+        if role in ("Core", "Supporting"):
+            by[sc][role].append((ind, d[name]))
+    bad = {sc: r for sc, r in by.items() if r["Supporting"] and r["Core"]
+           and min(v for _, v in r["Core"]) < max(v for _, v in r["Supporting"])}
+    assert not bad, f"핵심이 보강보다 약하다: {bad}"
+
+
+def test_core_indicators_are_not_morphology(g):
+    """핵심 단서가 형태학적 특징이면 사진만으로 가설이 선다. P1·C-5 와 충돌한다."""
+    from rdflib import RDF, RDFS, URIRef
+    def anc(c, seen=None):
+        seen = set() if seen is None else seen
+        for p_ in g.objects(c, RDFS.subClassOf):
+            if isinstance(p_, URIRef) and p_ not in seen:
+                seen.add(p_); anc(p_, seen)
+        return {q(x) for x in seen}
+    bad = [q(g.value(r, EFI.indicates)) for r in g.subjects(RDF.type, EFI.IndicatorRule)
+           if q(g.value(r, EFI.hasRole)) == "Core"
+           and "DamagePattern" in anc(EFI[q(g.value(r, EFI.indicates))])]
+    assert not bad, f"형태학적 핵심 단서: {bad}"
+
+
 # ── 논문 Table 10 사례 A ─────────────────────────────────────────────────
 CASE_A = """
 efi:sesA a efi:InvestigationSession ; efi:queryCount 2 .

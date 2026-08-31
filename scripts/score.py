@@ -97,7 +97,13 @@ def deltas(g=None):
     """규칙 이름 → 가감점. TTL 이 아니라 이 함수가 가중치의 단일 진실 원천이다."""
     g = g or Graph().parse(TTL, format="turtle")
     compat = compatibility(g)
-    positive = collections.defaultdict(set)     # 사슬이 끊긴 지표의 대체 근거
+    # 대체 근거. 인과 사슬이 없는 지표는 규칙 자체에서 k 를 얻는다. 부재 증거
+    # (아크·스패터 부재, 트립 이력 없음, 절연저항 정상)는 어떤 가설과도 양립하지
+    # 않는 것이 정상이라 사슬이 없는 편이 맞다. 다만 긍정 단서가 여기 걸리면
+    # 가중치 근거가 구조가 아니라 규칙 집합이 되므로 약하다.
+    # 현재 이 경로를 쓰는 긍정 단서: 비정상 온도·전압강하, 누전차단기 간헐 동작,
+    # 1차 단락흔, 아크·스패터 부재.
+    positive = collections.defaultdict(set)
     for _, sc, ind, role in rules(g):
         if role in ("Core", "Supporting"):
             positive[ind] |= set(ELECTRICAL if sc == "ElectricalIgnitionScenario" else [sc])
