@@ -897,3 +897,48 @@ efi:CuprousOxideDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:Connecti
         sh:construct """
         CONSTRUCT { $this efi:exhibits efi:CuprousOxideGrowth . }
         WHERE { $this efi:cuprousOxidePresent true }""" ] .
+
+
+# ============================================================================
+# 12. NFPA 921 (2024) 조항 대조
+#     방법론 층(SHACL 제약·규칙)에만 붙인다.
+#     지표 규칙 25개는 NFPA 가 아니라 논문 Table 2 · 국내 실무·선행연구에서 왔다.
+#     거기에 조항을 붙이면 출처가 왜곡되므로 붙이지 않는다.
+#     절 수준까지만 대조했다 — 하위 절 번호는 원문 확인 후 좁힌다.
+# ============================================================================
+efi:FalsificationRuleShape dcterms:references
+    "NFPA 921 (2024) §4.3 Relating to the Scientific Method" ,
+    "NFPA 921 (2024) §19.6 Testing the Hypothesis for Validity" .
+efi:ArcMarkSequenceRuleShape dcterms:references
+    "NFPA 921 (2024) §9.11 Identification of Damaged Conductors" .
+efi:IgnitionCompetenceRuleShape dcterms:references
+    "NFPA 921 (2024) §9.9 Ignition by Electrical Energy" ,
+    "NFPA 921 (2024) §19.6 Testing the Hypothesis for Validity" .
+efi:SupportScoreRuleShape dcterms:references
+    "NFPA 921 (2024) §19.6 Testing the Hypothesis for Validity" .
+efi:RefutationEvidenceShape dcterms:references
+    "NFPA 921 (2024) §19.6 Testing the Hypothesis for Validity" .
+efi:ConclusionShape dcterms:references
+    "NFPA 921 (2024) §19.7 Selecting the Final Hypothesis" .
+efi:ScenarioShape dcterms:references
+    "NFPA 921 (2024) §19.5 Developing Cause Hypotheses" .
+efi:FactShape dcterms:references
+    "NFPA 921 (2024) §19.3 Data Collection" .
+efi:MorphologyDiscriminationRuleShape dcterms:references
+    "NFPA 921 (2024) §9.10 Interpreting Damage to Elec. Systems" ,
+    "NFPA 921 (2024) §19.4 Analyze the Data" .
+efi:MorphologicalAmbiguityRuleShape dcterms:references
+    "NFPA 921 (2024) §9.10 Interpreting Damage to Elec. Systems" ,
+    "NFPA 921 (2024) §19.4 Analyze the Data" .
+efi:MorphologyOnlyConclusionShape dcterms:references
+    "NFPA 921 (2024) §9.10 Interpreting Damage to Elec. Systems" ,
+    "NFPA 921 (2024) §19.7 Selecting the Final Hypothesis" .
+efi:DerivedManifestationRuleShape dcterms:references
+    "NFPA 921 (2024) §9.9 Ignition by Electrical Energy" ,
+    "NFPA 921 (2024) §19.4 Analyze the Data" .
+efi:OverloadDerivationRuleShape dcterms:references
+    "NFPA 921 (2024) §9.6 Overcurrent Protection" .
+efi:StrandFractureDerivationRuleShape dcterms:references
+    "NFPA 921 (2024) §9.11 Identification of Damaged Conductors" .
+efi:CuprousOxideDerivationRuleShape dcterms:references
+    "NFPA 921 (2024) §9.10 Interpreting Damage to Elec. Systems" .

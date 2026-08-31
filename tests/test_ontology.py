@@ -130,6 +130,28 @@ def test_core_indicators_are_not_morphology(g):
     assert not bad, f"형태학적 핵심 단서: {bad}"
 
 
+# ── NFPA 921 조항 근거 ───────────────────────────────────────────────────
+def test_every_shape_cites_nfpa(g):
+    """방법론 층의 모든 제약·규칙은 NFPA 921 조항에 닿아야 한다.
+    닿지 않는 규칙은 우리가 지어낸 절차라는 뜻이므로 그 사실이 드러나야 한다."""
+    from rdflib import RDF, SH, URIRef
+    from rdflib.namespace import DCTERMS
+    bad = [q(sh) for sh in g.subjects(RDF.type, SH.NodeShape)
+           if isinstance(sh, URIRef) and not any(
+               "NFPA 921" in str(o) for o in g.objects(sh, DCTERMS.references))]
+    assert not bad, f"조항 근거 없는 도형: {bad}"
+
+
+def test_indicator_rules_do_not_cite_nfpa(g):
+    """지표 규칙은 Table 2 · 국내 실무·선행연구에서 왔다. NFPA 조항을 붙이면
+    출처가 왜곡된다. 출처 구분은 논문에서 뭉뚱그리지 않기 위한 것이다."""
+    from rdflib import RDF
+    from rdflib.namespace import DCTERMS
+    bad = [q(r) for r in g.subjects(RDF.type, EFI.IndicatorRule)
+           if any("NFPA" in str(o) for o in g.objects(r, DCTERMS.references))]
+    assert not bad, f"지표 규칙에 NFPA 조항이 붙었다: {bad}"
+
+
 # ── 논문 Table 10 사례 A ─────────────────────────────────────────────────
 CASE_A = """
 efi:sesA a efi:InvestigationSession ; efi:queryCount 2 .
