@@ -322,6 +322,25 @@ def test_peer_review_alone_cannot_validate_results():
     """)
 
 
+# ── §9.5.2 원문이 경고한 잘못된 추론 ─────────────────────────────────────
+def test_grounding_removal_does_not_imply_open_neutral():
+    """C-21 — 접지극 연결 제거는 중성선 단선의 원인이 아니다 (§9.5.2).
+    원문이 명시적으로 경고하는 추론이라 구조로 막는다."""
+    assert "접지 상태와 무관" in _msg("""
+    efi:gE a efi:GroundingElectrodeDisconnection ; efi:attests efi:OpenNeutral .
+    """)
+    # 정당한 단서로 증언하는 것은 막지 않는다.
+    assert "접지 상태와 무관" not in _msg("""
+    efi:lB a efi:AbnormalLampBrightnessReport ; efi:attests efi:OpenNeutral .
+    """)
+
+
+def test_service_entrance_allows_sustained_faulting():
+    """D-6 — 인입구는 과전류 보호가 없어 고장이 지속될 수 있다 (§9.3.4)."""
+    gr = run("efi:seA a efi:ServiceEntrance .")
+    assert list(gr.objects(EFI.seA, EFI.sustainedFaultingPossible))
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent

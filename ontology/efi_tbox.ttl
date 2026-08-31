@@ -1310,3 +1310,108 @@ efi:ReviewValidationShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
           ?sc efi:inSession ?s .
           FILTER NOT EXISTS { ?t a efi:TechnicalReview ; efi:reviews ?s . }
         }""" ] .
+
+# ============================================================================
+# 17. 인입 계통·접지 (NFPA 921 §9.3~§9.6)
+#     전압·인입 방식·계량기는 배경 지식이라 넣지 않는다. 넣어도 판정에 쓰이지 않아
+#     어휘만 남는다. 감식에 실제로 쓰이는 셋만 옮긴다.
+#       §9.3.4  인입구는 과전류 보호가 없어 고장이 지속된다
+#       §9.5.1.1 본딩은 저임피던스 경로로 보호장치를 제때 동작시킨다
+#       §9.5.2  중성선 단선은 과전압을 만들고, 접지극 제거가 그 원인이 아니다
+# ============================================================================
+
+# 용어 정렬 (§9.3.2.1.2). 실무에서 쓰는 말과 표준 용어가 다르다.
+efi:UngroundedConductor a owl:Class ; rdfs:subClassOf efi:Conductor ;
+    rdfs:label "비접지 도체"@ko ; skos:prefLabel "비접지 도체"@ko ;
+    skos:altLabel "핫"@ko , "hot"@en , "Ungrounded conductor"@en ;
+    rdfs:comment "현장에서 흔히 '핫'이라 부르나 표준 용어는 비접지 도체다 (§9.3.2.1.2)"@ko .
+efi:GroundedConductor a owl:Class ; rdfs:subClassOf efi:Conductor ;
+    rdfs:label "접지측 도체"@ko ; skos:prefLabel "접지측 도체"@ko ;
+    skos:altLabel "중성선"@ko , "neutral"@en , "Grounded conductor"@en ;
+    rdfs:comment "현장에서 흔히 '중성선'이라 부르나 표준 용어는 접지측 도체다 (§9.3.2.1.2)"@ko .
+efi:GroundingConductor a owl:Class ; rdfs:subClassOf efi:Conductor ;
+    rdfs:label "접지 도체"@ko ; skos:prefLabel "접지 도체"@ko ;
+    skos:altLabel "접지선"@ko , "ground"@en , "Grounding conductor"@en .
+
+efi:ServiceEntrance a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ;
+    rdfs:label "인입구"@ko ; skos:prefLabel "인입구"@ko ;
+    rdfs:comment "변압기와 건물 주보호장치 사이 구간. 통상 과전류 보호가 없어 고장이 시작되면 지속된다 (§9.3.4)"@ko .
+efi:ServiceEquipment a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ;
+    rdfs:label "인입 개폐기"@ko ; skos:prefLabel "인입 개폐기"@ko ;
+    rdfs:comment "전체 차단·보호·분기 세 기능을 한다 (§9.4)"@ko .
+efi:BondingPath a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ;
+    rdfs:label "본딩 경로"@ko ; skos:prefLabel "본딩 경로"@ko ;
+    rdfs:comment "지락 시 저임피던스 귀로를 만들어 보호장치를 제때 동작시킨다 (§9.5.1.1)"@ko .
+
+efi:OpenNeutral a owl:Class ; rdfs:subClassOf efi:ElectricalState ;
+    rdfs:label "중성선 단선"@ko ; skos:prefLabel "중성선 단선"@ko ;
+    skos:altLabel "부동 중성선"@ko , "floating neutral"@en , "open neutral"@en ;
+    rdfs:comment "두 다리의 전압이 120 V 로 고정되지 않고 합이 240 V 인 다른 값으로 갈린다. 부하에 따라 변한다 (§9.5.2)"@ko .
+efi:OpenNeutralOvervoltage a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ;
+    rdfs:label "중성선 단선 과전압 발열"@ko ; skos:prefLabel "중성선 단선 과전압 발열"@ko ;
+    rdfs:comment "높은 쪽 다리의 과전압이 기기를 과열시킨다. 5대 요인 외 확장 슬롯 (§9.5.2)"@ko .
+efi:SustainedFaulting a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ;
+    rdfs:label "지속 고장 발열"@ko ; skos:prefLabel "지속 고장 발열"@ko ;
+    rdfs:comment "과전류 보호가 없는 구간에서 단락·지락이 끊기지 않고 이어져 가연물을 착화시킨다 (§9.3.4)"@ko .
+
+# 거주자 진술 — 중성선 단선의 비형태 단서 (§9.5.2)
+efi:AbnormalLampBrightnessReport a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "조명 밝기 이상 진술"@ko ; skos:prefLabel "조명 밝기 이상 진술"@ko ;
+    rdfs:comment "백열등이 지나치게 밝거나 어두웠다는 진술 (§9.5.2)"@ko .
+efi:MultipleApplianceMalfunction a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "복수 기기 과열·오작동"@ko ; skos:prefLabel "복수 기기 과열·오작동"@ko ;
+    rdfs:comment "여러 기기가 동시에 과열되거나 오작동했다는 진술 (§9.5.2)"@ko .
+
+efi:AbnormalLampBrightnessReport efi:attests efi:OpenNeutral .
+efi:MultipleApplianceMalfunction efi:attests efi:OpenNeutral .
+efi:OpenNeutral efi:enables efi:OpenNeutralOvervoltage .
+
+efi:overcurrentProtected a owl:DatatypeProperty ; rdfs:domain efi:ElectricalArtifact ; rdfs:range xsd:boolean ;
+    rdfs:label "상류 과전류 보호 있음"@ko ; skos:prefLabel "상류 과전류 보호 있음"@ko .
+efi:sustainedFaultingPossible a owl:DatatypeProperty ; rdfs:domain efi:ElectricalArtifact ; rdfs:range xsd:boolean ;
+    rdfs:label "지속 고장 가능 구간"@ko ; skos:prefLabel "지속 고장 가능 구간"@ko .
+efi:GroundingElectrodeDisconnection a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "접지극 연결 제거 흔적"@ko ; skos:prefLabel "접지극 연결 제거 흔적"@ko ;
+    rdfs:comment "중성선 단선과 무관하다. 이 사실로 중성선 단선을 증언할 수 없다 (§9.5.2)"@ko .
+efi:protectiveDeviceOperated a owl:DatatypeProperty ; rdfs:domain efi:ElectricalArtifact ; rdfs:range xsd:boolean ;
+    rdfs:label "보호장치 동작함"@ko ; skos:prefLabel "보호장치 동작함"@ko .
+
+# [D-6] 과전류 보호가 없는 구간에서는 고장이 지속될 수 있다 (§9.3.4).
+#  인입구는 정의상 여기 해당한다.
+efi:SustainedFaultingRuleShape a sh:NodeShape ; sh:targetClass efi:ElectricalArtifact ;
+    dcterms:references "NFPA 921 (2024) §9.3.4 Significance" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:sustainedFaultingPossible true . }
+        WHERE { $this efi:overcurrentProtected false }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:sustainedFaultingPossible true . }
+        WHERE { $this a efi:ServiceEntrance . }""" ] .
+
+# [C-21] 접지극 연결 제거는 중성선 단선의 원인이 아니다 (§9.5.2).
+#  원문이 명시적으로 경고하는 잘못된 추론이다. 구조로 막는다.
+efi:OpenNeutralInferenceShape a sh:NodeShape ; sh:targetSubjectsOf efi:attests ;
+    dcterms:references "NFPA 921 (2024) §9.5.2 Floating Neutral (Open Neutral)" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "접지극 연결 제거를 근거로 중성선 단선을 판단할 수 없다. 중성선 단선은 접지 상태와 무관하다 (§9.5.2)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:attests ?o .
+          { { $this rdfs:subClassOf* efi:GroundingElectrodeDisconnection }
+            UNION { $this rdf:type/rdfs:subClassOf* efi:GroundingElectrodeDisconnection } }
+          { { ?o rdfs:subClassOf* efi:OpenNeutral }
+            UNION { ?o rdf:type/rdfs:subClassOf* efi:OpenNeutral } }
+        }""" ] .
+
+# [C-22] 보호된 구간에서 지속 고장을 주장하려면 보호장치가 왜 동작하지 않았는지 밝혀야 한다.
+#  보호장치는 자동 동작이 요건이다 (§9.6.1). 동작했는데 지속됐다면 설명이 필요하다.
+efi:ProtectedSustainedFaultShape a sh:NodeShape ; sh:targetClass efi:ElectricalArtifact ;
+    dcterms:references "NFPA 921 (2024) §9.6.1 Overcurrent Protection" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "보호된 구간에서 지속 고장을 주장하려면 보호장치 미동작 근거가 있어야 한다 (§9.6.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:sustainedFaultingPossible true ; efi:overcurrentProtected true .
+          FILTER NOT EXISTS { $this efi:protectiveDeviceOperated false }
+        }""" ] .

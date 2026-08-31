@@ -29,9 +29,10 @@ SECTIONS = [
     # ── Chapter 9 Electricity and Fire ─────────────────────────────────────
     ("9.1",  "Introduction",                         PART, "배경"),
     ("9.2",  "Basic Electricity",                    PART, "전기량 데이터 속성 일부"),
-    ("9.3",  "Building Electrical Systems",          NONE, "배선 계통 구조가 없다"),
-    ("9.4",  "Service Equipment",                    NONE, "인입 설비가 없다"),
-    ("9.5",  "Grounding",                            NONE, "접지·지락 경로가 없다. 누전은 트래킹 쪽에만 걸쳐 있다"),
+    ("9.3",  "Building Electrical Systems",          PART, "§9.3.4 인입구 무보호 구간을 구현. 전압·인입 방식·"
+                                                           "계량기는 판정에 쓰이지 않아 넣지 않았다(판단)"),
+    ("9.4",  "Service Equipment",                    PART, "ServiceEquipment 클래스. 세 기능 중 보호 기능만 판정에 연결"),
+    ("9.5",  "Grounding",                            DONE, "본딩 경로와 중성선 단선. C-21 로 잘못된 추론을 막는다"),
     ("9.6",  "Overcurrent Protection",               PART, "BreakerTripRecord, D-1 과부하, GFCI·AFCI 클래스. 동작 특성은 없음"),
     ("9.7",  "Branch Circuits",                      PART, "Circuit·BranchCircuit 클래스는 생겼다. 계통 위상은 없음"),
     ("9.8",  "Outlets and Devices",                  PART, "PlugReceptacle, TerminalBlock"),
@@ -56,6 +57,14 @@ SECTIONS = [
 
 # 9.13 하위 절. 원문 확인 후 좁힌 것. 나머지 절도 이 수준까지 내려가야 한다.
 SUBSECTIONS = [
+    ("9.3.2",    "단상·삼상 인입 전압과 결선",              OUT,  "배경 지식. 판정에 쓰이지 않는다(판단)"),
+    ("9.3.2.1.2", "hot·neutral·ground 표준 용어 정렬",      DONE, "UngroundedConductor 등 SKOS altLabel"),
+    ("9.3.3",    "계량기와 계량기함",                      OUT,  "배경 지식. 판정에 쓰이지 않는다(판단)"),
+    ("9.3.4",    "인입구는 과전류 보호가 없어 고장이 지속된다", DONE, "D-6 SustainedFaultingRuleShape, ServiceEntrance"),
+    ("9.5.1.1",  "본딩은 저임피던스 귀로를 만든다",           PART, "BondingPath 클래스. 임피던스 판정은 없음"),
+    ("9.5.2",    "중성선 단선 과전압과 거주자 진술",          DONE, "OpenNeutral, OpenNeutralOvervoltage, 진술 2종"),
+    ("9.5.2b",   "접지극 제거는 중성선 단선의 원인이 아니다",   DONE, "C-21 OpenNeutralInferenceShape"),
+    ("9.6.1",    "보호장치는 자동 동작이 요건이다",           DONE, "C-22 ProtectedSustainedFaultShape"),
     ("9.13.1.2", "조사 미완이면 결론은 조사 범위로 제한",   DONE, "C-7 ArcSurveyScopeShape"),
     ("9.13.1.3", "아크인지 다른 손상인지 금속조직 판정",     PART, "MaterialsAnalyst 행위자는 생겼다. 판정 규칙은 없음"),
     ("9.13.2.1", "회로 최하류 아크 지점 기록",             DONE, "D-5 FurthestDownstreamRuleShape"),
@@ -120,6 +129,9 @@ SHAPE_REFS = {
     "AdministrativeReviewScopeShape":    ["4.6"],
     "TechnicalReviewAccessShape":        ["4.6"],
     "ReviewValidationShape":             ["4.6"],
+    "SustainedFaultingRuleShape":        ["9.3"],
+    "OpenNeutralInferenceShape":         ["9.5"],
+    "ProtectedSustainedFaultShape":      ["9.6"],
 }
 
 
@@ -155,9 +167,9 @@ if __name__ == "__main__":
     for p_ in sorted({par(x[0]) for x in SUBSECTIONS}, key=lambda v: [int(t) for t in v.split(".")]):
         rows = [x for x in SUBSECTIONS if par(x[0]) == p_]
         k = Counter(x[2] for x in rows)
-        n = len(rows) - k[PROC]
-        print(f"\n  §{p_}  온톨로지 대상 {n}개 / 현장 절차 {k[PROC]}개"
+        n = len(rows) - k[PROC] - k[OUT]
+        print(f"\n  §{p_}  온톨로지 대상 {n}개 / 현장 절차 {k[PROC]}개 / 범위밖 {k[OUT]}개"
               f" — 이식률 {k[DONE]}/{n} = {k[DONE]/n*100:.0f}%")
         for sec, title, st, note in rows:
-            mark = {DONE: "■", PART: "◐", NONE: "□", PROC: "·"}[st]
+            mark = {DONE: "■", PART: "◐", NONE: "□", PROC: "·", OUT: "×"}[st]
             print(f"    {mark} {sec:9s} {title[:30]:30s} {st:5s} {note}")
