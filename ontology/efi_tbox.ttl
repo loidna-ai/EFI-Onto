@@ -219,6 +219,12 @@ efi:EnclosureMaterialFuel  a owl:Class ; rdfs:subClassOf efi:SelfFuel ; skos:pre
 efi:AdjacentCombustible    a owl:Class ; rdfs:subClassOf efi:FirstFuelIgnited ; skos:prefLabel "주변 가연물"@ko .
 efi:AccumulatedDustFuel    a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "퇴적 분진"@ko .
 efi:CelluloseFuel          a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "종이·목재·섬유"@ko .
+efi:PaperTextileFuel       a owl:Class ; rdfs:subClassOf efi:CelluloseFuel ;
+    rdfs:label "종이·섬유(표면적 큰 연료)"@ko ; skos:prefLabel "종이·섬유(표면적 큰 연료)"@ko ;
+    rdfs:comment "솜·티슈처럼 표면적/질량비가 커서 짧은 아크에도 착화될 수 있다 (§9.9.4.1)"@ko .
+efi:WoodStructuralFuel     a owl:Class ; rdfs:subClassOf efi:CelluloseFuel ;
+    rdfs:label "목재 구조재"@ko ; skos:prefLabel "목재 구조재"@ko ;
+    rdfs:comment "짧고 국부적인 아크로는 통상 착화되지 않는다 (§9.9.4.1)"@ko .
 efi:ThermalInsulationFuel  a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "단열재"@ko .
 efi:FlammableVaporFuel     a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "인화성 증기"@ko .
 
@@ -803,8 +809,8 @@ efi:OverloadHeating efi:ignites efi:InsulationMaterialFuel , efi:ThermalInsulati
 efi:ResistiveHeating efi:ignites efi:InsulationMaterialFuel .
 efi:PartialDisconnectionHeating efi:ignites efi:InsulationMaterialFuel .
 efi:SeriesArc efi:ignites efi:InsulationMaterialFuel , efi:AccumulatedDustFuel .
-efi:ShortCircuitArc efi:ignites efi:InsulationMaterialFuel , efi:AdjacentCombustible , efi:FlammableVaporFuel .
-efi:CrushInducedArc efi:ignites efi:InsulationMaterialFuel , efi:AdjacentCombustible .
+efi:ShortCircuitArc efi:ignites efi:InsulationMaterialFuel , efi:FlammableVaporFuel , efi:PaperTextileFuel , efi:AccumulatedDustFuel .
+efi:CrushInducedArc efi:ignites efi:InsulationMaterialFuel , efi:PaperTextileFuel .
 efi:InsulationBreakdownArc efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel .
 efi:ArcTracking efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel , efi:AccumulatedDustFuel .
 efi:LeakageCurrentHeating efi:ignites efi:InsulationMaterialFuel , efi:AccumulatedDustFuel .
@@ -1721,4 +1727,37 @@ efi:FuelProximityShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
           ?sc efi:hasMechanism ?m ; efi:hasFirstFuel ?f .
           ?m rdf:type/rdfs:subClassOf* efi:ElectricalHeatingMechanism .
           FILTER NOT EXISTS { ?f efi:distanceToHeatSource_mm ?d }
+        }""" ] .
+
+# ============================================================================
+# 22. 아크의 연료별 착화 역량 (NFPA 921 §9.9.4.1 · §9.9.4.4)
+#     아크 경로 안의 온도는 수천 도지만, 짧고 국부적이라 많은 연료를 착화시키지
+#     못한다. 목재 구조재 같은 벌크 고체는 통상 착화되지 않고, 표면적/질량비가
+#     큰 연료와 가스·증기·분진만 붙는다. F-3 은 온도만 보므로 이 축이 따로 필요하다.
+# ============================================================================
+efi:ignitableByBriefArc a owl:DatatypeProperty ; rdfs:range xsd:boolean ;
+    rdfs:label "짧은 아크로 착화 가능"@ko ; skos:prefLabel "짧은 아크로 착화 가능"@ko ;
+    rdfs:comment "통상적인 배선 아크는 짧고 저에너지다. 이 값이 거짓인 연료는 아크 단독으로 착화되지 않는다 (§9.9.4.4)"@ko .
+
+efi:FlammableVaporFuel efi:ignitableByBriefArc true .
+efi:AccumulatedDustFuel efi:ignitableByBriefArc true .
+efi:PaperTextileFuel efi:ignitableByBriefArc true .
+efi:WoodStructuralFuel efi:ignitableByBriefArc false .
+
+# [C-36] 짧은 아크로 착화되지 않는 연료를 아크 가설의 최초 착화물로 둘 수 없다.
+#  트래킹은 제외한다 — 표면에서 지속되는 아크라 성격이 다르다 (§9.9.4.5.1).
+efi:ArcFuelCompetenceShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.9.4.1 Arcs" ,
+                       "NFPA 921 (2024) §9.9.4.4 Parting Arcs" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "짧고 국부적인 아크로는 이 연료가 착화되지 않는다. 착화 역량이 성립하지 않는다 (§9.9.4.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:hasMechanism ?m ; efi:hasFirstFuel ?f .
+          { ?m rdf:type/rdfs:subClassOf* efi:ShortCircuitArc }
+          UNION
+          { ?m rdf:type/rdfs:subClassOf* efi:SeriesArc }
+          ?f rdf:type/rdfs:subClassOf* ?FA .
+          ?FA efi:ignitableByBriefArc false .
         }""" ] .

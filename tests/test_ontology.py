@@ -430,6 +430,19 @@ def test_heat_dissipation_impairment_justifies_overload():
         base + "efi:hO efi:hasAntecedent [ a efi:BundledWiring ] .")
 
 
+def test_brief_arc_cannot_ignite_bulk_solid():
+    """C-36 — 짧고 국부적인 아크로는 목재 구조재가 착화되지 않는다 (§9.9.4.1).
+    F-3 은 온도만 본다. 연료의 형상·표면적은 다른 축이다."""
+    wood = """
+    efi:hW a efi:IgnitionScenario ; efi:hasMechanism [ a efi:ShortCircuitArc ] ;
+           efi:hasFirstFuel [ a efi:WoodStructuralFuel ] .
+    efi:cW a efi:Conclusion ; efi:concludes efi:hW .
+    """
+    assert "이 연료가 착화되지 않는다" in _msg(wood)
+    assert "이 연료가 착화되지 않는다" not in _msg(
+        wood.replace("efi:WoodStructuralFuel", "efi:PaperTextileFuel"))
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent

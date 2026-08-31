@@ -78,8 +78,8 @@ SUBSECTIONS = [
     ("9.9.2.4",  "접속 불량 — 산화막 발열 30~40 W",          DONE, "PoorContactHeating·GlowingConnection 사슬. 수치는 "
                                                           "가설 시험 시 참조하는 지식이라 규칙으로 두지 않는다(판단)"),
     ("9.9.3.2",  "과부하 발화는 보호가 정상이면 드물다",        DONE, "C-34 OverloadIgnitionRarityShape"),
-    ("9.9.4.1",  "350 V 미만 자발 아크 없음. 고체 착화 어려움",  PART, "C-33 개시 경위만. 연료별 아크 적합성은 없음"),
-    ("9.9.4.4",  "통상 파팅 아크는 가스·증기·분진만 착화",      NONE, "아크 종류별 착화 가능 연료 구분이 없다"),
+    ("9.9.4.1",  "350 V 미만 자발 아크 없음. 고체 착화 어려움",  DONE, "C-33 개시 경위, C-36 연료별 착화 역량"),
+    ("9.9.4.4",  "통상 파팅 아크는 가스·증기·분진만 착화",      DONE, "ignitableByBriefArc, C-36 ArcFuelCompetenceShape"),
     ("9.9.4.5",  "탄화는 화재 열로도 생긴다 — 통전만이 아니다",  DONE, "ExternalFlame 도 CarbonizedConductivePath 를 낸다"),
     ("9.9.4.5.1", "PVC 자가발열 습윤 110°C 이상",             NONE, "온도 이력을 담을 자리가 없다"),
     ("9.9.5.2",  "알루미늄 스파크·분기회로 스파크의 효율",       OUT,  "입자 재질·크기는 잔해에서 판별되지 않는다(판단)"),
@@ -195,6 +195,7 @@ SHAPE_REFS = {
     "ArcInitiationShape":                ["9.9"],
     "OverloadIgnitionRarityShape":       ["9.9"],
     "FuelProximityShape":                ["9.9"],
+    "ArcFuelCompetenceShape":            ["9.9"],
 }
 
 
