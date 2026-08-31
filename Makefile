@@ -1,6 +1,7 @@
 .PHONY: install test build review graph export clean
 
 PY := python
+export PYTHONIOENCODING := utf-8
 
 install:
 	$(PY) -m pip install -r requirements.txt --break-system-packages
