@@ -381,6 +381,42 @@ def test_all_refuted_becomes_undetermined():
     assert list(gr.objects(EFI.sZ, EFI.outcomeUndetermined)), "원인미상 판정이 도출되지 않았다"
 
 
+# ── §19.5~19.6 원인 가설 ─────────────────────────────────────────────────
+def test_heat_producing_device_must_be_listed():
+    """C-29 — 발화부의 발열 기기는 쉽게 배제되더라도 목록에 올려야 한다 (§19.5.1).
+    뻔해 보인다는 이유로 빠지면 그 가설은 시험조차 되지 않는다."""
+    base = """
+    efi:sH a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:dH a efi:HeatProducingDevice ; efi:atOriginArea true .
+    efi:sH efi:hasFact efi:dH .
+    """
+    assert "가설 목록에 없다" in _msg(base)
+    assert "가설 목록에 없다" not in _msg(base + "efi:sH efi:hasCandidateSource efi:dH .")
+
+
+def test_source_and_fuel_alone_are_not_a_cause():
+    """C-30 — 발화원과 착화물을 짚은 것만으로는 원인이 아니다 (§19.6.5.2).
+    둘을 한자리에 모은 정황이 있어야 원인이 된다."""
+    base = """
+    efi:hC a efi:TrackingScenario ; efi:hasMechanism [ a efi:ArcTracking ] .
+    efi:cC a efi:Conclusion ; efi:concludes efi:hC .
+    """
+    assert "둘을 모은 정황이 없다" in _msg(base)
+    assert "둘을 모은 정황이 없다" not in _msg(
+        base + "efi:hC efi:hasAntecedent [ a efi:ContaminatedEnvironment ] .")
+
+
+def test_two_surviving_hypotheses_are_undetermined():
+    """D-8 — 둘 이상이 기각되지 않아도 원인미상이다 (§19.6.5.1).
+    모두 기각된 경우만 잡던 D-7 의 반대편이다."""
+    gr = run("""
+    efi:sQ a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:hQ1 a efi:TrackingScenario ; efi:inSession efi:sQ ; efi:supportScore 65 .
+    efi:hQ2 a efi:PoorContactScenario ; efi:inSession efi:sQ ; efi:supportScore 65 .
+    """)
+    assert list(gr.objects(EFI.sQ, EFI.outcomeUndetermined)), "원인미상 판정이 도출되지 않았다"
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent

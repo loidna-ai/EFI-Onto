@@ -1516,3 +1516,99 @@ efi:UndeterminedDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:Investig
             FILTER NOT EXISTS { ?h2 efi:verdict efi:Refuted }
           }
         }""" ] .
+
+# ============================================================================
+# 19. 원인 가설 수립·검증 (NFPA 921 §19.4~§19.7)
+#     소거법 금지(C-2)와 반증 우선은 이미 있다. 여기서는 그 위의 요건을 채운다.
+#       §19.5.1   발화부의 발열 기기는 쉽게 배제되더라도 반드시 목록에 올린다
+#       §19.6.3   가설 검증에서 답해야 할 질문 넷
+#       §19.6.5.1 둘 이상이 기각되지 않아도 원인미상이다
+#       §19.6.5.2 발화원과 최초 착화물을 짚은 것만으로는 원인이 아니다
+# ============================================================================
+efi:HeatProducingDevice a owl:Class ; rdfs:subClassOf efi:PhysicalEvidence ;
+    rdfs:label "발열 기기"@ko ; skos:prefLabel "발열 기기"@ko ;
+    rdfs:comment "발열하거나 고장 시 발열할 수 있는 기기. 쉽게 배제되더라도 가설 목록에 올린다 (§19.5.1)"@ko .
+efi:NonRecoverableIgnitionSource a owl:Class ; rdfs:subClassOf efi:PhysicalEvidence ;
+    rdfs:label "회수 불가 발화원"@ko ; skos:prefLabel "회수 불가 발화원"@ko ;
+    rdfs:comment "라이터·정전기·낙뢰처럼 현장에 물체가 남지 않는 발화원. 존재·부재를 다른 증거로 세워야 한다 (§19.5.2)"@ko .
+
+efi:atOriginArea a owl:DatatypeProperty ; rdfs:domain efi:PhysicalEvidence ; rdfs:range xsd:boolean ;
+    rdfs:label "발화 구역 내 존재"@ko ; skos:prefLabel "발화 구역 내 존재"@ko .
+efi:hasCandidateSource a owl:ObjectProperty ; rdfs:domain efi:InvestigationSession ; rdfs:range efi:PhysicalEvidence ;
+    rdfs:label "가설 목록에 올린 발화원 후보"@ko ; skos:prefLabel "가설 목록에 올린 발화원 후보"@ko .
+efi:sourceCompetentForFuel a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:boolean ;
+    rdfs:label "착화 역량 판단(질문 1)"@ko ; skos:prefLabel "착화 역량 판단(질문 1)"@ko ;
+    rdfs:comment "가정한 발화원이 최초 착화물에 대해 경합 가능한 발화원인가 (§19.6.3(1))"@ko .
+efi:timelineConsistent a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:boolean ;
+    rdfs:label "시간선 정합(질문 2)"@ko ; skos:prefLabel "시간선 정합(질문 2)"@ko ;
+    rdfs:comment "착화에 필요한 시간이 사건 시간선과 맞는가 (§19.6.3(2))"@ko .
+efi:contactCircumstance a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:string ;
+    rdfs:label "접촉 정황(질문 3)"@ko ; skos:prefLabel "접촉 정황(질문 3)"@ko ;
+    rdfs:comment "발화원과 최초 착화물을 접촉시킨 정황 (§19.6.3(3))"@ko .
+
+# [C-28] 가설 검증에서 답해야 할 질문에 답하지 않은 채 결론을 낼 수 없다 (§19.6.3).
+#  질문 4(고장 모드)는 '있다면'이라 필수가 아니다.
+efi:TestingQuestionsShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §19.6.3 Hypotheses Testing Questions" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "착화 역량·시간선·접촉 정황 중 답하지 않은 질문이 있다 (§19.6.3)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          FILTER ( NOT EXISTS { ?sc efi:sourceCompetentForFuel ?a }
+                || NOT EXISTS { ?sc efi:timelineConsistent ?b }
+                || NOT EXISTS { ?sc efi:contactCircumstance ?c } )
+        }""" ] .
+
+# [C-29] 발화부의 발열 기기는 쉽게 배제되더라도 반드시 가설 목록에 올린다 (§19.5.1).
+#  뻔해 보인다는 이유로 목록에서 빠지면 그 가설은 시험조차 되지 않는다.
+efi:HeatProducingDeviceListedShape a sh:NodeShape ; sh:targetClass efi:InvestigationSession ;
+    dcterms:references "NFPA 921 (2024) §19.5.1 Developing Cause Hypotheses" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "발화 구역의 발열 기기가 가설 목록에 없다. 쉽게 배제되더라도 목록에는 올려야 한다 (§19.5.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:hasFact ?d .
+          ?d rdf:type/rdfs:subClassOf* efi:HeatProducingDevice ; efi:atOriginArea true .
+          FILTER NOT EXISTS { $this efi:hasCandidateSource ?d }
+        }""" ] .
+
+# [C-30] 발화원과 최초 착화물을 짚은 것만으로는 원인이 아니다 (§19.6.5.2).
+#  둘을 한자리에 모은 정황이 있어야 원인이 된다.
+efi:CauseNotJustSourceShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §19.6.5.2 Ignition Source vs Fire Cause" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "발화원과 착화물을 짚었을 뿐 둘을 모은 정황이 없다. 그것만으로는 원인이 아니다 (§19.6.5.2)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:hasMechanism ?m .
+          FILTER NOT EXISTS { ?sc efi:hasAntecedent ?a }
+        }""" ] .
+
+# [C-31] 착화 역량이 미달인 가설로 결론을 낼 수 없다 (§19.6.4.2·§19.6.5.2).
+#  물리 법칙에 어긋나는 가설은 반증된 것이다.
+efi:CompetenceRequiredShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §19.6.4.2 Fundamental Principles of Science" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "도달 온도가 발화 온도에 못 미치는 가설로 결론을 낼 수 없다 (§19.6.4.2)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:ignitionCompetenceGap true .
+        }""" ] .
+
+# [D-8] 둘 이상이 기각되지 않아도 원인미상이다 (§19.6.5.1).
+#  D-7 은 모두 기각된 경우만 잡았다. 원문은 그 반대 경우도 원인미상이라고 한다.
+efi:UndeterminedByTieRuleShape a sh:NodeShape ; sh:targetClass efi:InvestigationSession ;
+    dcterms:references "NFPA 921 (2024) §19.6.5.1 Cause Undetermined" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 5 ;
+        sh:construct """
+        CONSTRUCT { $this efi:outcomeUndetermined true . }
+        WHERE {
+          ?h1 efi:inSession $this ; efi:supportScore ?n1 .
+          ?h2 efi:inSession $this ; efi:supportScore ?n2 .
+          FILTER ( ?h1 != ?h2 && ?n1 = ?n2 )
+          FILTER NOT EXISTS { ?h1 efi:verdict efi:Refuted }
+          FILTER NOT EXISTS { ?h2 efi:verdict efi:Refuted }
+        }""" ] .

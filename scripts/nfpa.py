@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """NFPA 921 (2024) 절 대조표. 이식이 얼마나 남았는지의 분모를 만든다.
 
-절 목록은 2024판 목차(절 수준)에서 옮긴 것이다. 하위 절 번호는 아직 없다.
-상태는 '우리 그래프가 그 절의 내용을 다루는가'이며, 절 제목만으로 판정 가능한
-것과 본문 확인이 필요한 것을 구분해 둔다.
+절 목록은 2024판 목차에서 옮긴 것이다. 원문을 받은 절만 하위 절까지 내려가 있고
+나머지는 절 제목 수준의 근사치다. 내려갈 때마다 이식률은 대체로 낮아진다 —
+제목으로는 덮인 듯 보이던 요건이 드러나기 때문이다. 낮아진 숫자가 정확한 숫자다.
 
 주의 — 단서 규칙 25개(Table 2)는 NFPA 가 아니라 국내 실무·선행연구에서 왔다.
 여기에 조항을 붙이면 출처가 왜곡된다. 조항은 방법론 층에만 붙인다.
@@ -47,9 +47,11 @@ SECTIONS = [
     ("19.1", "Introduction",                         PART, "배경"),
     ("19.2", "Overall Methodology",                  DONE, "세션 절차"),
     ("19.3", "Data Collection",                      DONE, "Fact, ConfirmationStatus, PROV-O (C-4)"),
-    ("19.4", "Analyze the Data",                     DONE, "M-1~M-3 변별력·혼동 쌍 산출"),
-    ("19.5", "Developing Cause Hypotheses",          DONE, "IgnitionScenario 생성, P2"),
-    ("19.6", "Testing the Hypothesis for Validity",  DONE, "F-1~F-4. 가장 강한 부분"),
+    ("19.4", "Analyze the Data",                     PART, "M-1~M-3 변별력·혼동 쌍. 발화 순서 분석(§19.4.4)은 "
+                                                       "요인 체크리스트가 없어 비어 있다"),
+    ("19.5", "Developing Cause Hypotheses",          PART, "C-29 발열 기기 목록. 회수 불가 발화원과 "
+                                                       "복수 경합 발화원은 비어 있다"),
+    ("19.6", "Testing the Hypothesis for Validity",  DONE, "F-1~F-4, C-28·C-30·C-31, D-7·D-8. 하위 절 표 참조"),
     ("19.7", "Selecting the Final Hypothesis",       DONE, "Conclusion, C-2, 확정 조건"),
     ("19.8", "Fire Incident and Cause Classification", PART, "분류 구조는 구현(C-9~C-11). 범주 목록은 "
                                                              "이 온톨로지가 정하지 않고 외부 체계를 참조한다"),
@@ -101,6 +103,23 @@ SUBSECTIONS = [
     ("4.6.2.1",  "기술 검토의 확증 편향 위험",               NONE, "편향 위험을 표시할 자리가 없다"),
     ("4.6.3",    "동료 검토 — 독립성·객관성",               DONE, "C-17 PeerReviewIndependenceShape"),
     ("4.6.3.2",  "동료 검토는 자료 오류를 잡지 못한다",        DONE, "C-20 ReviewValidationShape"),
+    ("19.4.4.2", "발화 순서 — 사건과 조건의 선후",           PART, "OWL-Time 은 있으나 발화 순서 자체의 모형이 없다"),
+    ("19.4.4.2.1", "발화 기여 요인 일곱 가지",              NONE, "연료·산화제·발화원·열전달·안전장치·정황·확산 체크리스트가 없다"),
+    ("19.4.4.3", "발화원 미발견 시 순서 추론의 조건",         NONE, "추론이 허용되는 제한적 상황 다섯을 담지 않았다"),
+    ("19.5.0",   "증거가 없다는 이유로 배제하지 말라",         DONE, "C-1 반증은 확인·부정 확인만. 확인 불가는 반증이 못 된다"),
+    ("19.5.1",   "발화부 발열 기기는 반드시 목록에",          DONE, "C-29 HeatProducingDeviceListedShape"),
+    ("19.5.2",   "회수 불가 발화원 — 라이터·정전기·낙뢰",      PART, "NonRecoverableIgnitionSource 클래스. 존재 판정 규칙은 없음"),
+    ("19.5.3",   "각 발화원에 대해 연료 존재를 세워야 한다",    PART, "ignites 사슬은 있으나 필수 요건이 아니다"),
+    ("19.5.4",   "복수 경합 발화원 — 특정 못 해도 가설은 선다", NONE, "발화원 미특정 가설을 표현할 자리가 없다"),
+    ("19.6.3",   "가설 검증에서 답해야 할 질문 넷",           DONE, "C-28 TestingQuestionsShape"),
+    ("19.6.4",   "확인이 아니라 반증을 시도한다",             DONE, "F-1, P3"),
+    ("19.6.4.1", "과학 문헌을 검증 수단으로 쓴다",            NONE, "인용 근거를 담을 자리가 없다"),
+    ("19.6.4.2", "물리·열역학 법칙에 어긋나면 반증된 것",      DONE, "C-31 CompetenceRequiredShape, F-3"),
+    ("19.6.4.5", "시간선은 변별 수단이 된다",                PART, "timelineConsistent 로 답만 기록. 시간선 검증은 없음"),
+    ("19.6.4.6", "고장 수목으로 가설을 시험한다",             NONE, "고장 수목 표현이 없다"),
+    ("19.6.5",   "negative corpus 는 과학적 방법이 아니다",   DONE, "C-2 ConclusionShape"),
+    ("19.6.5.1", "모두 기각되거나 둘 이상 남으면 원인미상",    DONE, "D-7, D-8 UndeterminedByTieRuleShape"),
+    ("19.6.5.2", "발화원과 착화물을 짚은 것은 원인이 아니다",   DONE, "C-30 CauseNotJustSourceShape"),
     ("19.8.1",   "통계 목적 사건 분류 — 외부 체계 참조",      DONE, "C-10 ClassificationSystemShape, ClassificationSystem 6종"),
     ("19.8.2",   "보고서용 원인 분류 — 판정 이후에 온다",     PART, "C-9 순서, C-11 분리는 구현. 범주 목록 미확보(원문 후속 필요)"),
 ]
@@ -150,6 +169,11 @@ SHAPE_REFS = {
     "DataAnalyzedShape":                 ["4.3"],
     "NoPresumptionShape":                ["4.3"],
     "UndeterminedDerivationRuleShape":   ["4.3"],
+    "TestingQuestionsShape":             ["19.6"],
+    "HeatProducingDeviceListedShape":    ["19.5"],
+    "CauseNotJustSourceShape":           ["19.6"],
+    "CompetenceRequiredShape":           ["19.6"],
+    "UndeterminedByTieRuleShape":        ["19.6"],
 }
 
 
