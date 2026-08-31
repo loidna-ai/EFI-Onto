@@ -23,6 +23,7 @@ make clean
 ```
 ontology/efi_tbox.ttl    TBox 본체. 클래스 125, 속성 27+33, 단서 규칙 25, SHACL 11
 src/efi_schema.py        Pydantic v2 추론 파이프라인. TTL 을 읽어 세션 단위로 실행
+scripts/score.py         가감점 산출. 가중치의 단일 진실 원천
 scripts/                 시각화·내보내기 (그래프 HTML, GraphML, SVG, 검토표 xlsx)
 tests/test_ontology.py   회귀 시험. TTL 을 고치면 반드시 통과해야 함
 docs/                    설계계획서 (Noy & McGuinness 7단계)
@@ -69,13 +70,17 @@ build/                   생성물. git 에 넣지 않음
 
 - 미사여구·불필요한 주석 없이 간결하게. `/mnt/skills/user/terse-coder` 스타일.
 - `supportScore` 는 xsd:integer, **퍼센트 기호를 붙이지 않는다** (논문 3.2). 확률이 아니다.
+- **`scoreDelta` 를 TTL 에서 직접 고치지 않는다.** `python scripts/score.py --write` 로 다시 만든다.
+  손으로 고치면 `test_score_deltas_are_derived` 가 잡는다.
 - TTL 을 고치면 `make test` 를 돌린다. M-3 불일치가 0이 아니면 커밋하지 않는다.
 - 한 줄에 한 주어만 쓴다 (Turtle 다중 주어는 파싱 사고의 원인이었다).
 - SPARQL 에서 `owl:unionOf` 는 순회되지 않는다. 하위 클래스는 `rdfs:subClassOf` 로 명시할 것.
 
 ## 검증되지 않은 것 — 건드릴 때 주의
 
-1. **`scoreDelta` 는 전부 예시값이다.** 실제 감별 루브릭으로 교체해야 한다.
+1. **`scoreDelta` 는 손으로 고치지 않는다.** `scripts/score.py` 가 변별력에서 유도한다.
+   척도(지지 15 / 반증 30)는 확정 조건에서 풀려나온 값이고, 형태학적 감쇠 0.7 만 판단이다.
+   **아직 사례로 보정되지 않았다** — ABox 150건이 들어오면 조건부 빈도로 검증해야 한다.
 2. **NFPA 921 조항 번호 미대조.** 현재 장(Ch.4/9/19) 수준 표기. 2024판 원문 확인 필요.
 3. **`canManifest` / `enables` / `producesDamage` / `ignites` / `exhibits` / `attests` 는 작성자 구성이다.**
    Table 1·2 와 선행연구를 근거로 했으나 실무 검증 전. `build/EFI-Onto_검토표.xlsx` 로 조사관 검토 진행 중.
@@ -87,4 +92,5 @@ build/                   생성물. git 에 넣지 않음
 |---|---|
 | 가설수립→검증→확정 3단계, 반증 우선, negative corpus 배제, 판단보류 허용 | NFPA 921 |
 | 5대 발화 요인 구분, Table 2 단서 | 국내 실무·선행연구 + FIReAct 논문 |
-| 가감점, 형태 발현 프로파일, 축 간 인과 연결 | 작성자 구성 (검증 필요) |
+| 형태 발현 프로파일, 축 간 인과 연결 | 작성자 구성 (검증 필요) |
+| 가감점 | 변별력에서 유도 (`scripts/score.py`). 사례 보정 전 |

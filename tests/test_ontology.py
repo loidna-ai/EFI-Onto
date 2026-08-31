@@ -79,6 +79,27 @@ def test_arc_mark_sequence_reaches_rules(g):
     assert used & {"PrimaryArcMark", "SecondaryArcMark"}, "아크흔 선후를 쓰는 규칙이 없다"
 
 
+# ── 가감점은 손으로 고르지 않는다 ────────────────────────────────────────
+def test_score_deltas_are_derived(g):
+    """모든 scoreDelta 는 scripts/score.py 의 공식에서 재현돼야 한다.
+    TTL 을 손으로 고치면 여기서 걸린다. 가중치의 단일 진실 원천은 공식이다."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import score
+    from rdflib import RDF
+    calc = score.deltas(g)
+    ttl = {q(r): int(g.value(r, EFI.scoreDelta)) for r in g.subjects(RDF.type, EFI.IndicatorRule)}
+    bad = {k: (ttl[k], v) for k, v in calc.items() if ttl.get(k) != v}
+    assert not bad, f"손으로 고친 가감점 (TTL, 계산값): {bad}"
+
+
+def test_shared_morphology_scores_zero():
+    """6개 가설 전부가 낼 수 있는 흔적은 가중치가 0 이어야 한다.
+    C-5 를 제약이 아니라 계산 결과로 얻는다는 것이 공식의 요지다."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import score, math
+    assert round(score.SUPPORT_MAX * math.log2(score.N / score.N) / math.log2(score.N)) == 0
+
+
 # ── 논문 Table 10 사례 A ─────────────────────────────────────────────────
 CASE_A = """
 efi:sesA a efi:InvestigationSession ; efi:queryCount 2 .

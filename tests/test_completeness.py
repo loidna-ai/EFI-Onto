@@ -17,17 +17,14 @@ TTL = ROOT / "ontology" / "efi_tbox.ttl"
 EFI = Namespace("https://w3id.org/efi-onto#")
 q = lambda u: str(u).split("#")[-1]
 
-# 자리표시자 점수. 실제 루브릭 값으로 교체되면 이 집합에서 벗어난다.
-PLACEHOLDER_DELTAS = {15, 8, -25}
-
 SCENARIOS = ["PoorContactScenario", "CrushDamageScenario", "PartialDisconnectionScenario",
              "InsulationDegradationScenario", "TrackingScenario", "ExternalFlameScenario"]
 
 # 왼쪽이 현재 허용 한계, 오른쪽이 도달 목표.
 BASELINE = {
-    # 21 → 24. 아크흔 선후 규칙 3개를 넣으면서 잠정 가감점이 늘었다. 구조를 얻고 빚을 늘린
-    # 의도적 거래이며, 그 빚이 여기 그대로 계상돼 있다. 루브릭 교체 시 한 번에 0 이 된다.
-    "placeholder_delta_rules":  (24, 0),    # 자리표시자 점수(15/8/-25)를 쓰는 규칙 수
+    # 선언된 역할과 계산된 변별력이 어긋나는 규칙. 핵심 단서가 보강 단서보다 약하면
+    # 둘 중 하나가 틀린 것이다. 역할 라벨을 고치거나 더 변별력 있는 핵심 단서를 찾아야 한다.
+    "role_rank_mismatch":        (4, 0),    # |core| < max|supporting| 인 규칙 수
     "min_refuting_per_scenario": (1, 2),    # 시나리오당 반증 규칙 최소 개수
     # 23 → 18 → 13. 남은 13개는 임계값·설계 결정이 있어야 풀린다(정의로 풀리는 것은 소진).
     "unwired_data_properties":  (13, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
@@ -61,9 +58,19 @@ def _is_damage(g, name):
 
 
 # ── 지표 산출 ─────────────────────────────────────────────────────────────
-def placeholder_delta_rules(g):
-    return sum(1 for _, role, _, d in _rules(g)
-               if role != "DecisiveRefuting" and d in PLACEHOLDER_DELTAS)
+def role_rank_mismatch(g):
+    """선언된 역할과 계산된 변별력의 어긋남.
+    핵심 단서가 그 가설의 보강 단서보다 약하면 라벨이나 단서 선택이 잘못된 것이다."""
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
+    import score
+    d = score.deltas(g)
+    by = collections.defaultdict(lambda: {"Core": [], "Supporting": []})
+    for name, sc, _, role in score.rules(g):
+        if role in ("Core", "Supporting"):
+            by[sc][role].append(d[name])
+    return sum(1 for r in by.values() if r["Supporting"]
+               for v in r["Core"] if v < max(r["Supporting"]))
 
 
 def min_refuting_per_scenario(g):
@@ -111,10 +118,10 @@ def _ratchet(key, now, better_is_lower=True):
     warnings.warn(f"[잔여] {key}: {now} (목표 {target})")
 
 
-def test_score_delta_is_still_placeholder(g):
-    """A-1 점수가 자리표시자다. 6개 시나리오가 15/8/-25 로 균일해
-    supportScore 가 확인 항목 개수의 카운터 노릇밖에 못 한다."""
-    _ratchet("placeholder_delta_rules", placeholder_delta_rules(g))
+def test_declared_role_matches_discrimination(g):
+    """A-1 잔여. 가감점은 구조에서 유도되지만 역할 라벨은 여전히 손으로 붙어 있다.
+    핵심이 보강보다 약한 규칙이 남아 있으면 둘 중 하나가 틀린 것이다."""
+    _ratchet("role_rank_mismatch", role_rank_mismatch(g))
 
 
 def test_refutation_rules_are_thin(g):
@@ -137,7 +144,7 @@ def test_core_indicators_are_not_morphology(g):
 if __name__ == "__main__":
     gr = Graph().parse(TTL, format="turtle")
     rows = [
-        ("자리표시자 점수 규칙", placeholder_delta_rules(gr), "placeholder_delta_rules"),
+        ("역할·변별력 어긋남", role_rank_mismatch(gr), "role_rank_mismatch"),
         ("시나리오당 최소 반증 규칙", min_refuting_per_scenario(gr), "min_refuting_per_scenario"),
         ("미연결 데이터 속성", len(unwired_data_properties(gr)), "unwired_data_properties"),
         ("형태학적 core 규칙", len(morphological_core_rules(gr)), "morphological_core_rules"),
