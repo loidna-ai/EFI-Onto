@@ -23,8 +23,10 @@ SCENARIOS = ["PoorContactScenario", "CrushDamageScenario", "PartialDisconnection
 # 왼쪽이 현재 허용 한계, 오른쪽이 도달 목표.
 BASELINE = {
     "min_refuting_per_scenario": (1, 2),    # 시나리오당 반증 규칙 최소 개수
-    # 23 → 18 → 13. 남은 13개는 임계값·설계 결정이 있어야 풀린다(정의로 풀리는 것은 소진).
-    "unwired_data_properties":  (13, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
+    # 23 → 18 → 13 → 12. 남은 12개는 임계값·설계 결정이 있어야 풀린다.
+    # 그중 5개는 임계값이 존재하지 않는 것이 확인됐다(기공률 등). 목표 0 은
+    # 도달하지 못할 수 있다 — 확인되면 그때 목표를 고친다.
+    "unwired_data_properties":  (12, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
 }
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
 #           morphological_core_rules(1→0). 모두 test_ontology.py 의 불변식이 됐다.

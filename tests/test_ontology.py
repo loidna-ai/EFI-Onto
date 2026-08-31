@@ -417,6 +417,19 @@ def test_two_surviving_hypotheses_are_undetermined():
     assert list(gr.objects(EFI.sQ, EFI.outcomeUndetermined)), "원인미상 판정이 도출되지 않았다"
 
 
+# ── §9.9.1.2 방열 저해 ───────────────────────────────────────────────────
+def test_heat_dissipation_impairment_justifies_overload():
+    """C-34 — 과부하 발화는 보호가 정상이면 드물다. 예외는 도체 축소이거나
+    열이 빠져나가지 못하는 상태다 (§9.9.3.2). 방열 저해가 그 근거가 된다."""
+    base = """
+    efi:hO a efi:IgnitionScenario ; efi:hasMechanism [ a efi:OverloadHeating ] .
+    efi:cO a efi:Conclusion ; efi:concludes efi:hO .
+    """
+    assert "과부하 발화는 보호가 정상이면 드물다" in _msg(base)
+    assert "과부하 발화는 보호가 정상이면 드물다" not in _msg(
+        base + "efi:hO efi:hasAntecedent [ a efi:BundledWiring ] .")
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent

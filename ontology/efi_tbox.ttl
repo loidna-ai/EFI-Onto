@@ -1674,4 +1674,51 @@ efi:OverloadIgnitionRarityShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
           ?sc efi:hasMechanism ?m .
           ?m rdf:type/rdfs:subClassOf* efi:OverloadHeating .
           FILTER NOT EXISTS { ?sc efi:conductorSizeReducedAfterProtection true }
+          FILTER NOT EXISTS {
+            ?sc efi:hasAntecedent ?a .
+            ?a rdf:type/rdfs:subClassOf* efi:HeatDissipationImpairment .
+          }
+        }""" ] .
+
+# ============================================================================
+# 21. 방열 저해 조건 (NFPA 921 §9.9.1.2 · §9.9.2.2 · §9.9.3.2)
+#     원문의 물리 논의(와트·온도·지속 시간)는 가설을 시험할 때 참조하는 지식이지
+#     현장에서 관측하는 대상이 아니다. 관측 가능한 형태는 '열이 빠져나가지 못하는
+#     상태였는가'이고, 그것만 담는다.
+#     같은 전류가 흘러도 방열이 막히면 발화하고 아니면 하지 않는다.
+# ============================================================================
+efi:HeatDissipationImpairment a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ;
+    rdfs:label "방열 저해 조건"@ko ; skos:prefLabel "방열 저해 조건"@ko ;
+    rdfs:comment "발생한 열이 주위로 빠져나가지 못하는 상태. 정격 전류에서도 발화 조건에 이를 수 있다 (§9.9.2.2)"@ko .
+efi:ThermalInsulationEnclosure a owl:Class ; rdfs:subClassOf efi:HeatDissipationImpairment ;
+    rdfs:label "단열재 매입·포설"@ko ; skos:prefLabel "단열재 매입·포설"@ko .
+efi:BundledWiring a owl:Class ; rdfs:subClassOf efi:HeatDissipationImpairment ;
+    rdfs:label "다발 배선"@ko ; skos:prefLabel "다발 배선"@ko ;
+    rdfs:comment "케이블이 다발로 묶여 서로의 열을 가둔다 (§9.9.3.2)"@ko .
+efi:CoveredHeatingDevice a owl:Class ; rdfs:subClassOf efi:HeatDissipationImpairment ;
+    rdfs:label "발열체 적치·접힘"@ko ; skos:prefLabel "발열체 적치·접힘"@ko ;
+    rdfs:comment "전기요를 접거나 발열체 위에 물건을 덮으면 열이 좁은 곳에 갇힌다 (§9.9.1.2)"@ko .
+
+efi:ThermalInsulationTrace a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "단열재 매입 흔적"@ko ; skos:prefLabel "단열재 매입 흔적"@ko .
+efi:BundledWiringTrace a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "다발 배선 흔적"@ko ; skos:prefLabel "다발 배선 흔적"@ko .
+
+efi:ThermalInsulationTrace efi:attests efi:ThermalInsulationEnclosure .
+efi:BundledWiringTrace efi:attests efi:BundledWiring .
+efi:HeatDissipationImpairment efi:enables efi:ResistiveHeating , efi:OverloadHeating .
+
+# [C-35] 전기적 원인 결론에는 최초 착화물이 발열원에서 얼마나 떨어져 있었는지가
+#  기록돼야 한다 (§9.9.1.1 — 착화되는 것은 '가까이 있는' 재료다).
+#  거리 임계값은 정하지 않는다. 원문이 수치를 주지 않았고 재료마다 다르다.
+efi:FuelProximityShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.9.1.1 Ignition by Electrical Energy" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "최초 착화물이 발열원에서 얼마나 떨어져 있었는지 기록되지 않았다 (§9.9.1.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:hasMechanism ?m ; efi:hasFirstFuel ?f .
+          ?m rdf:type/rdfs:subClassOf* efi:ElectricalHeatingMechanism .
+          FILTER NOT EXISTS { ?f efi:distanceToHeatSource_mm ?d }
         }""" ] .
