@@ -10,7 +10,10 @@
 """
 import sys, pathlib
 
-DONE, PART, NONE, OUT = "구현", "일부", "없음", "범위밖"
+DONE, PART, NONE, OUT, PROC = "구현", "일부", "없음", "범위밖", "현장절차"
+# PROC = 이론에는 있으나 온톨로지가 표현할 대상이 아닌 것(도체 취급·촬영·표식 등
+#        현장 작업 절차). 분모에서 뺀다. 빼지 않으면 100%는 도달 불가가 되고
+#        그 순간 이 지표는 무시된다.
 
 # (절, 제목, 상태, 우리 쪽 대응 또는 빠진 내용)
 SECTIONS = [
@@ -29,15 +32,14 @@ SECTIONS = [
     ("9.3",  "Building Electrical Systems",          NONE, "배선 계통 구조가 없다"),
     ("9.4",  "Service Equipment",                    NONE, "인입 설비가 없다"),
     ("9.5",  "Grounding",                            NONE, "접지·지락 경로가 없다. 누전은 트래킹 쪽에만 걸쳐 있다"),
-    ("9.6",  "Overcurrent Protection",               PART, "BreakerTripRecord, D-1 과부하. 보호기기 동작 특성은 없음"),
-    ("9.7",  "Branch Circuits",                      NONE, "분기회로 개념이 없다"),
+    ("9.6",  "Overcurrent Protection",               PART, "BreakerTripRecord, D-1 과부하, GFCI·AFCI 클래스. 동작 특성은 없음"),
+    ("9.7",  "Branch Circuits",                      PART, "Circuit·BranchCircuit 클래스는 생겼다. 계통 위상은 없음"),
     ("9.8",  "Outlets and Devices",                  PART, "PlugReceptacle, TerminalBlock"),
     ("9.9",  "Ignition by Electrical Energy",        DONE, "HeatingMechanism 축. 이 프로젝트의 중심"),
     ("9.10", "Interpreting Damage to Elec. Systems", DONE, "DamagePattern 축, M-1~M-3"),
     ("9.11", "Identification of Damaged Conductors", DONE, "1차/2차 단락흔, F-2"),
     ("9.12", "Electrical System Examination",        PART, "증거물 수거·관측은 있으나 검사 절차는 없음"),
-    ("9.13", "Arc Surveys",                          PART, "ArcMapPoint 클래스와 locatedInOriginArea 속성은 있으나 "
-                                                           "이를 쓰는 규칙이 하나도 없다. 어휘만 있고 절차가 없다"),
+    ("9.13", "Arc Surveys",                          DONE, "F-5, C-6~C-8, D-4~D-5 로 구현. 하위 절 표 참조"),
     ("9.14", "Static Electricity",                   OUT,  "5대 요인 밖. 범위 제외 (재검토 여지)"),
     ("9.15", "Batteries",                            OUT,  "5대 요인 밖. ESS·리튬 화재를 넣을지 결정 필요"),
     # ── Chapter 19 Fire Cause Determination ────────────────────────────────
@@ -50,6 +52,24 @@ SECTIONS = [
     ("19.7", "Selecting the Final Hypothesis",       DONE, "Conclusion, C-2, 확정 조건"),
     ("19.8", "Fire Incident and Cause Classification", NONE, "화재 분류(사고·방화·자연·원인미상)가 없다. "
                                                              "Withheld 는 가설 판정일 뿐 사건 분류가 아니다"),
+]
+
+# 9.13 하위 절. 원문 확인 후 좁힌 것. 나머지 절도 이 수준까지 내려가야 한다.
+SUBSECTIONS = [
+    ("9.13.1.2", "조사 미완이면 결론은 조사 범위로 제한",   DONE, "C-7 ArcSurveyScopeShape"),
+    ("9.13.1.3", "아크인지 다른 손상인지 금속조직 판정",     NONE, "재료 분석 행위자·판정이 없다"),
+    ("9.13.2.1", "회로 최하류 아크 지점 기록",             DONE, "D-5 FurthestDownstreamRuleShape"),
+    ("9.13.2.2", "회로별 보호장치 종류와 상태 기록",        PART, "GFCI·AFCI 클래스와 circuitProtection. 상태 열거는 없음"),
+    ("9.13.3.1", "아크 지점이 나타날 수 있는 위치",         PART, "도체·접속부는 있으나 전선관·접지면은 없다"),
+    ("9.13.3.2", "전선관 내 도체 인출과 방향 유지",         PROC, "현장 작업 절차"),
+    ("9.13.3.3", "전 둘레 육안·촉진 검사",                 PROC, "현장 작업 절차"),
+    ("9.13.3.4", "원상 기록 후 피복 제거",                 PROC, "현장 작업 절차"),
+    ("9.13.3.5", "현장 검사와 실험실 반출 선택",           PROC, "현장 작업 절차"),
+    ("9.13.4.2", "전위가 다른 쪽 대응 손상 확인",           DONE, "D-4 CorrespondingDamageRuleShape"),
+    ("9.13.4.3", "아크 지점 표식과 사진 기록",             PROC, "현장 작업 절차"),
+    ("9.13.4.5", "아크 용융 부재도 기록 — 미조사와 구분",    DONE, "F-5 ArcSiteAbsenceRuleShape"),
+    ("9.13.4.6", "용융이 아크 지점을 지웠을 가능성",         DONE, "F-5 + C-6 ObscuredArcSiteShape"),
+    ("9.13.4.7", "아크 용융흔 단독은 통전 사실만 말한다",     DONE, "C-8 ArcMeltAloneShape"),
 ]
 
 # 방법론 층에만 붙인다. 단서 규칙(Table 2)은 국내 실무 출처이므로 제외.
@@ -69,11 +89,20 @@ SHAPE_REFS = {
     "OverloadDerivationRuleShape":       ["9.6"],
     "StrandFractureDerivationRuleShape": ["9.11"],
     "CuprousOxideDerivationRuleShape":   ["9.10"],
+    # 아래 다섯은 TTL 안에 하위 절까지 직접 부착돼 있다 (§9.13.x).
+    "ArcSiteAbsenceRuleShape":           ["9.13"],
+    "ObscuredArcSiteShape":              ["9.13"],
+    "ArcSurveyScopeShape":               ["9.13"],
+    "ArcMeltAloneShape":                 ["9.13"],
+    "CorrespondingDamageRuleShape":      ["9.13"],
+    "FurthestDownstreamRuleShape":       ["9.13"],
 }
 
 
+from collections import Counter
+
+
 def counts():
-    from collections import Counter
     return Counter(s[2] for s in SECTIONS)
 
 
@@ -97,3 +126,10 @@ if __name__ == "__main__":
         print(f"  {mark} {sec:5s} {title[:38]:38s} {st}")
         if st in (NONE, PART):
             print(f"          {note}")
+    sc = Counter(x[2] for x in SUBSECTIONS)
+    stot = len(SUBSECTIONS) - sc[PROC]
+    print(f"\n\n── §9.13 하위 절 (온톨로지 대상 {stot}개 / 현장 절차 {sc[PROC]}개) " + "─" * 14)
+    for sec, title, st, note in SUBSECTIONS:
+        mark = {DONE: "■", PART: "◐", NONE: "□", PROC: "·"}[st]
+        print(f"  {mark} {sec:9s} {title[:30]:30s} {st:5s} {note}")
+    print(f"\n  §9.13 이식률 {sc[DONE]}/{stot} = {sc[DONE]/stot*100:.0f}%")

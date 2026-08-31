@@ -942,3 +942,137 @@ efi:StrandFractureDerivationRuleShape dcterms:references
     "NFPA 921 (2024) §9.11 Identification of Damaged Conductors" .
 efi:CuprousOxideDerivationRuleShape dcterms:references
     "NFPA 921 (2024) §9.10 Interpreting Damage to Elec. Systems" .
+
+# ============================================================================
+# 13. 아크 조사 (NFPA 921 §9.13)
+#     회로의 아크 지점을 계통적으로 찾아 발화부 판정과 확산 경로 해석에 쓴다.
+#     어휘(ArcMapPoint, locatedInOriginArea)만 있고 절차가 없던 부분을 채운다.
+# ============================================================================
+efi:ArcSurvey a owl:Class ; rdfs:subClassOf prov:Activity ;
+    rdfs:label "아크 조사"@ko ; skos:prefLabel "아크 조사"@ko ;
+    rdfs:comment "전기 계통의 아크 지점을 찾아 발화부 판정에 쓰는 조사 활동 (§9.13)"@ko .
+
+efi:CorrespondingDamageArea a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "대응 손상 영역"@ko ; skos:prefLabel "대응 손상 영역"@ko ;
+    rdfs:comment "같은 고장 회로에서 전위가 다른 도체 쪽에 대응해 나타나는 손상 (§9.13.4.2)"@ko .
+
+efi:GroundFaultProtectiveDevice a owl:Class ; rdfs:subClassOf efi:ProtectiveDevice ;
+    rdfs:label "누전차단기(GFCI)"@ko ; skos:prefLabel "누전차단기(GFCI)"@ko .
+efi:ArcFaultProtectiveDevice a owl:Class ; rdfs:subClassOf efi:ProtectiveDevice ;
+    rdfs:label "아크차단기(AFCI)"@ko ; skos:prefLabel "아크차단기(AFCI)"@ko .
+
+efi:surveyComplete a owl:DatatypeProperty ; rdfs:domain efi:ArcSurvey ; rdfs:range xsd:boolean ;
+    rdfs:label "아크 조사 완전 수행 여부"@ko ; skos:prefLabel "아크 조사 완전 수행 여부"@ko ;
+    rdfs:comment "완전하지 않으면 결론은 실제 조사한 범위로 제한된다 (§9.13.1.2)"@ko .
+efi:scopeLimitedTo a owl:DatatypeProperty ; rdfs:domain efi:Conclusion ; rdfs:range xsd:string ;
+    rdfs:label "결론 적용 범위"@ko ; skos:prefLabel "결론 적용 범위"@ko .
+efi:arcSiteFound a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range xsd:boolean ;
+    rdfs:label "아크 지점 발견 여부"@ko ; skos:prefLabel "아크 지점 발견 여부"@ko ;
+    rdfs:comment "부재도 기록 대상이다. 조사하지 않은 것과 조사했으나 없는 것은 다르다 (§9.13.4.5)"@ko .
+efi:obscuredByMelting a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range xsd:boolean ;
+    rdfs:label "용융으로 판독 불가"@ko ; skos:prefLabel "용융으로 판독 불가"@ko ;
+    rdfs:comment "용융이 아크 지점을 지웠을 수 있다. 이 경우 부재는 부정 확인이 아니라 확인 불가다 (§9.13.4.6)"@ko .
+efi:downstreamIndex a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range xsd:integer ;
+    rdfs:label "회로상 하류 순번"@ko ; skos:prefLabel "회로상 하류 순번"@ko ;
+    rdfs:comment "한 회로에 아크 지점이 여럿이면 최하류 지점을 기록한다 (§9.13.2.1)"@ko .
+efi:trueArcSiteLikely a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range xsd:boolean ;
+    rdfs:label "진성 아크 지점 가능성"@ko ; skos:prefLabel "진성 아크 지점 가능성"@ko .
+
+efi:fromArcSurvey a owl:ObjectProperty ; rdfs:domain efi:Conclusion ; rdfs:range efi:ArcSurvey ;
+    rdfs:label "아크 조사에 근거함"@ko ; skos:prefLabel "아크 조사에 근거함"@ko .
+efi:hasCorrespondingDamage a owl:ObjectProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range efi:CorrespondingDamageArea ;
+    rdfs:label "대응 손상을 가진다"@ko ; skos:prefLabel "대응 손상을 가진다"@ko .
+efi:circuitProtection a owl:ObjectProperty ; rdfs:domain efi:ArcSurvey ; rdfs:range efi:ProtectiveDevice ;
+    rdfs:label "회로 보호장치"@ko ; skos:prefLabel "회로 보호장치"@ko ;
+    rdfs:comment "조사한 회로마다 보호장치 종류와 동작 상태를 기록한다 (§9.13.2.2)"@ko .
+
+# [F-5] 아크흔 부재의 확인 상태. 조사한 결과 없음과 용융에 가려 못 봄을 가른다.
+#  P4(결측 ≠ 확인 불가 ≠ 부정 확인)와 §9.13.4.5·§9.13.4.6 이 같은 요구를 한다.
+efi:ArcSiteAbsenceRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMapPoint ;
+    dcterms:references "NFPA 921 (2024) §9.13.4.5 Documenting the Damage" ,
+                       "NFPA 921 (2024) §9.13.4.6 Documenting the Damage" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:confirmationStatus efi:ConfirmedAbsent . }
+        WHERE {
+          $this efi:arcSiteFound false .
+          FILTER NOT EXISTS { $this efi:obscuredByMelting true }
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:confirmationStatus efi:Unverifiable . }
+        WHERE { $this efi:obscuredByMelting true }""" ] .
+
+# [C-6] 용융에 가려진 지점을 부정 확인으로 쓰면 안 된다. 반증 근거가 되어버린다.
+efi:ObscuredArcSiteShape a sh:NodeShape ; sh:targetClass efi:ArcMapPoint ;
+    dcterms:references "NFPA 921 (2024) §9.13.4.6 Documenting the Damage" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "용융으로 판독 불가한 지점의 아크흔 부재는 확인 불가이지 부정 확인이 아니다 (§9.13.4.6)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:obscuredByMelting true .
+          $this efi:confirmationStatus efi:ConfirmedAbsent .
+        }""" ] .
+
+# [C-7] 부분 아크 조사에 근거한 결론은 조사한 범위를 넘어설 수 없다.
+efi:ArcSurveyScopeShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.13.1.2 Procedures and Limitations" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "완전하지 않은 아크 조사에 근거한 결론은 실제 조사한 범위를 명시해야 한다 (§9.13.1.2)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:fromArcSurvey ?s .
+          ?s efi:surveyComplete false .
+          FILTER NOT EXISTS { $this efi:scopeLimitedTo ?x }
+        }""" ] .
+
+# [C-8] 아크 용융흔 단독으로는 그 시점 통전 사실만 말한다. 발화원 결론이 되지 못한다.
+efi:ArcMeltAloneShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.13.4.7 Documenting the Damage" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "아크 용융흔은 그 시점 통전 사실만 증언한다. 발화부 근접 여부와 발화원 자격에는 별도 자료가 필요하다 (§9.13.4.7)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          FILTER EXISTS { ?sc efi:supportedBy ?f . ?f rdf:type/rdfs:subClassOf* efi:ArcMeltMark }
+          FILTER NOT EXISTS {
+            ?sc efi:supportedBy ?g .
+            ?g efi:confirmationStatus efi:Confirmed .
+            FILTER NOT EXISTS { ?g rdf:type/rdfs:subClassOf* efi:ArcMeltMark }
+          }
+        }""" ] .
+
+# [D-4] 전위가 다른 쪽에 대응 손상이 둘 이상 확인되면 진성 아크 지점일 확률이 오른다.
+efi:CorrespondingDamageRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMapPoint ;
+    dcterms:references "NFPA 921 (2024) §9.13.4.2 Documenting the Damage" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:trueArcSiteLikely true . }
+        WHERE {
+          { SELECT $this (COUNT(DISTINCT ?d) AS ?n) WHERE { $this efi:hasCorrespondingDamage ?d . } GROUP BY $this }
+          FILTER ( ?n >= 2 )
+        }""" ] .
+
+# 회로 (§9.7). 아크 지점의 하류 순번은 회로 단위로만 뜻이 있다.
+efi:Circuit a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ;
+    rdfs:label "회로"@ko ; skos:prefLabel "회로"@ko .
+efi:BranchCircuit a owl:Class ; rdfs:subClassOf efi:Circuit ;
+    rdfs:label "분기회로"@ko ; skos:prefLabel "분기회로"@ko .
+efi:onCircuit a owl:ObjectProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range efi:Circuit ;
+    rdfs:label "소속 회로"@ko ; skos:prefLabel "소속 회로"@ko .
+efi:furthestDownstream a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range xsd:boolean ;
+    rdfs:label "회로 최하류 아크 지점"@ko ; skos:prefLabel "회로 최하류 아크 지점"@ko .
+
+# [D-5] 한 회로에 아크 지점이 여럿이면 최하류 지점을 표시한다 (§9.13.2.1).
+efi:FurthestDownstreamRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMapPoint ;
+    dcterms:references "NFPA 921 (2024) §9.13.2.1 Arc Map" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:furthestDownstream true . }
+        WHERE {
+          $this efi:onCircuit ?c ; efi:downstreamIndex ?i .
+          FILTER NOT EXISTS {
+            ?o efi:onCircuit ?c ; efi:downstreamIndex ?j .
+            FILTER ( ?j > ?i )
+          }
+        }""" ] .
