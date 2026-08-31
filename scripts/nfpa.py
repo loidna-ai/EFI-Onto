@@ -50,8 +50,8 @@ SECTIONS = [
     ("19.5", "Developing Cause Hypotheses",          DONE, "IgnitionScenario 생성, P2"),
     ("19.6", "Testing the Hypothesis for Validity",  DONE, "F-1~F-4. 가장 강한 부분"),
     ("19.7", "Selecting the Final Hypothesis",       DONE, "Conclusion, C-2, 확정 조건"),
-    ("19.8", "Fire Incident and Cause Classification", NONE, "화재 분류(사고·방화·자연·원인미상)가 없다. "
-                                                             "Withheld 는 가설 판정일 뿐 사건 분류가 아니다"),
+    ("19.8", "Fire Incident and Cause Classification", PART, "분류 구조는 구현(C-9~C-11). 범주 목록은 "
+                                                             "이 온톨로지가 정하지 않고 외부 체계를 참조한다"),
 ]
 
 # 9.13 하위 절. 원문 확인 후 좁힌 것. 나머지 절도 이 수준까지 내려가야 한다.
@@ -70,6 +70,8 @@ SUBSECTIONS = [
     ("9.13.4.5", "아크 용융 부재도 기록 — 미조사와 구분",    DONE, "F-5 ArcSiteAbsenceRuleShape"),
     ("9.13.4.6", "용융이 아크 지점을 지웠을 가능성",         DONE, "F-5 + C-6 ObscuredArcSiteShape"),
     ("9.13.4.7", "아크 용융흔 단독은 통전 사실만 말한다",     DONE, "C-8 ArcMeltAloneShape"),
+    ("19.8.1",   "통계 목적 사건 분류 — 외부 체계 참조",      DONE, "C-10 ClassificationSystemShape, ClassificationSystem 6종"),
+    ("19.8.2",   "보고서용 원인 분류 — 판정 이후에 온다",     PART, "C-9 순서, C-11 분리는 구현. 범주 목록 미확보(원문 후속 필요)"),
 ]
 
 # 방법론 층에만 붙인다. 단서 규칙(Table 2)은 국내 실무 출처이므로 제외.
@@ -96,6 +98,9 @@ SHAPE_REFS = {
     "ArcMeltAloneShape":                 ["9.13"],
     "CorrespondingDamageRuleShape":      ["9.13"],
     "FurthestDownstreamRuleShape":       ["9.13"],
+    "CauseClassificationOrderShape":     ["19.8"],
+    "ClassificationSystemShape":         ["19.8"],
+    "ConclusionNotClassifiedShape":      ["19.8"],
 }
 
 
@@ -126,10 +131,14 @@ if __name__ == "__main__":
         print(f"  {mark} {sec:5s} {title[:38]:38s} {st}")
         if st in (NONE, PART):
             print(f"          {note}")
-    sc = Counter(x[2] for x in SUBSECTIONS)
-    stot = len(SUBSECTIONS) - sc[PROC]
-    print(f"\n\n── §9.13 하위 절 (온톨로지 대상 {stot}개 / 현장 절차 {sc[PROC]}개) " + "─" * 14)
-    for sec, title, st, note in SUBSECTIONS:
-        mark = {DONE: "■", PART: "◐", NONE: "□", PROC: "·"}[st]
-        print(f"  {mark} {sec:9s} {title[:30]:30s} {st:5s} {note}")
-    print(f"\n  §9.13 이식률 {sc[DONE]}/{stot} = {sc[DONE]/stot*100:.0f}%")
+    par = lambda x: ".".join(x.split(".")[:2])
+    print("\n\n── 하위 절까지 내려간 절 " + "─" * 44)
+    for p_ in sorted({par(x[0]) for x in SUBSECTIONS}, key=lambda v: [int(t) for t in v.split(".")]):
+        rows = [x for x in SUBSECTIONS if par(x[0]) == p_]
+        k = Counter(x[2] for x in rows)
+        n = len(rows) - k[PROC]
+        print(f"\n  §{p_}  온톨로지 대상 {n}개 / 현장 절차 {k[PROC]}개"
+              f" — 이식률 {k[DONE]}/{n} = {k[DONE]/n*100:.0f}%")
+        for sec, title, st, note in rows:
+            mark = {DONE: "■", PART: "◐", NONE: "□", PROC: "·"}[st]
+            print(f"    {mark} {sec:9s} {title[:30]:30s} {st:5s} {note}")

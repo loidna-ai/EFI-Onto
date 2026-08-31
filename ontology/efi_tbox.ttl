@@ -1076,3 +1076,73 @@ efi:FurthestDownstreamRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMapPoint 
             FILTER ( ?j > ?i )
           }
         }""" ] .
+
+# ============================================================================
+# 14. 화재 분류 (NFPA 921 §19.8)
+#     분류는 원인 판정과 다른 일이며 원인 판정이 끝난 뒤에 온다 (§19.8.2).
+#     범주 목록은 이 온톨로지가 정하지 않는다 — 관할이 쓰는 외부 분류 체계를
+#     참조하도록만 한다 (§19.8.1). 범주를 여기서 열거하면 체계마다 다른 정의를
+#     하나로 뭉개게 된다.
+# ============================================================================
+efi:ClassificationSystem a owl:Class ; rdfs:subClassOf obo:IAO_0000030 ;
+    rdfs:label "화재 분류 체계"@ko ; skos:prefLabel "화재 분류 체계"@ko ;
+    rdfs:comment "사건·원인 분류에 쓰는 외부 체계. 정의와 라벨은 체계마다 다르다 (§19.8.1)"@ko .
+
+efi:NFIRS a owl:NamedIndividual , efi:ClassificationSystem ;
+    skos:prefLabel "NFIRS (미국 화재사고 보고체계)"@ko .
+efi:NFPA901 a owl:NamedIndividual , efi:ClassificationSystem ;
+    skos:prefLabel "NFPA 901 (화재 자료 분류 표준)"@ko .
+efi:BATS a owl:NamedIndividual , efi:ClassificationSystem ;
+    skos:prefLabel "ATF BATS (폭발·방화 추적체계)"@ko .
+efi:UCR a owl:NamedIndividual , efi:ClassificationSystem ;
+    skos:prefLabel "FBI UCR (통합 범죄 보고)"@ko .
+efi:NIBRS a owl:NamedIndividual , efi:ClassificationSystem ;
+    skos:prefLabel "FBI NIBRS (사건 기반 보고체계)"@ko .
+efi:CanadianFireLossStatistics a owl:NamedIndividual , efi:ClassificationSystem ;
+    skos:prefLabel "캐나다 화재손실 통계 분류"@ko .
+
+efi:FireClassification a owl:Class ; rdfs:subClassOf obo:IAO_0000030 , prov:Entity ;
+    rdfs:label "화재 분류"@ko ; skos:prefLabel "화재 분류"@ko .
+efi:IncidentClassification a owl:Class ; rdfs:subClassOf efi:FireClassification ;
+    rdfs:label "사건 분류(통계 목적)"@ko ; skos:prefLabel "사건 분류(통계 목적)"@ko ;
+    rdfs:comment "통계·보고 목적의 사건 분류. 원인 판정과 다른 일이다 (§19.8.1)"@ko .
+efi:FireCauseClassification a owl:Class ; rdfs:subClassOf efi:FireClassification ;
+    rdfs:label "화재 원인 분류(보고서 목적)"@ko ; skos:prefLabel "화재 원인 분류(보고서 목적)"@ko ;
+    rdfs:comment "원인이 판정된 뒤 그 결과에 범주를 부여하는 절차 (§19.8.2)"@ko .
+
+# 분류는 감별 의견이 아니다. 섞이면 '분류했으니 원인을 밝혔다'가 되어버린다.
+[] a owl:AllDisjointClasses ; owl:members ( efi:Conclusion efi:FireClassification ) .
+
+efi:usesClassificationSystem a owl:ObjectProperty ;
+    rdfs:domain efi:FireClassification ; rdfs:range efi:ClassificationSystem ;
+    rdfs:label "사용한 분류 체계"@ko ; skos:prefLabel "사용한 분류 체계"@ko .
+efi:classificationCategory a owl:DatatypeProperty ;
+    rdfs:domain efi:FireClassification ; rdfs:range xsd:string ;
+    rdfs:label "분류 범주"@ko ; skos:prefLabel "분류 범주"@ko ;
+    rdfs:comment "체계가 정의한 라벨을 그대로 적는다. 이 온톨로지는 범주를 정의하지 않는다"@ko .
+efi:classifiesCause a owl:ObjectProperty ;
+    rdfs:domain efi:FireCauseClassification ; rdfs:range efi:Conclusion ;
+    rdfs:label "분류 대상 감별 의견"@ko ; skos:prefLabel "분류 대상 감별 의견"@ko .
+efi:classifiesIncident a owl:ObjectProperty ;
+    rdfs:domain efi:IncidentClassification ; rdfs:range efi:InvestigationSession ;
+    rdfs:label "분류 대상 사건"@ko ; skos:prefLabel "분류 대상 사건"@ko .
+
+# [C-9] 원인 분류는 원인 판정이 끝난 뒤에 온다 (§19.8.2).
+efi:CauseClassificationOrderShape a sh:NodeShape ; sh:targetClass efi:FireCauseClassification ;
+    dcterms:references "NFPA 921 (2024) §19.8.2 Fire Cause Classification for Reports" ;
+    sh:property [ sh:path efi:classifiesCause ; sh:minCount 1 ; sh:class efi:Conclusion ;
+        sh:message "원인 분류는 확정된 감별 의견을 가리켜야 한다. 분류가 판정을 대신할 수 없다 (§19.8.2)"@ko ] .
+
+# [C-10] 분류는 어떤 체계의 정의를 쓴 것인지 밝혀야 한다 (§19.8.1).
+#  체계마다 범주 정의가 다르므로 체계를 빼면 범주 라벨만으로는 뜻이 정해지지 않는다.
+efi:ClassificationSystemShape a sh:NodeShape ; sh:targetClass efi:FireClassification ;
+    dcterms:references "NFPA 921 (2024) §19.8.1 Incident Classification for Statistical Purposes" ;
+    sh:property [ sh:path efi:usesClassificationSystem ; sh:minCount 1 ;
+        sh:message "어떤 분류 체계의 정의를 쓴 것인지 밝혀야 한다. 체계마다 범주 정의가 다르다 (§19.8.1)"@ko ] .
+
+# [C-11] 감별 의견 자체에 분류 범주를 달지 않는다.
+#  분류와 판정을 한 칸에 쓰면 통계 라벨이 원인 판정으로 읽힌다 (§19.8.1).
+efi:ConclusionNotClassifiedShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §19.8.1 Incident Classification for Statistical Purposes" ;
+    sh:property [ sh:path efi:classificationCategory ; sh:maxCount 0 ;
+        sh:message "감별 의견에 분류 범주를 직접 달 수 없다. 분류는 별도 개체로 두고 이 의견을 가리키게 한다 (§19.8)"@ko ] .

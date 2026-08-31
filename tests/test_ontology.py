@@ -219,6 +219,35 @@ def test_c5_blocks_shared_morphology_only():
     """), "전용 양상을 넣었는데 막혔다"
 
 
+# ── §19.8 분류는 판정이 아니다 ───────────────────────────────────────────
+def _msg(extra):
+    return validate(Graph().parse(data=TTL.read_text(encoding="utf-8") + extra, format="turtle"),
+                    advanced=True, allow_infos=True, allow_warnings=True)[2]
+
+
+def test_classification_requires_a_determination():
+    """C-9 — 원인 분류는 확정된 감별 의견을 가리켜야 한다. 분류가 판정을 대신할 수 없다."""
+    assert "확정된 감별 의견" in _msg("""
+    efi:kA a efi:FireCauseClassification ; efi:usesClassificationSystem efi:NFIRS ;
+           efi:classificationCategory "예시 범주" .
+    """)
+
+
+def test_classification_must_name_its_system():
+    """C-10 — 체계마다 범주 정의가 다르므로 어느 체계를 쓴 것인지 밝혀야 한다."""
+    assert "분류 체계" in _msg("""
+    efi:kB a efi:IncidentClassification ; efi:classificationCategory "예시 범주" .
+    """)
+
+
+def test_conclusion_cannot_carry_a_category():
+    """C-11 — 감별 의견에 분류 범주를 직접 달면 통계 라벨이 원인 판정으로 읽힌다."""
+    assert "분류 범주를 직접" in _msg("""
+    efi:hK a efi:TrackingScenario ; efi:supportScore 75 .
+    efi:cK a efi:Conclusion ; efi:concludes efi:hK ; efi:classificationCategory "예시 범주" .
+    """)
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent
