@@ -428,7 +428,7 @@ efi:R_ID_sup3  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationSc
 efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:FlexingHistoryWithStrandFracture ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
 
 efi:R_TR_core  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
-efi:R_TR_sup1  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:CarbonizedConductivePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_TR_sup1  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:CarbonizedConductivePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_TR_sup2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:IntermittentRcdTripping ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_TR_ref   a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:NormalInsulationResistance ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
 
@@ -1611,4 +1611,67 @@ efi:UndeterminedByTieRuleShape a sh:NodeShape ; sh:targetClass efi:Investigation
           FILTER ( ?h1 != ?h2 && ?n1 = ?n2 )
           FILTER NOT EXISTS { ?h1 efi:verdict efi:Refuted }
           FILTER NOT EXISTS { ?h2 efi:verdict efi:Refuted }
+        }""" ] .
+
+# ============================================================================
+# 20. 전기 에너지에 의한 발화 (NFPA 921 §9.9)
+# ============================================================================
+
+# §9.9.4.5 정정 — 탄화는 통전으로만 생기지 않는다. 열에 의한 비전기적 탄화가 있고
+#  화재 자체가 그 열원이 될 수 있다. 탄화 도전로를 트래킹 전용 단서로 두었던 것은
+#  과대평가였다. 외부화염도 낼 수 있는 양상으로 정정한다.
+efi:ExternalFlameExposure efi:producesDamage efi:CarbonizedConductivePath .
+efi:ExternalFlameScenario efi:canManifest efi:CarbonizedConductivePath .
+
+efi:heatTransferPath a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:string ;
+    rdfs:label "열전달 경로"@ko ; skos:prefLabel "열전달 경로"@ko ;
+    rdfs:comment "발열원과 최초 착화물 사이의 열 전달 경로 또는 방법. 식별되지 않으면 전기적 원인으로 확정할 수 없다 (§9.9.1.4)"@ko .
+efi:arcInitiationMode a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:string ;
+    rdfs:label "아크 개시 경위"@ko ; skos:prefLabel "아크 개시 경위"@ko ;
+    rdfs:comment "공기 중 자발 아크에는 최소 350 V 가 필요하다. 120/240 V 계통에서는 자발적으로 생기지 않으므로 어떻게 시작됐는지 밝혀야 한다 (§9.9.4.1)"@ko .
+efi:conductorSizeReducedAfterProtection a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:boolean ;
+    rdfs:label "보호장치 하류 도체 축소"@ko ; skos:prefLabel "보호장치 하류 도체 축소"@ko ;
+    rdfs:comment "연장선처럼 보호장치와 부하 사이에 더 가는 도체가 있으면 보호장치를 동작시키지 않고 과열될 수 있다 (§9.9.3.2)"@ko .
+
+# [C-32] 전기적 원인으로 확정하려면 발열원과 최초 착화물 사이의
+#  열전달 경로가 식별돼야 한다 (§9.9.1.4).
+efi:HeatTransferPathShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.9.1.4 Ignition by Electrical Energy" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "발열원과 최초 착화물 사이의 열전달 경로가 식별되지 않았다. 전기적 원인으로 확정할 수 없다 (§9.9.1.4)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:hasMechanism ?m .
+          ?m rdf:type/rdfs:subClassOf* efi:ElectricalHeatingMechanism .
+          FILTER NOT EXISTS { ?sc efi:heatTransferPath ?p }
+        }""" ] .
+
+# [C-33] 120/240 V 계통에서 아크는 자발적으로 생기지 않는다 (§9.9.4.1).
+#  아크 가설은 아크가 어떻게 시작됐는지를 밝혀야 한다.
+efi:ArcInitiationShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.9.4.1 Arcs" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "아크가 어떻게 시작됐는지 밝히지 않았다. 저전압 계통에서 아크는 자발적으로 생기지 않는다 (§9.9.4.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:hasMechanism ?m .
+          ?m rdf:type/rdfs:subClassOf* efi:ArcHeating .
+          FILTER NOT EXISTS { ?sc efi:arcInitiationMode ?k }
+        }""" ] .
+
+# [C-34] 과부하 발화는 도체 규격이 적정한 회로에서는 드물다 (§9.9.3.2).
+#  보호장치가 먼저 열려 발화 조건에 이르기 전에 발열이 멈추기 때문이다.
+#  과부하 발화를 주장하려면 보호장치 미동작이거나 하류 도체 축소가 있어야 한다.
+efi:OverloadIgnitionRarityShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.9.3.2 Overcurrent and Overload" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "과부하 발화는 보호가 정상이면 드물다. 보호장치 미동작 또는 하류 도체 축소를 밝혀야 한다 (§9.9.3.2)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:hasMechanism ?m .
+          ?m rdf:type/rdfs:subClassOf* efi:OverloadHeating .
+          FILTER NOT EXISTS { ?sc efi:conductorSizeReducedAfterProtection true }
         }""" ] .

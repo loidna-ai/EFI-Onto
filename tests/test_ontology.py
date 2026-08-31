@@ -175,7 +175,7 @@ def run(extra):
 def test_case_a_scores():
     gr = run(CASE_A)
     score = lambda n: int(next(gr.objects(EFI[n], EFI.supportScore)))
-    assert score("hT") == 75, "트래킹 75점"
+    assert score("hT") == 71, "트래킹 71점 (탄화 도전로는 외부화염도 낸다 — §9.9.4.5)"
     assert score("hP") == 50, "접촉불량은 헐거움 부재에도 기각되지 않고 50점"
 
 
@@ -214,7 +214,7 @@ def test_c5_blocks_shared_morphology_only():
         advanced=True, allow_infos=True, allow_warnings=True)[2]
     assert fires(base), "공유 양상만인데 통과했다"
     assert not fires(base + """
-    efi:m3 a efi:CarbonizedConductivePath ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
+    efi:m3 a efi:BurnCenterOnSurface ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
     efi:hM efi:supportedBy efi:m3 .
     """), "전용 양상을 넣었는데 막혔다"
 
@@ -426,7 +426,7 @@ def test_python_matches_shacl(onto):
                 facts=[Fact(cls="MoistureExposure", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR),
                        Fact(cls="CarbonizedConductivePath", status=Status.CONFIRMED, agent=Agent.AI_VLM)])
     s.apply(onto)
-    assert s.hypotheses[0].support_score == 75
+    assert s.hypotheses[0].support_score == 71
 
 
 def test_subclass_matching(onto):
@@ -437,5 +437,6 @@ def test_subclass_matching(onto):
 
 def test_shared_morphology_is_not_discriminating(onto):
     assert not onto.is_discriminating("InsulationCarbonization")   # 6개 가설 공통
-    assert onto.is_discriminating("CarbonizedConductivePath")      # 트래킹 전용
+    assert not onto.is_discriminating("CarbonizedConductivePath")  # 화재 열로도 생긴다 (§9.9.4.5)
+    assert onto.is_discriminating("BurnCenterOnSurface")           # 트래킹 전용
     assert onto.is_discriminating("MoistureExposure")              # 형태학이 아님
