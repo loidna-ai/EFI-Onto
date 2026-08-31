@@ -341,6 +341,46 @@ def test_service_entrance_allows_sustained_faulting():
     assert list(gr.objects(EFI.seA, EFI.sustainedFaultingPossible))
 
 
+# ── §4.3 과학적 방법 ─────────────────────────────────────────────────────
+def test_hypothesis_built_on_absence_is_invalid():
+    """C-23 — 부재만으로 지지된 가설은 시험할 수 없어 무효다 (§4.3.6.1).
+    반증되지 않았다는 것은 참이라는 뜻이 아니다."""
+    absent = """
+    efi:sN a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:invN a efi:InvestigatorAgent .
+    efi:n1 a efi:LooseConnection ; efi:confirmationStatus efi:ConfirmedAbsent ;
+           prov:wasAttributedTo efi:invN ; efi:analyzed true .
+    efi:sN efi:hasFact efi:n1 .
+    efi:hN a efi:TrackingScenario ; efi:inSession efi:sN ; efi:verdict efi:Supported ;
+           efi:supportedBy efi:n1 .
+    efi:cN a efi:Conclusion ; efi:concludes efi:hN ; efi:certaintyLevel efi:Probable .
+    """
+    assert "부재 위에 세운 가설" in _msg(absent)
+    assert "부재 위에 세운 가설" not in _msg(
+        absent.replace("efi:confirmationStatus efi:ConfirmedAbsent",
+                       "efi:confirmationStatus efi:Confirmed"))
+
+
+def test_untested_alternate_hypothesis_blocks_conclusion():
+    """C-24 — 대안 가설을 고려하지 않는 것은 중대한 오류다 (§4.3.7)."""
+    assert "대안 가설을 고려하지 않는 것" in _msg("""
+    efi:sX a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:hX1 a efi:TrackingScenario ; efi:inSession efi:sX ; efi:verdict efi:Supported .
+    efi:hX2 a efi:PoorContactScenario ; efi:inSession efi:sX .
+    efi:cX a efi:Conclusion ; efi:concludes efi:hX1 ; efi:certaintyLevel efi:Possible .
+    """)
+
+
+def test_all_refuted_becomes_undetermined():
+    """C-25·D-7 — 어느 가설도 견디지 못하면 결론이 아니라 원인미상이다 (§4.3.6)."""
+    gr = run("""
+    efi:sZ a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:hZ1 a efi:TrackingScenario ; efi:inSession efi:sZ ; efi:verdict efi:Refuted .
+    efi:hZ2 a efi:PoorContactScenario ; efi:inSession efi:sZ ; efi:verdict efi:Refuted .
+    """)
+    assert list(gr.objects(EFI.sZ, EFI.outcomeUndetermined)), "원인미상 판정이 도출되지 않았다"
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent

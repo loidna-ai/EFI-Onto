@@ -79,6 +79,18 @@ SUBSECTIONS = [
     ("9.13.4.5", "아크 용융 부재도 기록 — 미조사와 구분",    DONE, "F-5 ArcSiteAbsenceRuleShape"),
     ("9.13.4.6", "용융이 아크 지점을 지웠을 가능성",         DONE, "F-5 + C-6 ObscuredArcSiteShape"),
     ("9.13.4.7", "아크 용융흔 단독은 통전 사실만 말한다",     DONE, "C-8 ArcMeltAloneShape"),
+    ("4.1.0",    "발화 지점을 먼저, 그다음 원인",            OUT,  "발화 지점 특정은 이 프로젝트 범위 밖(설계계획서 1.1)"),
+    ("4.3.1",    "문제 인식 — 무엇을 물을 것인가",           PART, "InvestigationSession 은 있으나 문제 진술 칸이 없다"),
+    ("4.3.2",    "문제 정의 — 어떻게 풀 것인가",            PART, "질의·관측 경로는 있으나 조사 설계 표현은 없다"),
+    ("4.3.3",    "자료 수집 — 검증 가능한 경험적 자료",       DONE, "Fact, ConfirmationStatus, SOSA·PROV (C-4)"),
+    ("4.3.4",    "자료 분석 — 수집·목록화는 분석이 아니다",    DONE, "C-26 DataAnalyzedShape"),
+    ("4.3.5",    "가설 수립(귀납) — 경험적 자료에서만",       DONE, "IgnitionScenario, P2"),
+    ("4.3.6",    "가설 검증(연역) — 반증을 설계한다",         DONE, "F-1, C-25 UndeterminedOutcome, D-7"),
+    ("4.3.6.1",  "시험 불가능한 가설은 무효다",              DONE, "C-23 UntestableHypothesisShape"),
+    ("4.3.7",    "최종 가설 선택 — 대안 미고려는 중대 오류",   DONE, "C-24 AllHypothesesTestedShape, C-2"),
+    ("4.3.8",    "예단 금지 — 자료 전에 가설 없다",          DONE, "C-27 NoPresumptionShape"),
+    ("4.3.9",    "기대 편향",                            NONE, "편향을 표시하거나 검출할 자리가 없다"),
+    ("4.3.10",   "확증 편향 — 같은 자료가 반대 가설도 지지",   PART, "M-2 혼동 쌍과 C-5 가 형태 쪽만 덮는다"),
     ("4.5.0",    "의견은 자료와 한계를 밝혀야 한다",          PART, "C-15 한계 명시. 과학적 방법 적용 서술은 §4.7 보고서 영역"),
     ("4.5.1.1",  "개연·가능 두 표현. 대등하면 가능까지",       DONE, "CertaintyLevel, C-12 EqualLikelihoodShape"),
     ("4.5.1.2",  "의심은 전문가 의견이 아니다",              DONE, "C-13 SuspectedNotOpinion, C-14 CertaintyStated"),
@@ -132,6 +144,12 @@ SHAPE_REFS = {
     "SustainedFaultingRuleShape":        ["9.3"],
     "OpenNeutralInferenceShape":         ["9.5"],
     "ProtectedSustainedFaultShape":      ["9.6"],
+    "UntestableHypothesisShape":         ["4.3"],
+    "AllHypothesesTestedShape":          ["4.3"],
+    "UndeterminedOutcomeShape":          ["4.3"],
+    "DataAnalyzedShape":                 ["4.3"],
+    "NoPresumptionShape":                ["4.3"],
+    "UndeterminedDerivationRuleShape":   ["4.3"],
 }
 
 
@@ -168,8 +186,9 @@ if __name__ == "__main__":
         rows = [x for x in SUBSECTIONS if par(x[0]) == p_]
         k = Counter(x[2] for x in rows)
         n = len(rows) - k[PROC] - k[OUT]
+        rate = f"{k[DONE]}/{n} = {k[DONE]/n*100:.0f}%" if n else "대상 없음"
         print(f"\n  §{p_}  온톨로지 대상 {n}개 / 현장 절차 {k[PROC]}개 / 범위밖 {k[OUT]}개"
-              f" — 이식률 {k[DONE]}/{n} = {k[DONE]/n*100:.0f}%")
+              f" — 이식률 {rate}")
         for sec, title, st, note in rows:
             mark = {DONE: "■", PART: "◐", NONE: "□", PROC: "·", OUT: "×"}[st]
             print(f"    {mark} {sec:9s} {title[:30]:30s} {st:5s} {note}")

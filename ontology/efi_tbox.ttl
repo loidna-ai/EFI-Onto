@@ -1415,3 +1415,104 @@ efi:ProtectedSustainedFaultShape a sh:NodeShape ; sh:targetClass efi:ElectricalA
           $this efi:sustainedFaultingPossible true ; efi:overcurrentProtected true .
           FILTER NOT EXISTS { $this efi:protectiveDeviceOperated false }
         }""" ] .
+
+# ============================================================================
+# 18. 과학적 방법 (NFPA 921 §4.3)
+#     반증 우선(P3)은 §4.3.6 에서 이미 가져왔다. 여기서는 그 앞뒤 요건을 채운다.
+#       §4.3.4   수집한 자료는 최종 가설 형성 전에 전부 분석돼야 한다
+#       §4.3.6   모든 가설을 시험해 유일하게 정합적인 하나가 남을 때까지 계속한다
+#                하나도 견디지 못하면 원인미상으로 둔다
+#       §4.3.6.1 자료 부재 위에 세운 가설은 시험 불가능하므로 무효다
+#                반증되지 않았다는 것이 참이라는 뜻은 아니다
+#       §4.3.7   대안 가설을 고려하지 않는 것은 중대한 오류다
+#       §4.3.8   자료가 모이기 전에는 어떤 가설도 세우거나 시험할 수 없다
+# ============================================================================
+efi:analyzed a owl:DatatypeProperty ; rdfs:range xsd:boolean ;
+    rdfs:label "분석 완료"@ko ; skos:prefLabel "분석 완료"@ko ;
+    rdfs:comment "수집·목록화는 분석이 아니다. 자료에 의미를 부여한 상태를 뜻한다 (§4.3.4)"@ko .
+efi:outcomeUndetermined a owl:DatatypeProperty ; rdfs:domain efi:InvestigationSession ; rdfs:range xsd:boolean ;
+    rdfs:label "원인미상 처리"@ko ; skos:prefLabel "원인미상 처리"@ko ;
+    rdfs:comment "연역적 검토를 견딘 가설이 하나도 없으면 원인미상으로 둔다 (§4.3.6)"@ko .
+
+# [C-23] 자료 부재 위에 세운 가설은 시험할 수 없으므로 무효다 (§4.3.6.1).
+#  부정 확인과 확인 불가만으로 지지된 가설이 여기 해당한다.
+#  반증되지 않았다는 것은 참이라는 뜻이 아니다.
+efi:UntestableHypothesisShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §4.3.6.1 Test the Hypotheses" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "존재가 확인된 사실이 하나도 없다. 부재 위에 세운 가설은 시험할 수 없어 무효다 (§4.3.6.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          FILTER EXISTS { ?sc efi:supportedBy ?f }
+          FILTER NOT EXISTS { ?sc efi:supportedBy ?g . ?g efi:confirmationStatus efi:Confirmed }
+        }""" ] .
+
+# [C-24] 대안 가설을 고려하지 않는 것은 중대한 오류다 (§4.3.7).
+#  결론 전에 세션의 모든 가설이 시험돼 판정을 가지고 있어야 한다.
+efi:AllHypothesesTestedShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §4.3.7 Select Final Hypothesis" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "판정되지 않은 가설이 남아 있다. 대안 가설을 고려하지 않는 것은 중대한 오류다 (§4.3.7)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:inSession ?s .
+          ?h efi:inSession ?s .
+          FILTER NOT EXISTS { ?h efi:verdict ?v }
+        }""" ] .
+
+# [C-25] 어느 가설도 연역적 검토를 견디지 못하면 원인미상이다 (§4.3.6).
+efi:UndeterminedOutcomeShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §4.3.6 Test the Hypotheses" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "모든 가설이 기각됐다. 결론을 낼 것이 아니라 원인미상으로 두어야 한다 (§4.3.6)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:inSession ?s .
+          FILTER NOT EXISTS {
+            ?h efi:inSession ?s .
+            FILTER NOT EXISTS { ?h efi:verdict efi:Refuted }
+          }
+        }""" ] .
+
+# [C-26] 수집한 자료는 최종 가설이 서기 전에 전부 분석돼야 한다 (§4.3.4).
+#  수집과 목록화는 분석이 아니다.
+efi:DataAnalyzedShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §4.3.4 Analyze the Data" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "분석되지 않은 자료가 남아 있다. 수집한 자료는 최종 가설 전에 전부 분석돼야 한다 (§4.3.4)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:inSession ?s .
+          ?s efi:hasFact ?f .
+          FILTER NOT EXISTS { ?f efi:analyzed true }
+        }""" ] .
+
+# [C-27] 자료가 모이기 전에는 어떤 가설도 판정할 수 없다 (§4.3.8).
+efi:NoPresumptionShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
+    dcterms:references "NFPA 921 (2024) §4.3.8 Avoid Presumption" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "자료가 하나도 수집되지 않은 세션에서 가설을 판정했다. 예단 없이 접근해야 한다 (§4.3.8)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:verdict ?v ; efi:inSession ?s .
+          FILTER NOT EXISTS { ?s efi:hasFact ?f }
+        }""" ] .
+
+# [D-7] 어느 가설도 견디지 못한 세션은 원인미상으로 판정한다 (§4.3.6).
+#  판단보류가 결론의 부재가 아니라 하나의 결과라는 점을 구조로 남긴다.
+efi:UndeterminedDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:InvestigationSession ;
+    dcterms:references "NFPA 921 (2024) §4.3.6 Test the Hypotheses" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 5 ;
+        sh:construct """
+        CONSTRUCT { $this efi:outcomeUndetermined true . }
+        WHERE {
+          FILTER EXISTS { ?h efi:inSession $this }
+          FILTER NOT EXISTS {
+            ?h2 efi:inSession $this .
+            FILTER NOT EXISTS { ?h2 efi:verdict efi:Refuted }
+          }
+        }""" ] .
