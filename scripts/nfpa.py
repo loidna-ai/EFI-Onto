@@ -38,8 +38,8 @@ SECTIONS = [
     ("9.8",  "Outlets and Devices",                  PART, "PlugReceptacle, TerminalBlock"),
     ("9.9",  "Ignition by Electrical Energy",        PART, "HeatingMechanism 축과 C-32~C-34. 열전달 지속 시간, "
                                                        "연료별 아크 적합성, 스파크 특성이 비어 있다"),
-    ("9.10", "Interpreting Damage to Elec. Systems", DONE, "DamagePattern 축, M-1~M-3"),
-    ("9.11", "Identification of Damaged Conductors", DONE, "1차/2차 단락흔, F-2"),
+    ("9.10", "Interpreting Damage to Elec. Systems", DONE, "DamagePattern 축, M-1~M-3, C-37~C-39. 하위 절 표 참조"),
+    ("9.11", "Identification of Damaged Conductors", DONE, "1차/2차 단락흔 F-2, 통념 부정 C-37. 하위 절 표 참조"),
     ("9.12", "Electrical System Examination",        PART, "증거물 수거·관측은 있으나 검사 절차는 없음"),
     ("9.13", "Arc Surveys",                          DONE, "F-5, C-6~C-8, D-4~D-5 로 구현. 하위 절 표 참조"),
     ("9.14", "Static Electricity",                   OUT,  "5대 요인 밖. 범위 제외 (재검토 여지)"),
@@ -84,6 +84,17 @@ SUBSECTIONS = [
     ("9.9.4.5.1", "PVC 자가발열 습윤 110°C 이상",             NONE, "온도 이력을 담을 자리가 없다"),
     ("9.9.5.2",  "알루미늄 스파크·분기회로 스파크의 효율",       OUT,  "입자 재질·크기는 잔해에서 판별되지 않는다(판단)"),
     ("9.9.6",    "고저항 고장은 화재 후 발견이 어렵다",         OUT,  "발견 난이도는 조사 여건이지 판정 대상이 아니다(판단)"),
+    ("9.10.1",   "단락·지락 파팅 아크 — 화재로도 생긴다",     DONE, "F-2 시간 선후 판정"),
+    ("9.10.2",   "화재 탄화를 통한 아크 — 여러 지점에 남는다",   DONE, "MultipleArcBeads 를 외부화염도 내도록 정정"),
+    ("9.10.2.2", "버스바 아크는 전원 반대쪽으로 이동한다",      DONE, "C-39 BusBarArcTravelShape"),
+    ("9.10.3.1", "과열 접속부의 형태 특징 열세 가지",          PART, "산화물 덩어리·나사머리 비대·밴딩 셋. "
+                                                              "화재 노출 동종 금속과의 상대 비교는 없다"),
+    ("9.10.3.3", "발광 접속부 증거는 외부 화재와 구별된다",      DONE, "MoltenOxideMass 등 3종을 접촉불량 전용으로"),
+    ("9.10.4.1", "슬리빙과 오프셋. 용융은 발화의 증거가 아니다",  DONE, "Sleeving, MeltOffset, C-38"),
+    ("9.10.5",   "기계적 홈·눌림은 아크흔과 구별된다",          PART, "MechanicalGouge 클래스. 미세 판별 규칙은 없음"),
+    ("9.10.6.1", "설치 시 망치 오타격 — 시간이 지나 발현",      DONE, "HammerMisHitDamage 선행 조건"),
+    ("9.11.1",   "언더사이즈 도체는 원인의 증거가 아니다",       DONE, "C-37 MisconceptionShape"),
+    ("9.11.2",   "니크·연신의 추가 발열은 무시할 수준이다",      DONE, "C-37 MisconceptionShape"),
     ("9.13.1.2", "조사 미완이면 결론은 조사 범위로 제한",   DONE, "C-7 ArcSurveyScopeShape"),
     ("9.13.1.3", "아크인지 다른 손상인지 금속조직 판정",     PART, "MaterialsAnalyst 행위자는 생겼다. 판정 규칙은 없음"),
     ("9.13.2.1", "회로 최하류 아크 지점 기록",             DONE, "D-5 FurthestDownstreamRuleShape"),
@@ -196,6 +207,9 @@ SHAPE_REFS = {
     "OverloadIgnitionRarityShape":       ["9.9"],
     "FuelProximityShape":                ["9.9"],
     "ArcFuelCompetenceShape":            ["9.9"],
+    "MisconceptionShape":                ["9.11"],
+    "OverloadMeltingNotProofShape":      ["9.10"],
+    "BusBarArcTravelShape":              ["9.10"],
 }
 
 

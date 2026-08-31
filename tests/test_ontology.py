@@ -443,6 +443,32 @@ def test_brief_arc_cannot_ignite_bulk_solid():
         wood.replace("efi:WoodStructuralFuel", "efi:PaperTextileFuel"))
 
 
+# ── §9.11 원문이 명시적으로 부정하는 통념 ────────────────────────────────
+def test_undersized_conductor_is_not_evidence_of_cause():
+    """C-37 — 언더사이즈 도체·과대 보호기는 화재 원인의 증거가 아니다 (§9.11.1).
+    허용 전류에는 큰 안전율이 있어 추가 발열만으로 피복이 벗겨지지 않는다."""
+    assert "허용 전류에는 큰 안전율" in _msg("""
+    efi:fU a efi:UndersizedConductorFuel ; efi:confirmationStatus efi:Confirmed .
+    efi:hU a efi:IgnitionScenario ; efi:supportedBy efi:fU .
+    efi:cU2 a efi:Conclusion ; efi:concludes efi:hU .
+    """)
+
+
+def test_nicked_conductor_is_not_a_heating_basis():
+    """C-37 — 니크·연신에 의한 단면 감소는 발열 근거가 못 된다 (§9.11.2)."""
+    assert "무시할 수준" in _msg("""
+    efi:fN a efi:NickedOrStretchedConductor ; efi:confirmationStatus efi:Confirmed .
+    efi:hN2 a efi:IgnitionScenario ; efi:supportedBy efi:fN .
+    efi:cN2 a efi:Conclusion ; efi:concludes efi:hN2 .
+    """)
+
+
+def test_multiple_arc_beads_are_no_longer_exclusive(onto):
+    """§9.10.2 — 화재 열로 탄화된 피복을 통한 아크는 여러 지점에서 일어난다.
+    다발성 아크 비드를 반단선 전용으로 둔 것은 과대평가였다."""
+    assert not onto.is_discriminating("MultipleArcBeads")
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent

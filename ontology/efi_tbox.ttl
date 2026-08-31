@@ -1761,3 +1761,119 @@ efi:ArcFuelCompetenceShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
           ?f rdf:type/rdfs:subClassOf* ?FA .
           ?FA efi:ignitableByBriefArc false .
         }""" ] .
+
+# ============================================================================
+# 23. 전기 계통 손상 해석 (NFPA 921 §9.10 · §9.11)
+# ============================================================================
+
+# §9.10.2 정정 — 화재 열로 탄화된 피복을 통한 아크는 여러 지점에서 일어난다.
+#  다발성 아크 비드를 반단선 전용 단서로 둔 것은 과대평가였다.
+#  §9.9.4.5 의 탄화 정정과 같은 뿌리다.
+efi:ExternalFlameExposure efi:producesDamage efi:MultipleArcBeads .
+efi:ExternalFlameScenario efi:canManifest efi:MultipleArcBeads .
+
+# §9.10.4.1 과부하의 형태 지표
+efi:Sleeving a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "슬리빙(피복 연화·처짐)"@ko ; skos:prefLabel "슬리빙(피복 연화·처짐)"@ko ;
+    rdfs:comment "과부하 구간 전 길이에 걸친 내부 발열로 열가소성 피복이 연화·처진다 (§9.10.4.1)"@ko .
+efi:MeltOffset a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "용융 오프셋"@ko ; skos:prefLabel "용융 오프셋"@ko ;
+    rdfs:comment "도체가 끊겨 회로가 열리는 순간 다른 용융 시작 지점이 굳어 어긋난 형태로 남는다. 대과부하의 지표 (§9.10.4.1)"@ko .
+efi:OverloadHeating efi:producesDamage efi:Sleeving , efi:MeltOffset .
+
+# §9.10.3.3 발광 접속부의 고유 증거. 원문이 외부 화재 노출로 인한 용융·아크와
+#  외관상 구별된다고 명시한 것들이다.
+efi:MoltenOxideMass a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "용융 산화물 덩어리"@ko ; skos:prefLabel "용융 산화물 덩어리"@ko ;
+    rdfs:comment "강제 단자 둘레에서 구리 도체가 산화물 덩어리로 변한 것 (§9.10.3.3)"@ko .
+efi:EnlargedScrewHeadOxidation a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "나사머리 비대 산화"@ko ; skos:prefLabel "나사머리 비대 산화"@ko ;
+    rdfs:comment "고온 산화로 나사머리가 부풀어 오른 것 (§9.10.3.3)"@ko .
+efi:OxideBanding a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "산화물 표면 밴딩"@ko ; skos:prefLabel "산화물 표면 밴딩"@ko ;
+    rdfs:comment "용융 산화물 표면의 띠·물결 무늬. 필라멘트가 여러 시간에 걸쳐 자리를 옮긴 흔적 (§9.10.3.1(12))"@ko .
+efi:GlowingConnection efi:producesDamage efi:MoltenOxideMass , efi:EnlargedScrewHeadOxidation , efi:OxideBanding .
+efi:PoorContactScenario efi:canManifest efi:MoltenOxideMass , efi:EnlargedScrewHeadOxidation , efi:OxideBanding .
+efi:ConnectionPoint efi:exhibits efi:MoltenOxideMass , efi:EnlargedScrewHeadOxidation , efi:OxideBanding .
+
+# §9.10.5 기계적 홈·눌림. 아크흔과 구별된다 — 긁힘 자국과 변형이 있고 융착면이 없다.
+efi:MechanicalGouge a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "기계적 홈·눌림"@ko ; skos:prefLabel "기계적 홈·눌림"@ko ;
+    rdfs:comment "긁힘 자국과 하부 변형이 있고 전기 에너지가 만드는 융착면이 없다. 아크흔과 구별된다 (§9.10.5)"@ko .
+efi:Conductor efi:exhibits efi:MechanicalGouge .
+
+# §9.10.6.1 설치 시 망치 오타격. 눈에 잘 띄지 않는 피복 손상을 남기고
+#  한참 뒤 서지에서 절연 파괴로 이어질 수 있다.
+efi:HammerMisHitDamage a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
+    rdfs:label "설치 시 망치 오타격 손상"@ko ; skos:prefLabel "설치 시 망치 오타격 손상"@ko ;
+    rdfs:comment "피복의 절연 내력을 낮춰 예상 서지 전압에서 아크가 생길 수 있다. 설치 후 오랜 시간이 지나 발생하기도 한다 (§9.10.6.1)"@ko .
+efi:HammerMisHitDamage efi:enables efi:InsulationBreakdownArc .
+
+# ── 원문이 명시적으로 부정하는 통념 ──────────────────────────────────────
+# [C-37] 언더사이즈 도체나 과대 보호기는 화재 원인의 증거가 아니다 (§9.11.1).
+#  허용 전류에는 큰 안전율이 있고, 추가 발열만으로 피복이 벗겨지지 않는다.
+efi:UndersizedConductorFuel a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "언더사이즈 도체·과대 보호기"@ko ; skos:prefLabel "언더사이즈 도체·과대 보호기"@ko .
+efi:NickedOrStretchedConductor a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "니크·연신 도체"@ko ; skos:prefLabel "니크·연신 도체"@ko .
+
+efi:MisconceptionShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.11.1 Undersized Conductors" ,
+                       "NFPA 921 (2024) §9.11.2 Nicked or Stretched Conductors" ,
+                       "NFPA 921 (2024) §9.10.4.1 Overload" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "언더사이즈 도체·과대 보호기는 화재 원인의 증거가 아니다. 허용 전류에는 큰 안전율이 있다 (§9.11.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:supportedBy ?f .
+          ?f rdf:type/rdfs:subClassOf* efi:UndersizedConductorFuel .
+        }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "니크·연신에 의한 단면 감소는 발열 근거가 되지 못한다. 추가 발열은 무시할 수준이다 (§9.11.2)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:supportedBy ?f .
+          ?f rdf:type/rdfs:subClassOf* efi:NickedOrStretchedConductor .
+        }""" ] .
+
+# [C-38] 과전류 용융의 증거는 그 방식에 의한 발화의 증거가 아니다 (§9.10.4.1).
+#  아크 용융흔에 대한 C-8 과 같은 형태의 경고다.
+efi:OverloadMeltingNotProofShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.10.4.1 Overload" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "과전류 용융 흔적만으로는 그 방식에 의한 발화를 증명하지 못한다 (§9.10.4.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:hasMechanism ?m .
+          ?m rdf:type/rdfs:subClassOf* efi:OverloadHeating .
+          FILTER EXISTS { ?sc efi:supportedBy ?f . ?f rdf:type/rdfs:subClassOf* efi:MeltOffset }
+          FILTER NOT EXISTS {
+            ?sc efi:supportedBy ?g .
+            ?g efi:confirmationStatus efi:Confirmed .
+            FILTER NOT EXISTS { ?g rdf:type/rdfs:subClassOf* efi:DamagePattern }
+          }
+        }""" ] .
+
+# [C-39] 버스바 아크는 전원 반대쪽으로 이동한다. 손상이 가장 큰 곳이
+#  발생 지점이 아닐 수 있다 (§9.10.2.2).
+efi:BusBar a owl:Class ; rdfs:subClassOf efi:Conductor ;
+    rdfs:label "버스바"@ko ; skos:prefLabel "버스바"@ko ;
+    rdfs:comment "아크가 전원 반대 방향으로 이동해, 아크가 끝난 자리의 손상이 발생 지점보다 클 수 있다 (§9.10.2.2)"@ko .
+efi:arcTravelConsidered a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:boolean ;
+    rdfs:label "아크 이동 고려 여부"@ko ; skos:prefLabel "아크 이동 고려 여부"@ko .
+
+efi:BusBarArcTravelShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.10.2.2 Arcing Through a Carbonized Path" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "버스바에서는 아크가 이동한다. 손상이 큰 자리를 발생 지점으로 볼 수 없으므로 이동을 고려했는지 밝혀야 한다 (§9.10.2.2)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:inSession ?s .
+          ?s efi:hasFact ?b .
+          ?b rdf:type/rdfs:subClassOf* efi:BusBar .
+          FILTER NOT EXISTS { ?sc efi:arcTravelConsidered true }
+        }""" ] .
