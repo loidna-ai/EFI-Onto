@@ -46,6 +46,9 @@ VERDICTS = {
     "FireMeltMark":                (FIRE, "외부화염 고유"),
     "LocalizedDiscoloration":      (FIRE, "§9.10.3.1(1) 화재 노출만으로도 금속이 산화된다"),
     "LossOfLuster":                (FIRE, "§9.10.3.1(1) 화재 산화로 표면 광택이 사라진다"),
+    "InsulationEmbrittlement":     (FIRE, "§9.11.3 절연은 노후와 가열로 취화된다. 화재 열도 가열이다"),
+    "CrackedInsulation":           (FIRE, "§9.11.3 취화된 절연은 갈라진다"),
+    "MetalTransferToFastener":     (FIRE, "§9.11.4.3 진행 중인 화재의 결과일 수 있다"),
     # 화재가 만들지 못하는 것 — 원문 근거 있음
     "MechanicalDeformation":       (ELEC, "§9.10.5 기계적 손상은 아크·열손상과 구별된다"),
     "WholeConductorCrushedOrCut":  (ELEC, "§9.10.5 기계적 손상"),

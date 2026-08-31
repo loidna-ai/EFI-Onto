@@ -29,7 +29,9 @@ BASELINE = {
     "unwired_data_properties":  (12, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
     # 화재 자체가 낼 수 있는지 원문 근거로 판정되지 않은 손상 양상.
     # 판정되지 않은 채로 전용 단서 노릇을 하면 변별력이 과대평가된다.
-    "unreviewed_fire_producibility": (8, 0),
+    # 8 → 7. §9.11.3 으로 절연 취화·균열을 판정했다. 남은 7건은 검토표 7번 시트로
+    # 조사관에게 나가 있다.
+    "unreviewed_fire_producibility": (7, 0),
 }
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
 #           morphological_core_rules(1→0). 모두 test_ontology.py 의 불변식이 됐다.

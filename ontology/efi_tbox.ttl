@@ -430,7 +430,7 @@ efi:R_PD_ref   a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionSce
 efi:R_ID_core  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ThermalDegradation ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_ID_sup1  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:AgedInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_ID_sup2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ReducedInsulationResistance ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_ID_sup3  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationEmbrittlement ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_ID_sup3  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationEmbrittlement ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:FlexingHistoryWithStrandFracture ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
 
 efi:R_TR_core  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
@@ -1886,3 +1886,101 @@ efi:ExternalFlameExposure efi:producesDamage
     efi:ArcMeltMark , efi:ArcBead , efi:LocalizedDiscoloration , efi:LossOfLuster .
 efi:ExternalFlameScenario efi:canManifest
     efi:ArcMeltMark , efi:ArcBead , efi:LocalizedDiscoloration , efi:LossOfLuster .
+
+# ============================================================================
+# 24. 손상 도체 식별의 통념들 (NFPA 921 §9.11.3~§9.11.6)
+#     원문이 "…라고 여겨져 왔으나" 로 시작해 부정하는 대목들이다.
+#     반증 근거는 지어내기 어려운데 원문이 직접 준다.
+# ============================================================================
+efi:CrackedInsulation a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "피복 균열"@ko ; skos:prefLabel "피복 균열"@ko ;
+    rdfs:comment "취화로 갈라진 균열. 도전성 용액이 들어가지 않는 한 누설 전류가 흐르지 않는다 (§9.11.3)"@ko .
+efi:ConductiveSolutionInCrack a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition ;
+    rdfs:label "균열 내 도전성 용액"@ko ; skos:prefLabel "균열 내 도전성 용액"@ko ;
+    rdfs:comment "균열이 누설 경로가 되려면 이것이 있어야 한다 (§9.11.3)"@ko .
+efi:MisdrivenStaple a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
+    rdfs:label "스테이플 오타입"@ko ; skos:prefLabel "스테이플 오타입"@ko ;
+    rdfs:comment "피복을 눌러 수개월~수년 뒤 고저항 접촉을 만들 수 있다 (§9.11.4.3)"@ko .
+efi:MetalTransferToFastener a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "못·스테이플로의 금속 전이"@ko ; skos:prefLabel "못·스테이플로의 금속 전이"@ko ;
+    rdfs:comment "진행 중인 화재의 결과일 수 있다. 고저항 경로의 증거로 단정할 수 없다 (§9.11.4.3)"@ko .
+efi:ExternalFlameExposure efi:producesDamage efi:MetalTransferToFastener , efi:CrackedInsulation .
+efi:MisdrivenStaple efi:enables efi:PoorContactHeating .
+
+# [C-40] 피복 균열만으로 누설 경로를 주장할 수 없다 (§9.11.3).
+#  도전성 용액이 균열에 들어가야 누설 전류가 흐른다.
+efi:CrackedInsulationLeakageShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.11.3 Deteriorated Insulation" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "피복 균열만으로는 누설 전류가 흐르지 않는다. 도전성 용액이 균열에 들어갔음을 밝혀야 한다 (§9.11.3)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:hasMechanism ?m .
+          ?m rdf:type/rdfs:subClassOf* efi:LeakageCurrentHeating .
+          FILTER EXISTS { ?sc efi:supportedBy ?f . ?f rdf:type/rdfs:subClassOf* efi:CrackedInsulation }
+          FILTER NOT EXISTS {
+            ?sc efi:hasAntecedent ?a .
+            ?a rdf:type/rdfs:subClassOf* efi:ConductiveSolutionInCrack .
+          }
+        }""" ] .
+
+# [C-41] 분기회로의 단락은 통상 피복을 착화시키지 않는다 (§9.11.5).
+#  보호장치 동작 전의 짧은 섬광은 발화성 증기를 낼 만큼 피복을 데우지 못한다.
+#  보호가 무력화·고장 난 경우에만 과부하가 되어 발화원이 될 수 있다.
+efi:ShortCircuitIgnitionShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.11.5 Short Circuit" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "분기회로 단락은 통상 피복을 착화시키지 못한다. 보호장치가 무력화·고장 났음을 밝혀야 한다 (§9.11.5)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:hasMechanism ?m ; efi:hasFirstFuel ?f .
+          ?m rdf:type/rdfs:subClassOf* efi:ShortCircuitArc .
+          ?f rdf:type/rdfs:subClassOf* efi:InsulationMaterialFuel .
+          FILTER NOT EXISTS { ?sc efi:conductorSizeReducedAfterProtection true }
+          FILTER NOT EXISTS { ?sc efi:hasAntecedent ?a . ?a rdf:type/rdfs:subClassOf* efi:HeatDissipationImpairment }
+        }""" ] .
+
+# [C-42] 도체 끝의 비드 하나만으로는 화재 원인을 지시하지 못한다 (§9.11.6).
+#  C-8(아크 용융흔), C-38(과전류 용융)과 같은 계열이다.
+efi:BeadedConductorShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.11.6 Beaded Conductor" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "도체 끝의 비드 자체는 화재 원인을 지시하지 않는다 (§9.11.6)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          FILTER EXISTS { ?sc efi:supportedBy ?f . ?f rdf:type/rdfs:subClassOf* efi:ArcBead }
+          FILTER NOT EXISTS {
+            ?sc efi:supportedBy ?g .
+            ?g efi:confirmationStatus efi:Confirmed .
+            FILTER NOT EXISTS { ?g rdf:type/rdfs:subClassOf* efi:ArcMeltMark }
+          }
+        }""" ] .
+
+# ============================================================================
+# 25. 전기 계통 검사 (NFPA 921 §9.12)
+#     대부분 현장 작업 절차다(안전 확보·LOTO·촬영). 온톨로지가 담을 것은
+#     검사 범위가 관심 영역에 전원을 공급하는 계통 전체를 포함했는가이다.
+# ============================================================================
+efi:examinationCoversSupplyPath a owl:DatatypeProperty ; rdfs:domain efi:ArcSurvey ; rdfs:range xsd:boolean ;
+    rdfs:label "공급 경로 전체 검사"@ko ; skos:prefLabel "공급 경로 전체 검사"@ko ;
+    rdfs:comment "관심 영역에 전원을 공급하는 계통의 모든 관련 구성요소를 식별·검사했는가 (§9.12.4)"@ko .
+
+# [C-43] 검사 범위가 공급 경로 전체를 포함했는지 밝혀야 한다 (§9.12.4).
+efi:SupplyPathCoverageShape a sh:NodeShape ; sh:targetClass efi:ArcSurvey ;
+    dcterms:references "NFPA 921 (2024) §9.12.4 Systematic Approach" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "관심 영역에 전원을 공급하는 계통 전체를 검사했는지 밝혀야 한다 (§9.12.4)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:surveyComplete true .
+          FILTER NOT EXISTS { $this efi:examinationCoversSupplyPath true }
+        }""" ] .
+
+# §9.11.3 일관 적용 — 절연은 노후와 가열로 취화된다. 화재 열도 가열이다.
+#  새로 만든 CrackedInsulation 에만 적용하고 기존 InsulationEmbrittlement 를
+#  빼두면 점수를 지키려고 일관성을 깨는 것이 된다. 그게 고치려는 편향이다.
+efi:ExternalFlameExposure efi:producesDamage efi:InsulationEmbrittlement .
+efi:ExternalFlameScenario efi:canManifest efi:InsulationEmbrittlement , efi:CrackedInsulation .

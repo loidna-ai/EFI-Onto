@@ -345,8 +345,30 @@ class Session(BaseModel):
     def closure_met(self, o: Ontology | None = None) -> bool:
         return any(not self.conclusion_check(h, o) for h in self.hypotheses)
 
+    # ---- 결론 검증은 SHACL 에 위임한다 ----
+    def validate(self, ttl_path: str) -> list[str]:
+        """결론 제약 위반 메시지. 규칙을 여기 옮겨 적지 않고 pySHACL 을 부른다.
+
+        제약을 두 곳에 적으면 반드시 갈라진다. 실제로 갈라졌었다 — SHACL 에만
+        수십 개가 쌓이는 동안 이 파일은 초기 다섯 가지만 알고 있었다.
+        점수 산출과 질의 선택은 여기서, 결론 검증은 저기서 한다.
+        """
+        from rdflib import Graph
+        from pyshacl import validate as shacl_validate
+        g = Graph().parse(
+            data=open(ttl_path, encoding="utf-8").read() + self.to_turtle(include_derived=False),
+            format="turtle")
+        _, _, text = shacl_validate(g, advanced=True, allow_infos=True, allow_warnings=True)
+        return [l.strip()[len("Message: "):] for l in text.splitlines()
+                if l.strip().startswith("Message: ")]
+
     # ---- ABox 직렬화 (rdflib 선택 의존) ----
-    def to_turtle(self) -> str:
+    def to_turtle(self, include_derived: bool = True) -> str:
+        """include_derived=False 면 점수·판정을 빼고 쓴다.
+
+        supportScore 는 owl:FunctionalProperty 인데 F-4 가 다시 계산해 넣는다.
+        둘 다 쓰면 값이 둘이 되어 모순이다. 검증할 때는 입력만 넘기고
+        도출은 SHACL 에 맡긴다."""
         from rdflib import BNode, Graph, Literal, Namespace, RDF, URIRef
         E, PROV = Namespace(EFI), Namespace("http://www.w3.org/ns/prov#")
         g, s = Graph(), URIRef(f"{EFI}session_{self.case_id}")
@@ -361,7 +383,9 @@ class Session(BaseModel):
             n, m = URIRef(f"{EFI}{self.case_id}_{h.scenario}"), BNode()
             g.add((n, RDF.type, E[h.scenario])); g.add((n, E.inSession, s))
             g.add((n, E.hasMechanism, m)); g.add((m, RDF.type, E[h.mechanism]))
-            g.add((n, E.supportScore, Literal(h.support_score))); g.add((n, E.verdict, E[h.verdict]))
+            if include_derived:
+                g.add((n, E.supportScore, Literal(h.support_score)))
+                g.add((n, E.verdict, E[h.verdict]))
         return g.serialize(format="turtle")
 
 

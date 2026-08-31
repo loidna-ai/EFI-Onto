@@ -14,6 +14,7 @@
 make install     # 의존성 설치
 make test        # 온톨로지 정합성 검사 (SHACL + Pydantic 양쪽)
 make build       # 시각화·검토표 전부 생성 → build/
+make status      # 현재 규모·이식률·래칫을 한 화면에
 make review      # 조사관 검토용 xlsx 만 생성
 make clean
 ```
@@ -21,13 +22,17 @@ make clean
 ## 구조
 
 ```
-ontology/efi_tbox.ttl    TBox 본체. 클래스 125, 속성 27+33, 단서 규칙 25, SHACL 11
-src/efi_schema.py        Pydantic v2 추론 파이프라인. TTL 을 읽어 세션 단위로 실행
-scripts/score.py         가감점 산출. 가중치의 단일 진실 원천
-scripts/                 시각화·내보내기 (그래프 HTML, GraphML, SVG, 검토표 xlsx)
-tests/test_ontology.py   회귀 시험. TTL 을 고치면 반드시 통과해야 함
-docs/                    설계계획서 (Noy & McGuinness 7단계)
-build/                   생성물. git 에 넣지 않음
+ontology/efi_tbox.ttl        TBox 본체 (규모는 make status)
+src/efi_schema.py            Pydantic 파이프라인. 점수 산출과 질의 선택
+scripts/score.py             가감점 산출. 가중치의 단일 진실 원천
+scripts/nfpa.py              NFPA 921 절 대조표. 이식률의 분모
+scripts/audit.py             형태 발현 편향 점검. '화재도 이 흔적을 내는가'
+scripts/status.py            현재 상태 요약
+scripts/{extract,build,graph,review,export}.py   시각화·검토표
+tests/test_ontology.py       정합성 불변식. 깨지면 안 되는 것
+tests/test_completeness.py   완성도 래칫. 얼마나 남았는가
+docs/                        설계계획서 + 변경 이력
+build/                       생성물. git 에 넣지 않음
 ```
 
 ## 설계 원칙 — 고치기 전에 읽을 것
@@ -51,20 +56,28 @@ build/                   생성물. git 에 넣지 않음
 
 ## SHACL 규칙과 제약
 
-| | 이름 | 하는 일 |
+접두어가 종류를 뜻한다. **개별 목록은 `make status` 와 TTL 의 절 주석을 보라 — 여기 적으면 낡는다.**
+
+| 접두어 | 하는 일 | 예 |
 |---|---|---|
-| M-1 | MorphologyDiscriminationRuleShape | 손상 양상별 변별력 산출 (몇 개 가설이 남기는가) |
-| M-2 | MorphologicalAmbiguityRuleShape | 양상 2개 이상 공유하는 가설 쌍 = 형태학적 혼동 쌍 |
-| M-3 | DerivedManifestationRuleShape | 선언된 canManifest 를 메커니즘의 producesDamage 와 대조 |
-| F-1 | FalsificationRuleShape | 반증 우선. 비통전 확인은 −100 즉시 기각 |
-| F-2 | ArcMarkSequenceRuleShape | 1차/2차 아크흔 판정 |
-| F-3 | IgnitionCompetenceRuleShape | 착화 역량 (도달 온도 < 발화 온도 → 약화) |
-| F-4 | SupportScoreRuleShape | 50 + Σ가감점, 0~100 클램프 |
-| C-1 | RefutationEvidenceShape | 반증은 Confirmed/ConfirmedAbsent 만 |
-| C-2 | ConclusionShape | 소거만으로 확정 불가 (negative corpus 배제) |
-| C-3 | ScenarioShape | 가설 하나에 메커니즘 하나 |
-| C-4 | FactShape | 모든 사실에 상태 + 출처 |
-| C-5 | MorphologyOnlyConclusionShape | 공유 형태만으로 확정 불가 (논문 4.2) |
+| M | 형태 발현에서 변별력·혼동 쌍을 산출 | M-1 변별력, M-2 혼동 쌍, M-3 메커니즘 근거 대조 |
+| F | 판정 규칙. 반증이 점수보다 먼저 (`sh:order`) | F-1 반증 우선, F-2 아크흔 선후, F-3 착화 역량, F-4 점수, F-5 아크흔 부재 |
+| C | 결론이 서지 못하게 막는 제약 | C-2 소거법 금지, C-5 공유 형태 금지, C-23 부재 위 가설 금지 |
+| D | 정의로 도출되는 사실. 임계값이 아니라 관계 비교 | D-1 과부하, D-4 대응 손상, D-7 원인미상 |
+
+**모든 명명 도형은 NFPA 921 조항에 닿아야 한다** (`test_every_shape_cites_nfpa`).
+닿지 않으면 우리가 지어낸 절차라는 뜻이므로 그 사실이 드러나야 한다.
+반대로 **지표 규칙에는 조항을 붙이지 않는다** — Table 2 는 국내 실무 출처다.
+
+## 어디까지가 SHACL 이고 어디까지가 Python 인가
+
+| | 맡는 것 | 이유 |
+|---|---|---|
+| `src/efi_schema.py` | 가감점 산출, 변별 질의 선택, 세션 상태 | 대화 루프에서 매 턴 돌아야 해서 가볍다 |
+| SHACL (`pySHACL`) | 결론 검증 전체 | 확정 시점에 한 번만 돌면 되고 규칙이 많다 |
+
+**결론 제약을 Python 으로 옮겨 적지 않는다.** 두 번 적으면 반드시 갈라진다 —
+실제로 갈라졌었다. `Session.validate()` 가 pySHACL 을 호출해 위임한다.
 
 ## 코딩 규칙
 
@@ -81,10 +94,23 @@ build/                   생성물. git 에 넣지 않음
 1. **`scoreDelta` 는 손으로 고치지 않는다.** `scripts/score.py` 가 변별력에서 유도한다.
    척도(지지 15 / 반증 30)는 확정 조건에서 풀려나온 값이고, 형태학적 감쇠 0.7 만 판단이다.
    **아직 사례로 보정되지 않았다** — ABox 150건이 들어오면 조건부 빈도로 검증해야 한다.
-2. **NFPA 921 조항 번호 미대조.** 현재 장(Ch.4/9/19) 수준 표기. 2024판 원문 확인 필요.
-3. **`canManifest` / `enables` / `producesDamage` / `ignites` / `exhibits` / `attests` 는 작성자 구성이다.**
-   Table 1·2 와 선행연구를 근거로 했으나 실무 검증 전. `build/EFI-Onto_검토표.xlsx` 로 조사관 검토 진행 중.
+2. **NFPA 921 조항 대조 진행 중.** `scripts/nfpa.py` 가 절별 상태를 들고 있다.
+   원문을 받은 절만 하위 절까지 내려가 있고 나머지는 절 제목 수준의 근사치다.
+   **내려갈 때마다 이식률은 대체로 낮아진다** — 제목으로는 덮인 듯 보이던 요건이 드러나기 때문이다.
+   낮아진 숫자가 정확한 숫자다.
+3. **인과 사슬(`canManifest`·`enables`·`producesDamage`·`ignites`·`exhibits`·`attests`)은 작성자 구성이다.**
+   일부는 원문 대조로 교정됐다. `build/EFI-Onto_검토표.xlsx` 로 조사관 검토 진행 중.
+
+   **알려진 편향** — 이 온톨로지는 '이 가설이 이 흔적을 낸다'는 방향으로만 지어져,
+   화재 자체가 만드는 흔적을 전기적 원인의 전용 단서로 오인했다. 원문 대조에서 다섯 건이 나왔다
+   (탄화 도전로, 다발성 아크 비드, 아크흔·비드, 국부 변색, 광택 소실).
+   `scripts/audit.py` 가 남은 것을 세고 `test_fire_producibility_declarations_agree` 가 재발을 막는다.
+
+   **새 형태 발현을 선언할 때 반드시 물을 것: 이 흔적을 화재 자체가 낼 수 있는가?**
 4. **ABox 없음.** 조사서 사례가 하나도 들어 있지 않다. 150건 변환이 다음 과제.
+   지금까지 잰 것은 전부 **이식률**이다. **정확도는 한 번도 재지 않았다.**
+5. **DL 일관성 검사(V1) 미실행.** HermiT·Pellet 은 Java 기반인데 이 환경에 Java 가 없다.
+   정의 클래스와 축 배타 공리가 계속 늘어 불만족 클래스 위험이 커졌다. Protégé 로라도 한 번 돌려야 한다.
 
 ## 출처 구분 — 논문·발표에서 뭉뚱그리지 말 것
 
@@ -92,5 +118,6 @@ build/                   생성물. git 에 넣지 않음
 |---|---|
 | 가설수립→검증→확정 3단계, 반증 우선, negative corpus 배제, 판단보류 허용 | NFPA 921 |
 | 5대 발화 요인 구분, Table 2 단서 | 국내 실무·선행연구 + FIReAct 논문 |
-| 형태 발현 프로파일, 축 간 인과 연결 | 작성자 구성 (검증 필요) |
+| 형태 발현 프로파일, 축 간 인과 연결 | 작성자 구성. 일부 원문 대조로 교정됨 |
+| 방법론 층 제약 (M·F·C·D 도형) | NFPA 921 조항에 대조됨 (`dcterms:references`) |
 | 가감점 | 변별력에서 유도 (`scripts/score.py`). 사례 보정 전 |

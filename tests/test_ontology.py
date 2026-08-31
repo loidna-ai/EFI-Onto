@@ -494,6 +494,30 @@ def test_python_matches_shacl(onto):
     assert s.hypotheses[0].support_score == 71
 
 
+def test_python_delegates_conclusion_checks_to_shacl():
+    """Python 은 결론 제약을 옮겨 적지 않고 pySHACL 에 위임한다.
+
+    제약을 두 곳에 적으면 갈라진다. 실제로 갈라졌었다 — SHACL 에 수십 개가
+    쌓이는 동안 Python 은 초기 다섯 가지만 알고 있었다. 이 시험은 Python 이
+    스스로 구현하지 않은 제약(C-3 선행 조건)을 실제로 보고하는지 확인한다."""
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent
+    s = Session(case_id="V", query_count=2,
+                hypotheses=[Hypothesis(scenario=Scenario.TRACKING, mechanism=Mechanism.ARC_TRACKING)],
+                facts=[Fact(cls="MoistureExposure", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR)])
+    msgs = s.validate(str(TTL))
+    assert any("hasAntecedent" in m for m in msgs), f"SHACL 제약이 전달되지 않았다: {msgs}"
+
+
+def test_serialization_does_not_duplicate_derived_values():
+    """supportScore 는 owl:FunctionalProperty 다. Python 이 쓴 값과 F-4 가 계산한
+    값이 겹치면 값이 둘이 되어 모순이다. 검증 입력에는 도출값을 넣지 않는다."""
+    from efi_schema import Session, Hypothesis, Scenario, Mechanism
+    s = Session(case_id="W",
+                hypotheses=[Hypothesis(scenario=Scenario.TRACKING, mechanism=Mechanism.ARC_TRACKING)])
+    assert "supportScore" in s.to_turtle()
+    assert "supportScore" not in s.to_turtle(include_derived=False)
+
+
 def test_subclass_matching(onto):
     """'결로'라고 답해도 오염 환경 규칙에 걸려야 한다."""
     for c in ("MoistureExposure", "DustAccumulation", "SalineOrChemicalExposure"):

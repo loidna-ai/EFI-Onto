@@ -1,4 +1,4 @@
-.PHONY: install test build review graph export clean
+.PHONY: install test build status review graph export clean
 
 PY := python
 export PYTHONIOENCODING := utf-8
@@ -17,6 +17,9 @@ build: | build-dir
 	$(PY) scripts/review.py
 	$(PY) scripts/export.py
 	@echo "→ build/ 확인"
+
+status:
+	@$(PY) scripts/status.py
 
 review: | build-dir
 	$(PY) scripts/extract.py > build/graph.json

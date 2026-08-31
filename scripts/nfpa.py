@@ -40,7 +40,8 @@ SECTIONS = [
                                                        "연료별 아크 적합성, 스파크 특성이 비어 있다"),
     ("9.10", "Interpreting Damage to Elec. Systems", DONE, "DamagePattern 축, M-1~M-3, C-37~C-39. 하위 절 표 참조"),
     ("9.11", "Identification of Damaged Conductors", DONE, "1차/2차 단락흔 F-2, 통념 부정 C-37. 하위 절 표 참조"),
-    ("9.12", "Electrical System Examination",        PART, "증거물 수거·관측은 있으나 검사 절차는 없음"),
+    ("9.12", "Electrical System Examination",        PART, "C-43 공급 경로 검사 범위. 안전 확보·LOTO·"
+                                                       "촬영은 현장 절차라 담지 않는다(판단)"),
     ("9.13", "Arc Surveys",                          DONE, "F-5, C-6~C-8, D-4~D-5 로 구현. 하위 절 표 참조"),
     ("9.14", "Static Electricity",                   OUT,  "5대 요인 밖. 범위 제외 (재검토 여지)"),
     ("9.15", "Batteries",                            OUT,  "5대 요인 밖. ESS·리튬 화재를 넣을지 결정 필요"),
@@ -94,6 +95,15 @@ SUBSECTIONS = [
     ("9.10.5",   "기계적 홈·눌림은 아크흔과 구별된다",          PART, "MechanicalGouge 클래스. 미세 판별 규칙은 없음"),
     ("9.10.6.1", "설치 시 망치 오타격 — 시간이 지나 발현",      DONE, "HammerMisHitDamage 선행 조건"),
     ("9.11.1",   "언더사이즈 도체는 원인의 증거가 아니다",       DONE, "C-37 MisconceptionShape"),
+    ("9.11.3",   "균열만으로는 누설 전류가 흐르지 않는다",       DONE, "C-40 CrackedInsulationLeakageShape"),
+    ("9.11.4.3", "못·스테이플로의 금속 전이는 화재 결과일 수 있다", DONE, "MetalTransferToFastener, MisdrivenStaple"),
+    ("9.11.5",   "분기회로 단락은 통상 피복을 착화시키지 않는다",   DONE, "C-41 ShortCircuitIgnitionShape"),
+    ("9.11.6",   "도체 끝 비드 자체는 원인을 지시하지 않는다",     DONE, "C-42 BeadedConductorShape"),
+    ("9.12.1",   "계통 검사의 목적 넷",                      PART, "아크 조사·발화원 식별은 있으나 화재 위험 판정은 없다"),
+    ("9.12.3",   "검사 전 무전원 확보와 재통전 방지",           PROC, "현장 안전 절차"),
+    ("9.12.4",   "공급 경로 전체를 식별·검사한다",             DONE, "C-43 SupplyPathCoverageShape"),
+    ("9.12.6.2", "분전반 검사 열한 항목",                    PROC, "현장 작업 절차"),
+    ("9.12.7.2", "기기 분해 시 증거 훼손(spoliation) 고려",     PROC, "현장 작업 절차"),
     ("9.11.2",   "니크·연신의 추가 발열은 무시할 수준이다",      DONE, "C-37 MisconceptionShape"),
     ("9.13.1.2", "조사 미완이면 결론은 조사 범위로 제한",   DONE, "C-7 ArcSurveyScopeShape"),
     ("9.13.1.3", "아크인지 다른 손상인지 금속조직 판정",     PART, "MaterialsAnalyst 행위자는 생겼다. 판정 규칙은 없음"),
@@ -210,6 +220,10 @@ SHAPE_REFS = {
     "MisconceptionShape":                ["9.11"],
     "OverloadMeltingNotProofShape":      ["9.10"],
     "BusBarArcTravelShape":              ["9.10"],
+    "CrackedInsulationLeakageShape":     ["9.11"],
+    "ShortCircuitIgnitionShape":         ["9.11"],
+    "BeadedConductorShape":              ["9.11"],
+    "SupplyPathCoverageShape":           ["9.12"],
 }
 
 
