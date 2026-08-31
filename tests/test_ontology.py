@@ -283,6 +283,45 @@ def test_unverifiable_fact_forces_limitation_disclosure():
         base + 'efi:cU efi:statedLimitation "절연저항 계측 불가" .')
 
 
+# ── §4.6 검토 절차 ───────────────────────────────────────────────────────
+def test_insider_review_is_not_peer_review():
+    """C-17 — 같은 조사에 참여한 사람의 검토는 동료 검토가 아니다 (§4.6.3).
+    이름을 잘못 붙이면 독립성 없는 검토가 독립 검토로 인용된다."""
+    inside = """
+    efi:sR a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:invR a efi:InvestigatorAgent ; efi:participatedIn efi:sR .
+    efi:rvR a efi:PeerReview ; efi:reviews efi:sR ; efi:reviewer efi:invR .
+    """
+    assert "동료 검토가 아니라 기술 검토" in _msg(inside)
+    assert "동료 검토가 아니라 기술 검토" not in _msg(
+        inside.replace("efi:invR a efi:InvestigatorAgent ; efi:participatedIn efi:sR .",
+                       "efi:invR a efi:InvestigatorAgent ."))
+
+
+def test_author_selected_reviewer_is_not_peer_review():
+    """C-17 — 저자가 검토자를 고르면 동료 검토가 아니다 (§4.6.3)."""
+    assert "동료 검토가 아니라 기술 검토" in _msg("""
+    efi:sR2 a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:rvR2 a efi:PeerReview ; efi:reviews efi:sR2 ; efi:reviewerSelectedByAuthor true .
+    """)
+
+
+def test_peer_review_alone_cannot_validate_results():
+    """C-20 — 동료 검토자는 논리 결함은 잡아도 자료 오류를 잡을 근거가 없다 (§4.6.3.2).
+    잘못된 자료 위의 결론은 잘못될 수밖에 없다."""
+    only_peer = """
+    efi:sV a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:hV a efi:TrackingScenario ; efi:inSession efi:sV ; efi:supportScore 75 .
+    efi:rvV a efi:PeerReview ; efi:reviews efi:sV .
+    efi:cV a efi:Conclusion ; efi:concludes efi:hV ;
+           efi:certaintyLevel efi:Probable ; efi:reviewValidated true .
+    """
+    assert "기술 검토가 있어야" in _msg(only_peer)
+    assert "기술 검토가 있어야" not in _msg(only_peer + """
+    efi:rvT a efi:TechnicalReview ; efi:reviews efi:sV ; efi:hasDocumentationAccess true .
+    """)
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent

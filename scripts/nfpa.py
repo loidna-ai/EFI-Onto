@@ -23,9 +23,9 @@ SECTIONS = [
     ("4.3",  "Relating to the Scientific Method",    DONE, "P3 반증 우선, F-1, C-2"),
     ("4.4",  "Basic Method of a Fire Investigation", DONE, "가설수립 → 검증 → 확정 3단계"),
     ("4.5",  "Expert Opinions",                      DONE, "CertaintyLevel 과 C-12~C-16. 하위 절 표 참조"),
-    ("4.6",  "Review Procedure",                     NONE, "동료 검토가 모형에 없다. 검토표는 외부 문서일 뿐. "
-                                                           "원문 본문 미확보 — 검토 유형과 한계를 봐야 한다"),
-    ("4.7",  "Reporting Procedure",                  NONE, "보고서 구조가 없다. PROV 경로는 있으나 보고서 자체는 미모형"),
+    ("4.6",  "Review Procedure",                     DONE, "검토 3종과 각각의 한계. C-17~C-20. 하위 절 표 참조"),
+    ("4.7",  "Reporting Procedure",                  PART, "InvestigationReport 와 reportsConclusion. "
+                                                           "형식·전달 경로는 소관에 따라 달라져 열거하지 않는다"),
     # ── Chapter 9 Electricity and Fire ─────────────────────────────────────
     ("9.1",  "Introduction",                         PART, "배경"),
     ("9.2",  "Basic Electricity",                    PART, "전기량 데이터 속성 일부"),
@@ -74,6 +74,12 @@ SUBSECTIONS = [
     ("4.5.1.1",  "개연·가능 두 표현. 대등하면 가능까지",       DONE, "CertaintyLevel, C-12 EqualLikelihoodShape"),
     ("4.5.1.2",  "의심은 전문가 의견이 아니다",              DONE, "C-13 SuspectedNotOpinion, C-14 CertaintyStated"),
     ("4.5.2",    "유일하고 신뢰할 수 있는 최종 가설",         DONE, "C-16 UniqueFinalHypothesisShape"),
+    ("4.6.1",    "행정 검토 — 절차와 서류 구비",             DONE, "AdministrativeReview"),
+    ("4.6.1.1",  "행정 검토는 실질 비평을 못 한다",           DONE, "C-18 AdministrativeReviewScopeShape"),
+    ("4.6.2",    "기술 검토 — 자격과 자료 접근이 전제",        PART, "C-19 자료 접근. 검토 범위별 자격 대조는 없음"),
+    ("4.6.2.1",  "기술 검토의 확증 편향 위험",               NONE, "편향 위험을 표시할 자리가 없다"),
+    ("4.6.3",    "동료 검토 — 독립성·객관성",               DONE, "C-17 PeerReviewIndependenceShape"),
+    ("4.6.3.2",  "동료 검토는 자료 오류를 잡지 못한다",        DONE, "C-20 ReviewValidationShape"),
     ("19.8.1",   "통계 목적 사건 분류 — 외부 체계 참조",      DONE, "C-10 ClassificationSystemShape, ClassificationSystem 6종"),
     ("19.8.2",   "보고서용 원인 분류 — 판정 이후에 온다",     PART, "C-9 순서, C-11 분리는 구현. 범주 목록 미확보(원문 후속 필요)"),
 ]
@@ -110,6 +116,10 @@ SHAPE_REFS = {
     "CertaintyStatedShape":              ["4.5"],
     "LimitationDisclosureShape":         ["4.5"],
     "UniqueFinalHypothesisShape":        ["4.5"],
+    "PeerReviewIndependenceShape":       ["4.6"],
+    "AdministrativeReviewScopeShape":    ["4.6"],
+    "TechnicalReviewAccessShape":        ["4.6"],
+    "ReviewValidationShape":             ["4.6"],
 }
 
 
