@@ -1,4 +1,4 @@
-.PHONY: install test build status review graph export clean
+.PHONY: install test build status reason review graph export clean
 
 PY := python
 export PYTHONIOENCODING := utf-8
@@ -20,6 +20,9 @@ build: | build-dir
 
 status:
 	@$(PY) scripts/status.py
+
+reason:
+	@$(PY) scripts/consistency.py
 
 review: | build-dir
 	$(PY) scripts/extract.py > build/graph.json

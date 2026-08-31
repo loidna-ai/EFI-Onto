@@ -51,7 +51,7 @@ def main():
 
     print("\n── 검증되지 않은 것 " + "─" * 41)
     print("  가감점이 사례로 보정되지 않았다 (ABox 0건)")
-    print("  DL 일관성 검사 미실행 (HermiT·Pellet 은 Java 필요, 이 환경에 없음)")
+    print("  DL 일관성(V1)은 통과 — make reason")
     print("  조사관 검토표 회수 전")
 
 

@@ -482,6 +482,39 @@ def test_fire_producibility_declarations_agree(g):
     assert not bad, f"판정과 선언의 불일치: {bad}"
 
 
+# ── V1: OWL 2 DL 일관성 ──────────────────────────────────────────────────
+def _hermit_available():
+    import shutil, importlib.util
+    return shutil.which("java") and importlib.util.find_spec("owlready2")
+
+
+@pytest.mark.skipif(not _hermit_available(), reason="HermiT 은 Java 와 owlready2 가 있어야 돈다")
+def test_no_unsatisfiable_classes():
+    """불만족 클래스가 없어야 한다. pySHACL 은 DL 일관성을 보지 않으므로
+    정의 클래스와 축 배타 공리가 어긋나도 다른 시험은 전부 통과한다."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import consistency
+    bad, inconsistent, msg = consistency.check()
+    assert not inconsistent, f"온톨로지 전체가 모순이다: {msg}"
+    assert not bad, f"불만족 클래스: {bad}"
+
+
+@pytest.mark.skipif(not _hermit_available(), reason="HermiT 은 Java 와 owlready2 가 있어야 돈다")
+def test_consistency_checker_actually_detects(tmp_path):
+    """검사기 자체의 반증 대조. 서로소인 두 축에 동시에 속하는 클래스를 넣으면
+    반드시 잡혀야 한다. 한 번 거짓 통과를 낸 적이 있어 이 시험을 둔다."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import consistency
+    poison = tmp_path / "poison.ttl"
+    poison.write_text(TTL.read_text(encoding="utf-8") + """
+efi:DeliberatelyBroken a owl:Class ;
+    rdfs:subClassOf efi:HeatingMechanism , efi:DamagePattern ;
+    rdfs:label "고의로 깨뜨린 클래스"@ko .
+""", encoding="utf-8")
+    bad, _, _ = consistency.check(str(poison))
+    assert "DeliberatelyBroken" in bad, f"검사기가 고의 결함을 놓쳤다: {bad}"
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent

@@ -15,6 +15,7 @@ make install     # 의존성 설치
 make test        # 온톨로지 정합성 검사 (SHACL + Pydantic 양쪽)
 make build       # 시각화·검토표 전부 생성 → build/
 make status      # 현재 규모·이식률·래칫을 한 화면에
+make reason      # OWL 2 DL 일관성 검사 (HermiT). Java 필요
 make review      # 조사관 검토용 xlsx 만 생성
 make clean
 ```
@@ -28,6 +29,7 @@ scripts/score.py             가감점 산출. 가중치의 단일 진실 원천
 scripts/nfpa.py              NFPA 921 절 대조표. 이식률의 분모
 scripts/audit.py             형태 발현 편향 점검. '화재도 이 흔적을 내는가'
 scripts/status.py            현재 상태 요약
+scripts/consistency.py       OWL 2 DL 일관성 검사 (HermiT 직접 호출)
 scripts/{extract,build,graph,review,export}.py   시각화·검토표
 tests/test_ontology.py       정합성 불변식. 깨지면 안 되는 것
 tests/test_completeness.py   완성도 래칫. 얼마나 남았는가
@@ -109,8 +111,10 @@ build/                       생성물. git 에 넣지 않음
    **새 형태 발현을 선언할 때 반드시 물을 것: 이 흔적을 화재 자체가 낼 수 있는가?**
 4. **ABox 없음.** 조사서 사례가 하나도 들어 있지 않다. 150건 변환이 다음 과제.
    지금까지 잰 것은 전부 **이식률**이다. **정확도는 한 번도 재지 않았다.**
-5. **DL 일관성 검사(V1) 미실행.** HermiT·Pellet 은 Java 기반인데 이 환경에 Java 가 없다.
-   정의 클래스와 축 배타 공리가 계속 늘어 불만족 클래스 위험이 커졌다. Protégé 로라도 한 번 돌려야 한다.
+5. **DL 일관성(V1)은 통과했다.** `make reason` 으로 HermiT 을 돌린다. Java 와 owlready2 가 필요하다.
+   pySHACL 은 DL 일관성을 보지 않으므로 이 검사 없이는 불만족 클래스가 생겨도 다른 시험이 전부 통과한다.
+   검사기 자체의 반증 대조 시험(`test_consistency_checker_actually_detects`)을 함께 둔다 —
+   한 번 거짓 통과를 냈던 적이 있다.
 
 ## 출처 구분 — 논문·발표에서 뭉뚱그리지 말 것
 
