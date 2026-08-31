@@ -469,6 +469,19 @@ def test_multiple_arc_beads_are_no_longer_exclusive(onto):
     assert not onto.is_discriminating("MultipleArcBeads")
 
 
+def test_fire_producibility_declarations_agree(g):
+    """화재가 낼 수 있다고 판정한 양상은 외부화염 선언에 있어야 하고,
+    낼 수 없다고 판정한 양상은 없어야 한다 (scripts/audit.py).
+
+    이 온톨로지는 '이 가설이 이 흔적을 낸다'는 방향으로만 지어져, 화재 자체가
+    만드는 흔적을 전기적 원인의 전용 단서로 오인하는 편향이 있었다. 원문 대조로
+    다섯 건이 드러났고 이 시험이 재발을 막는다."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import audit
+    bad = audit.inconsistent(g)
+    assert not bad, f"판정과 선언의 불일치: {bad}"
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent

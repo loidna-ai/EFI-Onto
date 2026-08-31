@@ -1877,3 +1877,12 @@ efi:BusBarArcTravelShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
           ?b rdf:type/rdfs:subClassOf* efi:BusBar .
           FILTER NOT EXISTS { ?sc efi:arcTravelConsidered true }
         }""" ] .
+
+# ── 형태 발현 편향 점검 결과 반영 (scripts/audit.py) ─────────────────────
+#  '이 가설이 이 흔적을 낸다'만 담고 '화재 자체가 낸다'를 빠뜨린 선언들이다.
+#  §9.10.1  화재로 연화된 피복이 단락 파팅 아크를 만든다 → 아크흔·비드
+#  §9.10.3.1(1) 화재 노출만으로도 금속이 산화된다 → 변색·광택 소실
+efi:ExternalFlameExposure efi:producesDamage
+    efi:ArcMeltMark , efi:ArcBead , efi:LocalizedDiscoloration , efi:LossOfLuster .
+efi:ExternalFlameScenario efi:canManifest
+    efi:ArcMeltMark , efi:ArcBead , efi:LocalizedDiscoloration , efi:LossOfLuster .

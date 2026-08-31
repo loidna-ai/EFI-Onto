@@ -27,6 +27,9 @@ BASELINE = {
     # 그중 5개는 임계값이 존재하지 않는 것이 확인됐다(기공률 등). 목표 0 은
     # 도달하지 못할 수 있다 — 확인되면 그때 목표를 고친다.
     "unwired_data_properties":  (12, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
+    # 화재 자체가 낼 수 있는지 원문 근거로 판정되지 않은 손상 양상.
+    # 판정되지 않은 채로 전용 단서 노릇을 하면 변별력이 과대평가된다.
+    "unreviewed_fire_producibility": (8, 0),
 }
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
 #           morphological_core_rules(1→0). 모두 test_ontology.py 의 불변식이 됐다.
@@ -44,6 +47,14 @@ def _rules(g):
 
 
 # ── 지표 산출 ─────────────────────────────────────────────────────────────
+def unreviewed_fire_producibility(g):
+    """'화재 자체가 이 흔적을 낼 수 있는가'에 원문 근거로 답하지 않은 양상."""
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
+    import audit
+    return audit.unreviewed(g)
+
+
 def min_refuting_per_scenario(g):
     """결정적 반증(비통전)은 제외한다. 전기 가설 전체에 걸리는 단일 규칙이라
     시나리오별 반증 수단을 갖췄다는 근거가 되지 못한다."""
@@ -88,6 +99,12 @@ def test_refutation_rules_are_thin(g):
     _ratchet("min_refuting_per_scenario", min_refuting_per_scenario(g), better_is_lower=False)
 
 
+def test_fire_producibility_is_reviewed(g):
+    """원문 근거로 판정되지 않은 양상이 남아 있다. 판정되지 않은 채 전용 단서
+    노릇을 하면 변별력이 과대평가된다 — 이미 다섯 건이 그랬다."""
+    _ratchet("unreviewed_fire_producibility", len(unreviewed_fire_producibility(g)))
+
+
 def test_data_properties_are_wired(g):
     """A-3 측정값을 담을 그릇만 있고 판정에 쓰이지 않는다.
     공극률·결정립을 '보강 근거로 쓴다'고 했으나 어떤 규칙에도 붙어 있지 않다."""
@@ -100,6 +117,7 @@ if __name__ == "__main__":
     rows = [
         ("시나리오당 최소 반증 규칙", min_refuting_per_scenario(gr), "min_refuting_per_scenario"),
         ("미연결 데이터 속성", len(unwired_data_properties(gr)), "unwired_data_properties"),
+        ("화재 생성 가능성 미검토", len(unreviewed_fire_producibility(gr)), "unreviewed_fire_producibility"),
     ]
     print(f"{'지표':26s} {'현재':>6s} {'한계':>6s} {'목표':>6s}")
     for label, now, key in rows:
