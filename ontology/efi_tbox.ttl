@@ -1146,3 +1146,86 @@ efi:ConclusionNotClassifiedShape a sh:NodeShape ; sh:targetClass efi:Conclusion 
     dcterms:references "NFPA 921 (2024) §19.8.1 Incident Classification for Statistical Purposes" ;
     sh:property [ sh:path efi:classificationCategory ; sh:maxCount 0 ;
         sh:message "감별 의견에 분류 범주를 직접 달 수 없다. 분류는 별도 개체로 두고 이 의견을 가리키게 한다 (§19.8)"@ko ] .
+
+# ============================================================================
+# 15. 의견 확신도 (NFPA 921 §4.5)
+#     '개연(probable)'은 확률값이 아니라 경합 가설 대비 유일하게 앞선 상태로
+#     구현한다. supportScore 를 확률로 읽으면 논문 3.2절 원칙을 깨뜨린다.
+# ============================================================================
+efi:CertaintyLevel a owl:Class ; rdfs:label "의견 확신도"@ko ; skos:prefLabel "의견 확신도"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf ( efi:Suspected efi:Possible efi:Probable ) ] .
+efi:Suspected a owl:NamedIndividual , efi:CertaintyLevel ; skos:prefLabel "의심 수준"@ko ;
+    rdfs:comment "전문가 의견의 요건을 갖추지 못한다 (§4.5.1.2)"@ko .
+efi:Possible a owl:NamedIndividual , efi:CertaintyLevel ; skos:prefLabel "가능(possible)"@ko ;
+    rdfs:comment "성립 가능함은 보였으나 배제도 개연 선언도 못 한 상태. 대등한 가설이 둘 이상이면 여기까지다 (§4.5.1.1)"@ko .
+efi:Probable a owl:NamedIndividual , efi:CertaintyLevel ; skos:prefLabel "개연(probable)"@ko ;
+    rdfs:comment "그렇지 않을 때보다 그럴 때가 더 그럴듯한 상태. 이때만 상당한 확실성으로 표현할 수 있다 (§4.5.1.2)"@ko .
+
+efi:certaintyLevel a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain efi:Conclusion ; rdfs:range efi:CertaintyLevel ;
+    rdfs:label "의견 확신도"@ko ; skos:prefLabel "의견 확신도"@ko .
+efi:statedLimitation a owl:DatatypeProperty ; rdfs:domain efi:Conclusion ; rdfs:range xsd:string ;
+    rdfs:label "명시한 한계"@ko ; skos:prefLabel "명시한 한계"@ko ;
+    rdfs:comment "아는 한계는 밝혀야 한다 (§4.5)"@ko .
+
+efi:MaterialsAnalyst a owl:Class ; rdfs:subClassOf prov:Agent , sosa:Sensor ;
+    rdfs:label "재료·금속조직 분석자"@ko ; skos:prefLabel "재료·금속조직 분석자"@ko ;
+    rdfs:comment "도체 이상이 아크에 의한 것인지 다른 손상인지 판정을 돕는다 (§9.13.1.3)"@ko .
+
+# [C-12] 대등한 가설이 둘 이상이면 개연이라 할 수 없다 (§4.5.1.1(2)).
+#  점수가 확률이 아니므로 크기 비교가 아니라 '유일하게 앞서는가'만 본다.
+efi:EqualLikelihoodShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §4.5.1.1 Expressions of Certainty" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "같은 세션에 대등하거나 더 앞선 가설이 남아 있다. 개연이 아니라 가능으로 표현해야 한다 (§4.5.1.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:certaintyLevel efi:Probable ; efi:concludes ?sc .
+          ?sc efi:inSession ?s ; efi:supportScore ?n .
+          ?o  efi:inSession ?s ; efi:supportScore ?m .
+          FILTER ( ?o != ?sc && ?m >= ?n )
+          FILTER NOT EXISTS { ?o efi:verdict efi:Refuted }
+        }""" ] .
+
+# [C-13] 의심 수준은 전문가 의견이 아니다 (§4.5.1.2).
+efi:SuspectedNotOpinionShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §4.5.1.2 Expressions of Certainty" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "의심 수준은 전문가 의견의 요건을 갖추지 못한다. 감별 의견으로 낼 수 없다 (§4.5.1.2)"@ko ;
+        sh:select """SELECT $this WHERE { $this efi:certaintyLevel efi:Suspected }""" ] .
+
+# [C-14] 확신도를 밝히지 않은 의견은 낼 수 없다.
+#  개연일 때만 상당한 확실성으로 표현할 수 있으므로 수준 표기가 곧 의견의 일부다 (§4.5.1.2).
+efi:CertaintyStatedShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §4.5.1.2 Expressions of Certainty" ;
+    sh:property [ sh:path efi:certaintyLevel ; sh:minCount 1 ;
+        sh:message "의견에는 확신도를 밝혀야 한다. 가능인지 개연인지 적지 않으면 상당한 확실성으로 읽힌다 (§4.5.1.2)"@ko ] .
+
+# [C-15] 아는 한계는 밝혀야 한다 (§4.5).
+#  확인 불가 사실이 있는데 한계 표기가 없으면 그 사실이 없었던 것처럼 읽힌다.
+efi:LimitationDisclosureShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §4.5 Expert Opinions" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "확인 불가 사실이 있는 세션의 의견은 그 한계를 명시해야 한다 (§4.5)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:inSession ?s .
+          ?s efi:hasFact ?f .
+          ?f efi:confirmationStatus efi:Unverifiable .
+          FILTER NOT EXISTS { $this efi:statedLimitation ?l }
+        }""" ] .
+
+# [C-16] 상당한 확실성은 유일한 최종 가설에서만 나온다 (§4.5.2).
+efi:UniqueFinalHypothesisShape a sh:NodeShape ; sh:targetClass efi:InvestigationSession ;
+    dcterms:references "NFPA 921 (2024) §4.5.2 Fire Investigation Certainty" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "한 세션에 개연 수준 의견이 둘 이상이다. 최종 가설은 유일해야 한다 (§4.5.2)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          ?c1 efi:certaintyLevel efi:Probable ; efi:concludes ?s1 .
+          ?c2 efi:certaintyLevel efi:Probable ; efi:concludes ?s2 .
+          ?s1 efi:inSession $this .
+          ?s2 efi:inSession $this .
+          FILTER ( ?c1 != ?c2 )
+        }""" ] .

@@ -22,9 +22,9 @@ SECTIONS = [
     ("4.2",  "Systematic Approach",                  DONE, "InvestigationSession 절차"),
     ("4.3",  "Relating to the Scientific Method",    DONE, "P3 반증 우선, F-1, C-2"),
     ("4.4",  "Basic Method of a Fire Investigation", DONE, "가설수립 → 검증 → 확정 3단계"),
-    ("4.5",  "Expert Opinions",                      NONE, "의견 확신도(probable/possible) 개념이 없다. "
-                                                           "Conclusion 에 확신 수준 칸이 없고, 누가 낼 자격이 있는지도 없다"),
-    ("4.6",  "Review Procedure",                     NONE, "동료 검토 절차가 모형에 없다. 검토표는 외부 문서일 뿐"),
+    ("4.5",  "Expert Opinions",                      DONE, "CertaintyLevel 과 C-12~C-16. 하위 절 표 참조"),
+    ("4.6",  "Review Procedure",                     NONE, "동료 검토가 모형에 없다. 검토표는 외부 문서일 뿐. "
+                                                           "원문 본문 미확보 — 검토 유형과 한계를 봐야 한다"),
     ("4.7",  "Reporting Procedure",                  NONE, "보고서 구조가 없다. PROV 경로는 있으나 보고서 자체는 미모형"),
     # ── Chapter 9 Electricity and Fire ─────────────────────────────────────
     ("9.1",  "Introduction",                         PART, "배경"),
@@ -57,7 +57,7 @@ SECTIONS = [
 # 9.13 하위 절. 원문 확인 후 좁힌 것. 나머지 절도 이 수준까지 내려가야 한다.
 SUBSECTIONS = [
     ("9.13.1.2", "조사 미완이면 결론은 조사 범위로 제한",   DONE, "C-7 ArcSurveyScopeShape"),
-    ("9.13.1.3", "아크인지 다른 손상인지 금속조직 판정",     NONE, "재료 분석 행위자·판정이 없다"),
+    ("9.13.1.3", "아크인지 다른 손상인지 금속조직 판정",     PART, "MaterialsAnalyst 행위자는 생겼다. 판정 규칙은 없음"),
     ("9.13.2.1", "회로 최하류 아크 지점 기록",             DONE, "D-5 FurthestDownstreamRuleShape"),
     ("9.13.2.2", "회로별 보호장치 종류와 상태 기록",        PART, "GFCI·AFCI 클래스와 circuitProtection. 상태 열거는 없음"),
     ("9.13.3.1", "아크 지점이 나타날 수 있는 위치",         PART, "도체·접속부는 있으나 전선관·접지면은 없다"),
@@ -70,6 +70,10 @@ SUBSECTIONS = [
     ("9.13.4.5", "아크 용융 부재도 기록 — 미조사와 구분",    DONE, "F-5 ArcSiteAbsenceRuleShape"),
     ("9.13.4.6", "용융이 아크 지점을 지웠을 가능성",         DONE, "F-5 + C-6 ObscuredArcSiteShape"),
     ("9.13.4.7", "아크 용융흔 단독은 통전 사실만 말한다",     DONE, "C-8 ArcMeltAloneShape"),
+    ("4.5.0",    "의견은 자료와 한계를 밝혀야 한다",          PART, "C-15 한계 명시. 과학적 방법 적용 서술은 §4.7 보고서 영역"),
+    ("4.5.1.1",  "개연·가능 두 표현. 대등하면 가능까지",       DONE, "CertaintyLevel, C-12 EqualLikelihoodShape"),
+    ("4.5.1.2",  "의심은 전문가 의견이 아니다",              DONE, "C-13 SuspectedNotOpinion, C-14 CertaintyStated"),
+    ("4.5.2",    "유일하고 신뢰할 수 있는 최종 가설",         DONE, "C-16 UniqueFinalHypothesisShape"),
     ("19.8.1",   "통계 목적 사건 분류 — 외부 체계 참조",      DONE, "C-10 ClassificationSystemShape, ClassificationSystem 6종"),
     ("19.8.2",   "보고서용 원인 분류 — 판정 이후에 온다",     PART, "C-9 순서, C-11 분리는 구현. 범주 목록 미확보(원문 후속 필요)"),
 ]
@@ -101,6 +105,11 @@ SHAPE_REFS = {
     "CauseClassificationOrderShape":     ["19.8"],
     "ClassificationSystemShape":         ["19.8"],
     "ConclusionNotClassifiedShape":      ["19.8"],
+    "EqualLikelihoodShape":              ["4.5"],
+    "SuspectedNotOpinionShape":          ["4.5"],
+    "CertaintyStatedShape":              ["4.5"],
+    "LimitationDisclosureShape":         ["4.5"],
+    "UniqueFinalHypothesisShape":        ["4.5"],
 }
 
 

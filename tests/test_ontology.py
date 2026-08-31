@@ -248,6 +248,41 @@ def test_conclusion_cannot_carry_a_category():
     """)
 
 
+# ── §4.5 확신도 ──────────────────────────────────────────────────────────
+def test_tied_hypotheses_cannot_be_probable():
+    """C-12 — 대등한 가설이 남아 있으면 개연이 아니라 가능이다 (§4.5.1.1(2)).
+    점수를 확률로 읽지 않고 '유일하게 앞서는가'만 본다."""
+    tie = """
+    efi:sT a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:h1 a efi:TrackingScenario ; efi:inSession efi:sT ; efi:supportScore 75 .
+    efi:h2 a efi:PoorContactScenario ; efi:inSession efi:sT ; efi:supportScore 75 .
+    efi:cT a efi:Conclusion ; efi:concludes efi:h1 ; efi:certaintyLevel efi:Probable .
+    """
+    assert "개연이 아니라 가능" in _msg(tie)
+    # 기각된 가설은 대등 경합으로 치지 않는다.
+    assert "개연이 아니라 가능" not in _msg(tie + "efi:h2 efi:verdict efi:Refuted .")
+
+
+def test_suspected_is_not_an_expert_opinion():
+    """C-13 — 의심 수준은 전문가 의견이 아니다 (§4.5.1.2)."""
+    assert "전문가 의견의 요건" in _msg("""
+    efi:hS a efi:TrackingScenario ; efi:supportScore 55 .
+    efi:cS a efi:Conclusion ; efi:concludes efi:hS ; efi:certaintyLevel efi:Suspected .
+    """)
+
+
+def test_unverifiable_fact_forces_limitation_disclosure():
+    """C-15 — 확인 불가 사실이 있으면 그 한계를 밝혀야 한다 (§4.5).
+    밝히지 않으면 그 사실이 없었던 것처럼 읽힌다."""
+    base = CASE_A + """
+    efi:hT efi:supportScore 75 .
+    efi:cU a efi:Conclusion ; efi:concludes efi:hT ; efi:certaintyLevel efi:Possible .
+    """
+    assert "한계를 명시" in _msg(base)
+    assert "한계를 명시" not in _msg(
+        base + 'efi:cU efi:statedLimitation "절연저항 계측 불가" .')
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent
