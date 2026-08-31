@@ -29,7 +29,8 @@ BASELINE = {
     # 의도적 거래이며, 그 빚이 여기 그대로 계상돼 있다. 루브릭 교체 시 한 번에 0 이 된다.
     "placeholder_delta_rules":  (24, 0),    # 자리표시자 점수(15/8/-25)를 쓰는 규칙 수
     "min_refuting_per_scenario": (1, 2),    # 시나리오당 반증 규칙 최소 개수
-    "unwired_data_properties":  (18, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
+    # 23 → 18 → 13. 남은 13개는 임계값·설계 결정이 있어야 풀린다(정의로 풀리는 것은 소진).
+    "unwired_data_properties":  (13, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
     "morphological_core_rules":  (1, 0),    # core 단서가 형태학적 특징인 규칙 수
 }
 # arc_sequence_rules 는 목표 도달(0 → 3) 후 test_ontology.py 로 이관했다.

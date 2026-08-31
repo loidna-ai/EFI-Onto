@@ -854,3 +854,45 @@ efi:PartialDisconnectionScenario efi:hasDeclaredMechanism efi:PartialDisconnecti
 efi:InsulationDegradationScenario efi:hasDeclaredMechanism efi:InsulationBreakdownArc .
 efi:TrackingScenario efi:hasDeclaredMechanism efi:ArcTracking , efi:LeakageCurrentHeating .
 efi:ExternalFlameScenario efi:hasDeclaredMechanism efi:ExternalFlameExposure .
+
+# ============================================================================
+# 11. 정의로 도출되는 사실 (D-1~D-3)
+#     임계값이 아니라 관계 비교다. 두 수치의 대소·동일 여부만으로 결정되므로
+#     감별 루브릭이 없어도 성립한다. OWL 은 두 데이터 속성을 비교하지 못하므로
+#     SHACL 로 쓴다.
+#     축을 넘지 않는다 — 물리 증거물에 대한 판정은 물리 증거물 쪽에만 남긴다.
+#     이 사실이 어느 선행 조건을 증언하는지는 루브릭 사항이며 여기서 정하지 않는다.
+# ============================================================================
+efi:loadExceedsRating a owl:DatatypeProperty ;
+    rdfs:domain efi:ElectricalArtifact ; rdfs:range xsd:boolean ;
+    rdfs:label "부하전류가 정격을 초과함"@ko ; skos:prefLabel "부하전류가 정격을 초과함"@ko ;
+    rdfs:comment "loadCurrent_A > ratedCurrent_A 에서 도출. 과부하 '상태'(선행 조건)로 곧장 등치하지 않는다 — 축이 다르다."@ko .
+
+# [D-1] 과부하 = 부하전류 > 정격전류
+efi:OverloadDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:ElectricalArtifact ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:loadExceedsRating true . }
+        WHERE {
+          $this efi:loadCurrent_A ?l ; efi:ratedCurrent_A ?r .
+          FILTER ( ?l > ?r )
+        }""" ] .
+
+# [D-2] 부분단선 = 파단 소선이 있으나 전부는 아니다.
+#  전부 파단인 경우는 여기서 판정하지 않는다 — '도체 전체 압착·절단'은 원인을 담은 이름이라
+#  소선 수만으로 단정할 수 없다.
+efi:StrandFractureDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:StrandedConductor ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:exhibits efi:StrandFracture . }
+        WHERE {
+          $this efi:strandCount ?n ; efi:fracturedStrandCount ?f .
+          FILTER ( ?f > 0 && ?f < ?n )
+        }""" ] .
+
+# [D-3] 아산화동 증식 = 접속부에서 아산화동이 확인됨
+efi:CuprousOxideDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:ConnectionPoint ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:exhibits efi:CuprousOxideGrowth . }
+        WHERE { $this efi:cuprousOxidePresent true }""" ] .
