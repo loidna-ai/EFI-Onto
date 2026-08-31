@@ -28,7 +28,7 @@ graph: | build-dir
 	$(PY) scripts/graph.py
 
 build-dir:
-	@mkdir -p build
+	@$(PY) -c "import os; os.makedirs('build', exist_ok=True)"
 
 clean:
 	rm -rf build/* .pytest_cache **/__pycache__

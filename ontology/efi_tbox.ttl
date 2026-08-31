@@ -114,6 +114,25 @@ efi:PrimaryArcMark           a owl:Class ; rdfs:subClassOf efi:ArcMeltMark ; sko
 efi:SecondaryArcMark         a owl:Class ; rdfs:subClassOf efi:ArcMeltMark ; skos:prefLabel "2차 단락흔(피해)"@ko ; skos:altLabel "Victim arc bead"@en .
 efi:FireMeltMark             a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "수열 용융흔(열흔)"@ko .
 efi:ArcBead                  a owl:Class ; rdfs:subClassOf efi:ArcMeltMark ; skos:prefLabel "아크 비드"@ko .
+
+# 트래킹 저항성이 낮은 절연물 = IEC 60112 재료군 III (IIIa 175≤CTI<400, IIIb 100≤CTI<175)
+# 군 경계 400 V 는 IEC 60112 표준값이다. 이 사실이 트래킹 가설에 갖는 가중치는 루브릭 사항이며 여기서 정하지 않는다.
+efi:LowTrackingResistanceInsulation a owl:Class ; rdfs:subClassOf efi:Insulation ;
+    rdfs:label "트래킹 저항성 낮은 절연물"@ko ; skos:prefLabel "트래킹 저항성 낮은 절연물"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:Insulation
+        [ a owl:Restriction ; owl:onProperty efi:comparativeTrackingIndex_V ;
+          owl:someValuesFrom [ a rdfs:Datatype ; owl:onDatatype xsd:decimal ;
+                               owl:withRestrictions ( [ xsd:maxExclusive "400"^^xsd:decimal ] ) ] ] ) ] ;
+    rdfs:comment "IEC 60112 재료군 III. CTI 는 재료가 트래킹 없이 견디는 최대 전압(V)이므로 값이 낮을수록 트래킹 저항성이 낮다."@ko .
+
+# 내용연수 초과 = 30년. 한전 내부규정 30년, 미국 케이블 30~40년, 일본 교체주기 권고 30년.
+efi:AgedElectricalArtifact a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ;
+    rdfs:label "내용연수 초과 증거물"@ko ; skos:prefLabel "내용연수 초과 증거물"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:ElectricalArtifact
+        [ a owl:Restriction ; owl:onProperty efi:serviceYears ;
+          owl:someValuesFrom [ a rdfs:Datatype ; owl:onDatatype xsd:decimal ;
+                               owl:withRestrictions ( [ xsd:minInclusive "30"^^xsd:decimal ] ) ] ] ) ] ;
+    rdfs:comment "물리 증거물의 속성이다. 선행 조건 AgedInsulation 과 축이 다르므로 직접 등가로 두지 않는다."@ko .
 efi:LargeMeltMark            a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "대형 용융흔"@ko .
 efi:SmallMeltBallOnStrandEnd a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "소선 끝단 소형 용융구"@ko .
 efi:GeneralMelting           a owl:Class ; rdfs:subClassOf efi:FireMeltMark ; skos:prefLabel "전반 용융"@ko .
@@ -137,7 +156,9 @@ efi:BurnCenterOnSurface      a owl:Class ; rdfs:subClassOf efi:DamagePattern ; s
 # --- 현장 증거 (비증거물 사실; 조사관 확인 대상) ---
 efi:SceneEvidence            a owl:Class ; rdfs:subClassOf obo:IAO_0000030 , prov:Entity ; skos:prefLabel "현장 사실"@ko .
 efi:BreakerTripRecord        a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "차단기 트립 이력"@ko .
-efi:ImmediateTripAfterExternalForce a owl:Class ; rdfs:subClassOf efi:BreakerTripRecord ; skos:prefLabel "외력 직후 즉시 트립·아크"@ko .
+efi:ImmediateTripAfterExternalForce a owl:Class ; rdfs:subClassOf efi:BreakerTripRecord ,
+    [ a owl:Restriction ; owl:onProperty efi:breakerTripped ; owl:hasValue true ] ;
+    skos:prefLabel "외력 직후 즉시 트립·아크"@ko .
 efi:NoTripDespiteExternalForce a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "외력 흔적 있으나 트립 이력 없음"@ko ; rdfs:comment "복합 사실 = ExternalForceTrace(확인) ∧ BreakerTripRecord(부정 확인)"@ko .
 efi:ExternalForceTrace       a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "외력 흔적"@ko .
 efi:MoistureTrace            a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "누수·결로 흔적"@ko .
@@ -152,8 +173,13 @@ efi:FlexingHistoryWithStrandFracture a owl:Class ; rdfs:subClassOf efi:SceneEvid
 # 3. 축 ③  선행 조건 (AntecedentCondition)
 # ============================================================================
 efi:ElectricalState        a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "전기적 상태"@ko .
-efi:EnergizedState         a owl:Class ; rdfs:subClassOf efi:ElectricalState ; skos:prefLabel "통전"@ko .
-efi:DeEnergizedState       a owl:Class ; rdfs:subClassOf efi:ElectricalState ; skos:prefLabel "비통전"@ko ; rdfs:comment "확인 시 모든 전기적 시나리오를 기각 수준으로 조정 (논문 3.2절)"@ko .
+efi:EnergizedState         a owl:Class ; rdfs:subClassOf efi:ElectricalState ; skos:prefLabel "통전"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:ElectricalState
+        [ a owl:Restriction ; owl:onProperty efi:isEnergized ; owl:hasValue true ] ) ] .
+efi:DeEnergizedState       a owl:Class ; rdfs:subClassOf efi:ElectricalState ; skos:prefLabel "비통전"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:ElectricalState
+        [ a owl:Restriction ; owl:onProperty efi:isEnergized ; owl:hasValue false ] ) ] ;
+    rdfs:comment "확인 시 모든 전기적 시나리오를 기각 수준으로 조정 (논문 3.2절)"@ko .
 efi:OverloadState          a owl:Class ; rdfs:subClassOf efi:ElectricalState ; skos:prefLabel "과부하 상태"@ko .
 
 efi:ConnectionCondition    a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "접속 상태"@ko .
@@ -325,7 +351,8 @@ efi:requiresStatus a owl:ObjectProperty , owl:FunctionalProperty ; rdfs:domain e
 # ============================================================================
 efi:resultValue          a owl:DatatypeProperty ; rdfs:subPropertyOf sosa:hasSimpleResult ; rdfs:range xsd:decimal .
 efi:measuredPreFire      a owl:DatatypeProperty ; rdfs:domain efi:Observation ; rdfs:range xsd:boolean ; skos:prefLabel "발화 전 계측 여부"@ko .
-efi:insulationResistance_MOhm a owl:DatatypeProperty ; rdfs:domain efi:Insulation ; rdfs:range xsd:decimal ; qudt:unit unit:MegaOHM .
+efi:insulationResistance_MOhm a owl:DatatypeProperty ; rdfs:domain efi:Insulation ; rdfs:range xsd:decimal ; qudt:unit unit:MegaOHM ;
+    rdfs:comment "중복 경로. 절연저항은 InsulationResistanceObservation + resultValue 로 이미 모형화돼 있고 NormalInsulationResistance 가 그 경로를 쓴다(KEC 132: 500 V 이하 1.0 MΩ). 이 속성을 살릴지 지울지 결정 필요."@ko .
 efi:comparativeTrackingIndex_V a owl:DatatypeProperty ; rdfs:domain efi:Insulation ; rdfs:range xsd:decimal ; skos:prefLabel "CTI (IEC 60112)"@ko .
 efi:serviceYears         a owl:DatatypeProperty ; rdfs:domain efi:ElectricalArtifact ; rdfs:range xsd:decimal .
 efi:conductorCrossSection_mm2 a owl:DatatypeProperty ; rdfs:domain efi:Conductor ; rdfs:range xsd:decimal .
@@ -334,7 +361,8 @@ efi:fracturedStrandCount a owl:DatatypeProperty ; rdfs:domain efi:StrandedConduc
 efi:ratedCurrent_A       a owl:DatatypeProperty ; rdfs:domain efi:ElectricalArtifact ; rdfs:range xsd:decimal ; qudt:unit unit:A .
 efi:loadCurrent_A        a owl:DatatypeProperty ; rdfs:domain efi:ElectricalArtifact ; rdfs:range xsd:decimal ; qudt:unit unit:A .
 efi:beadDiameter_mm      a owl:DatatypeProperty ; rdfs:domain efi:ArcMeltMark ; rdfs:range xsd:decimal ; qudt:unit unit:MilliM .
-efi:voidFraction         a owl:DatatypeProperty ; rdfs:domain efi:ArcMeltMark ; rdfs:range xsd:decimal ; skos:prefLabel "기공률(0~1)"@ko .
+efi:voidFraction         a owl:DatatypeProperty ; rdfs:domain efi:ArcMeltMark ; rdfs:range xsd:decimal ; skos:prefLabel "기공률(0~1)"@ko ;
+    rdfs:comment "1차/2차 단락흔을 가르는 기공률 임계값은 확립된 표준이 없다. 국내 선행연구도 단일 임계가 아니라 EBSD 조직인자 + 기계학습으로 판별한다. 임계값을 지어내 넣지 말 것. 판정은 F-2(시간 선후)로 하고 이 값은 보강 근거로만 쓴다."@ko .
 efi:hasSharpMeltBoundary a owl:DatatypeProperty ; rdfs:domain efi:MeltMark ; rdfs:range xsd:boolean .
 efi:heatAffectedZoneWidth_mm a owl:DatatypeProperty ; rdfs:domain efi:MeltMark ; rdfs:range xsd:decimal .
 efi:fineDendriticGrain   a owl:DatatypeProperty ; rdfs:domain efi:ArcMeltMark ; rdfs:range xsd:boolean ; skos:prefLabel "미세 수지상 결정립(EBSD·금속조직)"@ko .
@@ -362,6 +390,21 @@ efi:ignitionCompetenceGap a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScena
 # ============================================================================
 efi:R_ANY_DeEnergized a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:DeEnergizedState ;
     efi:hasRole efi:DecisiveRefuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -100 ; rdfs:comment "비통전 확인 → 전기적 가설 전부 기각"@ko .
+
+# 아크흔 선후 판정 (F-2). 형태가 아니라 ArcEvent time:before FireExposureEvent 로 가른 결과를 소비한다.
+# 2차 단락흔이면 그 아크는 화재 이후 형성된 것이므로 전기적 발화의 근거가 될 수 없다.
+# 가감점은 잠정값이다 — 다른 규칙과 동일하게 루브릭 교체 대상이며 완성도 래칫이 세고 있다.
+efi:R_ANY_PrimaryArc a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:PrimaryArcMark ;
+    efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 ;
+    rdfs:comment "아크가 화염 도달보다 앞섬 → 전기적 발화 가설 보강"@ko .
+
+efi:R_ANY_SecondaryArc a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:SecondaryArcMark ;
+    efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -25 ;
+    rdfs:comment "아크가 화염 도달보다 뒤짐 → 이 아크흔은 발화원 근거가 못 된다"@ko .
+
+efi:R_EF_sup3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:SecondaryArcMark ;
+    efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 ;
+    rdfs:comment "외부 화염이 먼저 도달했다는 것과 정합"@ko .
 
 efi:R_PC_core  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LooseConnection ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PC_sup1  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LongTermTerminalHeating ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 .
@@ -676,6 +719,14 @@ efi:MorphologicalAmbiguityRuleShape a sh:NodeShape ; sh:targetSubjectsOf efi:can
               $this efi:canManifest ?d . ?o efi:canManifest ?d . FILTER($this != ?o) }
             GROUP BY $this ?o }
           FILTER(?n >= 2)
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
+        sh:construct """
+        CONSTRUCT { $this efi:sharedMorphologyCount ?n . }
+        WHERE {
+          { SELECT $this (COUNT(DISTINCT ?d) AS ?n) WHERE {
+              $this efi:canManifest ?d . ?o efi:canManifest ?d . FILTER($this != ?o) }
+            GROUP BY $this }
         }""" ] .
 
 # [C-5] 공유 형태만으로는 확정할 수 없다 (논문 4.2절의 구조적 혼동을 제약으로 고정)

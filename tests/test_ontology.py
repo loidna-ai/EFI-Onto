@@ -70,6 +70,15 @@ def test_known_confusion_pairs_derived(inferred, a, b):
     assert tuple(sorted([a, b])) in pairs
 
 
+# ── F-2: 아크흔 선후 판정이 규칙 층까지 도달하는가 ───────────────────────
+def test_arc_mark_sequence_reaches_rules(g):
+    """1·2차 단락흔은 형태가 아니라 시간 선후로 가른다(F-2). 그 판정을 소비하는
+    지표 규칙이 없으면 원칙이 SHACL 안에 갇혀 판정에 영향을 주지 못한다."""
+    from rdflib import RDF
+    used = {q(g.value(r, EFI.indicates)) for r in g.subjects(RDF.type, EFI.IndicatorRule)}
+    assert used & {"PrimaryArcMark", "SecondaryArcMark"}, "아크흔 선후를 쓰는 규칙이 없다"
+
+
 # ── 논문 Table 10 사례 A ─────────────────────────────────────────────────
 CASE_A = """
 efi:sesA a efi:InvestigationSession ; efi:queryCount 2 .
