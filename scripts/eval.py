@@ -139,6 +139,21 @@ def main():
     for k, v in pair.most_common(8):
         print(f"   {v:3d}건  {k}")
 
+    # 동점이 왜 생기는지는 여기서 보인다. 한 사례가 여러 요인의 핵심 단서를
+    # 함께 적고 있으면 점수로 갈리지 않는다. 대각선이 아닌 칸이 그 겹침이다.
+    core = {r.scenario: r.indicator for r in onto.rules if r.role.value == "Core"}
+    lab = [a for a in labels if a in core]
+    print("\n핵심 단서 교차표  (행=실제, 열=그 요인의 핵심 단서를 적은 사례 수)")
+    print(f"{'':10s}" + "".join(f"{KO[b][:6]:>7s}" for b in lab))
+    for a in lab:
+        row = ""
+        for b in lab:
+            n = sum(1 for s in sessions if s["actual_scenario"] == a
+                    and any(onto.matches(f["cls"], core[b]) and f["status"] == "Confirmed"
+                            for f in s["facts"]))
+            row += f"{n:7d}"
+        print(f"{KO[a]:10s}{row}")
+
 
 if __name__ == "__main__":
     main()
