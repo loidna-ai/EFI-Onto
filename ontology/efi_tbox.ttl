@@ -3077,3 +3077,61 @@ efi:LusterAbsenceShape dcterms:references
 #    경로를 확인한다" (실무Ⅰ p.343)
 # D-5 가 최하류 지점을 표시한다. 그 표시가 무엇을 뜻하는지를 여기서 적는다.
 efi:furthestDownstream rdfs:comment "회로에서 가장 부하측에 가까운 아크 지점. 그 지점이 발화개소측이다 — 상류에서 단락이 먼저 일어났다면 보호장치가 동작해 하류에는 아크가 남지 않는다 (실무Ⅰ p.343, §9.13.2.1)"@ko .
+
+########################################################################
+# 46. 불완전 접촉 발열의 세 갈래 — 화재조사실무Ⅴ (2025) p.236
+#
+#   "전기적인 발열에 속한 현상 중의 하나인 불완전 접촉에 의한 발열은 통류
+#    면적의 감소, 간헐적인 접촉과 분리, 아산화동 증식 등 다양한 원인으로
+#    구분될 수 있을 것이며, 전기적인 원인에 의한 발화원으로서 대단히 높은
+#    점유율을 차지하고 있다."
+#
+# 우리는 셋 중 아산화동만 갖고 있었다(GlowingConnection).
+########################################################################
+
+efi:ReducedContactArea a owl:Class ; rdfs:subClassOf efi:PoorContactHeating ;
+    rdfs:label "통류 면적 감소 발열"@ko ; skos:prefLabel "통류 면적 감소 발열"@ko ;
+    rdfs:comment "접촉면이 줄어 전류가 좁은 단면을 지나며 발열한다. 도체에서 같은 일이 일어나면 반단선이고 접속부에서 일어나면 접촉불량이다 (실무Ⅴ p.236)"@ko .
+efi:IntermittentContactSeparation a owl:Class ; rdfs:subClassOf efi:PoorContactHeating ;
+    rdfs:label "간헐 접촉·분리 발열"@ko ; skos:prefLabel "간헐 접촉·분리 발열"@ko ;
+    rdfs:comment "접촉과 분리가 되풀이되며 그때마다 아크가 생긴다. 거주자가 목격하는 깜박임의 정체이기도 하다 (실무Ⅴ p.236)"@ko .
+efi:PoorContactScenario efi:hasDeclaredMechanism efi:ReducedContactArea , efi:IntermittentContactSeparation .
+efi:LooseConnection efi:enables efi:ReducedContactArea , efi:IntermittentContactSeparation .
+efi:InsufficientContactPressure efi:enables efi:ReducedContactArea .
+efi:Vibration efi:enables efi:IntermittentContactSeparation .
+efi:ReducedContactArea efi:producesDamage efi:LocalizedDiscoloration , efi:LongTermTerminalHeating , efi:CarbonizationFromInsideOut , efi:LocalizedHeatWithSurroundingDamage .
+efi:IntermittentContactSeparation efi:producesDamage efi:ArcBead , efi:ArcMeltMark , efi:LocalizedHeatWithSurroundingDamage .
+efi:ReducedContactArea efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel .
+efi:IntermittentContactSeparation efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel .
+efi:IntermittentContactSeparation efi:enablesProgressionTo efi:GlowingConnection .
+efi:FlickeringOrOdor efi:enables efi:IntermittentContactSeparation .
+
+# ── 46.1 접점 융착 — 의도치 않은 통전을 만든다 (실무Ⅴ p.238)
+#   "동작전류가 큰 기구의 릴레이 접점은 접촉 분리 시 발생한 아크에 의해 접점이
+#    변형 융착되어 오동작을 일으킬 수 있다." 조사 대상 차량은 시동시에만 전원이
+#    인가되어야 할 예열선에 릴레이 접점 융착으로 상시 전원이 공급됐다.
+efi:ContactWelding a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "접점 융착"@ko ; skos:prefLabel "접점 융착"@ko ;
+    rdfs:comment "접촉·분리 시의 아크로 접점이 변형·융착된 상태. 끊겨야 할 회로가 계속 통전되어 의도치 않은 발열로 이어진다 (실무Ⅴ p.238, 실무Ⅳ p.211)"@ko .
+efi:ProtectiveDevice efi:exhibits efi:ContactWelding .
+efi:ConnectionPoint efi:exhibits efi:ContactWelding .
+efi:IntermittentContactSeparation efi:producesDamage efi:ContactWelding .
+efi:PoorContactScenario efi:canManifest efi:ContactWelding .
+efi:R_PC_sup8  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:ContactWelding ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+
+# ── 46.2 [C-56] 연소 중심과 이격된 단락흔은 발화원으로 삼지 않는다 (실무Ⅴ p.232)
+#   "엔진 상단에 배선된 일부 전선에서 단락흔이 식별되나, 이는 연소 중심과
+#    이격된 상태로서 발화원으로 작용되었을 가능성보다는 연소 확대되는 과정에서
+#    절연피복이 소실되면서 단락흔이 발생되었을 가능성이 있다."
+efi:ArcMarkAwayFromOriginShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Violation ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "연소 중심과 이격된 단락흔을 발화원 근거로 삼았다. 연소가 번지며 피복이 소실돼 생긴 2차 단락흔일 수 있다 (§9.10.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?h .
+          ?h efi:supportedBy ?f .
+          ?f rdf:type/rdfs:subClassOf* efi:ArcMeltMark ; efi:atOriginArea false .
+        }""" ] .
+efi:ArcMarkAwayFromOriginShape dcterms:references
+    "NFPA 921 (2024) §9.10.1 — 화재로 연화된 피복이 단락 파팅 아크를 만든다. 국내 실무 교재가 차량 사례로 같은 판단을 보인다(실무Ⅴ p.232)"@ko .

@@ -96,6 +96,7 @@ VERDICTS = {
     "PostFireMechanicalDamage":    (FIRE, "실무Ⅳ p.318 진화·도괴·수습·조사관 절단으로 생긴다. 정의상 화재 이후의 것이다"),
     "CarbonizationFromInsideOut":  (ELEC, "실무Ⅳ p.312 도체가 발열하면 피복을 안쪽부터 태운다. §9.10.1 밖에서 온 화염은 반대 방향으로 태우므로 이 방향을 만들지 못한다"),
     "UniformDamageAlongConductor": (FIRE, "실무Ⅳ p.312 과전류는 도체 전 길이를 고르게 가열한다. 그러나 전선 전체가 화염에 잠겨도 같은 균일 손상이 나온다"),
+    "ContactWelding":              (ELEC, "실무Ⅴ p.238 접촉·분리 시의 아크가 접점을 융착시킨다. 화재열은 접점을 녹일 수는 있어도 개폐 아크가 만드는 변형·융착 형태를 만들지 않는다"),
     "ToothMarkOnInsulation":       (ELEC, "실무Ⅳ p.253 설치류의 이빨 자국은 화재가 만들 수 있는 형태가 아니다. 잔존 피복에 남는다"),
     "RubyRedCrystal":              (ELEC, "실무Ⅳ p.153 적색 결정은 출화개소에 대응하는 접촉부에서 나온다. 상위 CuprousOxideGrowth 와 같이 §9.10.3 발광 접속부 산물"),
     "PrimaryArcMark":              (ELEC, "정의상 화재 이전 형성"),
