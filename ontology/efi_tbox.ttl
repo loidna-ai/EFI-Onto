@@ -3051,16 +3051,23 @@ efi:FireMeltMark efi:attests efi:DeEnergizedState .
 # §40.2 에서 '1차는 광택이 있는 것이 많다'를 넣었다. 그 역은 성립하지 않는다.
 # 부재를 근거로 기각하면 P4('확인 불가'와 '부정 확인'의 구분)와 별개로,
 # 화재열이 지운 것을 없었던 것으로 읽는 오류가 된다.
+efi:tendencyOnly a owl:AnnotationProperty ;
+    rdfs:label "경향 진술로만 성립"@ko ; skos:prefLabel "경향 진술로만 성립"@ko ;
+    rdfs:comment "'~인 것이 많다'로 적힌 양상. 있으면 보강이 되지만 없다고 반대를 뜻하지는 않는다. 그 역을 쓰면 화재열이 지운 것을 없었던 것으로 읽게 된다"@ko .
+efi:HemisphericalMeltShape efi:tendencyOnly true .
+efi:SmoothLustrousMeltSurface efi:tendencyOnly true .
+efi:ForeignMatterInclusion efi:tendencyOnly true .
+
 efi:LusterAbsenceShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
     sh:severity sh:Violation ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
-        sh:message "광택·평활이 없다는 것으로 1차 단락흔을 배제했다. 연소열로 가열되면 그 특징은 사라진다 — 없음이 곧 아님이 아니다 (§9.10.3.1)"@ko ;
+        sh:message "경향 진술로만 성립하는 양상의 부재를 반증 근거로 삼았다. '~인 것이 많다'의 역은 성립하지 않으며, 연소열로 가열되면 그 특징은 사라진다 (§9.10.3.1)"@ko ;
         sh:select """
         SELECT $this WHERE {
           $this efi:concludes ?h .
           ?h efi:refutedBy ?f .
-          ?f rdf:type/rdfs:subClassOf* efi:SmoothLustrousMeltSurface ;
-             efi:confirmationStatus efi:ConfirmedAbsent .
+          ?f efi:confirmationStatus efi:ConfirmedAbsent .
+          ?f a ?cls . ?cls efi:tendencyOnly true .
         }""" ] .
 efi:LusterAbsenceShape dcterms:references
     "NFPA 921 (2024) §9.10.3.1 — 화재 노출만으로도 금속 표면이 변한다. 국내 실무 교재도 같은 단서를 단다(실무Ⅰ 표 4-9 '단락흔은 연소열로 가열되면 이 특징이 없어지는 경우가 있다')"@ko .
