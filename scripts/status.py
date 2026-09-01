@@ -46,8 +46,11 @@ def main():
     sys.path.insert(0, str(ROOT / "tests"))
     import test_completeness as tc
     print("\n── 완성도 래칫 " + "─" * 45)
-    for key, (limit, target) in tc.BASELINE.items():
-        print(f"  {key:32s} {limit:>3d} → 목표 {target}")
+    if tc.BASELINE:
+        for key, (limit, target) in tc.BASELINE.items():
+            print(f"  {key:32s} {limit:>3d} → 목표 {target}")
+    else:
+        print("  남은 항목 없음. 세던 미완성 8개가 전부 불변식으로 옮겨졌다")
 
     base = ROOT / "cases" / "baseline.json"
     if base.exists():
