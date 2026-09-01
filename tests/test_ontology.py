@@ -753,6 +753,22 @@ def test_each_indicator_rule_says_one_thing(g):
     assert not bad, f"규칙이 여러 값을 갖는다(id 중복 의심): {bad}"
 
 
+def test_vocabulary_is_wired(g):
+    """선언만 하고 사슬에 붙이지 않은 어휘가 없어야 한다.
+
+    ArcMapPoint 가 그랬고 downstreamIndex 가 그랬고 outcomeUndetermined 가
+    그랬다. 어휘만 있고 절차가 없으면 확인해도 판정에 기여하지 못한다.
+    23 → 0 으로 닫고 래칫에서 이관했다.
+
+    범위 밖으로 결정한 것(확장 슬롯 셋)과 붙일 근거가 원문에 없다고 확인한 것
+    (계측 속성 열)은 lint 가 따로 관리한다. 결정을 미완성으로 세면 결정이 지워진다.
+    """
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import lint
+    bad = lint.problems(g)
+    assert not bad, f"사슬에 붙지 않은 어휘: {[(t_, i) for t_, i, _ in bad]}"
+
+
 def test_constraint_numbers_are_unique(g):
     """C-번호를 두 번 쓰지 않는다.
 

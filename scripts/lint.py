@@ -60,6 +60,23 @@ def _linked(g, name, pairs, side):
     return any((a if side == 0 else b) in fam for a, b in pairs)
 
 
+# 붙일 근거가 원문에 없다고 확인된 계측 속성. 임계값을 지어내 넣지 않는다.
+# 확장 슬롯과 같이 결정이 끝났으므로 미완성 수에서 빼고 목록만 보여 준다.
+# 근거가 생기면 여기서 빼고 사슬에 붙인다.
+NO_CRITERION = {
+    "beadDiameter_mm":        "비드 지름과 온도의 대응이 원문에 없다 (실무Ⅳ p.307 은 '추정할 수 있다'까지만)",
+    "carbonizationDepth_mm":  "탄화 심도는 연소강약·발화개소 판정에 쓰이며 그 절차는 범위 밖이다",
+    "conductorCrossSection_mm2": "반단선 판정은 소선 수로 한다 (D-11). 단면적을 쓰는 기준이 원문에 없다",
+    "fineDendriticGrain":     "1차가 미세 공정조직이라는 것은 상대 비교이며 임계가 없다. 원문도 단독 단정을 금한다 (실무Ⅳ p.310)",
+    "heatAffectedZoneWidth_mm": "열영향부 폭의 판정 기준이 원문에 없다",
+    "minimumIgnitionEnergy_mJ": "견줄 아크 에너지 속성이 없다. F-3 은 온도로 착화 역량을 본다",
+    "moistureExposureWithin_h": "은이행 조건은 '고온·다습'까지만이고 숫자가 없다",
+    "relativeHumidity_pct":   "같은 이유로 숫자 기준이 없다",
+    "tripDelayFromEvent_s":   "'외력 직후 즉시'의 시간 정의가 원문에 없다",
+    "voidFraction":           "1차/2차를 가르는 기공률 임계는 확립된 표준이 없다 (선행연구도 EBSD+기계학습으로 판별)",
+}
+
+
 def checks(g):
     """(제목, 항목 목록, 설명) 의 목록."""
     out = []
@@ -138,8 +155,12 @@ def checks(g):
                          for l in lines)
     out.append(("선언만 되고 안 쓰이는 객체 속성",
                 sorted(p for p in _named(g, OWL.ObjectProperty) if not used(p)), ""))
+    unwired_dp = sorted(p for p in _named(g, OWL.DatatypeProperty) if not used(p))
     out.append(("선언만 되고 안 쓰이는 데이터 속성",
-                sorted(p for p in _named(g, OWL.DatatypeProperty) if not used(p)), ""))
+                [p for p in unwired_dp if p not in NO_CRITERION], ""))
+    print_only.append(("계측 속성 — 붙일 근거가 없는 것으로 결정됨",
+                       [p for p in unwired_dp if p in NO_CRITERION],
+                       "임계값이나 견줄 짝이 원문에 없다. 지어내지 않는다"))
 
     # 이름이 겹치는 클래스 (라벨 중복)
     lab = collections.defaultdict(list)

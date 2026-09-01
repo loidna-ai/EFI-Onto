@@ -21,21 +21,12 @@ SCENARIOS = ["PoorContactScenario", "CrushDamageScenario", "PartialDisconnection
              "InsulationDegradationScenario", "TrackingScenario", "ExternalFlameScenario"]
 
 # 왼쪽이 현재 허용 한계, 오른쪽이 도달 목표.
-BASELINE = {
-    # 23 → 18 → 13 → 12 → 11. 남은 11개는 임계값·설계 결정이 있어야 풀린다.
-    # 절연저항은 국내 실무 교재 표 2-22 가 기준을 주어 D-9 로 붙였다. 숫자는
-    # 규칙에 박지 않고 요구값 속성으로 분리했다 — D-1 과 같은 관계 비교다.
-    # 남은 것 중 5개는 임계값이 존재하지 않는 것이 확인됐다(기공률·결정립 등).
-    # 목표 0 은 도달하지 못할 수 있다 — 확인되면 그때 목표를 고친다.
-    "unwired_data_properties":  (10, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
-    # 사슬에 붙지 않은 어휘. 선언만 하고 쓰지 않으면 판정에 기여하지 못한다.
-    # 확장 슬롯 3건과 미사용 속성 15건. scripts/lint.py 참조.
-    "dangling_vocabulary": (10, 0),
-
-}
+BASELINE = {}
+# 비었다 — 세던 미완성이 전부 닫혔다. 새 항목이 생기면 여기 적는다.
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
 #           morphological_core_rules(1→0), unreviewed_fire_producibility(8→0),
-#           unreviewed_cause_exclusivity(11→0), min_refuting_per_scenario(1→2).
+#           unreviewed_cause_exclusivity(11→0), min_refuting_per_scenario(1→2),
+#           unwired_data_properties(23→0), dangling_vocabulary(23→0).
 #           모두 test_ontology.py 의 불변식이 됐다.
 
 
@@ -88,6 +79,11 @@ def unwired_data_properties(g):
                    for l in lines)
         if not used:
             out.append(p)
+    # 붙일 근거가 원문에 없다고 확인된 것은 lint 가 따로 관리한다. 임계값을
+    # 지어내 넣지 않기로 한 결정이며 그것을 미완성으로 세면 결정이 지워진다.
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import lint
+    out = [x for x in out if x not in lint.NO_CRITERION]
     return out
 
 
@@ -104,19 +100,6 @@ def _ratchet(key, now, better_is_lower=True):
     worse = now > limit if better_is_lower else now < limit
     assert not worse, f"{key} 가 나빠졌다 ({limit} → {now}). 목표 {target}"
     warnings.warn(f"[잔여] {key}: {now} (목표 {target})")
-
-
-def test_vocabulary_is_wired(g):
-    """선언만 하고 사슬에 붙이지 않은 어휘가 남아 있다. ArcMapPoint 가 그랬고
-    downstreamIndex 가 그랬다 — 어휘만 있고 절차가 없으면 판정에 기여하지 못한다."""
-    _ratchet("dangling_vocabulary", len(dangling_vocabulary(g)))
-
-
-def test_data_properties_are_wired(g):
-    """A-3 측정값을 담을 그릇만 있고 판정에 쓰이지 않는다.
-    공극률·결정립을 '보강 근거로 쓴다'고 했으나 어떤 규칙에도 붙어 있지 않다."""
-    un = unwired_data_properties(g)
-    _ratchet("unwired_data_properties", len(un))
 
 
 if __name__ == "__main__":
