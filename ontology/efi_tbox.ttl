@@ -2182,3 +2182,24 @@ efi:ReportTargetShape a sh:NodeShape ; sh:targetClass efi:InvestigationReport ;
     dcterms:references "NFPA 921 (2024) §4.7 Reporting Procedure" ;
     sh:property [ sh:path efi:reportsConclusion ; sh:minCount 1 ;
         sh:message "보고가 어느 감별 의견을 담은 것인지 가리켜야 한다 (§4.7)"@ko ] .
+
+# ============================================================================
+# 30. 발화 전 아크·불꽃 목격
+#     사례 실측에서 드러난 빈 곳이다. PreFireAnomaly 아래에 조명 깜박임·누전차단기
+#     동작·온도 이상은 있었으나 '배선에서 불꽃을 봤다'가 없었다.
+#
+#     축은 현장 사실이다. 선행 조건이 아니라 관측이며, 통전 사실을 증언한다.
+#     발화 전 아크를 목격했다면 그 시점에 회로가 살아 있었다는 뜻이다.
+# ============================================================================
+efi:PreFireArcObservation a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "발화 전 아크·불꽃 목격"@ko ; skos:prefLabel "발화 전 아크·불꽃 목격"@ko ;
+    skos:altLabel "스파크 목격"@ko , "불꽃 발생 목격"@ko ;
+    rdfs:comment "발화 이전 배선·기기에서 아크나 불꽃이 관찰·기록된 사실. 목격 진술과 영상 기록을 포함한다"@ko .
+efi:PreFireArcObservation efi:attests efi:EnergizedState .
+
+# 발화 전에 배선에서 아크가 있었다면 불이 밖에서 온 것이 아니다.
+# 출처는 구조 유도다 — 외부화염 가설과 양립하지 않는다. NFPA 조항을 붙이지 않는다.
+efi:R_EF_ref2 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ;
+    efi:indicates efi:PreFireArcObservation ;
+    efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 ;
+    rdfs:comment "발화 전 배선 아크 목격 → 외부에서 옮겨붙은 화염이라는 가설과 양립하지 않는다"@ko .

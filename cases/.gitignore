@@ -9,3 +9,5 @@ abox/*
 # 관찰만 떼어낸 텍스트도 원본에서 재생성된다. 사건 정보가 남아 있으므로 제외.
 observed/*
 manifest.json
+sessions.json
+sessions/
