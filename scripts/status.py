@@ -39,6 +39,14 @@ def main():
 
     import audit
     un = audit.unreviewed(g)
+    import domestic
+    dn, dins = domestic.counts()
+    print("\n── 국내 공식 분류 (실무Ⅳ 표 2-1) 이식률 " + "─" * 21)
+    print(f"  갈래 {len(domestic.BRANCHES)}개 중 범위 내 {dins}개")
+    print(f"  구현 {dn[domestic.DONE]}  일부 {dn[domestic.PART]}  "
+          f"없음 {dn[domestic.NONE]}  범위밖 {dn[domestic.OUT]}")
+    print(f"  이식률 {dn[domestic.DONE]}/{dins} = {dn[domestic.DONE] / dins * 100:.0f}%")
+
     print("\n── 형태 발현 편향 점검 " + "─" * 38)
     print(f"  손상 양상 {len(dp)}개(직속) / 판정 {len(audit.VERDICTS)}건 / 미검토 {len(un)}건")
     print(f"  판정과 선언의 불일치 {len(audit.inconsistent(g))}건")
