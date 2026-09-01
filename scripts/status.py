@@ -50,7 +50,7 @@ def main():
         print(f"  {key:32s} {limit:>3d} → 목표 {target}")
 
     print("\n── 검증되지 않은 것 " + "─" * 41)
-    print("  가감점이 사례로 보정되지 않았다 (ABox 0건)")
+    print("  가감점은 검증만 했다. 보정하지 않았다 — make calibrate")
     print("  DL 일관성(V1)은 통과 — make reason")
     print("  조사관 검토표 회수 전")
 
