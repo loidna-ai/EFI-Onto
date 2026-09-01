@@ -435,20 +435,28 @@ efi:R_CD_sup1  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; e
 efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_CD_ref   a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:NoTripDespiteExternalForce ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
 
-efi:R_PD_core  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RepeatedFlexing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+# 반단선의 핵심 단서를 반복 굴곡에서 인장으로 옮긴다.
+#
+# p.149 는 반단선이 생기는 외력으로 '꺾어지고 구부리거나 끌어당기는' 셋을
+# 나란히 든다. 그런데 표 2-1 의 단락 항목에는 바닥 깔림·접힘·굽혀짐·스테이플만
+# 있고 인장이 없다. 굽힘은 소선을 끊기도 하고 피복을 상해 양극을 닿게도 하지만,
+# 끌어당김은 소선을 끊을 뿐 피복을 벗기지 않는다. 그래서 인장만 반단선 전용이다.
+#
+# 반복 굴곡은 보강으로 내렸다. 원문이 두 자리에 적은 것을 한 자리로 읽지 않는다.
+efi:R_PD_core  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:Tension ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_PD_sup8  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RepeatedFlexing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_PD_sup1  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:SmallMeltBallOnStrandEnd ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_PD_sup2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureAtStressPoint ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
-efi:R_PD_sup4  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:Tension ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PD_ref   a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:WholeConductorCrushedOrCut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
 efi:R_ID_core  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_ID_sup2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ReducedInsulationResistance ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_ID_sup3  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationEmbrittlement ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:FlexingHistoryWithStrandFracture ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
+efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:FlexingHistoryWithStrandFracture ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -18 .
 
 efi:R_TR_core  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_TR_sup1  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:CarbonizedConductivePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_TR_sup2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:IntermittentRcdTripping ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_TR_sup2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:IntermittentRcdTripping ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_TR_ref   a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:NormalInsulationResistance ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
 
 efi:R_EF_core  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:NoArcOrSpatter ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
@@ -2468,3 +2476,35 @@ efi:CoveredByFloorCovering a owl:Class ; rdfs:subClassOf efi:HeatDissipationImpa
 # ── 34.6 지표 규칙 — 국내 실무 층이므로 조항을 붙이지 않는다
 efi:R_CD_sup4  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+
+########################################################################
+# 35. 원인 축 편향 교정 — scripts/cause_audit.py 가 잡은 다섯 건
+#
+# 형태 축에서 '화재도 이 흔적을 내는가'를 물어 여섯 건을 고쳤듯, 원인 축에서
+# '정말 그 요인에서만 일어나는가'를 물어 다섯 건을 고친다. 사슬이 넓어지면
+# 변별력은 떨어지지만 그것이 정확한 값이다.
+########################################################################
+
+# 먼지·습기는 트래킹 전용이 아니다.
+#   "모터코일은 장기간 사용하면 절연열화의 가능성이 있다. 먼지나 습기 등에 의해
+#    절연열화로 이어지는 경우와 변색 및 팽창, 냄새 등..." (실무Ⅳ p.245)
+#   "먼지 또는 분진 등이 누적되어 통풍, 냉각 저해로 발열되어 권선에서 발화" (p.246)
+efi:MoistureExposure efi:enables efi:InsulationBreakdownArc .
+efi:DustAccumulation efi:enables efi:InsulationBreakdownArc .
+
+# 조명 깜박임·이취는 접촉불량 전용이 아니다.
+#   "반단선에 의한 발열이 발생하면 ... 접촉·단속을 반복하여 용융흔이 생기고" (p.149)
+# 접촉·단속의 반복은 곧 거주자가 목격하는 깜박임이다.
+efi:FlickeringOrOdor efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
+
+# 누전차단기 간헐 동작은 누설전류가 있으면 일어난다. 트래킹만의 것이 아니다.
+#   "전선 또는 전기기계기구의 절연부분이 기계적 손상이나 변질(열화·노화·탄화)되어
+#    그 절연효력을 상실하게 되면 ... 대지로 누설되는 현상을 누전이라 한다" (p.155)
+efi:IntermittentRcdTripping efi:enables efi:InsulationBreakdownArc .
+
+# 반복 굴곡은 반단선만 만들지 않는다. 공식 분류표가 굽힘을 두 자리에 적는다.
+#   국부적인 저항치의 증가 → 반단선 : "코드의 굽히거나 접힘 등으로 소선 10% 단선"
+#   회로 외로 누설 → 단락      : "코드의 바닥 깔림, 접히거나 굽혀짐, 스테이플손상"
+# 같은 굽힘이 소선을 끊으면 반단선, 피복을 상해 양극이 닿으면 단락이다.
+# 결과가 갈리지 원인이 갈리는 것이 아니다.
+efi:RepeatedFlexing efi:enables efi:CrushInducedArc .

@@ -29,6 +29,7 @@ src/efi_schema.py            Pydantic 파이프라인. 점수 산출과 질의 �
 scripts/score.py             가감점 산출. 가중치의 단일 진실 원천
 scripts/nfpa.py              NFPA 921 절 대조표. 이식률의 분모
 scripts/audit.py             형태 발현 편향 점검. '화재도 이 흔적을 내는가'
+scripts/cause_audit.py       선행 조건 편향 점검. '정말 그 요인에서만 일어나는가'
 scripts/lint.py              구조 점검. 어휘가 사슬에 붙어 있는가
 scripts/status.py            현재 상태 요약
 scripts/consistency.py       OWL 2 DL 일관성 검사 (HermiT 직접 호출)
@@ -115,6 +116,13 @@ build/                       생성물. git 에 넣지 않음
    세우려면 비시각적 현장 사실(오염 환경)이 반드시 있어야 한다 — C-5 가 요구하던 그것이다.
 
    **새 형태 발현을 선언할 때 반드시 물을 것: 이 흔적을 화재 자체가 낼 수 있는가?**
+
+   같은 편향이 **원인 축에도 있었다.** 원문이 'A도 되고 B도 된다'고 적은 것을 A 쪽으로만 이었다
+   (진동을 반단선 전용으로, 플러그 접속부를 반단선 전용으로, 먼지·습기를 트래킹 전용으로).
+   `scripts/cause_audit.py` 가 한 가설에만 연결된 선행 조건을 세고
+   `test_cause_chain_declarations_agree` 가 판정과 사슬의 어긋남을 막는다.
+
+   **새 선행 조건을 한 가설에만 이을 때 반드시 물을 것: 정말 그 요인에서만 일어나는가?**
 
    **어휘만 만들고 사슬에 붙이지 않는 실패가 반복됐다.** ArcMapPoint, downstreamIndex,
    outcomeUndetermined 가 그랬다. 선언만 하면 확인해도 판정에 기여하지 못한다.

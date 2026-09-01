@@ -632,6 +632,19 @@ def test_subclass_matching(onto):
         assert onto.matches(c, "ContaminatedEnvironment"), c
 
 
+def test_cause_chain_declarations_agree(g):
+    """원인 축 판정과 사슬이 어긋나면 안 된다.
+
+    '이 조건은 다른 요인도 일으킨다'고 적어 놓고 사슬을 하나로 두면 아무 일도
+    일어나지 않는다. 판정만 적고 사슬을 안 고치는 실수를 막는다.
+    형태 축의 test_fire_producibility_declarations_agree 와 같은 짝이다.
+    """
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import cause_audit
+    bad = cause_audit.inconsistent(g)
+    assert not bad, f"판정과 사슬 불일치: {bad}"
+
+
 def test_every_morphology_answers_the_fire_question(onto):
     """모든 손상 양상은 '화재 자체도 이 흔적을 내는가'에 답이 있어야 한다.
 

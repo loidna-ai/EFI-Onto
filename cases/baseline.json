@@ -1,9 +1,9 @@
 {
  "cases": 150,
- "correct": 89,
- "undetermined": 36,
- "wrong": 25,
- "accuracy": 0.5933,
+ "correct": 87,
+ "undetermined": 35,
+ "wrong": 28,
+ "accuracy": 0.58,
  "per_class": {
   "압착손상": {
    "n": 30,
@@ -12,8 +12,8 @@
   },
   "반단선": {
    "n": 30,
-   "correct": 10,
-   "undetermined": 12
+   "correct": 8,
+   "undetermined": 11
   },
   "절연열화": {
    "n": 30,
