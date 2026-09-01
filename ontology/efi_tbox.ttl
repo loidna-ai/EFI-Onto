@@ -438,15 +438,14 @@ efi:R_CD_sup1  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; e
 efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_CD_ref   a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:NoTripDespiteExternalForce ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
 
-# 반단선의 핵심 단서를 반복 굴곡에서 인장으로 옮긴다.
+# 반단선의 핵심 단서는 '장기 반복 응력'이다 — 굴곡·진동·인장의 상위.
+# 필요조건 선언(hasAntecedent)이 정확히 그 셋의 합집합이고, 핵심 단서란
+# 이 온톨로지에서 '없으면 성립하지 않는 것'을 뜻한다.
 #
-# p.149 는 반단선이 생기는 외력으로 '꺾어지고 구부리거나 끌어당기는' 셋을
-# 나란히 든다. 그런데 표 2-1 의 단락 항목에는 바닥 깔림·접힘·굽혀짐·스테이플만
-# 있고 인장이 없다. 굽힘은 소선을 끊기도 하고 피복을 상해 양극을 닿게도 하지만,
-# 끌어당김은 소선을 끊을 뿐 피복을 벗기지 않는다. 그래서 인장만 반단선 전용이다.
-#
-# 반복 굴곡은 보강으로 내렸다. 원문이 두 자리에 적은 것을 한 자리로 읽지 않는다.
-efi:R_PD_core  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:Tension ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+# 셋 중 하나를 골라 올리지 않는다. p.149 는 '꺾어지고 구부리거나 끌어당기는'
+# 셋을 나란히 들 뿐 하나를 앞세우지 않는다.
+efi:R_PD_core  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:LongTermRepeatedStress ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PD_sup4  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:Tension ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PD_sup8  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RepeatedFlexing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_PD_sup1  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:SmallMeltBallOnStrandEnd ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_PD_sup2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureAtStressPoint ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
@@ -457,7 +456,7 @@ efi:R_ID_sup2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationSc
 efi:R_ID_sup3  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationEmbrittlement ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:FlexingHistoryWithStrandFracture ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -18 .
 
-efi:R_TR_core  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_TR_core  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_TR_sup1  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:CarbonizedConductivePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_TR_sup2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:IntermittentRcdTripping ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_TR_ref   a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:NormalInsulationResistance ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .

@@ -100,19 +100,57 @@ def test_shared_morphology_scores_zero():
     assert round(score.SUPPORT_MAX * math.log2(score.N / score.N) / math.log2(score.N)) == 0
 
 
-def test_core_is_the_strongest_clue(g):
-    """핵심 단서는 그 가설의 보강 단서보다 약할 수 없다.
-    약하다면 역할 선언이 틀렸거나 더 변별력 있는 단서를 놓친 것이다."""
-    sys.path.insert(0, str(ROOT / "scripts"))
-    import score, collections
-    d = score.deltas(g)
-    by = collections.defaultdict(lambda: {"Core": [], "Supporting": []})
-    for name, sc, ind, role in score.rules(g):
-        if role in ("Core", "Supporting"):
-            by[sc][role].append((ind, d[name]))
-    bad = {sc: r for sc, r in by.items() if r["Supporting"] and r["Core"]
-           and min(v for _, v in r["Core"]) < max(v for _, v in r["Supporting"])}
-    assert not bad, f"핵심이 보강보다 약하다: {bad}"
+def test_core_is_a_declared_necessary_condition(g):
+    """핵심 단서는 그 가설의 필요조건으로 선언돼 있어야 한다.
+
+    이 온톨로지에서 핵심 단서란 '가장 변별력 있는 것'이 아니라 '없으면 성립하지
+    않는 것'이다. CLAUDE.md 가 적어 둔 그대로 — 오염 환경이 있다고 트래킹인 것은
+    아니지만 오염 환경 없이 트래킹일 수는 없다.
+
+    전에는 가중치 순서(핵심 >= 보강)로 이것을 대신 쟀다. 대리 지표였고 실제로
+    두 번 옳게 걸렸다(접촉불량의 징후, 압착손상의 결과). 그러나 사슬이 정확해져
+    필요조건이 여러 요인과 양립하게 되자 대리 지표가 무너졌다 — 필요조건은
+    좁히는 것이 아니라 거르는 것이라 양립 가설 수로 값을 매길 대상이 아니다.
+    그래서 대리 지표를 버리고 재려던 것을 바로 잰다.
+    """
+    from rdflib import RDF, RDFS, OWL, URIRef
+    import rdflib.collection as rc
+
+    def declared(sc):
+        out = set()
+        for r in g.objects(EFI[sc], RDFS.subClassOf):
+            if (r, OWL.onProperty, EFI.hasAntecedent) not in g:
+                continue
+            v = g.value(r, OWL.someValuesFrom)
+            if isinstance(v, URIRef):
+                out.add(q(v))
+            elif v is not None:
+                for u in g.objects(v, OWL.unionOf):
+                    out |= {q(x) for x in rc.Collection(g, u)}
+        return out
+
+    def subs(c, acc=None):
+        acc = set() if acc is None else acc
+        for s in g.subjects(RDFS.subClassOf, c):
+            if isinstance(s, URIRef) and q(s) not in acc:
+                acc.add(q(s)); subs(s, acc)
+        return acc
+
+    bad = []
+    for r in g.subjects(RDF.type, EFI.IndicatorRule):
+        if q(g.value(r, EFI.hasRole)) != "Core":
+            continue
+        sc, ind = q(g.value(r, EFI.forScenario)), q(g.value(r, EFI.indicates))
+        need = declared(sc)
+        if not need:
+            continue                      # 외부화염은 부재 근거로 서는 가설이다
+        kids = subs(EFI[ind])
+        if ind in need:
+            continue
+        if kids and kids <= need:
+            continue                      # 필요조건들을 묶은 상위여도 된다
+        bad.append((sc, ind, sorted(need)))
+    assert not bad, f"핵심 단서가 필요조건이 아니다: {bad}"
 
 
 def test_core_indicators_are_not_morphology(g):
@@ -175,7 +213,10 @@ def run(extra):
 def test_case_a_scores():
     gr = run(CASE_A)
     score = lambda n: int(next(gr.objects(EFI[n], EFI.supportScore)))
-    assert score("hT") == 71, "트래킹 71점 (탄화 도전로는 외부화염도 낸다 — §9.9.4.5)"
+    # 71 → 62. 오염 환경이 트래킹 전용이 아니게 되면서 핵심 단서가 15 에서 6 으로
+    # 내려갔다. 습기는 절연열화로도(실무Ⅳ p.245), 염해는 접촉불량으로도(p.206) 간다.
+    # 두 단서로는 확정선 70 에 닿지 못한다 — 그것이 지금 이 온톨로지의 주장이다.
+    assert score("hT") == 62, "트래킹 62점 (오염 환경 6 + 탄화 도전로 6)"
     assert score("hP") == 50, "접촉불량은 헐거움 부재에도 기각되지 않고 50점"
 
 
@@ -535,12 +576,18 @@ def test_a_complete_conclusion_can_pass():
            prov:wasAttributedTo efi:invG ; efi:analyzed true .
     efi:f3 a efi:BurnCenterOnSurface ; efi:confirmationStatus efi:Confirmed ;
            prov:wasAttributedTo efi:invG ; efi:analyzed true .
-    efi:sG efi:hasFact efi:dG , efi:f1 , efi:f2 , efi:f3 .
+    # 오염 환경이 공유가 된 뒤로 트래킹은 단서 넷이 모여야 확정선에 닿는다.
+    # 전에는 둘이면 됐다. 늘어난 요구가 정확한 요구다.
+    efi:f4 a efi:OrganicInsulationPresent ; efi:confirmationStatus efi:Confirmed ;
+           prov:wasAttributedTo efi:invG ; efi:analyzed true .
+    efi:f5 a efi:IntermittentRcdTripping ; efi:confirmationStatus efi:Confirmed ;
+           prov:wasAttributedTo efi:invG ; efi:analyzed true .
+    efi:sG efi:hasFact efi:dG , efi:f1 , efi:f2 , efi:f3 , efi:f4 , efi:f5 .
     efi:fuelG a efi:InsulationMaterialFuel ; efi:distanceToHeatSource_mm 2 .
     efi:hG a efi:TrackingScenario ; efi:inSession efi:sG ;
            efi:hasMechanism [ a efi:ArcTracking ] ; efi:hasFirstFuel efi:fuelG ;
            efi:hasAntecedent [ a efi:ContaminatedEnvironment ] ; efi:verdict efi:Supported ;
-           efi:supportedBy efi:f1 , efi:f2 , efi:f3 ;
+           efi:supportedBy efi:f1 , efi:f2 , efi:f3 , efi:f4 , efi:f5 ;
            efi:sourceCompetentForFuel true ; efi:timelineConsistent true ;
            efi:contactCircumstance "오염 표면 누설 전류로 탄화 경로 형성" ;
            efi:heatTransferPath "탄화 경로에서 접촉 피복으로 직접 전도" ;
@@ -595,7 +642,7 @@ def test_python_matches_shacl(onto):
                 facts=[Fact(cls="MoistureExposure", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR),
                        Fact(cls="CarbonizedConductivePath", status=Status.CONFIRMED, agent=Agent.AI_VLM)])
     s.apply(onto)
-    assert s.hypotheses[0].support_score == 71
+    assert s.hypotheses[0].support_score == 62      # CASE_A 와 같은 값이어야 한다
 
 
 def test_python_delegates_conclusion_checks_to_shacl():

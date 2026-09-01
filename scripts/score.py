@@ -101,6 +101,14 @@ def compatibility(g):
                      for s in set(g.subjects(E.attests, None))):
         for a in ants:                                      # 현장사실 → 선행조건 → 가설
             compat[ev] |= compat.get(a, set())
+
+    # 지표가 상위 클래스이면 하위 어느 것이 관측돼도 그 지표에 걸린다(subsumption).
+    # 그러므로 지표의 양립 범위는 하위 전체의 합집합이다. 자기 선언만 읽으면
+    # 오염 환경처럼 하위가 넓어진 상위가 계속 전용으로 남아 과대평가된다.
+    # 선언(enables)은 여전히 상위→하위 상속이다 — 방향이 반대인 두 읽기다.
+    for c in list(compat):
+        for k in _subclasses(g, c):
+            compat[c] |= compat.get(k, set())
     return compat
 
 
