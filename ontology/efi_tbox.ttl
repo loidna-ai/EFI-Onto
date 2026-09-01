@@ -299,7 +299,8 @@ efi:PoorContactScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScen
 efi:CrushDamageScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ; skos:prefLabel "압착손상"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
         [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:CrushInducedArc ] ) ] ;
-    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:ExternalCrushing ] .
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ;
+        owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:ExternalCrushing efi:AbrasionAtPenetration efi:RodentGnawing efi:HammerMisHitDamage ) ] ] .
 
 efi:PartialDisconnectionScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ; skos:prefLabel "반단선"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
@@ -425,14 +426,14 @@ efi:R_EF_sup3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; 
 efi:R_PC_core  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LooseConnection ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PC_sup1  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LongTermTerminalHeating ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PC_sup2  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:AbnormalTemperatureOrVoltageDrop ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_PC_sup3  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:Vibration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_PC_sup3  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:Vibration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -13 .
 
 efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 # 마찰은 기계적 손상의 핵심 단서가 될 수 없다. 소선을 갈면 통전 단면적이 줄어
 # 반단선으로도 간다(실무Ⅳ p.149 반단선의 정의가 '통전 단면적의 감소'다).
 # 눌림(ExternalCrushing)만 전용으로 남아 핵심 자리를 지킨다.
-efi:R_CD_sup6  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:AbrasionAtPenetration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_CD_sup6  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:AbrasionAtPenetration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_CD_sup0  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ImmediateTripAfterExternalForce ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_CD_sup1  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MechanicalDeformation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
@@ -806,7 +807,7 @@ efi:ReducedInsulationResistance efi:enables efi:InsulationBreakdownArc , efi:Lea
 efi:ThermalDegradation efi:enables efi:InsulationBreakdownArc .
 efi:InsulationDeterioration efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating .
 efi:RepeatedFlexing efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
-efi:Vibration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc , efi:PoorContactHeating .
+efi:Vibration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc , efi:PoorContactHeating , efi:CrushInducedArc .
 efi:Tension efi:enables efi:PartialDisconnectionHeating .
 efi:LongTermRepeatedStress efi:enables efi:PartialDisconnectionHeating .
 efi:ExternalCrushing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
@@ -2515,10 +2516,9 @@ efi:RepeatedFlexing efi:enables efi:CrushInducedArc .
 # 36. 원인 축 편향 교정 2차 — cause_audit.py 의 미검토 6건을 원문으로 닫는다
 ########################################################################
 
-# 마찰은 피복만 상하게 하지 않는다. 반단선의 정의가 '통전 단면적의 감소'이고
-# (실무Ⅳ p.149 절 제목) 마찰이 소선을 갈면 단면적이 준다. p.253 은 기기
-# 삽입구에서 반단선이 관찰된다고 한다.
-efi:AbrasionAtPenetration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
+# 마찰은 기계적 손상 쪽이다. 원문은 마찰이 '절연손상'을 낸다고까지만 적는다
+# (p.269 "주변 구조물과의 마찰에 의한 손상"). 소선을 갈아 통전 단면적을 줄인다는
+# 것은 내 추론이었고 원문에 없다. 사례 8건도 전부 기계적 손상이다.
 
 # 망치 오타격은 기계적 관통 손상이다. 표 2-1 은 스테이플 찔림을 단락 아래 두고,
 # §9.10.5 는 기계적 홈·눌림을 아크흔과 구별하라 한다. 절연열화 쪽에만 이어 두었다.

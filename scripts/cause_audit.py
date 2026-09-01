@@ -64,7 +64,7 @@ VERDICTS = {
     "MisdrivenStaple":        (SHARED, "표 2-1 은 스테이플 찔림을 단락에 두고 실무Ⅳ p.245 는 같은 자리에서 반단선이 관찰된다고 한다"),
     "StressConcentrationPoint": (SHARED, "하위가 모두 공유다. 위치는 요인을 가르지 않는다"),
 
-    "AbrasionAtPenetration":  (SHARED, "실무Ⅳ p.149 반단선의 정의가 '통전 단면적의 감소'다. 마찰이 소선을 갈면 단면적이 줄고, p.253 은 기기 삽입구에서 반단선이 관찰된다고 한다"),
+    "AbrasionAtPenetration":  (EXCL, "실무Ⅳ p.269 는 마찰이 '절연손상'을 낸다고까지만 적는다. 소선을 갈아 통전 단면적을 줄인다는 것은 원문에 없는 추론이었다"),
     "HammerMisHitDamage":     (SHARED, "표 2-1 은 스테이플 찔림을 단락 아래 둔다. 망치 오타격도 같은 부류의 기계적 관통 손상이며 §9.10.5 가 그것을 아크흔과 구별하라 한다"),
     "LongTermRepeatedStress": (SHARED, "굴곡·진동·인장의 상위. 하위가 모두 공유이므로 상위도 공유다"),
     "OrganicInsulationPresent": (SHARED, "실무Ⅳ p.147~148 유기 절연물이라야 탄화 도전로가 생긴다 — 트래킹과 흑연화 양쪽의 조건이고, 절연열화가 일어나는 대상 자체가 유기 절연물이다"),

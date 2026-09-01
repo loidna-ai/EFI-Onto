@@ -33,7 +33,11 @@ RULES = {
  ],
  "slot_breaker_trip_status": [
     (r"확인\s*불가|식별\s*불가|판단\s*불가", "BreakerTripRecord"),      # 상태는 Unverifiable
-    (r"트립|떨어진|작동\s*확인|작동함|OFF|내려감", "ImmediateTripAfterExternalForce"),
+    # '외력 직후 즉시 트립'은 트립 사실과 외력 사실이 함께 서야 하는 복합 사실이고
+    # 외력은 다른 슬롯에 있다. 한 슬롯에서 판정할 수 없으므로 단순 기록으로 둔다.
+    # 실측이 이를 뒷받침한다 — 32건 중 기계적 손상은 12건뿐이다(37%). 차단기는
+    # 어떤 단락에서도 동작한다.
+    (r"트립|떨어진|작동\s*확인|작동함|OFF|내려감", "BreakerTripRecord"),
     (r"수동|임의로\s*차단", "BreakerTripRecord"),
  ],
  "slot_fastening_torque": [
