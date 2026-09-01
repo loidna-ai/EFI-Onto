@@ -423,7 +423,7 @@ efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; e
 efi:R_CD_ref   a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:NoTripDespiteExternalForce ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
 
 efi:R_PD_core  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:LongTermRepeatedStress ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
-efi:R_PD_sup1  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:SmallMeltBallOnStrandEnd ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_PD_sup1  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:SmallMeltBallOnStrandEnd ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_PD_sup2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureAtStressPoint ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PD_ref   a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:WholeConductorCrushedOrCut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
@@ -1984,3 +1984,168 @@ efi:SupplyPathCoverageShape a sh:NodeShape ; sh:targetClass efi:ArcSurvey ;
 #  빼두면 점수를 지키려고 일관성을 깨는 것이 된다. 그게 고치려는 편향이다.
 efi:ExternalFlameExposure efi:producesDamage efi:InsulationEmbrittlement .
 efi:ExternalFlameScenario efi:canManifest efi:InsulationEmbrittlement , efi:CrackedInsulation .
+
+# ============================================================================
+# 26. 발화 순서 기여 요인 (NFPA 921 §19.4.4.2.1)
+#     발화 순서 설명에 반드시 포함돼야 할 일곱 가지. 원문이 열거해 준 체크리스트라
+#     지어낼 것이 없다. 어느 하나라도 답하지 않으면 발화 순서를 설명한 것이 아니다.
+# ============================================================================
+efi:IgnitionSequenceFactor a owl:Class ; rdfs:subClassOf obo:IAO_0000030 ;
+    rdfs:label "발화 순서 기여 요인"@ko ; skos:prefLabel "발화 순서 기여 요인"@ko .
+
+efi:FactorFuelPresence a owl:NamedIndividual , efi:IgnitionSequenceFactor ;
+    skos:prefLabel "최초 착화물이 착화 가능한 형태·상·형상으로 있게 된 경위"@ko .
+efi:FactorOxidantPresence a owl:NamedIndividual , efi:IgnitionSequenceFactor ;
+    skos:prefLabel "산화제가 적절한 형태·양으로 있게 된 경위"@ko .
+efi:FactorSourcePresence a owl:NamedIndividual , efi:IgnitionSequenceFactor ;
+    skos:prefLabel "경합 발화원이 존재하고 연료와 만나게 된 경위"@ko .
+efi:FactorHeatTransfer a owl:NamedIndividual , efi:IgnitionSequenceFactor ;
+    skos:prefLabel "발화원이 열에너지를 연료로 전달한 경위"@ko .
+efi:FactorSafetyDevice a owl:NamedIndividual , efi:IgnitionSequenceFactor ;
+    skos:prefLabel "안전장치가 작동했는지 실패했는지"@ko .
+efi:FactorBringingTogether a owl:NamedIndividual , efi:IgnitionSequenceFactor ;
+    skos:prefLabel "행위·부작위·외부 요인이 셋을 한자리 한시점에 모은 경위"@ko .
+efi:FactorFireSpread a owl:NamedIndividual , efi:IgnitionSequenceFactor ;
+    skos:prefLabel "2차·3차 연료로 확산된 경위와 전파 경로"@ko .
+
+efi:addressesFactor a owl:ObjectProperty ;
+    rdfs:domain efi:IgnitionScenario ; rdfs:range efi:IgnitionSequenceFactor ;
+    rdfs:label "설명한 발화 순서 요인"@ko ; skos:prefLabel "설명한 발화 순서 요인"@ko .
+
+# [C-44] 일곱 요인을 모두 설명하지 않으면 발화 순서를 설명한 것이 아니다 (§19.4.4.2.1).
+efi:IgnitionSequenceShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §19.4.4.2.1 Analyzing the Ignition Sequence" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "발화 순서 기여 요인 일곱 중 설명하지 않은 것이 있다 (§19.4.4.2.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?f a efi:IgnitionSequenceFactor .
+          FILTER NOT EXISTS { ?sc efi:addressesFactor ?f }
+        }""" ] .
+
+# ============================================================================
+# 27. 발화원 미발견 시 추론 (NFPA 921 §19.4.4.3)
+#     원인 판정은 증거에 근거해야지 증거의 부재에 근거해서는 안 된다. 다만 발화원을
+#     찾지 못했어도 발화 순서를 논리적으로 추론할 수 있는 제한적 상황이 있다.
+#     그 상황에 해당하지 않으면 추론해서는 안 된다.
+# ============================================================================
+efi:InferenceWarrant a owl:Class ; rdfs:subClassOf obo:IAO_0000030 ;
+    rdfs:label "발화원 미발견 추론 근거"@ko ; skos:prefLabel "발화원 미발견 추론 근거"@ko .
+efi:WarrantDiffuseFuelExplosion a owl:NamedIndividual , efi:InferenceWarrant ;
+    skos:prefLabel "확산 연료 폭발·순간 화염"@ko .
+efi:WarrantIgnitibleLiquidResidue a owl:NamedIndividual , efi:InferenceWarrant ;
+    skos:prefLabel "실험실 확인된 인화성 액체 잔류물에 정상적 설명이 없음"@ko .
+efi:WarrantMultipleFires a owl:NamedIndividual , efi:InferenceWarrant ;
+    skos:prefLabel "복수 발화 지점"@ko .
+efi:WarrantTrailers a owl:NamedIndividual , efi:InferenceWarrant ;
+    skos:prefLabel "트레일러(연소 유도선) 관찰"@ko .
+efi:WarrantObservedInception a owl:NamedIndividual , efi:InferenceWarrant ;
+    skos:prefLabel "발생 시점 또는 2차 연료 확산 이전에 관찰·기록됨"@ko .
+
+efi:sourceNotRecovered a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:boolean ;
+    rdfs:label "발화원 미회수"@ko ; skos:prefLabel "발화원 미회수"@ko .
+efi:hasInferenceWarrant a owl:ObjectProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range efi:InferenceWarrant ;
+    rdfs:label "추론 근거"@ko ; skos:prefLabel "추론 근거"@ko .
+
+# [C-45] 발화원을 찾지 못한 채 원인을 말하려면 원문이 든 제한적 상황에
+#  해당해야 한다 (§19.4.4.3). 목록은 배타적이지 않으나, 근거 없이 발화 순서를
+#  가정하는 것을 원문이 경계한다.
+efi:UnrecoveredSourceShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §19.4.4.3 Analyzing the Ignition Sequence" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "발화원을 회수하지 못했는데 추론을 뒷받침하는 근거가 없다. 원인 판정은 증거의 부재가 아니라 증거에 근거해야 한다 (§19.4.4.3)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:sourceNotRecovered true .
+          FILTER NOT EXISTS { ?sc efi:hasInferenceWarrant ?w }
+        }""" ] .
+
+# [C-46] 복수의 경합 발화원 중 어느 것인지 특정하지 못해도 가설은 설 수 있다.
+#  다만 특정하지 못했다는 사실이 드러나야 한다 (§19.5.4).
+efi:sourceUnspecified a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:boolean ;
+    rdfs:label "경합 발화원 미특정"@ko ; skos:prefLabel "경합 발화원 미특정"@ko ;
+    rdfs:comment "발화부에 경합 발화원이 여럿이고 어느 것이 착화시켰는지 판정할 수 없는 상태 (§19.5.4)"@ko .
+efi:UnspecifiedSourceDisclosureShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §19.5.4 Developing Cause Hypotheses" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "경합 발화원을 특정하지 못했다면 그 사실을 한계로 명시해야 한다 (§19.5.4)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc efi:sourceUnspecified true .
+          FILTER NOT EXISTS { $this efi:statedLimitation ?l }
+        }""" ] .
+
+# ============================================================================
+# 28. 확증 편향과 가설 검증 수단 (NFPA 921 §4.3.10 · §4.6.2.1 · §19.6.4)
+# ============================================================================
+# [M-4] 같은 자료가 대안 가설도 지지한다 (§4.3.10).
+#  M-2 는 손상 양상만 본다. 원문은 형태에 한정하지 않으므로 선행 조건까지 넓힌다.
+#  선행 조건을 공유하는 가설 쌍은 그 조건으로는 갈리지 않는다.
+efi:evidentiallyAmbiguousWith a owl:ObjectProperty ;
+    rdfs:domain efi:IgnitionScenario ; rdfs:range efi:IgnitionScenario ;
+    rdfs:label "증거상 혼동 가설"@ko ; skos:prefLabel "증거상 혼동 가설"@ko ;
+    rdfs:comment "선행 조건을 공유해 그 조건만으로는 갈리지 않는 가설 쌍 (§4.3.10)"@ko .
+
+efi:EvidentialAmbiguityRuleShape a sh:NodeShape ; sh:targetSubjectsOf efi:hasDeclaredMechanism ;
+    dcterms:references "NFPA 921 (2024) §4.3.10 Confirmation Bias" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this efi:evidentiallyAmbiguousWith ?o . }
+        WHERE {
+          $this efi:hasDeclaredMechanism ?m1 .
+          ?a efi:enables ?m1 .
+          ?o efi:hasDeclaredMechanism ?m2 .
+          ?a efi:enables ?m2 .
+          FILTER ( $this != ?o )
+        }""" ] .
+
+# 가설 검증 수단 (§19.6.4). 원문이 든 것들이다.
+efi:HypothesisTestMethod a owl:Class ; rdfs:subClassOf obo:IAO_0000030 ;
+    rdfs:label "가설 검증 수단"@ko ; skos:prefLabel "가설 검증 수단"@ko .
+efi:TestByScientificLiterature a owl:NamedIndividual , efi:HypothesisTestMethod ;
+    skos:prefLabel "과학 문헌"@ko ; rdfs:comment "의존한 연구는 인용해 밝혀야 한다 (§19.6.4.1)"@ko .
+efi:TestByScientificPrinciple a owl:NamedIndividual , efi:HypothesisTestMethod ;
+    skos:prefLabel "과학 원리 적용"@ko ; rdfs:comment "물리·열역학 법칙에 어긋나면 반증된 것이다 (§19.6.4.2)"@ko .
+efi:TestByPhysicalExperiment a owl:NamedIndividual , efi:HypothesisTestMethod ;
+    skos:prefLabel "물리 실험"@ko .
+efi:TestByCognitiveExperiment a owl:NamedIndividual , efi:HypothesisTestMethod ;
+    skos:prefLabel "인지 실험"@ko .
+efi:TestByTimeline a owl:NamedIndividual , efi:HypothesisTestMethod ;
+    skos:prefLabel "시간선 대조"@ko .
+efi:TestByFaultTree a owl:NamedIndividual , efi:HypothesisTestMethod ;
+    skos:prefLabel "고장 수목"@ko ; rdfs:comment "조건이나 순서가 없으면 가설은 반증된다 (§19.6.4.6)"@ko .
+
+efi:testedBy a owl:ObjectProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range efi:HypothesisTestMethod ;
+    rdfs:label "검증 수단"@ko ; skos:prefLabel "검증 수단"@ko .
+
+# [C-47] 문헌에 기대어 검증했다면 그 연구를 인용해 밝혀야 한다 (§19.6.4.1).
+efi:LiteratureCitationShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
+    dcterms:references "NFPA 921 (2024) §19.6.4.1 Scientific Literature" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "문헌으로 가설을 검증했다면 의존한 연구를 인용해야 한다 (§19.6.4.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:testedBy efi:TestByScientificLiterature .
+          FILTER NOT EXISTS { $this <http://purl.org/dc/terms/references> ?r }
+        }""" ] .
+
+# [C-48] 기술 검토자는 결과에 이해관계가 있다고 비칠 수 있다 (§4.6.2.1).
+#  확증 편향이 관계를 통해 들어온다. 관계를 밝히지 않은 기술 검토는 그 위험이 가려진다.
+efi:reviewerRelationshipDisclosed a owl:DatatypeProperty ;
+    rdfs:domain efi:WorkProductReview ; rdfs:range xsd:boolean ;
+    rdfs:label "검토자 관계 공개"@ko ; skos:prefLabel "검토자 관계 공개"@ko .
+efi:TechnicalReviewBiasShape a sh:NodeShape ; sh:targetClass efi:TechnicalReview ;
+    dcterms:references "NFPA 921 (2024) §4.6.2.1 Limitations of Technical Reviews" ;
+    sh:property [ sh:path efi:reviewerRelationshipDisclosed ; sh:minCount 1 ;
+        sh:message "검토자와 조사자의 관계를 밝혀야 한다. 확증 편향은 관계를 통해 들어온다 (§4.6.2.1)"@ko ] .
+
+# 편향 점검 2차 반영 — 화재도 내는 것으로 판정된 양상들
+#  §9.9.5   스패터는 아크가 던진 입자다. §9.10.1 화재도 아크를 만든다.
+#  §9.10.2  화재 탄화를 통한 아크가 도체를 여러 토막으로 끊는다.
+efi:ExternalFlameExposure efi:producesDamage
+    efi:Spatter , efi:StrandFracture , efi:SmallMeltBallOnStrandEnd .
+efi:ExternalFlameScenario efi:canManifest
+    efi:Spatter , efi:StrandFracture , efi:SmallMeltBallOnStrandEnd .

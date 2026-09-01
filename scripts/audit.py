@@ -18,6 +18,11 @@
   FIRE   화재도 낸다 — 외부화염 시나리오에 포함돼 있어야 한다
   ELEC   화재는 내지 못한다 — 전기적 가설의 단서로 유지
   OPEN   원문 근거 없음 — 조사관 검토 또는 추가 조항 필요
+
+남은 OPEN
+  BurnCenterOnSurface — 절연물 표면에 소손이 집중되는 양상. 트래킹 특유로 보이나
+  화재가 같은 양상을 못 낸다는 원문 근거를 찾지 못했다. 지어내지 않고 남긴다.
+  검토표 7번 시트로 조사관에게 나가 있다.
 """
 import sys, pathlib, collections
 from rdflib import Graph, Namespace, RDFS, URIRef
@@ -49,6 +54,10 @@ VERDICTS = {
     "InsulationEmbrittlement":     (FIRE, "§9.11.3 절연은 노후와 가열로 취화된다. 화재 열도 가열이다"),
     "CrackedInsulation":           (FIRE, "§9.11.3 취화된 절연은 갈라진다"),
     "MetalTransferToFastener":     (FIRE, "§9.11.4.3 진행 중인 화재의 결과일 수 있다"),
+    "MeltMark":                    (FIRE, "FireMeltMark 가 하위 클래스다. 화재 용융흔이 여기 속한다"),
+    "Spatter":                     (FIRE, "§9.9.5 스패터는 아크가 던진 입자다. §9.10.1 화재도 아크를 만든다"),
+    "StrandFracture":              (FIRE, "§9.10.2 화재 탄화를 통한 아크가 도체를 여러 토막으로 끊는다"),
+    "SmallMeltBallOnStrandEnd":    (FIRE, "§9.10.2·§9.10.4.1 용융으로 끊긴 끝단에 생긴다"),
     # 화재가 만들지 못하는 것 — 원문 근거 있음
     "MechanicalDeformation":       (ELEC, "§9.10.5 기계적 손상은 아크·열손상과 구별된다"),
     "WholeConductorCrushedOrCut":  (ELEC, "§9.10.5 기계적 손상"),
@@ -60,6 +69,10 @@ VERDICTS = {
     "PrimaryArcMark":              (ELEC, "정의상 화재 이전 형성"),
     "Sleeving":                    (ELEC, "§9.10.4.1 과부하 구간 전 길이의 내부 발열"),
     "MeltOffset":                  (ELEC, "§9.10.4.1 회로가 열리는 순간 굳은 형태"),
+    "StrandFractureAtStressPoint": (ELEC, "§9.10.5 변별점은 파단 자체가 아니라 기계적 응력 부위와의 "
+                                          "위치 일치다. 화재는 응력 부위를 골라 끊지 않는다"),
+    "LongTermTerminalHeating":     (ELEC, "§9.10.3.1(12)·§9.10.3.3 여러 시간에 걸쳐 형성되며 "
+                                          "외부 화재 노출로 인한 용융·아크와 외관상 구별된다"),
 }
 
 

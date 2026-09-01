@@ -27,8 +27,8 @@ SECTIONS = [
     ("4.7",  "Reporting Procedure",                  PART, "InvestigationReport 와 reportsConclusion. "
                                                            "형식·전달 경로는 소관에 따라 달라져 열거하지 않는다"),
     # ── Chapter 9 Electricity and Fire ─────────────────────────────────────
-    ("9.1",  "Introduction",                         PART, "배경"),
-    ("9.2",  "Basic Electricity",                    PART, "전기량 데이터 속성 일부"),
+    ("9.1",  "Introduction",                         OUT,  "장 개요. 요건이 없다(판단)"),
+    ("9.2",  "Basic Electricity",                    OUT,  "전기 기초 이론. 배경 지식이라 판정에 쓰이지 않는다(판단)"),
     ("9.3",  "Building Electrical Systems",          PART, "§9.3.4 인입구 무보호 구간을 구현. 전압·인입 방식·"
                                                            "계량기는 판정에 쓰이지 않아 넣지 않았다(판단)"),
     ("9.4",  "Service Equipment",                    PART, "ServiceEquipment 클래스. 세 기능 중 보호 기능만 판정에 연결"),
@@ -46,13 +46,11 @@ SECTIONS = [
     ("9.14", "Static Electricity",                   OUT,  "5대 요인 밖. 범위 제외 (재검토 여지)"),
     ("9.15", "Batteries",                            OUT,  "5대 요인 밖. ESS·리튬 화재를 넣을지 결정 필요"),
     # ── Chapter 19 Fire Cause Determination ────────────────────────────────
-    ("19.1", "Introduction",                         PART, "배경"),
+    ("19.1", "Introduction",                         OUT,  "장 개요. 요건이 없다(판단)"),
     ("19.2", "Overall Methodology",                  DONE, "세션 절차"),
     ("19.3", "Data Collection",                      DONE, "Fact, ConfirmationStatus, PROV-O (C-4)"),
-    ("19.4", "Analyze the Data",                     PART, "M-1~M-3 변별력·혼동 쌍. 발화 순서 분석(§19.4.4)은 "
-                                                       "요인 체크리스트가 없어 비어 있다"),
-    ("19.5", "Developing Cause Hypotheses",          PART, "C-29 발열 기기 목록. 회수 불가 발화원과 "
-                                                       "복수 경합 발화원은 비어 있다"),
+    ("19.4", "Analyze the Data",                     DONE, "M-1~M-4, C-44·C-45 발화 순서 요인과 추론 근거"),
+    ("19.5", "Developing Cause Hypotheses",          DONE, "C-29 발열 기기 목록, C-46 경합 발화원 미특정 공개"),
     ("19.6", "Testing the Hypothesis for Validity",  DONE, "F-1~F-4, C-28·C-30·C-31, D-7·D-8. 하위 절 표 참조"),
     ("19.7", "Selecting the Final Hypothesis",       DONE, "Conclusion, C-2, 확정 조건"),
     ("19.8", "Fire Incident and Cause Classification", PART, "분류 구조는 구현(C-9~C-11). 범주 목록은 "
@@ -129,8 +127,9 @@ SUBSECTIONS = [
     ("4.3.6.1",  "시험 불가능한 가설은 무효다",              DONE, "C-23 UntestableHypothesisShape"),
     ("4.3.7",    "최종 가설 선택 — 대안 미고려는 중대 오류",   DONE, "C-24 AllHypothesesTestedShape, C-2"),
     ("4.3.8",    "예단 금지 — 자료 전에 가설 없다",          DONE, "C-27 NoPresumptionShape"),
-    ("4.3.9",    "기대 편향",                            NONE, "편향을 표시하거나 검출할 자리가 없다"),
-    ("4.3.10",   "확증 편향 — 같은 자료가 반대 가설도 지지",   PART, "M-2 혼동 쌍과 C-5 가 형태 쪽만 덮는다"),
+    ("4.3.9",    "기대 편향",                            OUT,  "성급한 가설이 질의를 유도했는지는 조사 과정의 기록이지 "
+                                                          "잔해에서 판정되지 않는다(판단)"),
+    ("4.3.10",   "확증 편향 — 같은 자료가 반대 가설도 지지",   DONE, "M-4 EvidentialAmbiguityRule 로 형태 밖까지 넓혔다"),
     ("4.5.0",    "의견은 자료와 한계를 밝혀야 한다",          PART, "C-15 한계 명시. 과학적 방법 적용 서술은 §4.7 보고서 영역"),
     ("4.5.1.1",  "개연·가능 두 표현. 대등하면 가능까지",       DONE, "CertaintyLevel, C-12 EqualLikelihoodShape"),
     ("4.5.1.2",  "의심은 전문가 의견이 아니다",              DONE, "C-13 SuspectedNotOpinion, C-14 CertaintyStated"),
@@ -138,23 +137,23 @@ SUBSECTIONS = [
     ("4.6.1",    "행정 검토 — 절차와 서류 구비",             DONE, "AdministrativeReview"),
     ("4.6.1.1",  "행정 검토는 실질 비평을 못 한다",           DONE, "C-18 AdministrativeReviewScopeShape"),
     ("4.6.2",    "기술 검토 — 자격과 자료 접근이 전제",        PART, "C-19 자료 접근. 검토 범위별 자격 대조는 없음"),
-    ("4.6.2.1",  "기술 검토의 확증 편향 위험",               NONE, "편향 위험을 표시할 자리가 없다"),
+    ("4.6.2.1",  "기술 검토의 확증 편향 위험",               DONE, "C-48 TechnicalReviewBiasShape 검토자 관계 공개"),
     ("4.6.3",    "동료 검토 — 독립성·객관성",               DONE, "C-17 PeerReviewIndependenceShape"),
     ("4.6.3.2",  "동료 검토는 자료 오류를 잡지 못한다",        DONE, "C-20 ReviewValidationShape"),
     ("19.4.4.2", "발화 순서 — 사건과 조건의 선후",           PART, "OWL-Time 은 있으나 발화 순서 자체의 모형이 없다"),
-    ("19.4.4.2.1", "발화 기여 요인 일곱 가지",              NONE, "연료·산화제·발화원·열전달·안전장치·정황·확산 체크리스트가 없다"),
-    ("19.4.4.3", "발화원 미발견 시 순서 추론의 조건",         NONE, "추론이 허용되는 제한적 상황 다섯을 담지 않았다"),
+    ("19.4.4.2.1", "발화 기여 요인 일곱 가지",              DONE, "IgnitionSequenceFactor 7종, C-44"),
+    ("19.4.4.3", "발화원 미발견 시 순서 추론의 조건",         DONE, "InferenceWarrant 5종, C-45"),
     ("19.5.0",   "증거가 없다는 이유로 배제하지 말라",         DONE, "C-1 반증은 확인·부정 확인만. 확인 불가는 반증이 못 된다"),
     ("19.5.1",   "발화부 발열 기기는 반드시 목록에",          DONE, "C-29 HeatProducingDeviceListedShape"),
     ("19.5.2",   "회수 불가 발화원 — 라이터·정전기·낙뢰",      PART, "NonRecoverableIgnitionSource 클래스. 존재 판정 규칙은 없음"),
     ("19.5.3",   "각 발화원에 대해 연료 존재를 세워야 한다",    PART, "ignites 사슬은 있으나 필수 요건이 아니다"),
-    ("19.5.4",   "복수 경합 발화원 — 특정 못 해도 가설은 선다", NONE, "발화원 미특정 가설을 표현할 자리가 없다"),
+    ("19.5.4",   "복수 경합 발화원 — 특정 못 해도 가설은 선다", DONE, "sourceUnspecified, C-46 한계 명시 요구"),
     ("19.6.3",   "가설 검증에서 답해야 할 질문 넷",           DONE, "C-28 TestingQuestionsShape"),
     ("19.6.4",   "확인이 아니라 반증을 시도한다",             DONE, "F-1, P3"),
-    ("19.6.4.1", "과학 문헌을 검증 수단으로 쓴다",            NONE, "인용 근거를 담을 자리가 없다"),
+    ("19.6.4.1", "과학 문헌을 검증 수단으로 쓴다",            DONE, "HypothesisTestMethod, C-47 인용 요구"),
     ("19.6.4.2", "물리·열역학 법칙에 어긋나면 반증된 것",      DONE, "C-31 CompetenceRequiredShape, F-3"),
     ("19.6.4.5", "시간선은 변별 수단이 된다",                PART, "timelineConsistent 로 답만 기록. 시간선 검증은 없음"),
-    ("19.6.4.6", "고장 수목으로 가설을 시험한다",             NONE, "고장 수목 표현이 없다"),
+    ("19.6.4.6", "고장 수목으로 가설을 시험한다",             DONE, "TestByFaultTree"),
     ("19.6.5",   "negative corpus 는 과학적 방법이 아니다",   DONE, "C-2 ConclusionShape"),
     ("19.6.5.1", "모두 기각되거나 둘 이상 남으면 원인미상",    DONE, "D-7, D-8 UndeterminedByTieRuleShape"),
     ("19.6.5.2", "발화원과 착화물을 짚은 것은 원인이 아니다",   DONE, "C-30 CauseNotJustSourceShape"),
@@ -224,6 +223,12 @@ SHAPE_REFS = {
     "ShortCircuitIgnitionShape":         ["9.11"],
     "BeadedConductorShape":              ["9.11"],
     "SupplyPathCoverageShape":           ["9.12"],
+    "IgnitionSequenceShape":             ["19.4"],
+    "UnrecoveredSourceShape":            ["19.4"],
+    "UnspecifiedSourceDisclosureShape":  ["19.5"],
+    "EvidentialAmbiguityRuleShape":      ["4.3"],
+    "LiteratureCitationShape":           ["19.6"],
+    "TechnicalReviewBiasShape":          ["4.6"],
 }
 
 
