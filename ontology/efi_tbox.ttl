@@ -2985,3 +2985,49 @@ efi:PostFireDamageShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
         }""" ] .
 efi:PostFireDamageShape dcterms:references
     "NFPA 921 (2024) §9.10.5 — 기계적 홈·눌림은 아크흔과 구별된다. 화재 이후 생긴 기계적 손상도 같은 구별 대상이며 국내 실무 교재(실무Ⅳ p.318)가 그 목록을 든다"@ko .
+
+########################################################################
+# 44. 안에서 탄 것인가 밖에서 탄 것인가 — 화재조사실무Ⅳ p.312
+#
+# 교재가 과전류로 피복이 소손된 경우의 식별 특징 셋을 든다.
+#   "과전류에 의해 전선피복이 소손되거나 손상될 때에는 해당되는 전선은
+#    전반적으로 비슷한 양상을 나타낸다"
+#   "손상된 부분과 손상되지 않은 부분의 경계선이 명확하지 않다"
+#   "전선절연 피복의 내부에서 외부로 탄화가 진행된 것을 식별할 수 있다"
+#
+# 마지막 것이 가장 세다. 도체가 발열하면 안에서 밖으로 타고, 밖에서 온 화염은
+# 밖에서 안으로 태운다. 방향이 반대다. §33 이 부품과 주위를, §37 이 절연물의
+# 표면과 내부를 견주었듯 여기서는 피복의 안과 밖을 견준다.
+########################################################################
+
+efi:CarbonizationFromInsideOut a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "피복 내부에서 외부로 탄화"@ko ; skos:prefLabel "피복 내부에서 외부로 탄화"@ko ;
+    rdfs:comment "도체가 발열해 피복을 안쪽부터 태운 흔적. 밖에서 온 화염은 반대 방향으로 태운다 (실무Ⅳ p.312)"@ko .
+efi:UniformDamageAlongConductor a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "전선 전반에 균일한 손상"@ko ; skos:prefLabel "전선 전반에 균일한 손상"@ko ;
+    rdfs:comment "과전류는 도체 전 길이를 고르게 가열하므로 해당 전선이 전반적으로 비슷한 양상을 보이고 손상·비손상 경계가 명확하지 않다 (실무Ⅳ p.312). 국부 발열과 반대다"@ko .
+efi:Insulation efi:exhibits efi:CarbonizationFromInsideOut , efi:UniformDamageAlongConductor .
+efi:ElectricalHeatingMechanism efi:producesDamage efi:CarbonizationFromInsideOut .
+efi:ResistiveHeating efi:producesDamage efi:UniformDamageAlongConductor .
+efi:OverloadHeating efi:producesDamage efi:UniformDamageAlongConductor , efi:CarbonizationFromInsideOut .
+
+# 다섯 요인 전부가 도체 발열을 거치므로 전기적 가설 상위에 건다.
+efi:PoorContactScenario efi:canManifest efi:CarbonizationFromInsideOut .
+efi:CrushDamageScenario efi:canManifest efi:CarbonizationFromInsideOut .
+efi:PartialDisconnectionScenario efi:canManifest efi:CarbonizationFromInsideOut .
+efi:InsulationDegradationScenario efi:canManifest efi:CarbonizationFromInsideOut .
+efi:TrackingScenario efi:canManifest efi:CarbonizationFromInsideOut .
+efi:PoorContactHeating efi:producesDamage efi:CarbonizationFromInsideOut .
+efi:GlowingConnection efi:producesDamage efi:CarbonizationFromInsideOut .
+efi:CrushInducedArc efi:producesDamage efi:CarbonizationFromInsideOut .
+efi:PartialDisconnectionHeating efi:producesDamage efi:CarbonizationFromInsideOut .
+efi:SeriesArc efi:producesDamage efi:CarbonizationFromInsideOut .
+efi:PartialDisconnectionInducedArc efi:producesDamage efi:CarbonizationFromInsideOut .
+efi:InsulationBreakdownArc efi:producesDamage efi:CarbonizationFromInsideOut .
+efi:ArcTracking efi:producesDamage efi:CarbonizationFromInsideOut .
+efi:LeakageCurrentHeating efi:producesDamage efi:CarbonizationFromInsideOut .
+
+efi:R_ANY_InsideOut a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:CarbonizationFromInsideOut ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 1 .
+efi:R_EF_ref4 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:CarbonizationFromInsideOut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -2 .
+efi:ExternalFlameExposure efi:producesDamage efi:UniformDamageAlongConductor .
+efi:ExternalFlameScenario efi:canManifest efi:UniformDamageAlongConductor .
