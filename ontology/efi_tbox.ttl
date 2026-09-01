@@ -2341,3 +2341,9 @@ efi:R_EF_sup2  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ;
 # 그 파단이 발화 전인지 화재 중인지 가릴 수 없다. 상위 StrandFracture 와 같이 둔다.
 efi:ExternalFlameExposure efi:producesDamage efi:StrandFractureOverTenPercent , efi:FuseGloballyMeltedScattered , efi:FuseMeltPattern .
 efi:ExternalFlameScenario efi:canManifest efi:StrandFractureOverTenPercent , efi:FuseGloballyMeltedScattered , efi:FuseMeltPattern .
+
+# 아산화동 증식발열은 접촉불량의 확립된 하위 경로다 (실무Ⅳ p.150~153).
+# "접속기구의 체결 불량이나 조임장치의 느슨함으로 접촉이 불완전해지고 그 부분의
+#  저항이 커져 국부과열이 발생할 때 특수산화물이 생성되어 아산화동 증식발열현상에
+#  의해 화재의 원인이 된다." 클래스도 사슬도 이미 있었으나 쓰는 규칙이 없었다.
+efi:R_PC_sup6  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:CuprousOxideGrowth ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
