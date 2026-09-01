@@ -228,6 +228,7 @@ SHAPE_REFS = {
     "MeltBoundaryRuleShape":             ["9.10"],
     "AlloyConductorArcMarkShape":        ["9.10"],
     "PostFireDamageShape":               ["9.10"],
+    "LusterAbsenceShape":                ["9.10"],
     "QueryDerivationRuleShape":          ["19.6"],
     "InsulationResistanceDerivationRuleShape": ["9.11"],
     "ShortCircuitIgnitionShape":         ["9.11"],

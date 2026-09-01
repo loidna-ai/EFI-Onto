@@ -3031,3 +3031,42 @@ efi:R_ANY_InsideOut a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnition
 efi:R_EF_ref4 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:CarbonizationFromInsideOut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -2 .
 efi:ExternalFlameExposure efi:producesDamage efi:UniformDamageAlongConductor .
 efi:ExternalFlameScenario efi:canManifest efi:UniformDamageAlongConductor .
+
+########################################################################
+# 45. 표 4-9 「단락흔」과 「열흔」의 특징 — 화재조사실무Ⅰ (2025) p.343
+#
+#   1차 단락흔  통전 있음. 화재의 원인이 된 단락흔. 구슬모양으로 광택이 있다.
+#               ※ 단락흔은 연소열로 가열되면 이 특징이 없어지는 경우가 있다.
+#   2차 단락흔  통전 있음. 화재의 열로 전선피복 등이 타서 2차적으로 생긴 것.
+#   열흔        통전 없음. 연소열로 용융한 것. 눈물모양으로 처져 있고 광택이 없다.
+########################################################################
+
+# ── 45.1 열흔은 비통전 상태의 산물이다
+# 표 4-9 의 '통전' 칸이 1차·2차는 '있음', 열흔은 '없음'이다.
+# 열흔이 확인되면 그 지점은 화재 당시 비통전이었다는 뜻이다.
+efi:FireMeltMark efi:attests efi:DeEnergizedState .
+
+# ── 45.2 [C-55] 광택이 없다고 1차 단락흔이 아니라고 할 수 없다
+#   "※ 단락흔은 연소열로 가열되면 이 특징이 없어지는 경우가 있다" (표 4-9)
+# §40.2 에서 '1차는 광택이 있는 것이 많다'를 넣었다. 그 역은 성립하지 않는다.
+# 부재를 근거로 기각하면 P4('확인 불가'와 '부정 확인'의 구분)와 별개로,
+# 화재열이 지운 것을 없었던 것으로 읽는 오류가 된다.
+efi:LusterAbsenceShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Violation ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "광택·평활이 없다는 것으로 1차 단락흔을 배제했다. 연소열로 가열되면 그 특징은 사라진다 — 없음이 곧 아님이 아니다 (§9.10.3.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?h .
+          ?h efi:refutedBy ?f .
+          ?f rdf:type/rdfs:subClassOf* efi:SmoothLustrousMeltSurface ;
+             efi:confirmationStatus efi:ConfirmedAbsent .
+        }""" ] .
+efi:LusterAbsenceShape dcterms:references
+    "NFPA 921 (2024) §9.10.3.1 — 화재 노출만으로도 금속 표면이 변한다. 국내 실무 교재도 같은 단서를 단다(실무Ⅰ 표 4-9 '단락흔은 연소열로 가열되면 이 특징이 없어지는 경우가 있다')"@ko .
+
+# ── 45.3 아크 조사의 방향 — 부하측에 가까운 쪽이 발화개소측이다
+#   "부하(전기를 소비하고 있는) 쪽에 가까운 쪽이 발화개소측이므로 전원코드 등의
+#    경로를 확인한다" (실무Ⅰ p.343)
+# D-5 가 최하류 지점을 표시한다. 그 표시가 무엇을 뜻하는지를 여기서 적는다.
+efi:furthestDownstream rdfs:comment "회로에서 가장 부하측에 가까운 아크 지점. 그 지점이 발화개소측이다 — 상류에서 단락이 먼저 일어났다면 보호장치가 동작해 하류에는 아크가 남지 않는다 (실무Ⅰ p.343, §9.13.2.1)"@ko .
