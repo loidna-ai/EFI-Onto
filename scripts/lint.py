@@ -63,6 +63,7 @@ def _linked(g, name, pairs, side):
 def checks(g):
     """(제목, 항목 목록, 설명) 의 목록."""
     out = []
+    print_only = []
     mech = _subs(g, "HeatingMechanism")
     dmg = _subs(g, "DamagePattern")
     ante = _subs(g, "AntecedentCondition")
@@ -80,14 +81,23 @@ def checks(g):
                 sorted(m for m in mech if not _abstract(g, m) and not _linked(g, m, produces, 0)),
                 "이 메커니즘이 일어나도 아무 흔적이 안 남는다는 뜻이 된다"))
     # 5대 요인 밖의 확장 슬롯. 가설로 세우려면 시나리오 집합을 늘려야 하는데
-    # 그건 배타 공리와 변별력 공식의 N 을 바꾸는 설계 결정이다. 범위 판단 대기.
+    # 그건 배타 공리와 변별력 공식의 N 을 바꾸는 설계 결정이다.
+    #
+    # 결정했다 — 늘리지 않는다. 공식 분류표(실무Ⅳ 표 2-1)는 과부하와 중성선
+    # 단선을 정식 갈래로 두지만, 이 온톨로지가 가르는 5대 요인은 그 표의
+    # '전기적 요인' 아래 국내 실무가 쓰는 세부 분류이고 사례 라벨도 그 다섯이다.
+    # 시나리오를 늘리면 변별력 공식의 N 이 바뀌어 이미 검증한 가감점이 전부
+    # 흔들린다. 어휘는 남긴다 — 표 2-1 을 옮긴 흔적이고, 그 갈래가 의심되면
+    # 이 온톨로지의 범위 밖이라고 말할 수 있어야 한다.
     SLOTS = {"OverloadHeating", "OpenNeutralOvervoltage", "SustainedFaulting"}
     out.append(("어떤 가설도 쓰지 않는 발열 메커니즘 (확장 슬롯 제외)",
                 sorted(m for m in mech if not _abstract(g, m) and m not in SLOTS
                        and not _linked(g, m, declared, 1)),
                 "가설로 세울 수 없어 판정에 등장하지 못한다"))
-    out.append(("확장 슬롯 — 범위 결정 대기", sorted(SLOTS),
-                "5대 요인 밖이라 가설로 세울 수 없다. 시나리오 집합을 늘릴지 결정이 필요하다"))
+    # 결정이 끝났으므로 미완성 수에서 뺀다. 목록은 계속 보여 준다.
+    print_only.append(("확장 슬롯 — 범위 밖으로 결정됨", sorted(SLOTS),
+                       "표 2-1 의 정식 갈래이나 이 온톨로지가 가르는 다섯 요인 밖이다. "
+                       "시나리오를 늘리면 변별력 공식의 N 이 바뀐다"))
     exhibits = rel("exhibits")
     out.append(("어디에도 붙지 않은 손상 양상",
                 sorted(d for d in dmg if not _abstract(g, d)
@@ -149,12 +159,12 @@ def checks(g):
     out.append(("두 축에 동시에 속하는 클래스", sorted(multi),
                 "축은 서로소다. 나오면 DL 일관성도 깨진다"))
 
-    return out
+    return out, print_only
 
 
 def problems(g=None):
     g = g or Graph().parse(TTL, format="turtle")
-    return [(t, items, why) for t, items, why in checks(g) if items]
+    return [(t, items, why) for t, items, why in checks(g)[0] if items]
 
 
 if __name__ == "__main__":
@@ -163,7 +173,8 @@ if __name__ == "__main__":
     for s, o in g.subject_objects(SKOS.prefLabel):
         KO.setdefault(ln(s), str(o))
     total = 0
-    for title, items, why in checks(g):
+    todo, noted = checks(g)
+    for title, items, why in todo:
         print(f"\n■ {title}  {len(items)}건")
         if why:
             print(f"    {why}")
@@ -172,4 +183,10 @@ if __name__ == "__main__":
         if len(items) > 20:
             print(f"    ... 외 {len(items) - 20}건")
         total += len(items)
+    for title, items, why in noted:
+        print(f"\n□ {title}  {len(items)}건  — 결정이 끝나 미완성 수에 넣지 않는다")
+        if why:
+            print(f"    {why}")
+        for i in items:
+            print(f"    - {KO.get(i, i)}" if i in KO else f"    - {i}")
     print(f"\n합계 {total}건")

@@ -30,7 +30,7 @@ BASELINE = {
     "unwired_data_properties":  (11, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
     # 사슬에 붙지 않은 어휘. 선언만 하고 쓰지 않으면 판정에 기여하지 못한다.
     # 확장 슬롯 3건과 미사용 속성 15건. scripts/lint.py 참조.
-    "dangling_vocabulary": (17, 0),
+    "dangling_vocabulary": (11, 0),
 
 }
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
