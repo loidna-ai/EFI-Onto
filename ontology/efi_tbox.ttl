@@ -1209,6 +1209,8 @@ efi:SuspectedNotOpinionShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
 efi:CertaintyStatedShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
     dcterms:references "NFPA 921 (2024) §4.5.1.2 Expressions of Certainty" ;
     sh:property [ sh:path efi:certaintyLevel ; sh:minCount 1 ;
+        # 권고 — §4.5.1.2 should an opinion be expressed
+        sh:severity sh:Warning ;
         sh:message "의견에는 확신도를 밝혀야 한다. 가능인지 개연인지 적지 않으면 상당한 확실성으로 읽힌다 (§4.5.1.2)"@ko ] .
 
 # [C-15] 아는 한계는 밝혀야 한다 (§4.5).
@@ -1490,6 +1492,7 @@ efi:UndeterminedOutcomeShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
 # [C-26] 수집한 자료는 최종 가설이 서기 전에 전부 분석돼야 한다 (§4.3.4).
 #  수집과 목록화는 분석이 아니다.
 efi:DataAnalyzedShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Warning ;   # 권고 — 원문이 should 로 쓴 요건
     dcterms:references "NFPA 921 (2024) §4.3.4 Analyze the Data" ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
         sh:message "분석되지 않은 자료가 남아 있다. 수집한 자료는 최종 가설 전에 전부 분석돼야 한다 (§4.3.4)"@ko ;
@@ -1559,6 +1562,7 @@ efi:contactCircumstance a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenari
 # [C-28] 가설 검증에서 답해야 할 질문에 답하지 않은 채 결론을 낼 수 없다 (§19.6.3).
 #  질문 4(고장 모드)는 '있다면'이라 필수가 아니다.
 efi:TestingQuestionsShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Warning ;   # 권고 — 원문이 should 로 쓴 요건
     dcterms:references "NFPA 921 (2024) §19.6.3 Hypotheses Testing Questions" ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
         sh:message "착화 역량·시간선·접촉 정황 중 답하지 않은 질문이 있다 (§19.6.3)"@ko ;
@@ -1660,6 +1664,7 @@ efi:HeatTransferPathShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
 # [C-33] 120/240 V 계통에서 아크는 자발적으로 생기지 않는다 (§9.9.4.1).
 #  아크 가설은 아크가 어떻게 시작됐는지를 밝혀야 한다.
 efi:ArcInitiationShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Warning ;   # 권고 — 원문이 should 로 쓴 요건
     dcterms:references "NFPA 921 (2024) §9.9.4.1 Arcs" ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
         sh:message "아크가 어떻게 시작됐는지 밝히지 않았다. 저전압 계통에서 아크는 자발적으로 생기지 않는다 (§9.9.4.1)"@ko ;
@@ -1722,6 +1727,7 @@ efi:HeatDissipationImpairment efi:enables efi:ResistiveHeating , efi:OverloadHea
 #  기록돼야 한다 (§9.9.1.1 — 착화되는 것은 '가까이 있는' 재료다).
 #  거리 임계값은 정하지 않는다. 원문이 수치를 주지 않았고 재료마다 다르다.
 efi:FuelProximityShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Warning ;   # 권고 — 원문이 should 로 쓴 요건
     dcterms:references "NFPA 921 (2024) §9.9.1.1 Ignition by Electrical Energy" ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
         sh:message "최초 착화물이 발열원에서 얼마나 떨어져 있었는지 기록되지 않았다 (§9.9.1.1)"@ko ;
@@ -1957,6 +1963,7 @@ efi:examinationCoversSupplyPath a owl:DatatypeProperty ; rdfs:domain efi:ArcSurv
 
 # [C-43] 검사 범위가 공급 경로 전체를 포함했는지 밝혀야 한다 (§9.12.4).
 efi:SupplyPathCoverageShape a sh:NodeShape ; sh:targetClass efi:ArcSurvey ;
+    sh:severity sh:Warning ;   # 권고 — 원문이 should 로 쓴 요건
     dcterms:references "NFPA 921 (2024) §9.12.4 Systematic Approach" ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
         sh:message "관심 영역에 전원을 공급하는 계통 전체를 검사했는지 밝혀야 한다 (§9.12.4)"@ko ;
@@ -2001,6 +2008,7 @@ efi:addressesFactor a owl:ObjectProperty ;
 
 # [C-44] 일곱 요인을 모두 설명하지 않으면 발화 순서를 설명한 것이 아니다 (§19.4.4.2.1).
 efi:IgnitionSequenceShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Warning ;   # 권고 — 원문이 should 로 쓴 요건
     dcterms:references "NFPA 921 (2024) §19.4.4.2.1 Analyzing the Ignition Sequence" ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
         sh:message "발화 순서 기여 요인 일곱 중 설명하지 않은 것이 있다 (§19.4.4.2.1)"@ko ;
@@ -2055,6 +2063,7 @@ efi:sourceUnspecified a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario 
     rdfs:label "경합 발화원 미특정"@ko ; skos:prefLabel "경합 발화원 미특정"@ko ;
     rdfs:comment "발화부에 경합 발화원이 여럿이고 어느 것이 착화시켰는지 판정할 수 없는 상태 (§19.5.4)"@ko .
 efi:UnspecifiedSourceDisclosureShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Warning ;   # 권고 — 원문이 should 로 쓴 요건
     dcterms:references "NFPA 921 (2024) §19.5.4 Developing Cause Hypotheses" ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
         sh:message "경합 발화원을 특정하지 못했다면 그 사실을 한계로 명시해야 한다 (§19.5.4)"@ko ;
@@ -2110,6 +2119,7 @@ efi:testedBy a owl:ObjectProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:rang
 
 # [C-47] 문헌에 기대어 검증했다면 그 연구를 인용해 밝혀야 한다 (§19.6.4.1).
 efi:LiteratureCitationShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
+    sh:severity sh:Warning ;   # 권고 — 원문이 should 로 쓴 요건
     dcterms:references "NFPA 921 (2024) §19.6.4.1 Scientific Literature" ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
         sh:message "문헌으로 가설을 검증했다면 의존한 연구를 인용해야 한다 (§19.6.4.1)"@ko ;
@@ -2127,6 +2137,8 @@ efi:reviewerRelationshipDisclosed a owl:DatatypeProperty ;
 efi:TechnicalReviewBiasShape a sh:NodeShape ; sh:targetClass efi:TechnicalReview ;
     dcterms:references "NFPA 921 (2024) §4.6.2.1 Limitations of Technical Reviews" ;
     sh:property [ sh:path efi:reviewerRelationshipDisclosed ; sh:minCount 1 ;
+        # 권고 — §4.6.2.1 should strive to maintain detachment
+        sh:severity sh:Warning ;
         sh:message "검토자와 조사자의 관계를 밝혀야 한다. 확증 편향은 관계를 통해 들어온다 (§4.6.2.1)"@ko ] .
 
 # 편향 점검 2차 반영 — 화재도 내는 것으로 판정된 양상들
@@ -2169,6 +2181,8 @@ efi:BurnPattern rdfs:comment "발화 지점 특정용 어휘. 그 절차는 범�
 efi:CircuitProtectionRecordShape a sh:NodeShape ; sh:targetClass efi:ArcSurvey ;
     dcterms:references "NFPA 921 (2024) §9.13.2.2 Arc Map" ;
     sh:property [ sh:path efi:circuitProtection ; sh:minCount 1 ;
+        # 권고 — §9.13.2.2 should be recorded
+        sh:severity sh:Warning ;
         sh:message "조사한 회로의 보호장치 종류와 상태를 기록해야 한다 (§9.13.2.2)"@ko ] .
 
 # [C-50] 사건 분류는 어느 사건을 분류한 것인지 가리켜야 한다 (§19.8.1).
