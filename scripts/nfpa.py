@@ -220,6 +220,8 @@ SHAPE_REFS = {
     "OverloadMeltingNotProofShape":      ["9.10"],
     "BusBarArcTravelShape":              ["9.10"],
     "CrackedInsulationLeakageShape":     ["9.11"],
+    "MetallographyAloneShape":           ["9.11"],
+    "InsulationResistanceDerivationRuleShape": ["9.11"],
     "ShortCircuitIgnitionShape":         ["9.11"],
     "SupplyPathCoverageShape":           ["9.12"],
     "IgnitionSequenceShape":             ["19.4"],

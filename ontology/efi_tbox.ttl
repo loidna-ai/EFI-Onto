@@ -2682,3 +2682,59 @@ efi:InsulationResistanceDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:
         }""" ] .
 efi:InsulationResistanceDerivationRuleShape dcterms:references
     "NFPA 921 (2024) §9.11.3 — 절연이 상해도 도전 경로가 서야 누설 전류가 흐른다. 절연저항 측정이 그 상태를 재는 수단이다. 숫자 기준은 NFPA 가 아니라 국내 실무 교재(실무Ⅳ 표 2-22)에서 오며 요구값 속성으로 분리해 두었다"@ko .
+
+########################################################################
+# 40. 용흔 외관·단면 관찰 — 화재조사실무Ⅳ (2025) p.306~309
+#
+# F-2 는 1차/2차를 시간 선후로 판정한다. 그것이 판정이고 여기 있는 것은 전부
+# 보강 근거다. 교재도 같은 선을 긋는다 —
+#   "본 결과물 단독으로 화재원인을 단정지어 판단할 수 없다" (p.307)
+# 그래서 이 절의 어떤 것도 핵심 단서로 올리지 않는다.
+########################################################################
+
+# ── 40.1 열용흔 — 전원이 차단된 상태에서 화재열로 녹은 것
+#   "전원이 차단된 상태에서 어떤 원인으로 화재가 발생하여 화재열에 의해 전선
+#    등의 금속이 용융된 흔적으로 화재와는 아무런 상관관계가 없다" (p.307)
+# FireMeltMark(수열 용융흔)가 있으나 그 형태 특징이 없었다.
+efi:WideMeltWithRoughSurface a owl:Class ; rdfs:subClassOf efi:FireMeltMark ; rdfs:label "융해 범위 넓고 표면 거칢"@ko ; skos:prefLabel "융해 범위 넓고 표면 거칢"@ko ; rdfs:comment "금속의 융해 범위가 넓고 표면에 요철이 있어 거칠며 광택이 없다 (실무Ⅳ p.309)"@ko .
+efi:DrippingMeltFormation a owl:Class ; rdfs:subClassOf efi:FireMeltMark ; rdfs:label "흘러내림·물방울 형태"@ko ; skos:prefLabel "흘러내림·물방울 형태"@ko ; rdfs:comment "전선 중간에서 녹아 흘러내린 결정체가 덮이고 끝부분이 물방울 떨어지기 직전 모양이다 (실무Ⅳ p.309)"@ko .
+efi:StretchedThinnedEnd a owl:Class ; rdfs:subClassOf efi:FireMeltMark ; rdfs:label "장력 방향 신장·끝 가늘어짐"@ko ; skos:prefLabel "장력 방향 신장·끝 가늘어짐"@ko ; rdfs:comment "외부 화염에 연화되면 장력을 받는 쪽으로 길게 늘어나고 끝이 가늘어지며 절단면이 거칠다 (실무Ⅳ p.309)"@ko .
+efi:Conductor efi:exhibits efi:WideMeltWithRoughSurface , efi:DrippingMeltFormation , efi:StretchedThinnedEnd .
+efi:ExternalFlameExposure efi:producesDamage efi:WideMeltWithRoughSurface , efi:DrippingMeltFormation , efi:StretchedThinnedEnd .
+efi:ExternalFlameScenario efi:canManifest efi:WideMeltWithRoughSurface , efi:DrippingMeltFormation , efi:StretchedThinnedEnd .
+
+# ── 40.2 1차 용흔의 외관 경향 (p.308)
+#   광택   1차 쪽이 광택이 있는 것이 많다
+#   평활도  1차는 평활하고 2차는 표면이 거친 것이 많다
+#   형상   구형·반구형·루상 중 1차는 반구형이 많다
+# '많다'이지 '이다'가 아니다. 보강 근거로만 둔다.
+efi:HemisphericalMeltShape a owl:Class ; rdfs:subClassOf efi:MeltMark ; rdfs:label "반구형 용융흔"@ko ; skos:prefLabel "반구형 용융흔"@ko ; rdfs:comment "구형·반구형·루상(촛농) 셋 중 1차 용융흔은 반구형이 많다 (실무Ⅳ p.308). 경향이지 판정 기준이 아니다"@ko .
+efi:SmoothLustrousMeltSurface a owl:Class ; rdfs:subClassOf efi:MeltMark ; rdfs:label "평활·광택 있는 용융면"@ko ; skos:prefLabel "평활·광택 있는 용융면"@ko ; rdfs:comment "1차 용융흔 쪽이 광택이 있고 평활한 것이 많다. 2차는 움푹 패이고 거칠다 (실무Ⅳ p.308)"@ko .
+efi:ForeignMatterInclusion a owl:Class ; rdfs:subClassOf efi:MeltMark ; rdfs:label "내부 이물 혼입"@ko ; skos:prefLabel "내부 이물 혼입"@ko ; rdfs:comment "2차 용융흔은 내부에 이물을 많이 혼입하고 있다 (실무Ⅳ p.309). 단면 관찰로 본다"@ko .
+efi:Conductor efi:exhibits efi:HemisphericalMeltShape , efi:SmoothLustrousMeltSurface , efi:ForeignMatterInclusion .
+efi:ElectricalHeatingMechanism efi:producesDamage efi:HemisphericalMeltShape , efi:SmoothLustrousMeltSurface .
+efi:ExternalFlameExposure efi:producesDamage efi:ForeignMatterInclusion , efi:HemisphericalMeltShape , efi:SmoothLustrousMeltSurface .
+efi:ExternalFlameScenario efi:canManifest efi:ForeignMatterInclusion , efi:HemisphericalMeltShape , efi:SmoothLustrousMeltSurface .
+
+# ── 40.3 [C-48] 금속조직·외관만으로 1차 단락흔을 단정할 수 없다
+#   "금속현미경으로 관찰 평가하여 결과를 화재원인을 추정하는데 참조할 수 있으며
+#    본 결과물 단독으로 화재원인을 단정지어 판단할 수 없다" (실무Ⅳ p.307)
+# NFPA 도 같은 말을 한다 — §9.11.6 도체 끝의 비드 자체는 원인을 지시하지 않는다.
+efi:MetallographyAloneShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Violation ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "금속조직·외관 관찰만으로 1차 단락흔을 단정했다. 시간 선후(F-2) 또는 비형태 사실이 함께 서야 한다 (§9.11.6)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?h .
+          ?h efi:supportedBy ?f .
+          ?f rdf:type/rdfs:subClassOf* efi:PrimaryArcMark .
+          FILTER NOT EXISTS { ?f efi:formedBy ?e . ?e time:before ?fe . ?fe a efi:FireExposureEvent }
+          FILTER NOT EXISTS {
+            ?h efi:supportedBy ?g .
+            FILTER ( ?g != ?f )
+            FILTER NOT EXISTS { ?g rdf:type/rdfs:subClassOf* efi:DamagePattern }
+          }
+        }""" ] .
+efi:MetallographyAloneShape dcterms:references
+    "NFPA 921 (2024) §9.11.6 — 도체 끝의 비드 자체는 화재 원인을 지시하지 않는다. 국내 실무 교재도 같다(실무Ⅳ p.307 '본 결과물 단독으로 화재원인을 단정지어 판단할 수 없다')"@ko .

@@ -84,6 +84,14 @@ VERDICTS = {
     "IntactSurroundingsAroundComponent":  (FIRE, "실무Ⅳ p.210·211 부품과 주위가 모두 경미하면 외부 화염을 맞은 것으로 판정한다. 정의상 화재가 만드는 양상"),
     "DendriticTreePath":           (ELEC, "실무Ⅳ p.153·156 절연체 내부에서 전계 집중을 따라 자라는 경로다. 화재는 절연물 내부에 수지상 경로를 만들지 않는다"),
     "InternalDamageExceedingSurface": (ELEC, "실무Ⅳ p.254 내부 전극·유전체가 표면보다 강하게 탄화됐다면 안에서 시작된 것이다. §9.10.1 밖에서 온 화염은 표면부터 태운다"),
+    # 용흔 외관·단면 (실무Ⅳ p.306~309). 1차/2차 판정은 F-2(시간 선후)가 하고
+    # 이것들은 보강 근거다. 교재도 "본 결과물 단독으로 단정할 수 없다"고 한다.
+    "WideMeltWithRoughSurface":    (FIRE, "실무Ⅳ p.309 열용흔의 대표 형태다. 전원이 차단된 상태에서 화재열로 녹은 것이므로 정의상 화재가 만든다"),
+    "DrippingMeltFormation":       (FIRE, "실무Ⅳ p.309 전선 중간이 녹아 흘러내린 형태. 열용흔이다"),
+    "StretchedThinnedEnd":         (FIRE, "실무Ⅳ p.309 외부 화염에 연화되어 장력 방향으로 늘어난 것. 열용흔이다"),
+    "HemisphericalMeltShape":      (FIRE, "실무Ⅳ p.308 1차 용융흔에 반구형이 '많다'는 경향일 뿐 2차에도 나온다. 전용 단서가 아니다"),
+    "SmoothLustrousMeltSurface":   (FIRE, "실무Ⅳ p.308 같은 경향 진술이다. 2차가 거친 것이 '많다'이지 항상은 아니다"),
+    "ForeignMatterInclusion":      (FIRE, "실무Ⅳ p.309 2차 용융흔의 특징이다. 2차는 화재가 만든 것이므로 화재가 낸다"),
     "ToothMarkOnInsulation":       (ELEC, "실무Ⅳ p.253 설치류의 이빨 자국은 화재가 만들 수 있는 형태가 아니다. 잔존 피복에 남는다"),
     "RubyRedCrystal":              (ELEC, "실무Ⅳ p.153 적색 결정은 출화개소에 대응하는 접촉부에서 나온다. 상위 CuprousOxideGrowth 와 같이 §9.10.3 발광 접속부 산물"),
     "PrimaryArcMark":              (ELEC, "정의상 화재 이전 형성"),
