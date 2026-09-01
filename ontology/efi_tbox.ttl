@@ -2346,7 +2346,7 @@ efi:R_PD_sup5  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionSce
 efi:R_PD_sup6  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureOverTenPercent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_CD_sup3  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MeltMarkOnSupplySideOnly ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_TR_sup3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:OrganicInsulationPresent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_EF_sup2  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:FuseIrregularlyMelted ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 0 .
+efi:R_EF_sup4  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:FuseIrregularlyMelted ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 
 # 편향 점검 결과 반영 — 화재도 내는 양상은 외부화염에도 선언해야 한다.
 # 소선 10% 이상 단선: 10% 라는 정도는 발화 전 상태를 뜻하지만, 소손 후 형태만으로는
@@ -2422,8 +2422,8 @@ efi:InsulationBreakdownArc efi:enablesProgressionTo efi:ArcTracking .
 # ── 33.5 지표 규칙 — 국내 실무 층이므로 조항을 붙이지 않는다
 efi:R_ANY_LocalHeat a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 1 .
 efi:R_ANY_Intact a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:IntactSurroundingsAroundComponent ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
-efi:R_EF_sup3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:IntactSurroundingsAroundComponent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 0 .
-efi:R_EF_ref2 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 0 .
+efi:R_EF_sup5 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:IntactSurroundingsAroundComponent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_EF_ref3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -2 .
 
 ########################################################################
 # 34. 반단선의 발생 위치와 남은 기계적 경로 — 화재조사실무Ⅳ (2025)

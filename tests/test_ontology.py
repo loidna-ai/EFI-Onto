@@ -679,6 +679,24 @@ def test_subclass_matching(onto):
         assert onto.matches(c, "ContaminatedEnvironment"), c
 
 
+def test_each_indicator_rule_says_one_thing(g):
+    """규칙 하나는 가설 하나·지표 하나·역할 하나·점수 하나여야 한다.
+
+    같은 id 를 두 번 쓰면 RDF 는 둘을 한 자원으로 합친다. 오류가 아니라
+    조용한 병합이라 파싱도 통과하고 DL 일관성도 통과한다. 실제로 세 건이
+    그렇게 합쳐져 있었고, 지표 셋이 사라진 채로 시험이 전부 녹색이었다.
+    """
+    from rdflib import RDF
+    bad = []
+    for r in g.subjects(RDF.type, EFI.IndicatorRule):
+        for prop in (EFI.forScenario, EFI.indicates, EFI.hasRole, EFI.scoreDelta,
+                     EFI.requiresStatus):
+            n = len(set(g.objects(r, prop)))
+            if n != 1:
+                bad.append((q(r), q(prop), n))
+    assert not bad, f"규칙이 여러 값을 갖는다(id 중복 의심): {bad}"
+
+
 def test_cause_chain_declarations_agree(g):
     """원인 축 판정과 사슬이 어긋나면 안 된다.
 
