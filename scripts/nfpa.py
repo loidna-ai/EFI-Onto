@@ -36,7 +36,7 @@ SECTIONS = [
     ("9.6",  "Overcurrent Protection",               DONE, "BreakerTripRecord, D-1 과부하, GFCI·AFCI. 동작 특성을 표 2-18·2-19 로 물화 — 규정 동작시간을 넘겨도 동작하지 않으면 보호장치 부동작"),
     ("9.7",  "Branch Circuits",                      PART, "Circuit·BranchCircuit 클래스는 생겼다. 계통 위상은 없음"),
     ("9.8",  "Outlets and Devices",                  PART, "PlugReceptacle, TerminalBlock"),
-    ("9.9",  "Ignition by Electrical Energy",        PART, "HeatingMechanism 축과 C-32~C-34. 열전달 지속 시간, "
+    ("9.9",  "Ignition by Electrical Energy",        PART, "HeatingMechanism 축과 C-32~C-34. 피복 탄화 방향(안→밖)으로 도체 발열을 외부 화염과 가른다. 열전달 지속 시간, "
                                                        "연료별 아크 적합성, 스파크 특성이 비어 있다"),
     ("9.10", "Interpreting Damage to Elec. Systems", DONE, "DamagePattern 축, M-1~M-3, C-37~C-39. 하위 절 표 참조"),
     ("9.11", "Identification of Damaged Conductors", DONE, "1차/2차 단락흔 F-2, 통념 부정 C-37. 하위 절 표 참조"),
