@@ -753,6 +753,20 @@ def test_each_indicator_rule_says_one_thing(g):
     assert not bad, f"규칙이 여러 값을 갖는다(id 중복 의심): {bad}"
 
 
+def test_constraint_numbers_are_unique(g):
+    """C-번호를 두 번 쓰지 않는다.
+
+    번호는 문서와 발표에서 제약을 가리키는 이름이다. 겹치면 어느 것을 말하는지
+    갈리지 않는다. 실제로 새 절을 붙이며 C-48~50 을 다시 썼다.
+    도형 id 와 달리 주석이라 RDF 도 시험도 잡지 못한다 — 여기서 센다.
+    """
+    import re, collections
+    text = TTL.read_text(encoding="utf-8")
+    n = collections.Counter(re.findall(r"\[([CMFD]-\d+)\]", text))
+    dup = {k: v for k, v in n.items() if v > 1}
+    assert not dup, f"번호가 겹친다: {dup}"
+
+
 def test_cause_chain_declarations_agree(g):
     """원인 축 판정과 사슬이 어긋나면 안 된다.
 

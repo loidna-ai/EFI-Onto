@@ -2716,7 +2716,7 @@ efi:ElectricalHeatingMechanism efi:producesDamage efi:HemisphericalMeltShape , e
 efi:ExternalFlameExposure efi:producesDamage efi:ForeignMatterInclusion , efi:HemisphericalMeltShape , efi:SmoothLustrousMeltSurface .
 efi:ExternalFlameScenario efi:canManifest efi:ForeignMatterInclusion , efi:HemisphericalMeltShape , efi:SmoothLustrousMeltSurface .
 
-# ── 40.3 [C-48] 금속조직·외관만으로 1차 단락흔을 단정할 수 없다
+# ── 40.3 [C-52] 금속조직·외관만으로 1차 단락흔을 단정할 수 없다
 #   "금속현미경으로 관찰 평가하여 결과를 화재원인을 추정하는데 참조할 수 있으며
 #    본 결과물 단독으로 화재원인을 단정지어 판단할 수 없다" (실무Ⅳ p.307)
 # NFPA 도 같은 말을 한다 — §9.11.6 도체 끝의 비드 자체는 원인을 지시하지 않는다.
@@ -2932,7 +2932,7 @@ efi:MeltBoundaryRuleShape a sh:NodeShape ; sh:targetClass efi:MeltMark ;
 efi:MeltBoundaryRuleShape dcterms:references
     "NFPA 921 (2024) §9.10.4.1 — 용융은 그 자체로 발화의 증거가 아니다. 경계의 날카로움은 아크 용흔과 열용흔을 가르는 관찰이며 국내 실무 교재(실무Ⅳ p.317)가 같은 구분을 쓴다"@ko .
 
-# ── 43.2 [C-49] 합금 전선에는 용흔 판정법을 적용하지 않는다 (p.318)
+# ── 43.2 [C-53] 합금 전선에는 용흔 판정법을 적용하지 않는다 (p.318)
 #   "알루미늄 전선이나 아연합금 전선은 은색이나 황동색으로 변색된다. 화재조사관은
 #    전선에 나타난 변색이 아크에 의한 것이 아니라 합금금속의 용융온도가 감소된
 #    결과일 수도 있다는 것을 인식하여야 한다. 이러한 합금 전선은 자체 손상이
@@ -2962,7 +2962,7 @@ efi:AlloyConductorArcMarkShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
 efi:AlloyConductorArcMarkShape dcterms:references
     "NFPA 921 (2024) §9.10.4.1 — 용융은 발화의 증거가 아니다. 합금 도체에서 판정법이 적용되지 않는다는 것은 국내 실무 교재(실무Ⅳ p.318)의 명시적 경고다"@ko .
 
-# ── 43.3 [C-50] 진화·수습 과정의 기계적 손상을 용흔으로 읽지 않는다 (p.318)
+# ── 43.3 [C-54] 진화·수습 과정의 기계적 손상을 용흔으로 읽지 않는다 (p.318)
 #   "화재현장이 어지럽혀짐에 따른 전선의 부서짐, 구축물의 도괴에 따른 배선이
 #    늘어나서 끊어지거나 긁힘 현상, 또는 화재조사관에 의한 절단은 용흔에 의한
 #    흔적으로 혼동될 수 있다."
