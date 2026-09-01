@@ -47,3 +47,6 @@ calibrate:
 
 cause-audit:
 	python scripts/cause_audit.py
+
+readers:
+	python scripts/reader_compare.py

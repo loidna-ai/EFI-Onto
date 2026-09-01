@@ -1,0 +1,383 @@
+{
+  "_meta": {
+    "무엇인가": "사전 판독(scripts/slots.py)이 놓친 슬롯 진술을 LLM(Claude)이 읽어 온톨로지 어휘로 옮긴 것. 사전 판독을 대체하지 않고 나란히 둔다.",
+    "왜": "사전이 못 읽은 것을 조사서가 안 적은 것으로 착각하는 사고가 반복됐다. 두 판독을 갈라 두면 '온톨로지의 한계'와 '판독의 한계'가 갈린다.",
+    "규칙": "1) 슬롯이 축을 정한다 — 같은 낱말이라도 슬롯에 따라 다르게 읽는다. 2) 근거가 원문에 있는 것만 옮긴다. 3) 애매하면 비워 두고 이유를 적는다.",
+    "판독자": "Claude Opus 5",
+    "기준일": "2026-09-02",
+    "결과": "LLM 판독 38건 중 8건이 오독이었다. 전부 과잉 판독 — 근거가 약한데 읽어 냈다. 사전 판독 대비 정확 -4.7%p, 오판 +6.0%p 였다. 오독을 걷어낸 뒤가 진짜 비교값이다."
+  },
+  "readings": [
+    {
+      "case": "ANSEONG_2023_194",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark"
+      ],
+      "why": "'용융 흔적'을 사전이 못 읽었다 — 패턴이 '용융흔'이라 띄어쓰기에서 빗나간다. 천공은 시각 슬롯이라 아크 손상일 수 있어 마찰로 읽지 않는다"
+    },
+    {
+      "case": "DONGDUCHEON_2024_024",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark",
+        "MultipleArcBeads"
+      ],
+      "why": "'수개의 용융 흔적'은 다발성이다. 천공은 같은 이유로 읽지 않는다"
+    },
+    {
+      "case": "DONGDUCHEON_2024_024",
+      "slot": "energized_status",
+      "classes": [
+        "AbnormalTemperatureOrVoltageDrop"
+      ],
+      "why": "'부분 정전'은 회로 일부가 나간 것이며 전기적 이상의 징후다. 비통전으로 읽으면 전기 가설 전부가 죽는다"
+    },
+    {
+      "case": "SUWON_2025_144",
+      "slot": "insulation_damage_history",
+      "classes": [
+        "AbrasionAtPenetration"
+      ],
+      "why": "배관에 걸린 채 사용되면 접촉부에서 쓸린다 (실무Ⅳ p.269 '주변 구조물과의 마찰에 의한 손상')"
+    },
+    {
+      "case": "SUWON_2025_144",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark",
+        "AbrasionAtPenetration"
+      ],
+      "why": "용융 흔적과, 배관에 걸린 상태의 마찰"
+    },
+    {
+      "case": "SUWONNAMBU_2022_131",
+      "slot": "insulation_damage_history",
+      "classes": [
+        "Tension",
+        "StressConcentrationPoint"
+      ],
+      "why": "매달린 상태는 전선에 인장이 걸린다. 실무Ⅳ p.149 가 반단선의 외력으로 '끌어당기는'을 든다"
+    },
+    {
+      "case": "SUWONNAMBU_2022_131",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark",
+        "LongTermTerminalHeating"
+      ],
+      "why": "단자에 소결이 남으면 그 자리에서 오래 발열한 것이다"
+    },
+    {
+      "case": "ILSAN_2024_151",
+      "slot": "insulation_damage_history",
+      "classes": [
+        "LooseConnection"
+      ],
+      "why": "이종 도선 비규격 접속은 접촉 면적·압력이 확보되지 않는다 (실무Ⅳ p.194)"
+    },
+    {
+      "case": "UIJEONGBU_2020_145",
+      "slot": "environmental_contamination",
+      "classes": [
+        "CorrodedConnection"
+      ],
+      "why": "부식 정황이 명시됐다. 실무Ⅳ p.206 이 접점부 산화를 접촉불량 원인으로 든다"
+    },
+    {
+      "case": "NAMYANGJU_2024_323",
+      "slot": "environmental_contamination",
+      "classes": [
+        "ThermalDegradation"
+      ],
+      "why": "지속적 고온 노출은 절연을 열적으로 열화시킨다 (실무Ⅳ p.328 주위 온도에 의한 피복 열화)"
+    },
+    {
+      "case": "POCHEON_2023_213",
+      "slot": "environmental_contamination",
+      "classes": [
+        "ThermalDegradation"
+      ],
+      "why": "반복적 온도 변화는 수축·팽창을 부른다 (실무Ⅳ p.328)"
+    },
+    {
+      "case": "SUWON_2024_093",
+      "slot": "breaker_trip_status",
+      "classes": [
+        "BreakerTripRecord"
+      ],
+      "why": "차단기 교체·재인가 이력이다"
+    },
+    {
+      "case": "SUWON_2024_093",
+      "slot": "pre_ignition_symptoms",
+      "classes": [
+        "IntermittentRcdTripping"
+      ],
+      "why": "전원 공급 불능으로 차단기를 교체했다면 그 전에 반복 동작이 있었다는 뜻이다"
+    },
+    {
+      "case": "GIMPO_2025_260",
+      "slot": "pre_ignition_symptoms",
+      "classes": [
+        "PreFireArcObservation"
+      ],
+      "why": "'분전반 내 전기적 충격'은 방전 목격 서술이다"
+    },
+    {
+      "case": "NAMYANGJU_2025_144",
+      "slot": "pre_ignition_symptoms",
+      "classes": [
+        "AbnormalTemperatureOrVoltageDrop"
+      ],
+      "why": "일정 시간 뒤 자동 정지는 과열 보호가 동작한 것이다"
+    },
+    {
+      "case": "GIMPO_2025_339",
+      "slot": "pre_ignition_symptoms",
+      "classes": [
+        "EnergizedState"
+      ],
+      "why": "한쪽을 사용 중이므로 통전 상태다"
+    },
+    {
+      "case": "GWANGJU_2025_312",
+      "slot": "energized_status",
+      "classes": [
+        "EnergizedState"
+      ],
+      "why": "상시 사용 기기다"
+    },
+    {
+      "case": "GOYANG_2025_094",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "LocalizedHeatWithSurroundingDamage",
+        "LongTermTerminalHeating"
+      ],
+      "why": "접속부에 국부 고열이 있고 주위로 연소가 번진 형태다 (실무Ⅳ p.211)"
+    },
+    {
+      "case": "YANGJU_2024_133",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark"
+      ],
+      "why": "'용융 흔적' 띄어쓰기로 못 읽었다"
+    },
+    {
+      "case": "HWASEONG_2025_638",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark"
+      ],
+      "why": "같은 띄어쓰기 문제"
+    },
+    {
+      "case": "HWASEONG_2025_639",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcBead"
+      ],
+      "why": "용융구 형태이나 소선 언급이 없어 일반 비드로 읽는다 (§9.11.6)"
+    },
+    {
+      "case": "GWANGJU_2025_261",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark"
+      ],
+      "why": "같은 띄어쓰기 문제"
+    },
+    {
+      "case": "UIJEONGBU_2021_088",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark"
+      ],
+      "why": "같은 띄어쓰기 문제"
+    },
+    {
+      "case": "SUWONNAMBU_2026_001",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark",
+        "StrandFracture"
+      ],
+      "why": "전선 1개 단선이며 단면에 용융흔이 있다"
+    },
+    {
+      "case": "GURI_2024_042",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "LocalizedHeatWithSurroundingDamage"
+      ],
+      "why": "계량기 중심의 국부 소실과 인근 수열이다 (실무Ⅳ p.211)"
+    },
+    {
+      "case": "YANGJU_2021_133",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "LooseConnection",
+        "LocalizedHeatWithSurroundingDamage"
+      ],
+      "why": "결속(임의 접속) 흔적과 국소 소실이다"
+    },
+    {
+      "case": "SUWON_2023_100",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "LocalizedHeatWithSurroundingDamage"
+      ],
+      "why": "집중 소훼는 그 지점이 발화점이라는 표지다"
+    },
+    {
+      "case": "GURI_2023_071",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "InternalDamageExceedingSurface",
+        "ContactWelding"
+      ],
+      "why": "기판 전후면 손상과 릴레이 접속핀 멸실. 릴레이 접점은 실무Ⅴ p.238 의 융착 경로다"
+    },
+    {
+      "case": "GWANGJU_2025_274",
+      "slot": "breaker_trip_status",
+      "classes": [
+        "IntermittentRcdTripping",
+        "MoistureExposure"
+      ],
+      "why": "누수로 차단기가 동작한 이력이다. 누설전류가 있었다는 뜻이며 수분 노출도 확인된다"
+    },
+    {
+      "case": "PAJU_2024_200",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "LocalizedHeatWithSurroundingDamage"
+      ],
+      "why": "외함 천공은 아크가 뚫은 것이며 관통부 마찰이 아니다. 집중 연소 패턴만 읽는다"
+    }
+  ],
+  "unmappable": [
+    {
+      "text": "건물 외부 바닥 노출 / 실외 통로 / 가판대 / 옥외 환풍기 / 외부 노출 (6건)",
+      "why": "설치 환경이지 오염·수분이 확인된 것이 아니다. 실측 변별력도 29% 로 낮다"
+    },
+    {
+      "text": "화장실 내 설치 환경",
+      "why": "습한 공간이나 수분 노출이 확인된 서술은 아니다"
+    },
+    {
+      "text": "장기간 외부 노출 상태",
+      "why": "노후로 읽을지 환경으로 읽을지 슬롯이 환경이라 갈린다"
+    },
+    {
+      "text": "화염의 급속한 확대 양상",
+      "why": "연소 확대 서술이지 발화 원인 정보가 아니다"
+    },
+    {
+      "text": "CCTV상 차단기 설치 위치에서 화염 식별",
+      "why": "발화 위치 정보다. 발화개소 판정은 이 온톨로지의 범위 밖이다"
+    },
+    {
+      "text": "외부에서 발생한 큰 소음 목격",
+      "why": "전기적 방전인지 다른 소리인지 갈리지 않는다"
+    },
+    {
+      "text": "진압대원·관계자가 차단기를 직접 차단함 (2건)",
+      "why": "사람이 내린 것이므로 보호장치 동작 기록이 아니다"
+    },
+    {
+      "text": "1층 차단기 작동하지 않음",
+      "why": "무트립이나 그 회로가 발화 회로인지 서술이 없다"
+    },
+    {
+      "text": "인접한 다른 차단기의 접속단자는 정상적인 체결 상태가 유지됨",
+      "why": "다른 단자의 상태이지 대상 단자의 부재 확인이 아니다"
+    },
+    {
+      "text": "발화 약 한 달 전 냉동고 실외기 수리 이력",
+      "why": "수리가 무엇을 바꿨는지 없다"
+    },
+    {
+      "text": "연결된 부하 설비인 월풀 욕조를 5년간 사용하지 않음",
+      "why": "미사용 이력이며 어느 조건으로도 옮기기 어렵다"
+    }
+  ],
+  "misread": [
+    {
+      "case": "YONGINSEOBU_2022_173",
+      "slot": "insulation_damage_history",
+      "classes": [
+        "LooseConnection"
+      ],
+      "why": "임의 제작 접속은 규격 체결이 아니다. 사전은 체결 슬롯에서만 '임의 접속'을 읽는다",
+      "왜 틀렸나": "'임의로 제작 및 사용'을 체결 불량으로 읽었다. 임의 제작이 곧 헐거움은 아니다. 과잉 판독"
+    },
+    {
+      "case": "POCHEON_2024_132",
+      "slot": "environmental_contamination",
+      "classes": [
+        "MoistureExposure"
+      ],
+      "why": "물 배관 주변은 수분 노출 환경이다",
+      "왜 틀렸나": "'물 배관 주변'을 수분 노출 확인으로 읽었다. 주변에 있다는 것이 노출 확인은 아니다. 과잉 판독"
+    },
+    {
+      "case": "BUCHEON_2020_330",
+      "slot": "pre_ignition_symptoms",
+      "classes": [
+        "IntermittentRcdTripping"
+      ],
+      "why": "사용 중 전원이 끊기는 것은 보호장치 동작이다. 정전과 갈리지 않아 사전에서는 뺐던 항목이며 판독이 갈리는 지점이다",
+      "왜 틀렸나": "'갑자기 전기가 차단'을 보호장치 동작으로 읽었다. 정전과 갈리지 않아 사전에서 이미 뺐던 항목인데 알면서 넣었다"
+    },
+    {
+      "case": "NAMYANGJU_2024_378",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark",
+        "LongTermTerminalHeating"
+      ],
+      "why": "접촉부 볼트가 녹았다면 그 자리의 발열이다",
+      "왜 틀렸나": "차단기 접촉부 용융을 접촉불량으로 읽었다. 교재 p.147 은 '각종 스위치류'를 트래킹의 자리로 든다. 접속부 손상이 곧 접촉불량은 아니다. 정답은 트래킹이었다"
+    },
+    {
+      "case": "YANGJU_2024_188",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "ArcMeltMark",
+        "LongTermTerminalHeating"
+      ],
+      "why": "접촉 단자 부위의 아크흔이다",
+      "왜 틀렸나": "같은 오독"
+    },
+    {
+      "case": "POCHEON_2024_102",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "LongTermTerminalHeating"
+      ],
+      "why": "칼날받이가 패인 것은 접속부의 반복 개폐·발열 흔적이다. 기계적 변형으로 읽으면 안 된다",
+      "왜 틀렸나": "칼날받이 손상을 접촉불량으로 읽었다. 같은 이유로 트래킹의 자리이기도 하다"
+    },
+    {
+      "case": "PAJU_2024_060",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "InternalDamageExceedingSurface"
+      ],
+      "why": "기판 앞뒤가 함께 강하게 탔다면 안에서 시작된 것이다 (실무Ⅳ p.254)",
+      "왜 틀렸나": "기판 앞뒤가 탄 것을 콘덴서 내부 탄화(실무Ⅳ p.254)의 논리로 읽었다. 얇은 기판은 표면 트래킹으로도 앞뒤가 함께 탄다. 정답은 트래킹이었다"
+    },
+    {
+      "case": "PAJU_2024_163",
+      "slot": "additional_visual_evidence",
+      "classes": [
+        "InternalDamageExceedingSurface"
+      ],
+      "why": "같은 근거",
+      "왜 틀렸나": "같은 오독"
+    }
+  ]
+}

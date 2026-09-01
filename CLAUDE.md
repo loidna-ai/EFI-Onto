@@ -18,6 +18,7 @@ make status      # 현재 규모·이식률·래칫을 한 화면에
 make reason      # OWL 2 DL 일관성 검사 (HermiT). Java 필요
 make lint        # 구조 점검 — 사슬에 붙지 않은 어휘 찾기
 make calibrate   # 유도 가감점을 사례로 검증 (보정하지 않는다)
+make readers     # 사전 판독 vs LLM 판독 — 판독의 한계를 온톨로지의 한계와 가른다
 make review      # 조사관 검토용 xlsx 만 생성
 make clean
 ```
@@ -33,6 +34,8 @@ scripts/audit.py             형태 발현 편향 점검. '화재도 이 흔적�
 scripts/cause_audit.py       선행 조건 편향 점검. '정말 그 요인에서만 일어나는가'
 scripts/lint.py              구조 점검. 어휘가 사슬에 붙어 있는가
 scripts/calibrate.py         유도 가감점을 사례로 검증. 보정하지 않는다
+scripts/reader.py            판독기 둘(사전·LLM). 대체가 아니라 나란히 둔다
+scripts/reader_compare.py    같은 온톨로지를 두 판독기로 돌려 차이를 낸다
 scripts/status.py            현재 상태 요약
 scripts/consistency.py       OWL 2 DL 일관성 검사 (HermiT 직접 호출)
 scripts/{extract,build,graph,review,export}.py   시각화·검토표
