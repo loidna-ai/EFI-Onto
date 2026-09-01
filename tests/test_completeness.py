@@ -33,6 +33,9 @@ BASELINE = {
     # 남은 1건(BurnCenterOnSurface)은 화재가 같은 양상을 못 낸다는 근거를 찾지 못했다.
     # 지어내지 않고 검토표 7번 시트로 조사관에게 보냈다.
     "unreviewed_fire_producibility": (1, 0),
+    # 사슬에 붙지 않은 어휘. 선언만 하고 쓰지 않으면 판정에 기여하지 못한다.
+    # 확장 슬롯 3건과 미사용 속성 15건. scripts/lint.py 참조.
+    "dangling_vocabulary": (18, 0),
 }
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
 #           morphological_core_rules(1→0). 모두 test_ontology.py 의 불변식이 됐다.
@@ -56,6 +59,14 @@ def unreviewed_fire_producibility(g):
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
     import audit
     return audit.unreviewed(g)
+
+
+def dangling_vocabulary(g):
+    """사슬에 붙지 않은 어휘. 어휘만 있고 절차가 없는 것은 이 프로젝트의 반복된 실패다."""
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
+    import lint
+    return [i for _, items, _ in lint.problems(g) for i in items]
 
 
 def min_refuting_per_scenario(g):
@@ -108,6 +119,12 @@ def test_fire_producibility_is_reviewed(g):
     _ratchet("unreviewed_fire_producibility", len(unreviewed_fire_producibility(g)))
 
 
+def test_vocabulary_is_wired(g):
+    """선언만 하고 사슬에 붙이지 않은 어휘가 남아 있다. ArcMapPoint 가 그랬고
+    downstreamIndex 가 그랬다 — 어휘만 있고 절차가 없으면 판정에 기여하지 못한다."""
+    _ratchet("dangling_vocabulary", len(dangling_vocabulary(g)))
+
+
 def test_data_properties_are_wired(g):
     """A-3 측정값을 담을 그릇만 있고 판정에 쓰이지 않는다.
     공극률·결정립을 '보강 근거로 쓴다'고 했으나 어떤 규칙에도 붙어 있지 않다."""
@@ -121,6 +138,7 @@ if __name__ == "__main__":
         ("시나리오당 최소 반증 규칙", min_refuting_per_scenario(gr), "min_refuting_per_scenario"),
         ("미연결 데이터 속성", len(unwired_data_properties(gr)), "unwired_data_properties"),
         ("화재 생성 가능성 미검토", len(unreviewed_fire_producibility(gr)), "unreviewed_fire_producibility"),
+        ("사슬에 안 붙은 어휘", len(dangling_vocabulary(gr)), "dangling_vocabulary"),
     ]
     print(f"{'지표':26s} {'현재':>6s} {'한계':>6s} {'목표':>6s}")
     for label, now, key in rows:

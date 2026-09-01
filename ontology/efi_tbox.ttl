@@ -341,7 +341,7 @@ efi:hasFact       a owl:ObjectProperty ; rdfs:domain efi:InvestigationSession ; 
 efi:supportedBy   a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom ; rdfs:domain efi:IgnitionScenario ; skos:prefLabel "지지 근거"@ko .
 efi:refutedBy     a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom ; rdfs:domain efi:IgnitionScenario ; skos:prefLabel "기각 근거"@ko .
 efi:verdict       a owl:ObjectProperty , owl:FunctionalProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range efi:Verdict .
-efi:confirmationStatus a owl:ObjectProperty , owl:FunctionalProperty ; rdfs:range efi:ConfirmationStatus ; skos:prefLabel "확인 상태"@ko .
+efi:confirmationStatus a owl:ObjectProperty , owl:FunctionalProperty ; rdfs:range efi:ConfirmationStatus ; skos:prefLabel "확인 상태를 가진다"@ko .
 efi:discriminates a owl:ObjectProperty ; rdfs:domain efi:VerificationQuery ; rdfs:range efi:IgnitionScenario ; skos:prefLabel "경합 가설을 변별한다"@ko .
 efi:concludes     a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom ; rdfs:domain efi:Conclusion ; rdfs:range efi:IgnitionScenario .
 
@@ -1169,7 +1169,7 @@ efi:Probable a owl:NamedIndividual , efi:CertaintyLevel ; skos:prefLabel "개연
 
 efi:certaintyLevel a owl:ObjectProperty , owl:FunctionalProperty ;
     rdfs:domain efi:Conclusion ; rdfs:range efi:CertaintyLevel ;
-    rdfs:label "의견 확신도"@ko ; skos:prefLabel "의견 확신도"@ko .
+    rdfs:label "확신도를 가진다"@ko ; skos:prefLabel "확신도를 가진다"@ko .
 efi:statedLimitation a owl:DatatypeProperty ; rdfs:domain efi:Conclusion ; rdfs:range xsd:string ;
     rdfs:label "명시한 한계"@ko ; skos:prefLabel "명시한 한계"@ko ;
     rdfs:comment "아는 한계는 밝혀야 한다 (§4.5)"@ko .
@@ -2149,3 +2149,49 @@ efi:ExternalFlameExposure efi:producesDamage
     efi:Spatter , efi:StrandFracture , efi:SmallMeltBallOnStrandEnd .
 efi:ExternalFlameScenario efi:canManifest
     efi:Spatter , efi:StrandFracture , efi:SmallMeltBallOnStrandEnd .
+
+# ============================================================================
+# 29. 구조 점검으로 드러난 끊긴 사슬 (scripts/lint.py)
+#     선언만 하고 사슬에 붙이지 않은 어휘들이다. 확인해도 어떤 가설로도
+#     이어지지 않으므로 판정에 기여하지 못한다.
+# ============================================================================
+# 발화 전 이상 징후 → 발열. 근거는 원문에 있다.
+#  §9.10.3  접속이 헐거워지면 저항이 늘고 접점에서 발열이 커진다 → 온도·전압강하 이상
+#  §9.5.2   중성선이 열리면 한쪽 다리가 과전압이 되어 조명이 지나치게 밝거나 어두워진다
+efi:AbnormalTemperatureOrVoltageDrop efi:enables efi:PoorContactHeating , efi:ResistiveHeating .
+efi:IntermittentRcdTripping efi:enables efi:LeakageCurrentHeating .
+efi:FlickeringOrOdor efi:enables efi:PoorContactHeating , efi:OpenNeutralOvervoltage .
+
+# §9.11.3 균열이 누설 경로가 되려면 도전성 용액이 들어가야 한다.
+efi:ConductiveSolutionInCrack efi:enables efi:LeakageCurrentHeating , efi:ArcTracking .
+
+# §9.13.4.7 아크 용융흔은 그 시점에 통전 중이었음을 증언한다.
+efi:ArcMapPoint efi:attests efi:EnergizedState .
+
+# 확장 슬롯 메커니즘에도 손상 양상을 붙인다. 흔적이 없으면 관측으로 확인할 길이 없다.
+#  §9.5.2   과전압이 기기를 과열시킨다
+#  §9.10.2.1 인입구 지속 고장은 수 피트에 걸쳐 도체를 부분 용융·소실시킨다
+efi:OpenNeutralOvervoltage efi:producesDamage efi:InsulationCarbonization , efi:LocalizedDiscoloration .
+efi:SustainedFaulting efi:producesDamage efi:LargeMeltMark , efi:ArcMeltMark , efi:Spatter .
+
+# 연소 패턴은 발화 지점 특정에 쓰는 어휘다. 그 절차는 이 프로젝트 범위 밖이므로
+# (설계계획서 1.1) 사슬에 붙이지 않는다. 범위가 넓어지면 그때 잇는다.
+efi:BurnPattern rdfs:comment "발화 지점 특정용 어휘. 그 절차는 범위 밖이라 사슬에 붙이지 않는다"@ko .
+
+# [C-49] 조사한 회로마다 보호장치 종류와 동작 상태를 기록한다 (§9.13.2.2).
+efi:CircuitProtectionRecordShape a sh:NodeShape ; sh:targetClass efi:ArcSurvey ;
+    dcterms:references "NFPA 921 (2024) §9.13.2.2 Arc Map" ;
+    sh:property [ sh:path efi:circuitProtection ; sh:minCount 1 ;
+        sh:message "조사한 회로의 보호장치 종류와 상태를 기록해야 한다 (§9.13.2.2)"@ko ] .
+
+# [C-50] 사건 분류는 어느 사건을 분류한 것인지 가리켜야 한다 (§19.8.1).
+efi:IncidentClassificationTargetShape a sh:NodeShape ; sh:targetClass efi:IncidentClassification ;
+    dcterms:references "NFPA 921 (2024) §19.8.1 Incident Classification for Statistical Purposes" ;
+    sh:property [ sh:path efi:classifiesIncident ; sh:minCount 1 ;
+        sh:message "어느 사건을 분류한 것인지 가리켜야 한다 (§19.8.1)"@ko ] .
+
+# [C-51] 보고는 어느 의견을 담은 것인지 가리켜야 한다 (§4.7).
+efi:ReportTargetShape a sh:NodeShape ; sh:targetClass efi:InvestigationReport ;
+    dcterms:references "NFPA 921 (2024) §4.7 Reporting Procedure" ;
+    sh:property [ sh:path efi:reportsConclusion ; sh:minCount 1 ;
+        sh:message "보고가 어느 감별 의견을 담은 것인지 가리켜야 한다 (§4.7)"@ko ] .

@@ -16,6 +16,7 @@ make test        # 온톨로지 정합성 검사 (SHACL + Pydantic 양쪽)
 make build       # 시각화·검토표 전부 생성 → build/
 make status      # 현재 규모·이식률·래칫을 한 화면에
 make reason      # OWL 2 DL 일관성 검사 (HermiT). Java 필요
+make lint        # 구조 점검 — 사슬에 붙지 않은 어휘 찾기
 make review      # 조사관 검토용 xlsx 만 생성
 make clean
 ```
@@ -28,6 +29,7 @@ src/efi_schema.py            Pydantic 파이프라인. 점수 산출과 질의 �
 scripts/score.py             가감점 산출. 가중치의 단일 진실 원천
 scripts/nfpa.py              NFPA 921 절 대조표. 이식률의 분모
 scripts/audit.py             형태 발현 편향 점검. '화재도 이 흔적을 내는가'
+scripts/lint.py              구조 점검. 어휘가 사슬에 붙어 있는가
 scripts/status.py            현재 상태 요약
 scripts/consistency.py       OWL 2 DL 일관성 검사 (HermiT 직접 호출)
 scripts/{extract,build,graph,review,export}.py   시각화·검토표
@@ -109,6 +111,10 @@ build/                       생성물. git 에 넣지 않음
    `scripts/audit.py` 가 남은 것을 세고 `test_fire_producibility_declarations_agree` 가 재발을 막는다.
 
    **새 형태 발현을 선언할 때 반드시 물을 것: 이 흔적을 화재 자체가 낼 수 있는가?**
+
+   **어휘만 만들고 사슬에 붙이지 않는 실패가 반복됐다.** ArcMapPoint, downstreamIndex,
+   outcomeUndetermined 가 그랬다. 선언만 하면 확인해도 판정에 기여하지 못한다.
+   `make lint` 가 센다. 새 클래스·속성을 만들면 그 자리에서 사슬에 붙인다.
 4. **ABox 없음.** 조사서 사례가 하나도 들어 있지 않다. 150건 변환이 다음 과제.
    지금까지 잰 것은 전부 **이식률**이다. **정확도는 한 번도 재지 않았다.**
 5. **DL 일관성(V1)은 통과했다.** `make reason` 으로 HermiT 을 돌린다. Java 와 owlready2 가 필요하다.
