@@ -429,7 +429,10 @@ efi:R_PC_sup3  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; e
 efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -13 .
 
 efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
-efi:R_CD_core2 a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:AbrasionAtPenetration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+# 마찰은 기계적 손상의 핵심 단서가 될 수 없다. 소선을 갈면 통전 단면적이 줄어
+# 반단선으로도 간다(실무Ⅳ p.149 반단선의 정의가 '통전 단면적의 감소'다).
+# 눌림(ExternalCrushing)만 전용으로 남아 핵심 자리를 지킨다.
+efi:R_CD_sup6  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:AbrasionAtPenetration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_CD_sup0  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ImmediateTripAfterExternalForce ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_CD_sup1  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MechanicalDeformation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
@@ -2341,7 +2344,7 @@ efi:R_PC_sup5  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; e
 efi:R_PD_sup5  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MeltMarkOnBothSidesOfBreak ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PD_sup6  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureOverTenPercent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_CD_sup3  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MeltMarkOnSupplySideOnly ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
-efi:R_TR_sup3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:OrganicInsulationPresent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_TR_sup3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:OrganicInsulationPresent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_EF_sup2  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:FuseIrregularlyMelted ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 0 .
 
 # 편향 점검 결과 반영 — 화재도 내는 양상은 외부화염에도 선언해야 한다.
@@ -2508,3 +2511,34 @@ efi:IntermittentRcdTripping efi:enables efi:InsulationBreakdownArc .
 # 같은 굽힘이 소선을 끊으면 반단선, 피복을 상해 양극이 닿으면 단락이다.
 # 결과가 갈리지 원인이 갈리는 것이 아니다.
 efi:RepeatedFlexing efi:enables efi:CrushInducedArc .
+
+########################################################################
+# 36. 원인 축 편향 교정 2차 — cause_audit.py 의 미검토 6건을 원문으로 닫는다
+########################################################################
+
+# 마찰은 피복만 상하게 하지 않는다. 반단선의 정의가 '통전 단면적의 감소'이고
+# (실무Ⅳ p.149 절 제목) 마찰이 소선을 갈면 단면적이 준다. p.253 은 기기
+# 삽입구에서 반단선이 관찰된다고 한다.
+efi:AbrasionAtPenetration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
+
+# 망치 오타격은 기계적 관통 손상이다. 표 2-1 은 스테이플 찔림을 단락 아래 두고,
+# §9.10.5 는 기계적 홈·눌림을 아크흔과 구별하라 한다. 절연열화 쪽에만 이어 두었다.
+efi:HammerMisHitDamage efi:enables efi:CrushInducedArc .
+
+# 상위 enables 는 적지 않는다. 선언은 하위 전체에 상속되므로 하위의 합집합을
+# 상위에 적으면 '인장도 기계적 손상을 가능하게 한다'는, 원문이 하지 않은 말이 된다.
+# 상위가 무엇과 양립하는지는 하위의 합집합으로 읽어야 하고, 그것은 cause_audit 의 몫이다.
+
+# 유기 절연물은 트래킹의 조건이자 흑연화의 조건이고, 절연열화가 일어나는 대상
+# 자체다 (실무Ⅳ p.147~148). 무기 절연물이라야 트래킹이 어렵다는 대비이지
+# 유기 절연물이 트래킹만 부른다는 말이 아니다.
+efi:OrganicInsulationPresent efi:enables efi:InsulationBreakdownArc .
+
+# 염해·화학 노출은 접속부도 상하게 한다.
+#   "접점부의 산화, 유황과 다른 물질의 화합 등 환경오염에 의한 접촉불량이
+#    일어나는 경우도 있다" (실무Ⅳ p.206)
+efi:SalineOrChemicalExposure efi:enables efi:PoorContactHeating .
+
+# 오염 환경도 같다. 상위에 적지 않는다 — 분진이 접촉불량을 부른다는 근거는 없다.
+# 다만 '오염 환경이 확인됐다'는 관측 자체는 하위 어느 것일 수도 있으므로
+# 트래킹만 가리키지 않는다. cause_audit 이 하위 합집합으로 그렇게 읽는다.

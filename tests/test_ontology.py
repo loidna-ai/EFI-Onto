@@ -645,6 +645,17 @@ def test_cause_chain_declarations_agree(g):
     assert not bad, f"판정과 사슬 불일치: {bad}"
 
 
+def test_every_cause_answers_the_exclusivity_question(g):
+    """모든 선행 조건은 '정말 그 요인에서만 일어나는가'에 답이 있어야 한다.
+
+    답이 없는 채로 한 가설에만 이어 두면 변별력이 과대평가된다. 실제로 그렇게
+    좁혀 둔 것이 열한 건 나왔다. 11 → 0 으로 닫고 래칫에서 이관했다.
+    """
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import cause_audit
+    assert not cause_audit.unreviewed(g), f"전용성 미검토: {cause_audit.unreviewed(g)}"
+
+
 def test_every_morphology_answers_the_fire_question(onto):
     """모든 손상 양상은 '화재 자체도 이 흔적을 내는가'에 답이 있어야 한다.
 

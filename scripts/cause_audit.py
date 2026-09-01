@@ -45,7 +45,7 @@ VERDICTS = {
     "ExternalCrushing":       (EXCL, "표 2-1 코드의 바닥 깔림이 단락 아래에 있다. 눌림은 도체를 직접 상하게 한다"),
     "RodentGnawing":          (EXCL, "실무Ⅳ p.253 피복을 갉아 도체가 드러나 단락에 이른다. 기계적 손상 경로"),
     "ConductiveSolutionInCrack": (EXCL, "§9.11.3 균열에 도전성 용액이 들어가야 누설이 흐른다. 트래킹의 필요조건"),
-    "ContaminatedEnvironment": (EXCL, "실무Ⅳ p.147 이극 도체 사이 절연물 표면에 도전성 물질이 부착해야 트래킹이 시작된다"),
+    "ContaminatedEnvironment": (SHARED, "트래킹의 필요조건이지만(실무Ⅳ p.147) 하위가 공유다 — 습기·분진은 절연열화로도(p.245), 염해는 접촉불량으로도(p.206) 간다. '오염 환경이 확인됐다'는 관측이 트래킹만 가리키지는 않는다"),
 
     # ── 원문이 둘 이상을 적는 것 ────────────────────────────────────
     "MoistureExposure":       (SHARED, "실무Ⅳ p.245 '먼지나 습기 등에 의해 절연열화로 이어지는 경우'. 트래킹 전용이 아니다"),
@@ -64,8 +64,20 @@ VERDICTS = {
     "MisdrivenStaple":        (SHARED, "표 2-1 은 스테이플 찔림을 단락에 두고 실무Ⅳ p.245 는 같은 자리에서 반단선이 관찰된다고 한다"),
     "StressConcentrationPoint": (SHARED, "하위가 모두 공유다. 위치는 요인을 가르지 않는다"),
 
-    # ── 아직 근거를 찾지 못한 것 ────────────────────────────────────
-    # 지어내지 않는다. 원문을 더 받거나 조사관 검토로 닫는다.
+    "AbrasionAtPenetration":  (SHARED, "실무Ⅳ p.149 반단선의 정의가 '통전 단면적의 감소'다. 마찰이 소선을 갈면 단면적이 줄고, p.253 은 기기 삽입구에서 반단선이 관찰된다고 한다"),
+    "HammerMisHitDamage":     (SHARED, "표 2-1 은 스테이플 찔림을 단락 아래 둔다. 망치 오타격도 같은 부류의 기계적 관통 손상이며 §9.10.5 가 그것을 아크흔과 구별하라 한다"),
+    "LongTermRepeatedStress": (SHARED, "굴곡·진동·인장의 상위. 하위가 모두 공유이므로 상위도 공유다"),
+    "OrganicInsulationPresent": (SHARED, "실무Ⅳ p.147~148 유기 절연물이라야 탄화 도전로가 생긴다 — 트래킹과 흑연화 양쪽의 조건이고, 절연열화가 일어나는 대상 자체가 유기 절연물이다"),
+    "SalineOrChemicalExposure": (SHARED, "실무Ⅳ p.206 '접점부의 산화, 유황과 다른 물질의 화합 등 환경오염에 의한 접촉불량이 일어나는 경우도 있다'"),
+    "Tension":                (EXCL, "실무Ⅳ p.149 는 반단선의 외력으로 꺾임·구부림·끌어당김 셋을 들지만, 표 2-1 의 단락 항목에는 인장이 없다. 끌어당김은 소선을 끊을 뿐 피복을 벗기지 않는다"),
+
+
+    # ── 축의 추상 상위. 관측이 아니라 묶음이므로 하위 구성으로 판정한다 ──
+    "ConnectionCondition":    (EXCL, "하위가 접속부 헐거움과 부식 둘뿐이고 둘 다 접속부의 문제다. 접촉불량으로 간다"),
+    "EnvironmentalCondition": (SHARED, "오염 환경과 방열 저해를 함께 묶는다. 구성상 여러 요인에 걸친다"),
+    "InsulationCondition":    (SHARED, "절연 열화와 절연저항 저하를 묶는다. 절연열화와 트래킹 양쪽에 걸친다"),
+    "MechanicalStressHistory": (SHARED, "반복 응력과 일회성 외력을 함께 묶는다. 반단선과 기계적 손상을 가르는 자리가 이 아래다"),
+    "PreFireAnomaly":         (SHARED, "발화 전 징후는 어느 요인에서도 목격된다. 깜박임·간헐 트립·과열이 모두 그렇다"),
 }
 
 def _subclasses(g, c, out=None):
@@ -77,13 +89,21 @@ def _subclasses(g, c, out=None):
 
 
 def reach(g=None):
-    """선행 조건 → 닿는 가설 집합. 사슬을 그대로 따라간다."""
+    """선행 조건 → 닿는 가설 집합.
+
+    상위는 하위의 합집합으로 읽는다. 선언(enables)은 상위에서 하위로 상속되므로
+    '모든 하위에 참인 것'만 상위에 적을 수 있다. 그러나 이 파일이 묻는 것은
+    관측의 뜻이다 — '오염 환경이 확인됐다'는 하위 어느 것일 수도 있으므로
+    하위가 닿는 곳 전부와 양립한다. 두 읽기를 섞으면 상위만 전용으로 남는다.
+    """
     import score
     g = g or Graph().parse(TTL, format="turtle")
     comp = score.compatibility(g)
     out = {}
     for a in sorted(_subclasses(g, E.AntecedentCondition)):
         v = {ln(x) for x in comp.get(a, set())}
+        for k in _subclasses(g, E[a]):
+            v |= {ln(x) for x in comp.get(k, set())}
         if v:                                   # 어디에도 안 닿는 것은 lint 의 몫
             out[a] = v
     return out
@@ -104,6 +124,16 @@ def inconsistent(g=None):
             bad.append((a, "전용이라 했는데 사슬이 여럿에 닿는다", sorted(scs)))
         if v[0] == SHARED and len(scs) == 1:
             bad.append((a, "공유라 했는데 사슬이 하나뿐이다 — 넓혀야 한다", sorted(scs)))
+    # 상위가 전용인데 하위가 공유면 상위도 공유다. compatibility 는 각 클래스의
+    # 자기 enables 만 읽으므로 상위에 적어 두지 않으면 이 어긋남이 조용히 남는다.
+    g2 = g or Graph().parse(TTL, format="turtle")
+    r = reach(g2)
+    for a in r:
+        if VERDICTS.get(a, (OPEN,))[0] != EXCL:
+            continue
+        wide = [k for k in _subclasses(g2, E[a]) if len(r.get(k, set())) > len(r[a])]
+        if wide:
+            bad.append((a, f"전용이라 했는데 하위가 더 넓다: {sorted(wide)}", sorted(r[a])))
     return bad
 
 

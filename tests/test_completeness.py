@@ -30,13 +30,11 @@ BASELINE = {
     # 사슬에 붙지 않은 어휘. 선언만 하고 쓰지 않으면 판정에 기여하지 못한다.
     # 확장 슬롯 3건과 미사용 속성 15건. scripts/lint.py 참조.
     "dangling_vocabulary": (18, 0),
-    # 한 가설에만 연결됐는데 '정말 그 요인에서만 일어나는가'에 답이 없는 선행 조건.
-    # 형태 축에서 여섯 건이 그렇게 과대평가됐고, 원인 축에서도 이미 다섯 건이
-    # 나왔다(먼지·습기·깜박임·간헐 트립·반복 굴곡). scripts/cause_audit.py 참조.
-    "unreviewed_cause_exclusivity": (6, 0),
+
 }
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
-#           morphological_core_rules(1→0), unreviewed_fire_producibility(8→0).
+#           morphological_core_rules(1→0), unreviewed_fire_producibility(8→0),
+#           unreviewed_cause_exclusivity(11→0).
 #           모두 test_ontology.py 의 불변식이 됐다.
 
 
@@ -110,14 +108,6 @@ def _ratchet(key, now, better_is_lower=True):
 def test_refutation_rules_are_thin(g):
     """A-2 반증 우선(P3)을 선언했으나 가설당 반증 수단이 하나뿐이다."""
     _ratchet("min_refuting_per_scenario", min_refuting_per_scenario(g), better_is_lower=False)
-
-
-def test_cause_exclusivity_is_reviewed(g):
-    """전용으로 둔 선행 조건에 원문 근거가 있는가. 없는 채로 전용 노릇을 하면
-    형태 축에서 그랬듯 변별력이 과대평가된다."""
-    sys.path.insert(0, str(ROOT / "scripts"))
-    import cause_audit
-    _ratchet("unreviewed_cause_exclusivity", len(cause_audit.unreviewed(g)))
 
 
 def test_vocabulary_is_wired(g):
