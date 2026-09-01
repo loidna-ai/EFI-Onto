@@ -44,3 +44,6 @@ clean:
 
 calibrate:
 	python scripts/calibrate.py
+
+cause-audit:
+	python scripts/cause_audit.py

@@ -4,7 +4,7 @@
 문서에 숫자를 손으로 적으면 반드시 낡는다. 실제로 낡았다 — SHACL 도형이 12개라고
 적혀 있는 동안 55개가 됐다. 그래서 숫자는 여기서만 만들고 문서는 원칙만 적는다.
 """
-import sys, pathlib, collections
+import sys, json, pathlib, collections
 from rdflib import Graph, Namespace, RDF, RDFS, OWL, SH, URIRef
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -48,6 +48,19 @@ def main():
     print("\n── 완성도 래칫 " + "─" * 45)
     for key, (limit, target) in tc.BASELINE.items():
         print(f"  {key:32s} {limit:>3d} → 목표 {target}")
+
+    base = ROOT / "cases" / "baseline.json"
+    if base.exists():
+        b = json.loads(base.read_text(encoding="utf-8"))
+        print("\n── 정확도 (사례 %d건) " % b["cases"] + "─" * 38)
+        print(f"  전체        {b['accuracy']*100:5.1f}%   "
+              f"오판 {b['wrong']/b['cases']*100:.1f}%  미상 {b['undetermined']/b['cases']*100:.1f}%")
+        print(f"  답한 것 중   {b.get('accuracy_when_answered',0)*100:5.1f}%   판단보류 제외")
+        print(f"  상한        {b.get('ceiling',0)*100:5.1f}%   조사서에 자기 요인 단서가 있는 사례")
+        for k, v in sorted(b["per_class"].items(), key=lambda x: -x[1]["correct"] / x[1]["n"]):
+            gap = (v.get("ceiling", v["n"]) - v["correct"]) / v["n"] * 100
+            print(f"    {k:8s} {v['correct']/v['n']*100:5.1f}%  상한 {v.get('ceiling',0)/v['n']*100:5.1f}%"
+                  f"  남은거리 {gap:4.1f}%p")
 
     print("\n── 검증되지 않은 것 " + "─" * 41)
     print("  가감점은 검증만 했다. 보정하지 않았다 — make calibrate")
