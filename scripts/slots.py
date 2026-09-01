@@ -58,7 +58,7 @@ RULES = {
     (r"건조|청결|오염\s*없", None),                                     # 부재 확인
  ],
  "slot_pre_ignition_symptoms": [
-    (r"불꽃|스파크|아크|섬광|파열음.*불", "PreFireArcObservation"),
+    (r"불꽃|스파크|아크|섬광|번쩍|불빛|퍽\s*소리|펑\s*소리|파열음", "PreFireArcObservation"),
     (r"타는\s*냄새|냄새|깜박|점멸|밝기|어둡", "FlickeringOrOdor"),
     (r"차단기.*(내려|떨어|작동)|누전\s*차단기.*이력", "IntermittentRcdTripping"),
     (r"온도|과열|뜨거|전압\s*강하|정전", "AbnormalTemperatureOrVoltageDrop"),
