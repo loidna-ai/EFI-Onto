@@ -66,6 +66,18 @@ VERDICTS = {
     "EnlargedScrewHeadOxidation":  (ELEC, "§9.10.3.3 외부 화재 노출과 외관상 구별된다"),
     "OxideBanding":                (ELEC, "§9.10.3.1(12) 필라멘트 이동 흔적"),
     "CuprousOxideGrowth":          (ELEC, "§9.10.3 발광 접속부의 산화물 생성"),
+
+    # 국내 실무 교재(화재조사실무Ⅳ 2025)에서 온 양상. NFPA 조항이 아니므로
+    # 근거에 쪽수를 남긴다. 질문은 같다 — 화재도 이 흔적을 내는가?
+    "FuseMeltPattern":             (FIRE, "실무Ⅳ p.203 퓨즈가 녹은 형태 일반은 외부 화염도 만든다. 갈래를 따져야 변별이 생긴다"),
+    "FuseIrregularlyMelted":       (FIRE, "실무Ⅳ p.203 외부 화염에 의한 용융은 불규칙한 형태"),
+    "FuseGloballyMeltedScattered": (FIRE, "실무Ⅳ p.203 단락 형태이나 §9.10.1 화재 유발 단락도 같은 형태를 낸다"),
+    "FuseMeltedAtCenter":          (ELEC, "실무Ⅳ p.203 100~300% 과부하 구간이 중앙을 녹인다. §9.9.3 화재는 그 구간이 아니라 완전 단락을 만든다"),
+    "FuseEndsDarkened":            (ELEC, "실무Ⅳ p.203 양단 흑변은 홀더 접촉부의 장기 발열 산물. 화재열은 퓨즈를 고르게 가열한다"),
+    "MeltMarkOnBothSidesOfBreak":  (ELEC, "실무Ⅳ p.150 파단부 양쪽이라는 대응은 그 지점의 접촉·단속 반복이 만든다. §9.10.1 화재 유발 아크는 위치를 고르지 않는다"),
+    "MeltMarkOnSupplySideOnly":    (ELEC, "실무Ⅳ p.150 전원측 편중은 방향성이다. §9.10.2.2 방향성은 전기적 현상의 표식이고 화재는 전원측을 가리지 않는다"),
+    "StrandFractureOverTenPercent": (FIRE, "상위 StrandFracture 가 §9.10.2 로 화재도냄이다. 10% 라는 정도는 발화 전 상태를 뜻하지만 소손 후 형태만으로는 선후를 가릴 수 없다"),
+    "RubyRedCrystal":              (ELEC, "실무Ⅳ p.153 적색 결정은 출화개소에 대응하는 접촉부에서 나온다. 상위 CuprousOxideGrowth 와 같이 §9.10.3 발광 접속부 산물"),
     "PrimaryArcMark":              (ELEC, "정의상 화재 이전 형성"),
     "Sleeving":                    (ELEC, "§9.10.4.1 과부하 구간 전 길이의 내부 발열"),
     "MeltOffset":                  (ELEC, "§9.10.4.1 회로가 열리는 순간 굳은 형태"),

@@ -2266,3 +2266,78 @@ efi:PartialDisconnectionInducedArc efi:producesDamage
 efi:PartialDisconnectionScenario efi:canManifest efi:ArcMeltMark .
 efi:PartialDisconnectionInducedArc efi:ignites efi:InsulationMaterialFuel .
 
+
+########################################################################
+# 32. 국내 실무 감식 지식 — 소방청 화재조사실무Ⅳ (2025) 제2편 전기화재감식
+#
+# 출처 구분: 이 절은 NFPA 조항이 아니라 국내 실무 교재다. Table 2 와 같은 층이므로
+# 지표 규칙에 조항을 붙이지 않는다. 클래스 주석에 쪽수를 남겨 추적만 한다.
+#
+# 왜 필요했나 — 지금까지 5대 요인의 '원인'은 채웠으나 요인을 가르는 '형태'는
+# 단락흔·용융구 수준에 머물러 있었다. 실무 교재는 훨씬 구체적인 감별 기준을 갖고
+# 있고, 그 기준들이 우리가 못 가르던 바로 그 쌍을 가른다.
+########################################################################
+
+# ── 32.1 퓨즈 용단 형태 (p.203)
+# 한 관측이 네 갈래를 가른다. 이만큼 변별하는 형태는 지금까지 없었다.
+efi:Fuse a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "퓨즈"@ko ; skos:prefLabel "퓨즈"@ko .
+efi:FuseMeltPattern a owl:Class ; rdfs:subClassOf efi:DamagePattern ; rdfs:label "퓨즈 용단 형태"@ko ; skos:prefLabel "퓨즈 용단 형태"@ko .
+efi:FuseGloballyMeltedScattered a owl:Class ; rdfs:subClassOf efi:FuseMeltPattern ; rdfs:label "퓨즈 전체 용융·비산"@ko ; skos:prefLabel "퓨즈 전체 용융·비산"@ko ; rdfs:comment "퓨즈 몸체 전체가 녹아 둥근 형태로 비산해 케이스에 부착 — 단락 (실무Ⅳ p.203)"@ko .
+efi:FuseMeltedAtCenter a owl:Class ; rdfs:subClassOf efi:FuseMeltPattern ; rdfs:label "퓨즈 중앙부 용단"@ko ; skos:prefLabel "퓨즈 중앙부 용단"@ko ; rdfs:comment "100~300% 과부하 시 중앙부가 용단된다 (실무Ⅳ p.203)"@ko .
+efi:FuseEndsDarkened a owl:Class ; rdfs:subClassOf efi:FuseMeltPattern ; rdfs:label "퓨즈 양단 흑변"@ko ; skos:prefLabel "퓨즈 양단 흑변"@ko ; rdfs:comment "접촉불량으로 용단되면 양쪽 끝이 검게 변색된다 (실무Ⅳ p.203)"@ko .
+efi:FuseIrregularlyMelted a owl:Class ; rdfs:subClassOf efi:FuseMeltPattern ; rdfs:label "퓨즈 불규칙 용융"@ko ; skos:prefLabel "퓨즈 불규칙 용융"@ko ; rdfs:comment "외부 화염에 의한 용융은 불규칙한 형태다 (실무Ⅳ p.203)"@ko .
+efi:Fuse efi:exhibits efi:FuseGloballyMeltedScattered , efi:FuseMeltedAtCenter , efi:FuseEndsDarkened , efi:FuseIrregularlyMelted .
+efi:PoorContactHeating efi:producesDamage efi:FuseEndsDarkened .
+efi:PoorContactScenario efi:canManifest efi:FuseEndsDarkened .
+efi:OverloadHeating efi:producesDamage efi:FuseMeltedAtCenter .
+efi:ShortCircuitArc efi:producesDamage efi:FuseGloballyMeltedScattered .
+efi:ExternalFlameExposure efi:producesDamage efi:FuseIrregularlyMelted .
+efi:ExternalFlameScenario efi:canManifest efi:FuseIrregularlyMelted .
+
+# ── 32.2 반단선 용흔과 도체 절단 용흔의 위치 차이 (p.150)
+# 반단선과 기계적 손상을 가르는 형태 기준. 우리가 가장 못 가르던 쌍이다.
+efi:MeltMarkOnBothSidesOfBreak a owl:Class ; rdfs:subClassOf efi:MeltMark ; rdfs:label "단선부 양측 용흔"@ko ; skos:prefLabel "단선부 양측 용흔"@ko ; rdfs:comment "반단선은 단선 부분의 양쪽에 용흔이 생긴다 (실무Ⅳ p.150)"@ko .
+efi:MeltMarkOnSupplySideOnly a owl:Class ; rdfs:subClassOf efi:MeltMark ; rdfs:label "전원측 편중 용흔"@ko ; skos:prefLabel "전원측 편중 용흔"@ko ; rdfs:comment "금속 등 도체로 절단된 경우 전원측 한쪽에 집중적으로 생긴다 (실무Ⅳ p.150)"@ko .
+efi:StrandedConductor efi:exhibits efi:MeltMarkOnBothSidesOfBreak , efi:MeltMarkOnSupplySideOnly .
+efi:PartialDisconnectionInducedArc efi:producesDamage efi:MeltMarkOnBothSidesOfBreak .
+efi:PartialDisconnectionScenario efi:canManifest efi:MeltMarkOnBothSidesOfBreak .
+efi:CrushInducedArc efi:producesDamage efi:MeltMarkOnSupplySideOnly .
+efi:CrushDamageScenario efi:canManifest efi:MeltMarkOnSupplySideOnly .
+
+# ── 32.3 반단선의 정량 정의 (p.149)
+# "소선이 10% 이상 끊어졌거나 전체가 완전히 단선된 후 일부가 접촉상태로 남아 있는 상태".
+# 우리는 StrandFracture 를 정도 구분 없이 써 왔다. 정의를 물화한다.
+efi:StrandFractureOverTenPercent a owl:Class ; rdfs:subClassOf efi:StrandFracture ; rdfs:label "소선 10% 이상 단선"@ko ; skos:prefLabel "소선 10% 이상 단선"@ko ; rdfs:comment "국내 실무의 반단선 정의. 단선율 10%를 넘으면 이후 급격히 증가한다 (실무Ⅳ p.149). 통전 단면적 감소는 곧 과부하 상태를 뜻한다."@ko .
+efi:PartialDisconnectionHeating efi:producesDamage efi:StrandFractureOverTenPercent .
+efi:PartialDisconnectionScenario efi:canManifest efi:StrandFractureOverTenPercent .
+
+# ── 32.4 트래킹의 필요조건 — 유기절연물 (p.147)
+# "무기절연물은 도전성물질의 생성이 적어 트래킹 문제가 적지만, 유기절연물은 탄화하여
+#  도전성물질(흑연)이 생기기 쉽다." 오염 환경만으로는 부족했다.
+efi:OrganicInsulationPresent a owl:Class ; rdfs:subClassOf efi:InsulationCondition ; rdfs:label "유기 절연물 개재"@ko ; skos:prefLabel "유기 절연물 개재"@ko ; rdfs:comment "이극 도체 사이에 유기 절연물이 있어야 탄화 도전로가 생긴다. 무기 절연물에서는 트래킹이 성립하기 어렵다 (실무Ⅳ p.147)"@ko .
+efi:OrganicInsulationPresent efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
+efi:TrackingScenario rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:OrganicInsulationPresent ] .
+
+# ── 32.5 아산화동 적색 결정 (p.153)
+# "출화부로 추정되는 접촉불량 개소에 아산화동이 없으면 접촉저항에 의한 발열이 원인."
+# 곧 적색 결정의 유무가 접촉불량의 두 하위 경로를 가른다.
+efi:RubyRedCrystal a owl:Class ; rdfs:subClassOf efi:CuprousOxideGrowth ; rdfs:label "아산화동 적색 결정"@ko ; skos:prefLabel "아산화동 적색 결정"@ko ; rdfs:comment "검은 덩어리를 회수해 20배로 확대하면 보이는 진홍색 유리형 결정. 아산화동 특유이며 출화개소에 대응하는 도체 접촉부에서 관찰된다 (실무Ⅳ p.153). 현미경이 없으면 저항이 0도 무한대도 아닐 때 가열해 저항이 내려가는지로 대신한다 — 아산화동은 부의 저항온도계수를 갖는다."@ko .
+efi:ConnectionPoint efi:exhibits efi:RubyRedCrystal .
+efi:PoorContactHeating efi:producesDamage efi:RubyRedCrystal .
+efi:PoorContactScenario efi:canManifest efi:RubyRedCrystal .
+
+
+# ── 32.6 지표 규칙 — 국내 실무 층이므로 조항을 붙이지 않는다
+efi:R_PC_sup4  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:FuseEndsDarkened ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_PC_sup5  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:RubyRedCrystal ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_PD_sup5  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MeltMarkOnBothSidesOfBreak ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_PD_sup6  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureOverTenPercent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_CD_sup3  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MeltMarkOnSupplySideOnly ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_TR_sup3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:OrganicInsulationPresent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_EF_sup2  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:FuseIrregularlyMelted ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 0 .
+
+# 편향 점검 결과 반영 — 화재도 내는 양상은 외부화염에도 선언해야 한다.
+# 소선 10% 이상 단선: 10% 라는 정도는 발화 전 상태를 뜻하지만, 소손 후 형태만으로는
+# 그 파단이 발화 전인지 화재 중인지 가릴 수 없다. 상위 StrandFracture 와 같이 둔다.
+efi:ExternalFlameExposure efi:producesDamage efi:StrandFractureOverTenPercent , efi:FuseGloballyMeltedScattered , efi:FuseMeltPattern .
+efi:ExternalFlameScenario efi:canManifest efi:StrandFractureOverTenPercent , efi:FuseGloballyMeltedScattered , efi:FuseMeltPattern .
