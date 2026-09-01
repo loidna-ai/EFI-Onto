@@ -2644,3 +2644,41 @@ efi:R_TR_ref3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:
 #    단선 부분의 전원측의 한쪽 부분에 집중적으로 생겨 있다" (실무Ⅳ p.150)
 # 원문이 바로 이 대비로 반단선을 가른다.
 efi:R_PD_ref3  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MeltMarkOnSupplySideOnly ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
+
+########################################################################
+# 39. [D-9] 절연저항 저하 도출 — 임계값이 아니라 관계 비교
+#
+# insulationResistance_MOhm 이 선언만 되고 아무데서도 쓰이지 않고 있었다.
+# 국내 실무 교재가 기준을 준다 (실무Ⅳ 표 2-22 저압전로의 절연저항).
+#   400V 미만  대지전압 150V 이하        0.1 ㏁
+#              대지전압 150V 초과 300V 이하  0.2 ㏁   ← 220V 회로가 여기다
+#              사용전압 300V 초과 400V 미만  0.3 ㏁
+#   400V 이상                          0.4 ㏁
+#
+# 숫자를 규칙에 박지 않는다. D-1(과부하)이 부하전류와 정격전류를 견주듯,
+# 잰 값과 그 회로에 요구되는 값을 견준다. 표의 숫자는 정규화기가 사용전압에서
+# 채워 넣는다 — 기준이 바뀌면 규칙이 아니라 그 표만 갈아 끼운다.
+########################################################################
+
+efi:requiredInsulationResistance_MOhm a owl:DatatypeProperty ;
+    rdfs:domain efi:Insulation ; rdfs:range xsd:decimal ; qudt:unit unit:MegaOHM ;
+    rdfs:label "요구 절연저항"@ko ; skos:prefLabel "요구 절연저항"@ko ;
+    rdfs:comment "그 회로의 사용전압에 대해 요구되는 최소 절연저항. 국내 기준은 실무Ⅳ 표 2-22 이며 정규화기가 채운다. 규칙은 잰 값과 이 값을 견주기만 한다"@ko .
+
+efi:InsulationResistanceDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:Insulation ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this a efi:ReducedInsulationResistance . }
+        WHERE {
+          $this efi:insulationResistance_MOhm ?m ; efi:requiredInsulationResistance_MOhm ?req .
+          FILTER ( ?m < ?req )
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this a efi:NormalInsulationResistance . }
+        WHERE {
+          $this efi:insulationResistance_MOhm ?m ; efi:requiredInsulationResistance_MOhm ?req .
+          FILTER ( ?m >= ?req )
+        }""" ] .
+efi:InsulationResistanceDerivationRuleShape dcterms:references
+    "NFPA 921 (2024) §9.11.3 — 절연이 상해도 도전 경로가 서야 누설 전류가 흐른다. 절연저항 측정이 그 상태를 재는 수단이다. 숫자 기준은 NFPA 가 아니라 국내 실무 교재(실무Ⅳ 표 2-22)에서 오며 요구값 속성으로 분리해 두었다"@ko .
