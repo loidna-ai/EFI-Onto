@@ -72,13 +72,13 @@ RULES = {
     (r"꺾|굴곡|굴절|접힌|반복.*움직|굽힘|구부", "RepeatedFlexing"),
     (r"진동", "Vibration"),
     (r"당겨|장력|인장", "Tension"),
-    (r"노후|경년|장기간\s*사용|장시간\s*사용|장기간\s*경과|오래|\d+\s*년\s*(이상|전|간)?\s*(사용|경과|설치|된|가동)|\d{4}\s*년식|\d+\s*년식", "AgedInsulation"),
-    (r"열화|경화|취성|딱딱", "ThermalDegradation"),
+    (r"노후|경년|장기간|장시간|오래|\d+\s*년\s*(이상|전|간)?\s*(사용|경과|설치|된|가동)|\d{4}\s*년식|\d+\s*년식|상시\s*연결", "AgedInsulation"),
+    (r"열화|경화|취성|딱딱|성상\s*변화|상태\s*변화|열\s*스트레스", "ThermalDegradation"),
     (r"마모|쓸림|긁힘|찢|벗겨|피복\s*손상|피복\s*훼손|박리|천공|날카로", "AbrasionAtPenetration"),
     (r"갈라|균열", "CrackedInsulation"),
     (r"나사|새들|스테이플|고정\s*부품|타카|못", "MisdrivenStaple"),
     # 이 슬롯에도 접속 불량 서술이 온다
-    (r"꼬아|꼬여|꼬인|절연테이프|전기테이프", "LooseConnection"),
+    (r"꼬아|꼬여|꼬인|테이프", "LooseConnection"),
     (r"소선.*끊|일부\s*단선|가닥.*끊", "StrandFracture"),
  ],
  "slot_additional_visual_evidence": [
@@ -103,6 +103,8 @@ RULES = {
     (r"스패터|비산|튄", "Spatter"),
     (r"광택\s*소실|무광", "LossOfLuster"),
     (r"아산화동", "CuprousOxideGrowth"),
+    # 시각 슬롯에 적힌 환경 흔적 — 진술이 명백할 때만
+    (r"누수\s*흔적|침수\s*흔적|물에\s*의해|수분\s*유입|결로\s*흔적", "MoistureExposure"),
     # 절연물 '내부' 현상 — 화재가 만들 수 없는 절연열화 전용 형태 (실무Ⅳ p.153·254)
     (r"수지상|전기\s*트리|워터\s*트리|트리잉", "DendriticTreePath"),
     (r"외함\s*파열|케이스.{0,4}(구멍|쪼개|파열)|내부.{0,4}탄화|내부.{0,6}유전체", "InternalDamageExceedingSurface"),
