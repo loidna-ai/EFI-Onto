@@ -41,3 +41,6 @@ build-dir:
 
 clean:
 	rm -rf build/* .pytest_cache **/__pycache__
+
+calibrate:
+	python scripts/calibrate.py
