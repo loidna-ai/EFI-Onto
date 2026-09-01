@@ -19,10 +19,12 @@
   ELEC   화재는 내지 못한다 — 전기적 가설의 단서로 유지
   OPEN   원문 근거 없음 — 조사관 검토 또는 추가 조항 필요
 
-남은 OPEN
-  BurnCenterOnSurface — 절연물 표면에 소손이 집중되는 양상. 트래킹 특유로 보이나
-  화재가 같은 양상을 못 낸다는 원문 근거를 찾지 못했다. 지어내지 않고 남긴다.
-  검토표 7번 시트로 조사관에게 나가 있다.
+OPEN 은 남지 않았다 (8 → 0)
+  마지막 한 건이던 BurnCenterOnSurface 는 소방청 화재조사실무Ⅳ(2025) p.153 이
+  답을 줬다. 표면 집중은 트래킹을 접속부 내부 발열과 가르지만, 외부 화염도
+  절연물을 표면부터 태운다. 전용 단서가 아니다 — 화재도냄으로 판정했다.
+  그 결과 트래킹에는 전용 형태 단서가 하나도 남지 않았고, 그래서 트래킹을
+  세우려면 비시각적 현장 사실(오염 환경)이 있어야 한다. C-5 가 요구하는 그것이다.
 """
 import sys, pathlib, collections
 from rdflib import Graph, Namespace, RDFS, URIRef
@@ -65,6 +67,7 @@ VERDICTS = {
     "MoltenOxideMass":             (ELEC, "§9.10.3.3 외부 화재 노출과 외관상 구별된다"),
     "EnlargedScrewHeadOxidation":  (ELEC, "§9.10.3.3 외부 화재 노출과 외관상 구별된다"),
     "OxideBanding":                (ELEC, "§9.10.3.1(12) 필라멘트 이동 흔적"),
+    "BurnCenterOnSurface":         (FIRE, "실무Ⅳ p.153 표면 집중은 트래킹을 접속부 내부 발열과 가른다. 그러나 §9.10.1 외부 화염도 절연물을 표면부터 태우므로 전용 단서가 될 수 없다"),
     "CuprousOxideGrowth":          (ELEC, "§9.10.3 발광 접속부의 산화물 생성"),
 
     # 국내 실무 교재(화재조사실무Ⅳ 2025)에서 온 양상. NFPA 조항이 아니므로
@@ -77,6 +80,8 @@ VERDICTS = {
     "MeltMarkOnBothSidesOfBreak":  (ELEC, "실무Ⅳ p.150 파단부 양쪽이라는 대응은 그 지점의 접촉·단속 반복이 만든다. §9.10.1 화재 유발 아크는 위치를 고르지 않는다"),
     "MeltMarkOnSupplySideOnly":    (ELEC, "실무Ⅳ p.150 전원측 편중은 방향성이다. §9.10.2.2 방향성은 전기적 현상의 표식이고 화재는 전원측을 가리지 않는다"),
     "StrandFractureOverTenPercent": (FIRE, "상위 StrandFracture 가 §9.10.2 로 화재도냄이다. 10% 라는 정도는 발화 전 상태를 뜻하지만 소손 후 형태만으로는 선후를 가릴 수 없다"),
+    "LocalizedHeatWithSurroundingDamage": (ELEC, "실무Ⅳ p.210·211 주위까지 심하게 태운 국부 고열은 그 부품이 발화점이라는 표지다. 밖에서 온 화염은 이 대비를 만들지 않는다"),
+    "IntactSurroundingsAroundComponent":  (FIRE, "실무Ⅳ p.210·211 부품과 주위가 모두 경미하면 외부 화염을 맞은 것으로 판정한다. 정의상 화재가 만드는 양상"),
     "RubyRedCrystal":              (ELEC, "실무Ⅳ p.153 적색 결정은 출화개소에 대응하는 접촉부에서 나온다. 상위 CuprousOxideGrowth 와 같이 §9.10.3 발광 접속부 산물"),
     "PrimaryArcMark":              (ELEC, "정의상 화재 이전 형성"),
     "Sleeving":                    (ELEC, "§9.10.4.1 과부하 구간 전 길이의 내부 발열"),

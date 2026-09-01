@@ -426,7 +426,7 @@ efi:R_PC_core  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; e
 efi:R_PC_sup1  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LongTermTerminalHeating ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PC_sup2  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:AbnormalTemperatureOrVoltageDrop ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_PC_sup3  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:Vibration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
+efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -13 .
 
 efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_CD_core2 a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:AbrasionAtPenetration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
@@ -2347,3 +2347,68 @@ efi:ExternalFlameScenario efi:canManifest efi:StrandFractureOverTenPercent , efi
 #  저항이 커져 국부과열이 발생할 때 특수산화물이 생성되어 아산화동 증식발열현상에
 #  의해 화재의 원인이 된다." 클래스도 사슬도 이미 있었으나 쓰는 규칙이 없었다.
 efi:R_PC_sup6  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:CuprousOxideGrowth ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+
+########################################################################
+# 33. 자체 발화 판정과 절연열화 경로 — 화재조사실무Ⅳ (2025)
+########################################################################
+
+# ── 33.1 부품이 발화점인가, 화염을 맞은 것인가 (p.210·p.211)
+# 교재가 전자개폐기·커넥터에 같은 원칙을 두 번 적는다. 요인과 무관한 일반 원칙이라
+# 전기적 가설 상위(ElectricalIgnitionScenario)에 건다.
+#   "커넥터와 주위 플라스틱 부분의 손상이 적으면 외부화염에 의해 피해를 입은 것"
+#   "커넥터 부위에 높은 열의 흔적이 있고 주위 플라스틱의 손상이 심하면 화재가
+#    커넥터에서 시작된 것"
+efi:LocalizedHeatWithSurroundingDamage a owl:Class ; rdfs:subClassOf efi:DamagePattern ; rdfs:label "부품 국부 고열 + 주위 손상"@ko ; skos:prefLabel "부품 국부 고열 + 주위 손상"@ko ; rdfs:comment "부품 부위에 높은 열의 흔적이 있고 주위 수지가 심하게 손상됨. 그 부품에서 시작됐다는 표지 (실무Ⅳ p.210·211)"@ko .
+efi:IntactSurroundingsAroundComponent a owl:Class ; rdfs:subClassOf efi:DamagePattern ; rdfs:label "부품 주위 손상 경미"@ko ; skos:prefLabel "부품 주위 손상 경미"@ko ; rdfs:comment "부품과 주위 수지의 손상이 모두 적음. 밖에서 온 화염을 맞았다는 표지 (실무Ⅳ p.210·211)"@ko .
+efi:ElectricalArtifact efi:exhibits efi:LocalizedHeatWithSurroundingDamage , efi:IntactSurroundingsAroundComponent .
+efi:ElectricalHeatingMechanism efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:PoorContactScenario efi:canManifest efi:LocalizedHeatWithSurroundingDamage .
+efi:CrushDamageScenario efi:canManifest efi:LocalizedHeatWithSurroundingDamage .
+efi:PartialDisconnectionScenario efi:canManifest efi:LocalizedHeatWithSurroundingDamage .
+efi:InsulationDegradationScenario efi:canManifest efi:LocalizedHeatWithSurroundingDamage .
+efi:TrackingScenario efi:canManifest efi:LocalizedHeatWithSurroundingDamage .
+efi:PoorContactHeating efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:GlowingConnection efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:CrushInducedArc efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:PartialDisconnectionHeating efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:SeriesArc efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:PartialDisconnectionInducedArc efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:InsulationBreakdownArc efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:ArcTracking efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:LeakageCurrentHeating efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
+efi:ExternalFlameExposure efi:producesDamage efi:IntactSurroundingsAroundComponent .
+efi:ExternalFlameScenario efi:canManifest efi:IntactSurroundingsAroundComponent .
+
+# ── 33.2 소손 중심 표면 집중을 화재도냄으로 다시 판정한다
+# 표면 집중은 트래킹(표면 현상)을 접속부 내부 발열과 가르지만, 외부 화염도
+# 절연물을 표면부터 태운다. 전용 단서가 아니다. 마지막 미검토 항목이었다.
+efi:ExternalFlameExposure efi:producesDamage efi:BurnCenterOnSurface .
+efi:ExternalFlameScenario efi:canManifest efi:BurnCenterOnSurface .
+
+# ── 33.3 층간단락 — 공식 분류표의 '임피던스의 감소' 갈래 (표 2-1, p.219~220)
+# "안정기의 경년열화에 의해 권선코일의 절연열화된 선간에서 접촉하여 코일의 일부가
+#  전체에서 분리되어 링회로를 형성하면 큰 전류가 이 부분에 흘러 국부 발열하여 출화"
+efi:InterTurnShortCircuit a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; rdfs:label "층간단락"@ko ; skos:prefLabel "층간단락"@ko ; rdfs:comment "권선 층간 절연이 깨져 코일 일부가 링회로를 이루고 큰 순환 전류가 국부 발열한다. 아크가 아니라 순환 전류 발열이다 (실무Ⅳ p.219~220)"@ko .
+efi:InsulationDeterioration efi:enables efi:InterTurnShortCircuit .
+efi:InsulationDegradationScenario efi:hasDeclaredMechanism efi:InterTurnShortCircuit .
+efi:InterTurnShortCircuit efi:producesDamage efi:InsulationCarbonization , efi:LocalizedDiscoloration , efi:LocalizedHeatWithSurroundingDamage .
+efi:InsulationDegradationScenario efi:canManifest efi:InsulationCarbonization .
+efi:InterTurnShortCircuit efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel .
+
+# 되먹임 — 교재의 출화 진행도가 고리다.
+#   코일 절연열화 → 층간단락 → 이상발열 → 절연열화 촉진 → 층간단락 확대 → 발화
+# 앞 단계가 뒤 단계를 부르고 뒤 단계가 앞 단계를 키운다. 한 방향만 적으면
+# '이상발열이 절연열화를 촉진한다'는 원문의 핵심이 빠진다.
+efi:InsulationBreakdownArc efi:enablesProgressionTo efi:InterTurnShortCircuit .
+efi:InterTurnShortCircuit efi:enablesProgressionTo efi:InsulationBreakdownArc .
+
+# ── 33.4 절연열화가 트래킹을 부른다 (p.211 서모스탯 사례)
+# "접점의 반복적인 동작에 의한 아크 발생과 이로 인한 주변 절연재의 절연열화에
+#  의해 형성된 트래킹으로 발화된 사례"
+efi:InsulationBreakdownArc efi:enablesProgressionTo efi:ArcTracking .
+
+# ── 33.5 지표 규칙 — 국내 실무 층이므로 조항을 붙이지 않는다
+efi:R_ANY_LocalHeat a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 1 .
+efi:R_ANY_Intact a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:IntactSurroundingsAroundComponent ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
+efi:R_EF_sup3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:IntactSurroundingsAroundComponent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 0 .
+efi:R_EF_ref2 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 0 .

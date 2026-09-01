@@ -27,18 +27,13 @@ BASELINE = {
     # 그중 5개는 임계값이 존재하지 않는 것이 확인됐다(기공률 등). 목표 0 은
     # 도달하지 못할 수 있다 — 확인되면 그때 목표를 고친다.
     "unwired_data_properties":  (12, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
-    # 화재 자체가 낼 수 있는지 원문 근거로 판정되지 않은 손상 양상.
-    # 판정되지 않은 채로 전용 단서 노릇을 하면 변별력이 과대평가된다.
-    # 8 → 7 → 1. 원문 근거로 판정 가능한 것은 모두 판정했다.
-    # 남은 1건(BurnCenterOnSurface)은 화재가 같은 양상을 못 낸다는 근거를 찾지 못했다.
-    # 지어내지 않고 검토표 7번 시트로 조사관에게 보냈다.
-    "unreviewed_fire_producibility": (1, 0),
     # 사슬에 붙지 않은 어휘. 선언만 하고 쓰지 않으면 판정에 기여하지 못한다.
     # 확장 슬롯 3건과 미사용 속성 15건. scripts/lint.py 참조.
     "dangling_vocabulary": (18, 0),
 }
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
-#           morphological_core_rules(1→0). 모두 test_ontology.py 의 불변식이 됐다.
+#           morphological_core_rules(1→0), unreviewed_fire_producibility(8→0).
+#           모두 test_ontology.py 의 불변식이 됐다.
 
 
 @pytest.fixture(scope="module")
@@ -111,12 +106,6 @@ def _ratchet(key, now, better_is_lower=True):
 def test_refutation_rules_are_thin(g):
     """A-2 반증 우선(P3)을 선언했으나 가설당 반증 수단이 하나뿐이다."""
     _ratchet("min_refuting_per_scenario", min_refuting_per_scenario(g), better_is_lower=False)
-
-
-def test_fire_producibility_is_reviewed(g):
-    """원문 근거로 판정되지 않은 양상이 남아 있다. 판정되지 않은 채 전용 단서
-    노릇을 하면 변별력이 과대평가된다 — 이미 다섯 건이 그랬다."""
-    _ratchet("unreviewed_fire_producibility", len(unreviewed_fire_producibility(g)))
 
 
 def test_vocabulary_is_wired(g):

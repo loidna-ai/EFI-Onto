@@ -199,7 +199,12 @@ def test_deenergized_refutes_all_electrical():
 
 
 def test_c5_blocks_shared_morphology_only():
-    """C-5 — 피복 탄화 + 아크 비드처럼 공유 양상만으로는 확정 불가."""
+    """C-5 — 피복 탄화 + 아크 비드처럼 공유 양상만으로는 확정 불가.
+
+    트래킹으로 세운다. 편향 점검에서 소손 중심 표면 집중이 화재도냄으로 바뀐 뒤
+    트래킹에는 전용 형태 단서가 하나도 남지 않았다. 그래서 이 가설을 세우려면
+    비시각적 현장 사실(오염 환경)이 있어야 한다 — C-5 가 요구하는 바로 그것이다.
+    """
     base = """
     efi:sesM a efi:InvestigationSession ; efi:queryCount 2 .
     efi:invM a efi:InvestigatorAgent .
@@ -214,9 +219,9 @@ def test_c5_blocks_shared_morphology_only():
         advanced=True, allow_infos=True, allow_warnings=True)[2]
     assert fires(base), "공유 양상만인데 통과했다"
     assert not fires(base + """
-    efi:m3 a efi:BurnCenterOnSurface ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
+    efi:m3 a efi:MoistureExposure ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
     efi:hM efi:supportedBy efi:m3 .
-    """), "전용 양상을 넣었는데 막혔다"
+    """), "비시각적 현장 사실을 넣었는데 막혔다"
 
 
 # ── §19.8 분류는 판정이 아니다 ───────────────────────────────────────────
@@ -627,8 +632,20 @@ def test_subclass_matching(onto):
         assert onto.matches(c, "ContaminatedEnvironment"), c
 
 
+def test_every_morphology_answers_the_fire_question(onto):
+    """모든 손상 양상은 '화재 자체도 이 흔적을 내는가'에 답이 있어야 한다.
+
+    답이 없는 채로 전용 단서 노릇을 하면 변별력이 과대평가된다. 실제로 그렇게
+    과대평가된 것이 여섯 건 나왔다. 8 → 0 으로 닫고 래칫에서 이관했다.
+    """
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import audit
+    assert not audit.unreviewed(), f"화재 발현 미검토: {audit.unreviewed()}"
+
+
 def test_shared_morphology_is_not_discriminating(onto):
     assert not onto.is_discriminating("InsulationCarbonization")   # 6개 가설 공통
     assert not onto.is_discriminating("CarbonizedConductivePath")  # 화재 열로도 생긴다 (§9.9.4.5)
-    assert onto.is_discriminating("BurnCenterOnSurface")           # 트래킹 전용
+    assert not onto.is_discriminating("BurnCenterOnSurface")       # 외부 화염도 표면부터 태운다 (실무Ⅳ p.153)
+    assert onto.is_discriminating("MoltenOxideMass")               # 접촉불량 전용 (§9.10.3.3)
     assert onto.is_discriminating("MoistureExposure")              # 형태학이 아님
