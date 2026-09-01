@@ -134,7 +134,8 @@ efi:AgedElectricalArtifact a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact 
                                owl:withRestrictions ( [ xsd:minInclusive "30"^^xsd:decimal ] ) ] ] ) ] ;
     rdfs:comment "물리 증거물의 속성이다. 선행 조건 AgedInsulation 과 축이 다르므로 직접 등가로 두지 않는다."@ko .
 efi:LargeMeltMark            a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "대형 용융흔"@ko .
-efi:SmallMeltBallOnStrandEnd a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "소선 끝단 소형 용융구"@ko .
+efi:SmallMeltBallOnStrandEnd a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "소선 끝단 소형 용융구"@ko ;
+    rdfs:comment "연선을 이루는 개별 소선(素線)의 끝에 생긴 작은 용융구다. 전선(電線) 말단의 일반 비드와 다르다 — 후자는 §9.11.6 이 '도체 끝의 비드 자체는 화재 원인을 지시하지 않는다'고 못박은 것이며 ArcBead 로 읽어야 한다. 판독기가 둘을 뭉개면 C-8 제약을 우회하게 된다. 실측으로도 갈린다 — 소선이 명시된 것은 반단선 75%, 명시되지 않은 것은 16%."@ko .
 efi:GeneralMelting           a owl:Class ; rdfs:subClassOf efi:FireMeltMark ; skos:prefLabel "전반 용융"@ko .
 efi:Spatter                  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "스패터"@ko .
 efi:MultipleArcBeads         a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "다발성 아크 비드"@ko .
