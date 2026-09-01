@@ -295,7 +295,7 @@ efi:ElectricalIgnitionScenario a owl:Class ; rdfs:subClassOf efi:IgnitionScenari
 efi:PoorContactScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ; skos:prefLabel "접촉불량"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
         [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:PoorContactHeating ] ) ] ;
-    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:LooseConnection ] .
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:ConnectionCondition ] .
 
 efi:CrushDamageScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ; skos:prefLabel "압착손상"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
@@ -424,7 +424,7 @@ efi:R_EF_sup3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; 
     efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
     rdfs:comment "외부 화염이 먼저 도달했다는 것과 정합"@ko .
 
-efi:R_PC_core  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LooseConnection ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_PC_core  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:ConnectionCondition ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PC_sup1  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LongTermTerminalHeating ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PC_sup2  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:AbnormalTemperatureOrVoltageDrop ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_PC_sup3  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:Vibration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
@@ -512,6 +512,11 @@ efi:IgnitionCompetenceRuleShape a sh:NodeShape ; sh:targetClass efi:IgnitionScen
         }""" ] .
 
 # [F-4] 지지점수 산출 (참조 구현): 50 + Σ 발화된 지표 규칙의 scoreDelta, 0~100 클램프
+#
+# 부재 확인은 포섭 방향이 반대다. 관측이 '헐거움'이면 상위인 '접속 상태'도
+# 관측된 것이지만, '헐거움 없음'은 '접속 상태 이상 없음'을 뜻하지 않는다 —
+# 부식이 있을 수 있다. 부재는 위에서 아래로만 함의한다. src/efi_schema.py 의
+# matches_absent 와 같은 규칙이며, 두 곳이 갈리면 안 되므로 함께 적는다.
 efi:SupportScoreRuleShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 4 ;
         sh:construct """
@@ -522,7 +527,11 @@ efi:SupportScoreRuleShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
               OPTIONAL {
                 $this rdf:type/rdfs:subClassOf* ?cat . ?s efi:hasFact ?f .
                 ?r a efi:IndicatorRule ; efi:forScenario ?cat ; efi:indicates ?C ; efi:requiresStatus ?st ; efi:scoreDelta ?d .
-                ?f rdf:type/rdfs:subClassOf* ?C ; efi:confirmationStatus ?st . }
+                { ?f efi:confirmationStatus ?st . FILTER(?st != efi:ConfirmedAbsent)
+                  ?f rdf:type/rdfs:subClassOf* ?C }
+                UNION
+                { ?f efi:confirmationStatus ?st . FILTER(?st = efi:ConfirmedAbsent)
+                  ?C rdfs:subClassOf* ?fc . ?f a ?fc } }
             } GROUP BY $this }
           BIND ( IF( 50 + ?sum > 100, 100, IF( 50 + ?sum < 0, 0, 50 + ?sum ) ) AS ?score )
         }""" ] .
@@ -2594,3 +2603,44 @@ efi:InterTurnShortCircuit efi:producesDamage efi:InternalDamageExceedingSurface 
 efi:InsulationDegradationScenario efi:canManifest efi:DendriticTreePath , efi:InternalDamageExceedingSurface .
 efi:R_ID_sup4  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:DendriticTreePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_ID_sup5  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InternalDamageExceedingSurface ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+
+########################################################################
+# 38. 반증 경로를 채운다 — 필요조건의 부재 확인
+#
+# 다섯 요인이 반증 규칙을 하나씩만 갖고 있었고 그 다섯 지표가 전부 사례 0건이라
+# 반증이 한 번도 발동하지 않았다. 점수를 더 주는 길만 있고 기각으로 좁히는
+# 길이 통째로 비어 있었다. P3(반증 우선)가 절반만 구현돼 있던 셈이다.
+#
+# 원리는 온톨로지가 이미 갖고 있다 — 각 가설의 hasAntecedent 제한이 필요조건이다.
+# 그것이 '없음'으로 확인되면 가설은 선다고 할 수 없다. §4.3.6 이 가설 시험을
+# 요구하고 C-1·P4 가 '확인 불가'는 반증이 될 수 없다고 이미 막고 있으므로,
+# requiresStatus 를 ConfirmedAbsent 로 두면 결측·확인불가와 자동으로 갈린다.
+#
+# 이 프로젝트에서 ConfirmedAbsent 를 요구하는 규칙은 지금까지 0개였다.
+# P4 를 선언만 하고 쓰지 않고 있었다.
+########################################################################
+
+# 기계적 손상의 필요조건을 이름 있는 클래스로 물화한다. 제한 안의 익명 합집합은
+# 규칙이 가리킬 수 없다.
+efi:MechanicalDamageAntecedent a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
+    rdfs:label "기계적 손상 선행 조건"@ko ; skos:prefLabel "기계적 손상 선행 조건"@ko ;
+    rdfs:comment "눌림·마찰·쥐 갉음·망치 오타격을 묶는다. 기계적 손상 단락이 서려면 이 중 하나는 있어야 한다"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:unionOf ( efi:ExternalCrushing efi:AbrasionAtPenetration efi:RodentGnawing efi:HammerMisHitDamage ) ] .
+efi:ExternalCrushing rdfs:subClassOf efi:MechanicalDamageAntecedent .
+efi:AbrasionAtPenetration rdfs:subClassOf efi:MechanicalDamageAntecedent .
+efi:RodentGnawing rdfs:subClassOf efi:MechanicalDamageAntecedent .
+efi:HammerMisHitDamage rdfs:subClassOf efi:MechanicalDamageAntecedent .
+
+# 필요조건이 '없음'으로 확인되면 기각한다. 결측이나 확인 불가는 해당하지 않는다.
+efi:R_PC_ref2  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:ConnectionCondition ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -30 .
+efi:R_CD_ref2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MechanicalDamageAntecedent ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -30 .
+efi:R_PD_ref2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:LongTermRepeatedStress ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -12 .
+efi:R_ID_ref2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -12 .
+efi:R_TR_ref2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -12 .
+efi:R_TR_ref3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:OrganicInsulationPresent ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -18 .
+
+# 형태로 서는 반증 하나 — 용흔이 전원측 한쪽에 몰려 있으면 반단선이 아니다.
+#   "반단선의 경우는 단선 부분의 양쪽에, 금속 등의 도체로 절단된 경우는
+#    단선 부분의 전원측의 한쪽 부분에 집중적으로 생겨 있다" (실무Ⅳ p.150)
+# 원문이 바로 이 대비로 반단선을 가른다.
+efi:R_PD_ref3  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MeltMarkOnSupplySideOnly ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .

@@ -230,6 +230,16 @@ class Ontology(BaseModel):
     def matches(self, fact_cls: str, indicator: str) -> bool:
         return indicator in self.ancestors.get(fact_cls, {fact_cls})
 
+    def matches_absent(self, fact_cls: str, indicator: str) -> bool:
+        """부재 확인은 포섭 방향이 반대다.
+
+        관측이 '헐거움'이면 상위인 '접속 상태'도 관측된 것이다 — 위로 올라간다.
+        그러나 '헐거움 없음'은 '접속 상태 이상 없음'을 뜻하지 않는다. 부식이
+        있을 수 있다. 부재는 위에서 아래로만 함의한다 — '오염 환경 없음'이
+        확인되면 그 하위인 '습기 노출 없음'도 따라온다.
+        """
+        return fact_cls in self.ancestors.get(indicator, {indicator})
+
     def is_damage(self, fact_cls: str) -> bool:
         return fact_cls in self.damage_cls
 
@@ -301,7 +311,8 @@ class Session(BaseModel):
         return next((f.status for f in self.facts if f.cls == cls), Status.MISSING)
 
     def _facts_matching(self, r: IndicatorRule, o: Ontology) -> list[Fact]:
-        return [f for f in self.facts if o.matches(f.cls, r.indicator) and f.status == r.required_status]
+        hit = o.matches_absent if r.required_status is Status.CONFIRMED_ABSENT else o.matches
+        return [f for f in self.facts if hit(f.cls, r.indicator) and f.status == r.required_status]
 
     def _slot_status(self, indicator: str, o: Ontology) -> Status:
         sts = [f.status for f in self.facts if o.matches(f.cls, indicator)]

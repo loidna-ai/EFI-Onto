@@ -22,7 +22,6 @@ SCENARIOS = ["PoorContactScenario", "CrushDamageScenario", "PartialDisconnection
 
 # 왼쪽이 현재 허용 한계, 오른쪽이 도달 목표.
 BASELINE = {
-    "min_refuting_per_scenario": (1, 2),    # 시나리오당 반증 규칙 최소 개수
     # 23 → 18 → 13 → 12. 남은 12개는 임계값·설계 결정이 있어야 풀린다.
     # 그중 5개는 임계값이 존재하지 않는 것이 확인됐다(기공률 등). 목표 0 은
     # 도달하지 못할 수 있다 — 확인되면 그때 목표를 고친다.
@@ -34,7 +33,7 @@ BASELINE = {
 }
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
 #           morphological_core_rules(1→0), unreviewed_fire_producibility(8→0),
-#           unreviewed_cause_exclusivity(11→0).
+#           unreviewed_cause_exclusivity(11→0), min_refuting_per_scenario(1→2).
 #           모두 test_ontology.py 의 불변식이 됐다.
 
 
@@ -103,11 +102,6 @@ def _ratchet(key, now, better_is_lower=True):
     worse = now > limit if better_is_lower else now < limit
     assert not worse, f"{key} 가 나빠졌다 ({limit} → {now}). 목표 {target}"
     warnings.warn(f"[잔여] {key}: {now} (목표 {target})")
-
-
-def test_refutation_rules_are_thin(g):
-    """A-2 반증 우선(P3)을 선언했으나 가설당 반증 수단이 하나뿐이다."""
-    _ratchet("min_refuting_per_scenario", min_refuting_per_scenario(g), better_is_lower=False)
 
 
 def test_vocabulary_is_wired(g):

@@ -61,6 +61,7 @@ VERDICTS = {
     "ReducedInsulationResistance": (SHARED, "절연저항 저하는 절연열화의 계측 증거이자 트래킹 진행의 결과이기도 하다"),
     "PlugJunctionArea":       (SHARED, "실무Ⅳ p.253 같은 쪽에 '플러그 인접부분에서의 반단선'과 '플러그 부분에서의 불완전 접촉으로 출화'가 함께 있다"),
     "ApplianceEntryPoint":    (SHARED, "실무Ⅳ p.204 관통부는 꺾임(반단선)과 마찰·눌림(기계적 손상)이 함께 일어나는 자리다"),
+    "MechanicalDamageAntecedent": (SHARED, "눌림·마찰·쥐 갉음·망치 오타격의 상위. 망치 오타격이 절연열화로도 가므로 상위도 공유다"),
     "MisdrivenStaple":        (SHARED, "표 2-1 은 스테이플 찔림을 단락에 두고 실무Ⅳ p.245 는 같은 자리에서 반단선이 관찰된다고 한다"),
     "StressConcentrationPoint": (SHARED, "하위가 모두 공유다. 위치는 요인을 가르지 않는다"),
 

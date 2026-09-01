@@ -679,6 +679,26 @@ def test_subclass_matching(onto):
         assert onto.matches(c, "ContaminatedEnvironment"), c
 
 
+def test_every_scenario_can_be_refuted_two_ways(g):
+    """가설마다 반증 경로가 둘 이상 있어야 한다.
+
+    P3 는 반증을 점수보다 먼저 실행하라 하는데, 정작 다섯 요인이 반증 규칙을
+    하나씩만 갖고 그 다섯 지표가 사례 150건에서 전부 0건이었다. 반증이 한 번도
+    발동하지 않는 채로 '반증 우선'을 구현했다고 적고 있었던 셈이다.
+    필요조건의 부재 확인을 반증 경로로 물화해 채웠다.
+    """
+    from rdflib import RDF
+    import collections
+    n = collections.Counter()
+    for r in g.subjects(RDF.type, EFI.IndicatorRule):
+        if q(g.value(r, EFI.hasRole)) in ("Refuting", "DecisiveRefuting"):
+            n[q(g.value(r, EFI.forScenario))] += 1
+    scen = {q(s) for s in g.subjects(RDFS.subClassOf, EFI.ElectricalIgnitionScenario)}
+    scen.add("ExternalFlameScenario")
+    bad = {s: n[s] for s in scen if n[s] < 2}
+    assert not bad, f"반증 경로가 둘 미만인 가설: {bad}"
+
+
 def test_each_indicator_rule_says_one_thing(g):
     """규칙 하나는 가설 하나·지표 하나·역할 하나·점수 하나여야 한다.
 
