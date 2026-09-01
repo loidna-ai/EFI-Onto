@@ -2826,3 +2826,86 @@ efi:PartialDisconnectionDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:
         }""" ] .
 efi:PartialDisconnectionDerivationRuleShape dcterms:references
     "NFPA 921 (2024) §9.11.2 — 니크·연신의 추가 발열은 무시할 수준이라는 통념 부정과 짝을 이룬다. 여기서 다루는 것은 소선 다수가 끊겨 통전 단면적 자체가 크게 준 경우이며, 정량 기준(10%)은 NFPA 가 아니라 국내 실무 교재(실무Ⅳ p.149)에서 온다"@ko .
+
+########################################################################
+# 42. §9.6 보호장치 동작 특성 — NFPA 대조에서 '동작 특성은 없음'이던 자리
+#     화재조사실무Ⅳ (2025) 표 2-18·2-19
+########################################################################
+
+# ── 42.1 과전류차단기 동작시간특성 (표 2-18, p.194)
+#   정격전류 1.25배 통전:  30A 이하 60분 / 30~50A 60분 / 50A 초과 120분
+#   정격전류 2배 통전:     30A 이하 2분 / 30~50A 4분 / 50~100A 6분 / 100~225A 8분 …
+# 규칙은 배수와 지속 시간을 견주기만 한다. 표의 숫자는 정규화기가 채운다.
+efi:overcurrentMultiple a owl:DatatypeProperty ; rdfs:domain efi:ProtectiveDevice ; rdfs:range xsd:decimal ;
+    rdfs:label "관측된 과전류 배수"@ko ; skos:prefLabel "관측된 과전류 배수"@ko .
+efi:overcurrentDuration_min a owl:DatatypeProperty ; rdfs:domain efi:ProtectiveDevice ; rdfs:range xsd:decimal ;
+    rdfs:label "과전류 지속 시간"@ko ; skos:prefLabel "과전류 지속 시간"@ko .
+efi:ratedTripTime_min a owl:DatatypeProperty ; rdfs:domain efi:ProtectiveDevice ; rdfs:range xsd:decimal ;
+    rdfs:label "그 배수에서의 규정 동작시간"@ko ; skos:prefLabel "그 배수에서의 규정 동작시간"@ko ;
+    rdfs:comment "정격전류 구분과 과전류 배수로 정해진다. 국내 기준은 실무Ⅳ 표 2-18 이며 정규화기가 채운다"@ko .
+efi:ProtectiveDeviceFailedToOperate a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "보호장치 부동작"@ko ; skos:prefLabel "보호장치 부동작"@ko ;
+    rdfs:comment "규정 동작시간을 넘겨 과전류가 흘렀는데도 동작하지 않은 상태. §9.9.3.2 는 보호가 정상 동작하면 과부하 발화가 드물다고 하므로 그 역이 성립할 조건이다"@ko .
+
+efi:ProtectiveDeviceOperationRuleShape a sh:NodeShape ; sh:targetClass efi:ProtectiveDevice ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { $this a efi:ProtectiveDeviceFailedToOperate . }
+        WHERE {
+          $this efi:overcurrentMultiple ?m ; efi:overcurrentDuration_min ?d ; efi:ratedTripTime_min ?t .
+          FILTER NOT EXISTS { $this efi:exhibits ?x . ?x a efi:BreakerTripRecord }
+          FILTER ( ?m > 1 && ?d > ?t )
+        }""" ] .
+efi:ProtectiveDeviceOperationRuleShape dcterms:references
+    "NFPA 921 (2024) §9.6 과전류 보호, §9.9.3.2 보호가 정상 동작하면 과부하 발화는 드물다. 동작시간 수치는 NFPA 가 아니라 국내 기준(실무Ⅳ 표 2-18, 표 2-19 KS C 4613)에서 온다"@ko .
+efi:ProtectiveDeviceFailedToOperate efi:attests efi:OverloadState .
+
+# ── 42.2 누전차단기 정격감도전류·동작시간 (표 2-19, KS C 4613, p.200)
+#   고감도 고속형 5·10·15·30㎃ — 정격감도전류에서 0.1초 이내(인체보호형 0.03초)
+#   시연형 0.1초 초과 2초 이내 / 반한시형 0.2초 초과 1초 이내
+#   최소동작전류는 정격의 50% 이상(정격 10㎃ 이하는 60% 이상)
+efi:ratedSensitivityCurrent_mA a owl:DatatypeProperty ; rdfs:domain efi:GroundFaultProtectiveDevice ;
+    rdfs:range xsd:decimal ; qudt:unit unit:MilliA ;
+    rdfs:label "정격감도전류"@ko ; skos:prefLabel "정격감도전류"@ko ;
+    rdfs:comment "KS C 4613. 최소동작전류는 정격의 50% 이상이며 정격 10㎃ 이하는 60% 이상이다 (실무Ⅳ 표 2-19)"@ko .
+efi:leakageCurrent_mA a owl:DatatypeProperty ; rdfs:domain efi:Circuit ; rdfs:range xsd:decimal ; qudt:unit unit:MilliA ;
+    rdfs:label "측정 누설전류"@ko ; skos:prefLabel "측정 누설전류"@ko .
+efi:protectedBy a owl:ObjectProperty ; rdfs:domain efi:Circuit ; rdfs:range efi:ProtectiveDevice ;
+    rdfs:label "이 보호장치가 지킨다"@ko ; skos:prefLabel "이 보호장치가 지킨다"@ko .
+
+# 누설전류가 정격감도전류 이상인데 누전차단기가 동작하지 않았다면 부동작이다.
+efi:GroundFaultProtectionRuleShape a sh:NodeShape ; sh:targetClass efi:Circuit ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { ?g a efi:ProtectiveDeviceFailedToOperate . }
+        WHERE {
+          $this efi:leakageCurrent_mA ?i ; efi:protectedBy ?g .
+          ?g a efi:GroundFaultProtectiveDevice ; efi:ratedSensitivityCurrent_mA ?s .
+          FILTER NOT EXISTS { ?g efi:exhibits ?x . ?x a efi:BreakerTripRecord }
+          FILTER ( ?i >= ?s )
+        }""" ] .
+efi:GroundFaultProtectionRuleShape dcterms:references
+    "NFPA 921 (2024) §9.6 과전류·지락 보호. 정격감도전류와 동작시간 수치는 국내 기준(KS C 4613, 실무Ⅳ 표 2-19)에서 온다"@ko .
+
+# ── 42.3 접촉저항이 커지는 갈래 (p.194)
+#   "접속 면적이 충분하지 못하거나 접속압력이 불충분하면 ... 허용전류 이하에서도
+#    발열한다. 또 개폐기·차단기 등의 접속부위가 진동 등에 의하여 조임 압력이
+#    이완되거나, 접속면의 부식·요철발생·오염, 개폐부분이나 플러그의 변형이
+#    있어도 접촉저항은 증가한다."
+efi:InsufficientContactPressure a owl:Class ; rdfs:subClassOf efi:ConnectionCondition ;
+    rdfs:label "접속압력·면적 부족"@ko ; skos:prefLabel "접속압력·면적 부족"@ko ;
+    rdfs:comment "허용전류 이하에서도 발열한다 (실무Ⅳ p.194)"@ko .
+efi:ContaminatedContactSurface a owl:Class ; rdfs:subClassOf efi:ConnectionCondition ;
+    rdfs:label "접속면 오염·요철"@ko ; skos:prefLabel "접속면 오염·요철"@ko ;
+    rdfs:comment "기름 등 절연물이 부착하면 경계저항이 생기고, 요철은 집중저항을 만든다 (실무Ⅳ p.194)"@ko .
+efi:DeformedPlugOrSwitch a owl:Class ; rdfs:subClassOf efi:ConnectionCondition ;
+    rdfs:label "플러그·개폐부 변형"@ko ; skos:prefLabel "플러그·개폐부 변형"@ko .
+efi:InsufficientContactPressure efi:enables efi:PoorContactHeating , efi:GlowingConnection .
+efi:ContaminatedContactSurface efi:enables efi:PoorContactHeating , efi:GlowingConnection .
+efi:DeformedPlugOrSwitch efi:enables efi:PoorContactHeating , efi:GlowingConnection .
+
+# ── 42.4 접속부 발열의 양의 되먹임 (p.194)
+#   "온도가 증가하면 산화 피막이 형성되어 접촉저항은 더욱 증가하고"
+# 앞 단계가 뒤 단계를 부르고 뒤가 앞을 키운다. 층간단락과 같은 구조다.
+efi:PoorContactHeating efi:enablesProgressionTo efi:GlowingConnection .
+efi:GlowingConnection efi:enablesProgressionTo efi:PoorContactHeating .

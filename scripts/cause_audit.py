@@ -41,6 +41,9 @@ EXCL, SHARED, OPEN = "전용", "공유", "미검토"
 VERDICTS = {
     # ── 정의상 그 요인 자체인 것 ─────────────────────────────────────
     "LooseConnection":        (EXCL, "접속부 체결 불량이 곧 접촉불량이다. 공식 분류가 '접촉불량에 의한 단락'이라 적는 그 원인"),
+    "InsufficientContactPressure": (EXCL, "실무Ⅳ p.194 접속 면적·압력이 부족하면 허용전류 이하에서도 접속부가 발열한다. 접속부 현상이다"),
+    "ContaminatedContactSurface":  (EXCL, "실무Ⅳ p.194 기름 등 절연물 부착은 경계저항을, 요철은 집중저항을 만든다. 접속부 현상이다"),
+    "DeformedPlugOrSwitch":        (EXCL, "실무Ⅳ p.194 개폐부·플러그 변형이 접촉저항을 키운다. 접속부 현상이다"),
     "CorrodedConnection":     (EXCL, "실무Ⅳ p.206 접점부의 산화·환경오염에 의한 접촉불량. 접속부 현상이다"),
     "ExternalCrushing":       (EXCL, "표 2-1 코드의 바닥 깔림이 단락 아래에 있다. 눌림은 도체를 직접 상하게 한다"),
     "RodentGnawing":          (EXCL, "실무Ⅳ p.253 피복을 갉아 도체가 드러나 단락에 이른다. 기계적 손상 경로"),

@@ -33,7 +33,7 @@ SECTIONS = [
                                                            "계량기는 판정에 쓰이지 않아 넣지 않았다(판단)"),
     ("9.4",  "Service Equipment",                    PART, "ServiceEquipment 클래스. 세 기능 중 보호 기능만 판정에 연결"),
     ("9.5",  "Grounding",                            DONE, "본딩 경로와 중성선 단선. C-21 로 잘못된 추론을 막는다"),
-    ("9.6",  "Overcurrent Protection",               PART, "BreakerTripRecord, D-1 과부하, GFCI·AFCI 클래스. 동작 특성은 없음"),
+    ("9.6",  "Overcurrent Protection",               DONE, "BreakerTripRecord, D-1 과부하, GFCI·AFCI. 동작 특성을 표 2-18·2-19 로 물화 — 규정 동작시간을 넘겨도 동작하지 않으면 보호장치 부동작"),
     ("9.7",  "Branch Circuits",                      PART, "Circuit·BranchCircuit 클래스는 생겼다. 계통 위상은 없음"),
     ("9.8",  "Outlets and Devices",                  PART, "PlugReceptacle, TerminalBlock"),
     ("9.9",  "Ignition by Electrical Energy",        PART, "HeatingMechanism 축과 C-32~C-34. 열전달 지속 시간, "
@@ -223,6 +223,8 @@ SHAPE_REFS = {
     "MetallographyAloneShape":           ["9.11"],
     "ArcOriginIndicationRuleShape":      ["9.12"],
     "PartialDisconnectionDerivationRuleShape": ["9.11"],
+    "ProtectiveDeviceOperationRuleShape": ["9.6", "9.9"],
+    "GroundFaultProtectionRuleShape":    ["9.6"],
     "QueryDerivationRuleShape":          ["19.6"],
     "InsulationResistanceDerivationRuleShape": ["9.11"],
     "ShortCircuitIgnitionShape":         ["9.11"],
