@@ -138,7 +138,36 @@ class Role(StrEnum):
 
 
 FactClass = Antecedent | Damage | SceneEvidence
-_FACT_NAMES = {m.value for e in (Antecedent, Damage, SceneEvidence) for m in e}
+def _fact_names() -> set[str]:
+    """사실이 될 수 있는 클래스 이름. TTL 에서 읽는다.
+
+    열거형을 손으로 들고 있으면 TTL 에 클래스를 더할 때마다 어긋난다. 실제로
+    어긋났다 — 사례 평가를 돌리자 새로 넣은 어휘가 전부 거부됐다.
+    열거형은 자주 쓰는 값의 별칭으로 남기고, 유효성은 TTL 이 정한다.
+    """
+    try:
+        import pathlib
+        from rdflib import Graph, Namespace, RDFS, URIRef
+        ttl = pathlib.Path(__file__).resolve().parents[1] / "ontology" / "efi_tbox.ttl"
+        g = Graph().parse(ttl, format="turtle")
+        E = Namespace(EFI)
+        out = set()
+
+        def walk(c):
+            for x in g.subjects(RDFS.subClassOf, c):
+                if isinstance(x, URIRef):
+                    n = str(x).split("#")[-1]
+                    if n not in out:
+                        out.add(n)
+                        walk(x)
+        for root in ("AntecedentCondition", "DamagePattern", "SceneEvidence", "Observation"):
+            walk(E[root])
+        return out or {m.value for e in (Antecedent, Damage, SceneEvidence) for m in e}
+    except Exception:
+        return {m.value for e in (Antecedent, Damage, SceneEvidence) for m in e}
+
+
+_FACT_NAMES = _fact_names()
 
 
 # ───────────────────── 관측 · 사실 (SOSA + PROV) ─────────────────────

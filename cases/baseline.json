@@ -1,0 +1,34 @@
+{
+ "cases": 150,
+ "correct": 69,
+ "undetermined": 44,
+ "wrong": 37,
+ "accuracy": 0.46,
+ "per_class": {
+  "압착손상": {
+   "n": 30,
+   "correct": 15,
+   "undetermined": 9
+  },
+  "반단선": {
+   "n": 30,
+   "correct": 3,
+   "undetermined": 12
+  },
+  "절연열화": {
+   "n": 30,
+   "correct": 15,
+   "undetermined": 5
+  },
+  "접촉불량": {
+   "n": 30,
+   "correct": 17,
+   "undetermined": 9
+  },
+  "트래킹": {
+   "n": 30,
+   "correct": 19,
+   "undetermined": 9
+  }
+ }
+}

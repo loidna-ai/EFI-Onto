@@ -135,7 +135,7 @@ def build():
     tot = collections.Counter()
     for r in data:
         rec = dict(zip(hdr, r))
-        facts = []
+        facts, fuels = [], []
         for s in slots:
             v = str(rec.get(s) or "").strip()
             if not v:
@@ -147,12 +147,17 @@ def build():
             else:
                 cov[s] += 1
             for cls, st in got:
-                facts.append({"cls": cls, "status": st, "agent": "InvestigatorAgent",
-                              "slot": s, "src": v})
+                # 착화물은 세션 사실이 아니라 가설의 속성(hasFirstFuel)이다.
+                # 착화물을 지목하는 지표 규칙도 없어 점수에 기여하지 않는다.
+                # 매핑 커버리지에는 세되 사실 목록에는 넣지 않는다.
+                (fuels if s == "slot_surrounding_combustibles" else facts).append(
+                    {"cls": cls, "status": st, "agent": "InvestigatorAgent",
+                     "slot": s, "src": v})
         sessions.append({
             "case_id": str(rec["case_id"]),
             "actual_scenario": LABEL[str(rec["gt_label"])],
             "facts": facts,
+            "fuels": fuels,
             "query_count": sum(1 for s in slots if str(rec.get(s) or "").strip()),
         })
     return sessions, cov, tot, miss
