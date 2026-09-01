@@ -526,7 +526,10 @@ efi:ConclusionShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
 # [C-3] 시나리오 구조 제약: 메커니즘 정확히 1개, 선행조건 ≥1, 착화물은 0..1 (미확인 허용 → 판단보류 경로)
 efi:ScenarioShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
     sh:property [ sh:path efi:hasMechanism ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:HeatingMechanism ] ;
-    sh:property [ sh:path efi:hasAntecedent ; sh:minCount 1 ; sh:class efi:AntecedentCondition ] ;
+    # 선행 조건을 여기서 필수로 걸면 기각된 후보까지 정황을 요구하게 된다.
+    # §19.5.1 은 쉽게 배제될 것도 목록에 올리라고 한다. 확정 가설의 정황 요구는
+    # C-30(§19.6.5.2)이 하므로 여기서는 유형만 본다.
+    sh:property [ sh:path efi:hasAntecedent ; sh:class efi:AntecedentCondition ] ;
     sh:property [ sh:path efi:hasFirstFuel ; sh:maxCount 1 ; sh:class efi:FirstFuelIgnited ] ;
     sh:property [ sh:path efi:supportScore ; sh:maxCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 100 ] .
 
@@ -1034,7 +1037,8 @@ efi:ArcSurveyScopeShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
 
 # [C-8] 아크 용융흔 단독으로는 그 시점 통전 사실만 말한다. 발화원 결론이 되지 못한다.
 efi:ArcMeltAloneShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
-    dcterms:references "NFPA 921 (2024) §9.13.4.7 Documenting the Damage" ;
+    dcterms:references "NFPA 921 (2024) §9.13.4.7 Documenting the Damage" ,
+                       "NFPA 921 (2024) §9.11.6 Beaded Conductor" ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
         sh:message "아크 용융흔은 그 시점 통전 사실만 증언한다. 발화부 근접 여부와 발화원 자격에는 별도 자료가 필요하다 (§9.13.4.7)"@ko ;
         sh:select """
@@ -1940,23 +1944,6 @@ efi:ShortCircuitIgnitionShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
           ?f rdf:type/rdfs:subClassOf* efi:InsulationMaterialFuel .
           FILTER NOT EXISTS { ?sc efi:conductorSizeReducedAfterProtection true }
           FILTER NOT EXISTS { ?sc efi:hasAntecedent ?a . ?a rdf:type/rdfs:subClassOf* efi:HeatDissipationImpairment }
-        }""" ] .
-
-# [C-42] 도체 끝의 비드 하나만으로는 화재 원인을 지시하지 못한다 (§9.11.6).
-#  C-8(아크 용융흔), C-38(과전류 용융)과 같은 계열이다.
-efi:BeadedConductorShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
-    dcterms:references "NFPA 921 (2024) §9.11.6 Beaded Conductor" ;
-    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
-        sh:message "도체 끝의 비드 자체는 화재 원인을 지시하지 않는다 (§9.11.6)"@ko ;
-        sh:select """
-        SELECT $this WHERE {
-          $this efi:concludes ?sc .
-          FILTER EXISTS { ?sc efi:supportedBy ?f . ?f rdf:type/rdfs:subClassOf* efi:ArcBead }
-          FILTER NOT EXISTS {
-            ?sc efi:supportedBy ?g .
-            ?g efi:confirmationStatus efi:Confirmed .
-            FILTER NOT EXISTS { ?g rdf:type/rdfs:subClassOf* efi:ArcMeltMark }
-          }
         }""" ] .
 
 # ============================================================================

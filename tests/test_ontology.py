@@ -2,7 +2,7 @@
 """EFI-Onto 회귀 시험. TTL 을 고쳤으면 반드시 통과해야 한다."""
 import sys, pathlib
 import pytest
-from rdflib import Graph, Namespace
+from rdflib import Graph, Namespace, RDFS
 from pyshacl import validate
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -515,6 +515,72 @@ efi:DeliberatelyBroken a owl:Class ;
     assert "DeliberatelyBroken" in bad, f"검사기가 고의 결함을 놓쳤다: {bad}"
 
 
+# ── 논리적 정합 ──────────────────────────────────────────────────────────
+def test_a_complete_conclusion_can_pass():
+    """제약을 40개 넘게 쌓았다. 통과 가능한 결론이 실제로 존재해야 한다.
+    존재하지 않으면 이 시스템은 영원히 결론을 내지 못한다."""
+    gold = """
+    efi:sG a efi:InvestigationSession ; efi:queryCount 3 ; efi:hasCandidateSource efi:dG .
+    efi:invG a efi:InvestigatorAgent .
+    efi:dG a efi:HeatProducingDevice ; efi:atOriginArea true ;
+           efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invG ; efi:analyzed true .
+    efi:f1 a efi:ContaminatedEnvironment ; efi:confirmationStatus efi:Confirmed ;
+           prov:wasAttributedTo efi:invG ; efi:analyzed true .
+    efi:f2 a efi:CarbonizedConductivePath ; efi:confirmationStatus efi:Confirmed ;
+           prov:wasAttributedTo efi:invG ; efi:analyzed true .
+    efi:f3 a efi:BurnCenterOnSurface ; efi:confirmationStatus efi:Confirmed ;
+           prov:wasAttributedTo efi:invG ; efi:analyzed true .
+    efi:sG efi:hasFact efi:dG , efi:f1 , efi:f2 , efi:f3 .
+    efi:fuelG a efi:InsulationMaterialFuel ; efi:distanceToHeatSource_mm 2 .
+    efi:hG a efi:TrackingScenario ; efi:inSession efi:sG ;
+           efi:hasMechanism [ a efi:ArcTracking ] ; efi:hasFirstFuel efi:fuelG ;
+           efi:hasAntecedent [ a efi:ContaminatedEnvironment ] ; efi:verdict efi:Supported ;
+           efi:supportedBy efi:f1 , efi:f2 , efi:f3 ;
+           efi:sourceCompetentForFuel true ; efi:timelineConsistent true ;
+           efi:contactCircumstance "오염 표면 누설 전류로 탄화 경로 형성" ;
+           efi:heatTransferPath "탄화 경로에서 접촉 피복으로 직접 전도" ;
+           efi:arcInitiationMode "오염층 누설 전류가 표면을 탄화시켜 개시" ;
+           efi:testedBy efi:TestByScientificPrinciple ;
+           efi:addressesFactor efi:FactorFuelPresence , efi:FactorOxidantPresence ,
+               efi:FactorSourcePresence , efi:FactorHeatTransfer , efi:FactorSafetyDevice ,
+               efi:FactorBringingTogether , efi:FactorFireSpread .
+    efi:hG2 a efi:PoorContactScenario ; efi:inSession efi:sG ; efi:verdict efi:Refuted ;
+            efi:hasMechanism [ a efi:PoorContactHeating ] .
+    efi:cG a efi:Conclusion ; efi:concludes efi:hG ; efi:certaintyLevel efi:Probable ;
+           efi:statedLimitation "절연저항 계측 불가 구간 있음" .
+    """
+    msgs = _msg(gold)
+    assert "Message:" not in msgs and "Conforms: True" in msgs, "완전한 사례가 막혔다:\n" + msgs[:900]
+
+
+def test_causal_chain_stays_class_level(g):
+    """인과 사슬은 클래스끼리 잇는다. 개체 수준 진술이 섞이면 M-1 의 변별력 계산과
+    M-2 의 혼동 쌍 판정이 개체까지 세어 틀어진다. ABox 가 들어올 때 위험하다."""
+    from rdflib import RDF, OWL, URIRef
+    CHAIN = ["canManifest", "producesDamage", "enables", "ignites", "attests",
+             "exhibits", "hasDeclaredMechanism"]
+    bad = []
+    for p_ in CHAIN:
+        for s_, o_ in g.subject_objects(EFI[p_]):
+            for n in (s_, o_):
+                if isinstance(n, URIRef) and str(n).startswith(str(EFI))                         and (n, RDF.type, OWL.Class) not in g:
+                    bad.append(f"{p_}: {q(n)}")
+    assert not bad, f"인과 사슬에 클래스가 아닌 것이 섞였다: {sorted(set(bad))}"
+
+
+def test_scenario_list_comes_from_the_ontology():
+    """변별력 공식의 N 은 TTL 의 가설 수여야 한다. 손으로 들고 있으면 시나리오가
+    늘어도 N 이 그대로여서 모든 가중치가 조용히 틀린 값이 된다."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import score
+    from rdflib import Graph as G2
+    gg = G2().parse(TTL, format="turtle")
+    ttl = {q(s) for s in gg.subjects(RDFS.subClassOf, EFI.IgnitionScenario)} |           {q(s) for s in gg.subjects(RDFS.subClassOf, EFI.ElectricalIgnitionScenario)}
+    ttl = {t for t in ttl if not list(gg.subjects(RDFS.subClassOf, EFI[t]))}
+    assert set(score.SCENARIOS) == ttl, f"TTL {sorted(ttl)} vs score.py {sorted(score.SCENARIOS)}"
+    assert score.N == len(ttl)
+
+
 # ── Pydantic 파이프라인이 SHACL 과 같은 답을 내는가 ──────────────────────
 def test_python_matches_shacl(onto):
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent
@@ -537,8 +603,12 @@ def test_python_delegates_conclusion_checks_to_shacl():
     s = Session(case_id="V", query_count=2,
                 hypotheses=[Hypothesis(scenario=Scenario.TRACKING, mechanism=Mechanism.ARC_TRACKING)],
                 facts=[Fact(cls="MoistureExposure", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR)])
-    msgs = s.validate(str(TTL))
-    assert any("hasAntecedent" in m for m in msgs), f"SHACL 제약이 전달되지 않았다: {msgs}"
+    # 같은 ABox 를 pySHACL 로 직접 돌린 결과와 일치해야 한다. 특정 제약에 기대면
+    # 그 제약이 바뀔 때 시험이 깨지고, 정작 위임이 끊겨도 모른다.
+    direct = _msg(s.to_turtle(include_derived=False))
+    got = s.validate(str(TTL))
+    assert all(m in direct for m in got), f"위임 결과가 직접 실행과 다르다: {got}"
+    assert ("Conforms: True" in direct) == (not got)
 
 
 def test_serialization_does_not_duplicate_derived_values():

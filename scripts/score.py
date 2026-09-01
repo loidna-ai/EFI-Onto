@@ -40,8 +40,25 @@ REFUTE_MAX = 30       # 확정 요건을 갖춘 가설을 기준선으로 되돌
 MORPHOLOGY_FACTOR = 0.7   # 판단. 사진 판독은 현장 확인과 같은 무게가 아니다
 DECISIVE = -100       # 비통전. 점수가 아니라 차단기다
 
-SCENARIOS = ["PoorContactScenario", "CrushDamageScenario", "PartialDisconnectionScenario",
-             "InsulationDegradationScenario", "TrackingScenario", "ExternalFlameScenario"]
+def _scenarios():
+    """가설 목록을 TTL 에서 읽는다. 손으로 들고 있으면 시나리오가 늘 때 어긋나고,
+    변별력 공식의 N 이 조용히 틀린 값이 된다."""
+    g = Graph().parse(TTL, format="turtle")
+    out = set()
+
+    def walk(c):
+        for s in g.subjects(RDFS.subClassOf, c):
+            if isinstance(s, URIRef):
+                n = ln(s)
+                if n not in out:
+                    if not list(g.subjects(RDFS.subClassOf, s)):   # 추상 상위는 뺀다
+                        out.add(n)
+                    walk(s)
+    walk(E.IgnitionScenario)
+    return sorted(out)
+
+
+SCENARIOS = _scenarios()
 ELECTRICAL = [s for s in SCENARIOS if s != "ExternalFlameScenario"]
 N = len(SCENARIOS)
 
