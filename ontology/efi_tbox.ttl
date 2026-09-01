@@ -187,11 +187,14 @@ efi:LooseConnection        a owl:Class ; rdfs:subClassOf efi:ConnectionCondition
 efi:CorrodedConnection     a owl:Class ; rdfs:subClassOf efi:ConnectionCondition ; skos:prefLabel "접속부 부식"@ko .
 
 efi:MechanicalStressHistory a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "기계적 응력 이력"@ko .
-efi:RepeatedFlexing        a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "반복 굴곡"@ko .
-efi:Vibration              a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "진동"@ko .
-efi:Tension                a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "인장"@ko .
+efi:RepeatedFlexing        a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "반복 굴곡"@ko .
+efi:Vibration              a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "진동"@ko .
+efi:Tension                a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "인장"@ko .
 efi:ExternalCrushing       a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "외력 압착·찍힘"@ko .
-efi:LongTermRepeatedStress a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "장기 반복 응력 정황"@ko .
+efi:LongTermRepeatedStress a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
+    skos:prefLabel "장기 반복 응력 정황"@ko ;
+    rdfs:comment "굴곡·진동·인장의 상위. 분류에만 쓰고 지표로는 쓰지 않는다 — 셋의 변별력이 서로 달라(굴곡·인장은 반단선 전용, 진동은 접촉불량도 만든다) 하나로 묶으면 굴곡의 변별력까지 깎인다."@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:unionOf ( efi:RepeatedFlexing efi:Vibration efi:Tension ) ] .
 
 efi:InsulationCondition    a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "절연 상태"@ko .
 efi:AgedInsulation         a owl:Class ; rdfs:subClassOf efi:InsulationCondition , efi:InsulationDeterioration ; skos:prefLabel "노후화·장기 사용"@ko .
@@ -419,6 +422,7 @@ efi:R_EF_sup3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; 
 efi:R_PC_core  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LooseConnection ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PC_sup1  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LongTermTerminalHeating ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PC_sup2  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:AbnormalTemperatureOrVoltageDrop ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_PC_sup3  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:Vibration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
 efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
@@ -427,9 +431,10 @@ efi:R_CD_sup1  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; e
 efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_CD_ref   a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:NoTripDespiteExternalForce ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
 
-efi:R_PD_core  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:LongTermRepeatedStress ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_PD_core  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RepeatedFlexing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PD_sup1  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:SmallMeltBallOnStrandEnd ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_PD_sup2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureAtStressPoint ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_PD_sup4  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:Tension ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PD_ref   a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:WholeConductorCrushedOrCut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
 efi:R_ID_core  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
@@ -786,7 +791,7 @@ efi:ReducedInsulationResistance efi:enables efi:InsulationBreakdownArc , efi:Lea
 efi:ThermalDegradation efi:enables efi:InsulationBreakdownArc .
 efi:InsulationDeterioration efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating .
 efi:RepeatedFlexing efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
-efi:Vibration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
+efi:Vibration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc , efi:PoorContactHeating .
 efi:Tension efi:enables efi:PartialDisconnectionHeating .
 efi:LongTermRepeatedStress efi:enables efi:PartialDisconnectionHeating .
 efi:ExternalCrushing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
@@ -2255,9 +2260,3 @@ efi:PartialDisconnectionInducedArc efi:producesDamage
 efi:PartialDisconnectionScenario efi:canManifest efi:ArcMeltMark .
 efi:PartialDisconnectionInducedArc efi:ignites efi:InsulationMaterialFuel .
 
-# 반복 굴곡은 반단선의 원인이다. 온톨로지가 이미 선행 조건으로 선언해 두었으나
-# 이를 쓰는 규칙이 없었다. 공식 분류가 원인을 앞세우므로 원인 쪽에 규칙을 둔다.
-efi:R_PD_core2 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ;
-    efi:indicates efi:RepeatedFlexing ;
-    efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 ;
-    rdfs:comment "반복 굴곡이 소선을 파단시킨다. 단락은 그 결과이지 변별점이 아니다"@ko .
