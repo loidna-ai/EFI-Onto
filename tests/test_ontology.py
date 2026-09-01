@@ -825,3 +825,22 @@ def test_shared_morphology_is_not_discriminating(onto):
     assert not onto.is_discriminating("BurnCenterOnSurface")       # 외부 화염도 표면부터 태운다 (실무Ⅳ p.153)
     assert onto.is_discriminating("MoltenOxideMass")               # 접촉불량 전용 (§9.10.3.3)
     assert onto.is_discriminating("MoistureExposure")              # 형태학이 아님
+
+
+def test_refuting_rules_have_no_counterexamples(onto):
+    """반증 규칙은 정답 라벨의 사례에서 발동하면 안 된다.
+
+    반증 후보를 조사관에게 "맞습니까?"로 묻는 대신 사례로 센다. 정답 라벨에서
+    발동하는 반증은 맞는 답을 깎는 규칙이며, 그 지표가 다른 요인에서도 나온다는
+    뜻이다. 검토표 시트 6 의 후보 하나(관통부 마모)가 그렇게 걸러졌다.
+    사례 파일은 git 밖이므로 없으면 건너뛴다.
+    """
+    import json
+    path = ROOT / "cases" / "sessions.json"
+    if not path.exists():
+        pytest.skip("cases/sessions.json 없음 — python scripts/slots.py 로 만든다")
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import refute_audit
+    sessions = json.loads(path.read_text(encoding="utf-8"))
+    bad = [(rid, lbl) for rid, *_, n, cnt, lbl in refute_audit.existing(onto, sessions) if cnt]
+    assert not bad, f"정답 라벨에서 발동하는 반증 규칙: {bad}"

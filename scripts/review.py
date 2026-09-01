@@ -138,44 +138,26 @@ sheet('5 용어', ['축', '이름', '상위 개념', '설명'], d5, [15, 24, 22,
 
 
 # ── 6. 반증 후보 ──────────────────────────────────────────────────────────
-#  혼동 쌍마다 질문 하나. 사진으로 못 가르는 두 가설 사이의 반증이 가장 값지다.
-#  후보풀에서 비형태·상위 개념을 대표로 뽑는다 — 하위 개념은 조사관이 한 번만 답하면 된다.
-import score
-from rdflib import Graph, Namespace as _NS
+#  혼동 쌍마다 질문 하나. 후보 산출은 scripts/refute_audit.py 와 같은 함수다 —
+#  거기서 사례 반례를 세고 여기서 원문·경험을 묻는다. 두 곳이 갈리면 안 된다.
+#  이 시트는 원문 대조(audit·cause_audit)와 사례 반례 검사(make refute)를
+#  거친 뒤에만 사람에게 간다. 묻는 것은 의견이 아니라 반례다.
+import refute_audit
+from rdflib import Graph
 _g = Graph().parse('ontology/efi_tbox.ttl', format='turtle')
-_E = _NS('https://w3id.org/efi-onto#')
-_ln = lambda u: str(u).split('#')[-1]
-_man = {sc: {_ln(d) for d in _g.objects(_E[sc], _E.canManifest)} for sc in score.SCENARIOS}
-_conf = {(a, b): len(_man[a] & _man[b])
-         for a in score.SCENARIOS for b in score.SCENARIOS
-         if a != b and len(_man[a] & _man[b]) >= 2}
-_compat = score.compatibility(_g)
-_excl = {i: next(iter(v)) for i, v in _compat.items() if len(v) == 1}
-_cov = {}
-for _n, _sc, _ind, _r in score.rules(_g):
-    for _x in (score.ELECTRICAL if _sc == 'ElectricalIgnitionScenario' else [_sc]):
-        _cov.setdefault(_x, set()).add(_ind)
-_morph = lambda i: 'DamagePattern' in score._ancestors(_g, _E[i])
-
 d6 = []
-for (sc, own), n in _conf.items():
-    pool = [i for i, o in _excl.items() if o == own and i not in _cov.get(sc, set())]
-    anc = {i: score._ancestors(_g, _E[i]) for i in pool}
-    pool = [i for i in pool if not (anc[i] & set(pool))]
-    if not pool:
-        continue
-    pool.sort(key=lambda i: (_morph(i), len(anc[i]), i))
-    ind = pool[0]
-    d6.append([SCEN[sc], SCEN[own], k(ind), n, -21 if _morph(ind) else -30,
-               f'{SCEN[sc]} 가설을 보고 있을 때 {k(ind)}이(가) 확인되면, 이것은 {SCEN[own]}에서만 '
-               f'성립하는 것이므로 {SCEN[sc]}을(를) 약화시킨다 — 맞습니까?'])
+for sc, own, ind, n, morph in refute_audit.candidates(_g):
+    d6.append([SCEN[sc], SCEN[own], k(ind), n, -21 if morph else -30,
+               f'{k(ind)}은(는) 지금 {SCEN[own]}에서만 나온다고 되어 있습니다. '
+               f'{SCEN[sc]} 화재에서 {k(ind)}이(가) 확인된 사건을 보신 적이 있습니까? '
+               f'있으면 사건번호를 적어 주십시오.'])
 d6.sort(key=lambda r: (r[0], r[4]))
 sheet('6 반증 후보', ['가설', '경쟁 가설', '확인 항목', '공유 흔적 수', '가감점', '문장으로 읽으면'],
       d6, [12, 12, 22, 10, 8, 56],
-      '가설마다 반증 단서가 하나뿐이라 반증이 잘 작동하지 않습니다. 사진으로 잘 안 갈리는 가설 쌍마다 '
-      '질문을 하나씩 만들었습니다. O 로 표시하신 항목은 그대로 반증 규칙이 됩니다. '
-      '중요한 조건: 화재로 사라지는 것은 반증이 될 수 없습니다. 불에 타 없어질 것이라면 X 로 봐 주십시오. '
-      '대부분 X 여도 정상입니다.')
+      '사진으로 잘 안 갈리는 가설 쌍마다 질문을 하나씩 만들었습니다. 맞는지 틀린지가 아니라 '
+      '반례를 묻습니다 — 그 요인의 화재에서 이 항목이 나온 사건을 보셨으면 사건번호를 적어 주십시오. '
+      '반례 하나가 찬성 열 개보다 값집니다. 본 적이 없으면 비워 두셔도 됩니다. '
+      '사건번호가 적힌 항목은 반증 후보에서 제외됩니다. 원문·사례 검증은 이미 거쳤습니다.')
 
 # ── 7. 화재가 낼 수 있는 흔적인가 ────────────────────────────────────────
 #  이 온톨로지는 '이 가설이 이 흔적을 낸다'는 방향으로만 지어졌다. 반대 방향을

@@ -19,6 +19,7 @@ make reason      # OWL 2 DL 일관성 검사 (HermiT). Java 필요
 make lint        # 구조 점검 — 사슬에 붙지 않은 어휘 찾기
 make calibrate   # 유도 가감점을 사례로 검증 (보정하지 않는다)
 make readers     # 사전 판독 vs LLM 판독 — 판독의 한계를 온톨로지의 한계와 가른다
+make refute      # 반증 규칙을 사례로 검증 — 정답 라벨에서 발동하면 반례다
 make review      # 조사관 검토용 xlsx 만 생성
 make clean
 ```
@@ -36,6 +37,7 @@ scripts/lint.py              구조 점검. 어휘가 사슬에 붙어 있는가
 scripts/calibrate.py         유도 가감점을 사례로 검증. 보정하지 않는다
 scripts/reader.py            판독기 둘(사전·LLM). 대체가 아니라 나란히 둔다
 scripts/reader_compare.py    같은 온톨로지를 두 판독기로 돌려 차이를 낸다
+scripts/refute_audit.py      반증 규칙·후보를 사례로 검증. 정답 라벨에서 발동하면 반례
 scripts/status.py            현재 상태 요약
 scripts/consistency.py       OWL 2 DL 일관성 검사 (HermiT 직접 호출)
 scripts/{extract,build,graph,review,export}.py   시각화·검토표
@@ -147,8 +149,10 @@ build/                       생성물. git 에 넣지 않음
    **어휘만 만들고 사슬에 붙이지 않는 실패가 반복됐다.** ArcMapPoint, downstreamIndex,
    outcomeUndetermined 가 그랬다. 선언만 하면 확인해도 판정에 기여하지 못한다.
    `make lint` 가 센다. 새 클래스·속성을 만들면 그 자리에서 사슬에 붙인다.
-4. **ABox 없음.** 조사서 사례가 하나도 들어 있지 않다. 150건 변환이 다음 과제.
-   지금까지 잰 것은 전부 **이식률**이다. **정확도는 한 번도 재지 않았다.**
+4. **사례 150건은 `cases/sessions.json` 에 있다** (git 밖, `python scripts/slots.py` 로 재생성).
+   정확도는 `scripts/eval.py` 가 잰다. **반증 규칙은 이 150건에서 한 번도 발동하지 않는다** —
+   정확도는 전부 지지점수에서 나온다. 반증을 새로 붙일 때는 원문이 양립 불가를 말하는지
+   확인하고 `make refute` 로 반례를 센다. "B 가 X 를 낸다"는 인용은 반증 근거가 아니다.
 5. **DL 일관성(V1)은 통과했다.** `make reason` 으로 HermiT 을 돌린다. Java 와 owlready2 가 필요하다.
    pySHACL 은 DL 일관성을 보지 않으므로 이 검사 없이는 불만족 클래스가 생겨도 다른 시험이 전부 통과한다.
    검사기 자체의 반증 대조 시험(`test_consistency_checker_actually_detects`)을 함께 둔다 —

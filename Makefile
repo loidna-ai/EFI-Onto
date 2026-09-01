@@ -1,4 +1,4 @@
-.PHONY: install test build status reason lint review graph export clean
+.PHONY: install test build status reason lint review graph export clean calibrate cause-audit readers refute domestic
 
 PY := python
 export PYTHONIOENCODING := utf-8
@@ -50,3 +50,9 @@ cause-audit:
 
 readers:
 	python scripts/reader_compare.py
+
+refute:
+	python scripts/refute_audit.py
+
+domestic:
+	python scripts/domestic.py
