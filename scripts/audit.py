@@ -82,6 +82,7 @@ VERDICTS = {
     "StrandFractureOverTenPercent": (FIRE, "상위 StrandFracture 가 §9.10.2 로 화재도냄이다. 10% 라는 정도는 발화 전 상태를 뜻하지만 소손 후 형태만으로는 선후를 가릴 수 없다"),
     "LocalizedHeatWithSurroundingDamage": (ELEC, "실무Ⅳ p.210·211 주위까지 심하게 태운 국부 고열은 그 부품이 발화점이라는 표지다. 밖에서 온 화염은 이 대비를 만들지 않는다"),
     "IntactSurroundingsAroundComponent":  (FIRE, "실무Ⅳ p.210·211 부품과 주위가 모두 경미하면 외부 화염을 맞은 것으로 판정한다. 정의상 화재가 만드는 양상"),
+    "ToothMarkOnInsulation":       (ELEC, "실무Ⅳ p.253 설치류의 이빨 자국은 화재가 만들 수 있는 형태가 아니다. 잔존 피복에 남는다"),
     "RubyRedCrystal":              (ELEC, "실무Ⅳ p.153 적색 결정은 출화개소에 대응하는 접촉부에서 나온다. 상위 CuprousOxideGrowth 와 같이 §9.10.3 발광 접속부 산물"),
     "PrimaryArcMark":              (ELEC, "정의상 화재 이전 형성"),
     "Sleeving":                    (ELEC, "§9.10.4.1 과부하 구간 전 길이의 내부 발열"),

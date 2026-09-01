@@ -2412,3 +2412,59 @@ efi:R_ANY_LocalHeat a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnition
 efi:R_ANY_Intact a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:IntactSurroundingsAroundComponent ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 efi:R_EF_sup3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:IntactSurroundingsAroundComponent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 0 .
 efi:R_EF_ref2 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 0 .
+
+########################################################################
+# 34. 반단선의 발생 위치와 남은 기계적 경로 — 화재조사실무Ⅳ (2025)
+#
+# 지금까지 반단선의 '원인'(굴곡·진동·인장)은 있었으나 '어디서 생기는가'가 없었다.
+# 교재는 위치를 세 번 따로 적는다 — 위치가 곧 실무의 감식 지점이기 때문이다.
+########################################################################
+
+# ── 34.1 응력 집중 개소 (p.149·245·253)
+#   "코드와 플러그의 접속·접촉부 부근 등의 꺾어지고 구부리거나 끌어당기는 등
+#    비교적 강한 외력이 걸리기 쉬운 개소에서 발생하기 쉽다" (p.149)
+#   "전원플러그 인접부분이나 냉장고 몸체 삽입구 부분에서의 반단선" (p.253)
+#   "코드가 스테이플 또는 못 등으로 고정되어 있는 경우는 그 부분에서 반단선이
+#    관찰된다" (p.245)
+efi:StressConcentrationPoint a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; rdfs:label "응력 집중 개소"@ko ; skos:prefLabel "응력 집중 개소"@ko ; rdfs:comment "외력이 걸리기 쉬워 반단선이 생기기 쉬운 자리. 원인이 아니라 위치이며, 실무의 감식 지점이다 (실무Ⅳ p.149·245·253)"@ko .
+efi:PlugJunctionArea a owl:Class ; rdfs:subClassOf efi:StressConcentrationPoint ; rdfs:label "플러그 접속부 부근"@ko ; skos:prefLabel "플러그 접속부 부근"@ko .
+efi:ApplianceEntryPoint a owl:Class ; rdfs:subClassOf efi:StressConcentrationPoint ; rdfs:label "기기 몸체 인출·삽입구"@ko ; skos:prefLabel "기기 몸체 인출·삽입구"@ko .
+efi:StressConcentrationPoint efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc , efi:PoorContactHeating , efi:CrushInducedArc .
+efi:PlugJunctionArea efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc , efi:PoorContactHeating .
+efi:ApplianceEntryPoint efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc , efi:CrushInducedArc .
+
+# ── 34.2 위치는 지표가 아니다 (p.149)
+#   "위와 같은 장소에서 전기 용융흔의 발생개소에 단락을 발생할 원인이 없으면
+#    반단선일 가능성이 높다."
+# 결정적 규칙은 결합 조건이다 — 위치가 맞고 '단락 원인이 따로 없다'가 같이 서야 한다.
+# 위치 단독으로 지표를 걸면 원문이 하지 않은 말을 하게 되므로 걸지 않았다.
+# '단락 원인 부재'는 다른 가설이 기각되는 것으로 이미 나타난다.
+#
+# 사례 150건이 이를 뒷받침한다 — 플러그 언급 8건이 네 요인에 고루 흩어진다
+# (접촉불량 3·반단선 2·절연열화 2·트래킹 1). 플러그는 모든 요인이 일어나는 자리다.
+
+# ── 34.3 스테이플 고정부는 두 갈래다
+#   표 2-1(p.127) 은 스테이플손상(찔림)을 '단락' 아래 두고, p.245 는 같은 자리에서
+#   반단선이 관찰된다고 한다. 사슬을 한쪽으로만 적어 두면 원문을 어긴다.
+efi:MisdrivenStaple efi:enables efi:PartialDisconnectionHeating , efi:CrushInducedArc .
+efi:MisdrivenStaple rdfs:subClassOf efi:StressConcentrationPoint .
+
+# ── 34.4 쥐 갉음 (p.253)
+#   "전선이나 코드를 쥐가 갈아 피복이 손상되고 단락이 일어나 출화한 경우.
+#    동물의 존재유무나 잔존 코드피복 등에 이빨흔적 등 관찰."
+# 기계적 피복 손상의 한 갈래인데 통째로 빠져 있었다. 이빨흔적이라는 전용 표지가 있다.
+efi:RodentGnawing a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; rdfs:label "쥐 갉음"@ko ; skos:prefLabel "쥐 갉음"@ko ; rdfs:comment "설치류가 피복을 갉아 도체가 드러나 단락에 이른다. 잔존 피복의 이빨흔적과 동물의 존재로 확인한다 (실무Ⅳ p.253)"@ko .
+efi:ToothMarkOnInsulation a owl:Class ; rdfs:subClassOf efi:DamagePattern ; rdfs:label "피복 이빨흔적"@ko ; skos:prefLabel "피복 이빨흔적"@ko ; rdfs:comment "잔존 코드 피복에 남은 설치류의 이빨 자국 (실무Ⅳ p.253)"@ko .
+efi:RodentGnawing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
+efi:Insulation efi:exhibits efi:ToothMarkOnInsulation .
+efi:CrushInducedArc efi:producesDamage efi:ToothMarkOnInsulation .
+efi:CrushDamageScenario efi:canManifest efi:ToothMarkOnInsulation .
+
+# ── 34.5 바닥 깔림에 의한 방열 저해 (p.245·253)
+#   "코드가 카펫의 아래를 통과하여 사용되고 있으면 코드자체의 방열효과가
+#    악화되어 과열 발열 발화한 경우"
+efi:CoveredByFloorCovering a owl:Class ; rdfs:subClassOf efi:HeatDissipationImpairment ; rdfs:label "바닥재·카펫 밑 통과"@ko ; skos:prefLabel "바닥재·카펫 밑 통과"@ko ; rdfs:comment "코드가 카펫·매트 아래를 지나면 방열이 막혀 과열한다. 눌림(압착)과는 다른 경로다 — 도체가 상하지 않아도 발열한다 (실무Ⅳ p.245·253)"@ko .
+
+# ── 34.6 지표 규칙 — 국내 실무 층이므로 조항을 붙이지 않는다
+efi:R_CD_sup4  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
