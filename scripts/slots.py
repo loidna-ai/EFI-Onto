@@ -28,7 +28,7 @@ LABEL = {"기계적 손상 단락": "CrushDamageScenario", "반단선": "Partial
 # 슬롯 → (표현 패턴, 온톨로지 클래스). 위에서부터 먼저 맞는 것을 쓴다.
 RULES = {
  "slot_energized_status": [
-    (r"통전|전원\s*인가|전원\s*투입|작동\s*중|가동\s*중|점등|사용\s*중", "EnergizedState"),
+    (r"통전|전원.{0,3}(인가|투입|공급)|작동\s*(중|상태)|가동\s*(중|상태|을)|점등|사용\s*중|삽입되어", "EnergizedState"),
     # '정전'만으로 비통전이라 읽지 않는다. 비통전은 결정적 기각(-100)이라
     # 전기 가설 전부를 죽인다. 그런데 '부분 정전'은 회로 일부가 나갔다는 뜻이고
     # 오히려 전기적 이상의 징후다 — 발화 지점이 비통전이었다는 뜻이 아니다.
@@ -41,7 +41,7 @@ RULES = {
     # 외력은 다른 슬롯에 있다. 한 슬롯에서 판정할 수 없으므로 단순 기록으로 둔다.
     # 실측이 이를 뒷받침한다 — 32건 중 기계적 손상은 12건뿐이다(37%). 차단기는
     # 어떤 단락에서도 동작한다.
-    (r"트립|떨어진|작동\s*확인|작동함|OFF|내려감", "BreakerTripRecord"),
+    (r"트립|떨어진|작동\s*확인|작동함|동작함|[Oo][Ff][Ff]|[Oo][Nn]\s*상태|내려감|차단됨|차단된|차단\s*상태|퓨즈\s*단선", "BreakerTripRecord"),
     (r"수동|임의로\s*차단", "BreakerTripRecord"),
  ],
  "slot_fastening_torque": [
@@ -51,7 +51,7 @@ RULES = {
  ],
  "slot_environmental_contamination": [
     (r"먼지|분진|이물질|퇴적물|파지", "DustAccumulation"),
-    (r"습기|습한|습도|결로|누수|물기|수분|빗물|강수|침수|물청소", "MoistureExposure"),
+    (r"습기|습한|습도|결로|누수|물기|수분|빗물|우천|강수|침수|물청소", "MoistureExposure"),
     (r"기름|유증|염분|염해|화학|부식성", "SalineOrChemicalExposure"),
     (r"밀폐|방출되지\s*못|보온재|단열재\s*사이|감싸|덮인", "ThermalInsulationEnclosure"),
     (r"다발|묶음|여러\s*가닥.*묶", "BundledWiring"),
@@ -99,7 +99,11 @@ RULES = {
     (r"비드", "ArcBead"),
     (r"탄화|그을|숯", "InsulationCarbonization"),
     (r"변색|산화|검게", "LocalizedDiscoloration"),
-    (r"눌린|압착|찍힘|변형|구부러", "MechanicalDeformation"),
+    (r"눌린|눌려|압착|찍힘|변형|구부러", "MechanicalDeformation"),
+    # 결선 형태는 접속 상태의 관찰이다 — 꼬임·비틀림·나선 접속
+    (r"꼰\s*흔적|꼬임|꼬여|비틀림|나선", "LooseConnection"),
+    # 반단선의 결정적 형태 — 단선부 양쪽 용흔 (실무Ⅳ p.150). 어휘만 있고 못 읽고 있었다
+    (r"(끊어진|단선|파단)[^.]{0,10}양[측쪽][^.]{0,14}(용융|용흔|뭉친)|양[측쪽][^.]{0,10}(끊어진|단선|파단)[^.]{0,14}(용융|용흔)", "MeltMarkOnBothSidesOfBreak"),
     (r"스패터|비산|튄", "Spatter"),
     (r"광택\s*소실|무광", "LossOfLuster"),
     (r"아산화동", "CuprousOxideGrowth"),
