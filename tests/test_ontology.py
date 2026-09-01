@@ -645,6 +645,42 @@ def test_python_matches_shacl(onto):
     assert s.hypotheses[0].support_score == 62      # CASE_A 와 같은 값이어야 한다
 
 
+def test_absence_direction_matches_in_both_engines():
+    """부재 확인의 포섭 방향이 Python 과 SHACL 에서 같아야 한다.
+
+    '헐거움 없음'은 상위인 '접속 상태 이상 없음'을 뜻하지 않는다. 반대로
+    '접속 상태 이상 없음'은 하위인 '헐거움 없음'을 함의한다. 방향이 하나뿐이며
+    두 엔진이 갈리면 점수와 검증이 어긋난다. 실제로 SHACL 쪽만 고쳤을 때
+    골든 케이스가 깨졌다.
+    """
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, Ontology
+    onto = Ontology.load(str(TTL))
+
+    def both(cls):
+        s = Session(case_id="N", query_count=2,
+                    hypotheses=[Hypothesis(scenario=Scenario.POOR_CONTACT,
+                                           mechanism=Mechanism.POOR_CONTACT_HEATING)],
+                    facts=[Fact(cls=cls, status=Status.CONFIRMED_ABSENT,
+                                agent=Agent.INVESTIGATOR)])
+        s.apply(onto)
+        gr = run(f"""
+        efi:sN a efi:InvestigationSession ; efi:queryCount 2 .
+        efi:invN a efi:InvestigatorAgent .
+        efi:n1 a efi:{cls} ; efi:confirmationStatus efi:ConfirmedAbsent ; prov:wasAttributedTo efi:invN .
+        efi:sN efi:hasFact efi:n1 .
+        efi:hN a efi:PoorContactScenario ; efi:inSession efi:sN .
+        """)
+        return s.hypotheses[0].support_score, int(next(gr.objects(EFI.hN, EFI.supportScore)))
+
+    # 하위의 부재 — 상위 필요조건을 기각하지 못한다
+    py, sh = both("LooseConnection")
+    assert py == sh == 50, f"하위 부재가 기각시켰다: python {py}, shacl {sh}"
+    # 상위의 부재 — 기각한다
+    py, sh = both("ConnectionCondition")
+    assert py == sh, f"두 엔진이 갈렸다: python {py}, shacl {sh}"
+    assert py < 50, f"상위 필요조건 부재인데 기각되지 않았다: {py}"
+
+
 def test_python_delegates_conclusion_checks_to_shacl():
     """Python 은 결론 제약을 옮겨 적지 않고 pySHACL 에 위임한다.
 
