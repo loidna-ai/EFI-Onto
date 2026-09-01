@@ -452,7 +452,7 @@ efi:R_PD_sup1  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionSce
 efi:R_PD_sup2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureAtStressPoint ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PD_ref   a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:WholeConductorCrushedOrCut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
-efi:R_ID_core  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_ID_core  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_ID_sup2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ReducedInsulationResistance ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_ID_sup3  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationEmbrittlement ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:FlexingHistoryWithStrandFracture ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -18 .
@@ -2556,3 +2556,40 @@ efi:SalineOrChemicalExposure efi:enables efi:PoorContactHeating .
 # 화재도 도체를 끊는다(§9.10.2). 그 판정은 이미 되어 있고 외부화염에도 선언돼
 # 있어 가중치가 그만큼 깎인다 — 전용 단서로 쓰는 것이 아니다.
 efi:R_PD_sup9  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFracture ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+
+# 스테이플·못 오타입에 규칙을 붙인다. 선행 조건으로 선언만 돼 있었다.
+#   표 2-1  스테이플손상(찔림) → 단락
+#   p.245   "코드가 스테이플 또는 못 등으로 고정되어 있는 경우는 그 부분에서 반단선"
+#   §9.11.4.3 스테이플 오타입이 피복을 눌러 고저항 접촉을 만든다
+# 셋 다 원문 근거가 있으므로 셋 다 붙인다. 한쪽에만 붙이면 사슬이 부정하는 말을
+# 하게 된다 — 진동에서 이미 겪었다.
+efi:R_CD_sup7  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PD_sup10 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PC_sup7  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+
+# 노후·경년열화는 절연열화와 트래킹만 부르지 않는다. 접속부도 헐겁게 만든다.
+#   p.267 "커넥터의 접속부분이 경년열화에 의해 헐거워져서 접촉저항이 증대하여
+#          줄열에 의해 발열로 배선피복에 착화하여 출화한 경우"
+#   p.220 "스위치를 오랜 기간 사용하면 구동 용수철의 열화, 미끄럼 이동부의 파손,
+#          접점부의 마모에 의한 열화, 접점부의 산화 ... 접촉불량이 일어나는 경우"
+# 반단선 쪽은 직접 근거를 찾지 못해 넣지 않는다. p.267 의 '가열선이 오랜 사용으로
+# 가늘어진다'는 산화·증발이지 소선 파단이 아니다 — 마찰에서 한 번 넓게 읽어
+# 되돌린 적이 있으므로 같은 추론을 반복하지 않는다.
+efi:AgedInsulation efi:enables efi:PoorContactHeating , efi:GlowingConnection .
+
+########################################################################
+# 37. 절연물 '내부' 현상 — 절연열화의 전용 형태 (화재조사실무Ⅳ 2025)
+#
+# §33.1 이 부품과 주위를 견주었듯, 여기서는 절연물의 표면과 내부를 견준다.
+# 교재가 그 대비를 명시한다 — 트래킹·은이행은 표면, 보이드·트리는 내부(p.154).
+# 우리는 표면 쪽만 갖고 있었다.
+########################################################################
+
+efi:DendriticTreePath a owl:Class ; rdfs:subClassOf efi:DamagePattern ; rdfs:label "수지상 방전로(전기·수 트리)"@ko ; skos:prefLabel "수지상 방전로(전기·수 트리)"@ko ; rdfs:comment "절연체 내부에서 전계가 집중된 곳을 따라 수지상으로 뻗는 열화 경로. CV케이블의 물 트리가 대표다 (실무Ⅳ p.153 그림 2-12·p.156)"@ko .
+efi:InternalDamageExceedingSurface a owl:Class ; rdfs:subClassOf efi:DamagePattern ; rdfs:label "내부 손상이 표면보다 심함"@ko ; skos:prefLabel "내부 손상이 표면보다 심함"@ko ; rdfs:comment "콘덴서 외함이 뚫리거나 쪼개지고 내부 전극·유전체가 강하게 탄화된 상태. 절연 열화가 안에서 시작됐다는 표지다 (실무Ⅳ p.254)"@ko .
+efi:Insulation efi:exhibits efi:DendriticTreePath , efi:InternalDamageExceedingSurface .
+efi:InsulationBreakdownArc efi:producesDamage efi:DendriticTreePath , efi:InternalDamageExceedingSurface .
+efi:InterTurnShortCircuit efi:producesDamage efi:InternalDamageExceedingSurface .
+efi:InsulationDegradationScenario efi:canManifest efi:DendriticTreePath , efi:InternalDamageExceedingSurface .
+efi:R_ID_sup4  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:DendriticTreePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_ID_sup5  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InternalDamageExceedingSurface ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .

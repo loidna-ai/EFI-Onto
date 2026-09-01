@@ -55,7 +55,7 @@ VERDICTS = {
     "AbnormalTemperatureOrVoltageDrop": (SHARED, "저항이 커지면 무엇이든 국부 과열·전압강하를 낸다. 소선이 줄어도 그렇다"),
     "FlickeringOrOdor":       (SHARED, "실무Ⅳ p.149 반단선은 접촉·단속을 반복한다. 깜박임은 접촉불량 전용 징후가 아니다"),
     "IntermittentRcdTripping": (SHARED, "누설전류가 흐르면 동작한다. 실무Ⅳ p.155 절연열화로도 누설이 생긴다"),
-    "AgedInsulation":         (SHARED, "노후 절연은 절연파괴 아크와 누설전류 발열 양쪽을 가능하게 한다"),
+    "AgedInsulation":         (SHARED, "실무Ⅳ p.267 '커넥터의 접속부분이 경년열화에 의해 헐거워져서 접촉저항이 증대', p.220 '오랜 기간 사용하면 ... 접촉불량'. 절연파괴·누설전류에 더해 접촉불량까지 간다"),
     "ThermalDegradation":     (SHARED, "AgedInsulation 과 같다. 열화된 절연은 두 경로 모두에 열려 있다"),
     "InsulationDeterioration": (SHARED, "노후·열열화의 상위. 하위가 공유이므로 상위도 공유다"),
     "ReducedInsulationResistance": (SHARED, "절연저항 저하는 절연열화의 계측 증거이자 트래킹 진행의 결과이기도 하다"),

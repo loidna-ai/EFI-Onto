@@ -29,7 +29,11 @@ LABEL = {"기계적 손상 단락": "CrushDamageScenario", "반단선": "Partial
 RULES = {
  "slot_energized_status": [
     (r"통전|전원\s*인가|전원\s*투입|작동\s*중|가동\s*중|점등|사용\s*중", "EnergizedState"),
-    (r"정전|비통전|전원\s*없|단전", "DeEnergizedState"),
+    # '정전'만으로 비통전이라 읽지 않는다. 비통전은 결정적 기각(-100)이라
+    # 전기 가설 전부를 죽인다. 그런데 '부분 정전'은 회로 일부가 나갔다는 뜻이고
+    # 오히려 전기적 이상의 징후다 — 발화 지점이 비통전이었다는 뜻이 아니다.
+    # 실제로 "매장 내 부분 정전 현상"이 압착손상 사례를 통째로 기각시키고 있었다.
+    (r"비통전|전원\s*없|단전|전원\s*차단\s*상태|미통전", "DeEnergizedState"),
  ],
  "slot_breaker_trip_status": [
     (r"확인\s*불가|식별\s*불가|판단\s*불가", "BreakerTripRecord"),      # 상태는 Unverifiable
@@ -85,6 +89,10 @@ RULES = {
     (r"스패터|비산|튄", "Spatter"),
     (r"광택\s*소실|무광", "LossOfLuster"),
     (r"아산화동", "CuprousOxideGrowth"),
+    # 절연물 '내부' 현상 — 화재가 만들 수 없는 절연열화 전용 형태 (실무Ⅳ p.153·254)
+    (r"수지상|전기\s*트리|워터\s*트리|트리잉", "DendriticTreePath"),
+    (r"외함\s*파열|케이스.{0,4}(구멍|쪼개|파열)|내부.{0,4}탄화|내부.{0,6}유전체", "InternalDamageExceedingSurface"),
+    (r"성상\s*변화|경화|취성|딱딱|부풀|팽창", "InsulationEmbrittlement"),
  ],
  "slot_surrounding_combustibles": [
     (r"피복|절연물|전선\s*피복", "InsulationMaterialFuel"),
