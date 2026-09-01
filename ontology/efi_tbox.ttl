@@ -2909,3 +2909,79 @@ efi:DeformedPlugOrSwitch efi:enables efi:PoorContactHeating , efi:GlowingConnect
 # 앞 단계가 뒤 단계를 부르고 뒤가 앞을 키운다. 층간단락과 같은 구조다.
 efi:PoorContactHeating efi:enablesProgressionTo efi:GlowingConnection .
 efi:GlowingConnection efi:enablesProgressionTo efi:PoorContactHeating .
+
+########################################################################
+# 43. 용흔으로 오인되는 것들 — 화재조사실무Ⅳ p.317~318
+#
+# 교재가 소화 후 손상을 열적·화학적·기계적 셋으로 나누고 각각이 용흔과 혼동될
+# 수 있다고 경고한다. 우리는 열적 손상만 갖고 있었다.
+########################################################################
+
+# ── 43.1 열용흔의 경계 — 날카로운 경계선이 없다 (p.317)
+#   "녹은 동선이 흐름에 따라 날카로운 경계선은 거의 나타나지 않지만 일부
+#    구형 구슬형태는 기공(Gas Pocket)에 형성될 수 있다"
+# hasSharpMeltBoundary 가 선언만 되고 쓰이지 않았다. 여기서 쓴다.
+efi:MeltBoundaryRuleShape a sh:NodeShape ; sh:targetClass efi:MeltMark ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
+        sh:construct """
+        CONSTRUCT { $this a efi:FireMeltMark . }
+        WHERE {
+          $this efi:hasSharpMeltBoundary false .
+          FILTER NOT EXISTS { $this efi:formedBy ?e }
+        }""" ] .
+efi:MeltBoundaryRuleShape dcterms:references
+    "NFPA 921 (2024) §9.10.4.1 — 용융은 그 자체로 발화의 증거가 아니다. 경계의 날카로움은 아크 용흔과 열용흔을 가르는 관찰이며 국내 실무 교재(실무Ⅳ p.317)가 같은 구분을 쓴다"@ko .
+
+# ── 43.2 [C-49] 합금 전선에는 용흔 판정법을 적용하지 않는다 (p.318)
+#   "알루미늄 전선이나 아연합금 전선은 은색이나 황동색으로 변색된다. 화재조사관은
+#    전선에 나타난 변색이 아크에 의한 것이 아니라 합금금속의 용융온도가 감소된
+#    결과일 수도 있다는 것을 인식하여야 한다. 이러한 합금 전선은 자체 손상이
+#    나타나거나 아크를 은폐시킬 수도 있다. 따라서 합금 전선은 아크사고 용흔
+#    판정법이 거의 적용되지 않는다."
+efi:AlloyConductor a owl:Class ; rdfs:subClassOf efi:Conductor ;
+    rdfs:label "합금 전선(알루미늄·아연)"@ko ; skos:prefLabel "합금 전선(알루미늄·아연)"@ko ;
+    rdfs:comment "용융온도가 낮아 변색과 손상이 아크 없이도 생기고 아크를 은폐하기도 한다. 용흔 판정법이 거의 적용되지 않는다 (실무Ⅳ p.318)"@ko .
+efi:AlloyDiscoloration a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "합금 변색(은색·황동색)"@ko ; skos:prefLabel "합금 변색(은색·황동색)"@ko ;
+    rdfs:comment "알루미늄은 은색, 아연합금은 황동색으로 변한다. 아크의 증거가 아니라 합금 용융온도가 낮아진 결과일 수 있다 (실무Ⅳ p.318)"@ko .
+efi:AlloyConductor efi:exhibits efi:AlloyDiscoloration .
+efi:ExternalFlameExposure efi:producesDamage efi:AlloyDiscoloration .
+efi:ExternalFlameScenario efi:canManifest efi:AlloyDiscoloration .
+
+efi:AlloyConductorArcMarkShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Violation ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "합금 전선(알루미늄·아연)의 용흔으로 결론을 세웠다. 합금은 용융온도가 낮아 아크 없이도 손상되고 아크를 은폐하기도 하므로 용흔 판정법이 적용되지 않는다 (§9.10.4.1)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?h .
+          ?h efi:supportedBy ?f .
+          ?f rdf:type/rdfs:subClassOf* efi:ArcMeltMark .
+          ?c rdf:type/rdfs:subClassOf* efi:AlloyConductor ; efi:exhibits ?f .
+        }""" ] .
+efi:AlloyConductorArcMarkShape dcterms:references
+    "NFPA 921 (2024) §9.10.4.1 — 용융은 발화의 증거가 아니다. 합금 도체에서 판정법이 적용되지 않는다는 것은 국내 실무 교재(실무Ⅳ p.318)의 명시적 경고다"@ko .
+
+# ── 43.3 [C-50] 진화·수습 과정의 기계적 손상을 용흔으로 읽지 않는다 (p.318)
+#   "화재현장이 어지럽혀짐에 따른 전선의 부서짐, 구축물의 도괴에 따른 배선이
+#    늘어나서 끊어지거나 긁힘 현상, 또는 화재조사관에 의한 절단은 용흔에 의한
+#    흔적으로 혼동될 수 있다."
+efi:PostFireMechanicalDamage a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "화재 이후 기계적 손상"@ko ; skos:prefLabel "화재 이후 기계적 손상"@ko ;
+    rdfs:comment "진화·도괴·수습·조사관 절단으로 생긴 부서짐·늘어남·긁힘. 발화와 무관하며 용흔과 혼동된다 (실무Ⅳ p.318)"@ko .
+efi:Conductor efi:exhibits efi:PostFireMechanicalDamage .
+efi:ExternalFlameExposure efi:producesDamage efi:PostFireMechanicalDamage .
+efi:ExternalFlameScenario efi:canManifest efi:PostFireMechanicalDamage .
+
+efi:PostFireDamageShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Violation ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "화재 이후 기계적 손상을 결론 근거로 삼았다. 진화·도괴·수습·조사관 절단으로 생긴 것은 발화와 무관하다 (§9.10.5)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?h .
+          ?h efi:supportedBy ?f .
+          ?f rdf:type/rdfs:subClassOf* efi:PostFireMechanicalDamage .
+        }""" ] .
+efi:PostFireDamageShape dcterms:references
+    "NFPA 921 (2024) §9.10.5 — 기계적 홈·눌림은 아크흔과 구별된다. 화재 이후 생긴 기계적 손상도 같은 구별 대상이며 국내 실무 교재(실무Ⅳ p.318)가 그 목록을 든다"@ko .

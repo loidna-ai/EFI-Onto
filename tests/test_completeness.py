@@ -27,10 +27,10 @@ BASELINE = {
     # 규칙에 박지 않고 요구값 속성으로 분리했다 — D-1 과 같은 관계 비교다.
     # 남은 것 중 5개는 임계값이 존재하지 않는 것이 확인됐다(기공률·결정립 등).
     # 목표 0 은 도달하지 못할 수 있다 — 확인되면 그때 목표를 고친다.
-    "unwired_data_properties":  (11, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
+    "unwired_data_properties":  (10, 0),    # 선언만 되고 아무데서도 안 쓰이는 데이터 속성
     # 사슬에 붙지 않은 어휘. 선언만 하고 쓰지 않으면 판정에 기여하지 못한다.
     # 확장 슬롯 3건과 미사용 속성 15건. scripts/lint.py 참조.
-    "dangling_vocabulary": (11, 0),
+    "dangling_vocabulary": (10, 0),
 
 }
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),

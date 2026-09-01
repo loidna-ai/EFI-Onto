@@ -92,6 +92,8 @@ VERDICTS = {
     "HemisphericalMeltShape":      (FIRE, "실무Ⅳ p.308 1차 용융흔에 반구형이 '많다'는 경향일 뿐 2차에도 나온다. 전용 단서가 아니다"),
     "SmoothLustrousMeltSurface":   (FIRE, "실무Ⅳ p.308 같은 경향 진술이다. 2차가 거친 것이 '많다'이지 항상은 아니다"),
     "ForeignMatterInclusion":      (FIRE, "실무Ⅳ p.309 2차 용융흔의 특징이다. 2차는 화재가 만든 것이므로 화재가 낸다"),
+    "AlloyDiscoloration":          (FIRE, "실무Ⅳ p.318 알루미늄은 은색, 아연합금은 황동색으로 변한다. 아크가 아니라 합금 용융온도가 낮아진 결과일 수 있다"),
+    "PostFireMechanicalDamage":    (FIRE, "실무Ⅳ p.318 진화·도괴·수습·조사관 절단으로 생긴다. 정의상 화재 이후의 것이다"),
     "ToothMarkOnInsulation":       (ELEC, "실무Ⅳ p.253 설치류의 이빨 자국은 화재가 만들 수 있는 형태가 아니다. 잔존 피복에 남는다"),
     "RubyRedCrystal":              (ELEC, "실무Ⅳ p.153 적색 결정은 출화개소에 대응하는 접촉부에서 나온다. 상위 CuprousOxideGrowth 와 같이 §9.10.3 발광 접속부 산물"),
     "PrimaryArcMark":              (ELEC, "정의상 화재 이전 형성"),
