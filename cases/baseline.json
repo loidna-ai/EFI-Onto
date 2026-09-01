@@ -1,10 +1,10 @@
 {
  "cases": 150,
- "correct": 120,
- "undetermined": 26,
- "wrong": 4,
- "accuracy": 0.8,
- "accuracy_when_answered": 0.9677,
+ "correct": 123,
+ "undetermined": 19,
+ "wrong": 8,
+ "accuracy": 0.82,
+ "accuracy_when_answered": 0.9389,
  "ceiling": 0.8933,
  "per_class": {
   "압착손상": {
@@ -22,19 +22,19 @@
   "절연열화": {
    "n": 30,
    "correct": 21,
-   "undetermined": 8,
+   "undetermined": 6,
    "ceiling": 26
   },
   "접촉불량": {
    "n": 30,
-   "correct": 25,
-   "undetermined": 5,
+   "correct": 24,
+   "undetermined": 4,
    "ceiling": 25
   },
   "트래킹": {
    "n": 30,
-   "correct": 25,
-   "undetermined": 5,
+   "correct": 29,
+   "undetermined": 1,
    "ceiling": 29
   }
  }
