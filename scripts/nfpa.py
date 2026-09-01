@@ -222,6 +222,7 @@ SHAPE_REFS = {
     "CrackedInsulationLeakageShape":     ["9.11"],
     "MetallographyAloneShape":           ["9.11"],
     "ArcOriginIndicationRuleShape":      ["9.12"],
+    "PartialDisconnectionDerivationRuleShape": ["9.11"],
     "QueryDerivationRuleShape":          ["19.6"],
     "InsulationResistanceDerivationRuleShape": ["9.11"],
     "ShortCircuitIgnitionShape":         ["9.11"],
