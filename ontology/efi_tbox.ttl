@@ -2541,3 +2541,18 @@ efi:SalineOrChemicalExposure efi:enables efi:PoorContactHeating .
 # 오염 환경도 같다. 상위에 적지 않는다 — 분진이 접촉불량을 부른다는 근거는 없다.
 # 다만 '오염 환경이 확인됐다'는 관측 자체는 하위 어느 것일 수도 있으므로
 # 트래킹만 가리키지 않는다. cause_audit 이 하위 합집합으로 그렇게 읽는다.
+
+# 소선 일부 파단에 규칙을 붙인다.
+#
+# 교재의 반단선 정의가 이것이다 — "여러 개의 소선으로 구성된 전선이나 코드의
+# 심선이 10% 이상 끊어졌거나 전체가 완전히 단선된 후에 일부가 접촉상태로 남아
+# 있는 상태를 반단선이라 한다" (실무Ⅳ p.149). 정의가 규칙에 걸리지 않고 있었다.
+#
+# 왜 없었나 — 우리는 StrandFractureAtStressPoint(응력 부위에서 끊어졌는가)라는
+# 복합 사실만 요구했다. 조사서는 그 위치를 적지 않아 150건에서 0건이다. 합성
+# 개념을 요구하고 실무가 실제로 쓰는 어휘를 버린 것이고, '장기 반복 응력'에서
+# 이미 한 번 저지른 실수다.
+#
+# 화재도 도체를 끊는다(§9.10.2). 그 판정은 이미 되어 있고 외부화염에도 선언돼
+# 있어 가중치가 그만큼 깎인다 — 전용 단서로 쓰는 것이 아니다.
+efi:R_PD_sup9  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFracture ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
