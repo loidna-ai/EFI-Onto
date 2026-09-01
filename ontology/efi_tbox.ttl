@@ -194,9 +194,13 @@ efi:ExternalCrushing       a owl:Class ; rdfs:subClassOf efi:MechanicalStressHis
 efi:LongTermRepeatedStress a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "장기 반복 응력 정황"@ko .
 
 efi:InsulationCondition    a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "절연 상태"@ko .
-efi:AgedInsulation         a owl:Class ; rdfs:subClassOf efi:InsulationCondition ; skos:prefLabel "노후화·장기 사용"@ko .
+efi:AgedInsulation         a owl:Class ; rdfs:subClassOf efi:InsulationCondition , efi:InsulationDeterioration ; skos:prefLabel "노후화·장기 사용"@ko .
 efi:ReducedInsulationResistance a owl:Class ; rdfs:subClassOf efi:InsulationCondition ; skos:prefLabel "절연저항 저하"@ko .
-efi:ThermalDegradation     a owl:Class ; rdfs:subClassOf efi:InsulationCondition ; skos:prefLabel "열적 절연 열화"@ko .
+efi:ThermalDegradation     a owl:Class ; rdfs:subClassOf efi:InsulationCondition , efi:InsulationDeterioration ; skos:prefLabel "열적 절연 열화"@ko .
+efi:InsulationDeterioration a owl:Class ; rdfs:subClassOf efi:InsulationCondition ;
+    skos:prefLabel "절연 열화(절연열화 핵심 단서)"@ko ;
+    rdfs:comment "경년·열에 의해 절연 성능이 떨어진 상태. 공식 분류의 '절연열화에 의한 단락'에서 원인에 해당하는 부분이다. 절연저항 저하는 이 상태의 계측 증거이지 이 상태의 한 종류가 아니므로 합집합에 넣지 않는다."@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:unionOf ( efi:AgedInsulation efi:ThermalDegradation ) ] .
 
 efi:EnvironmentalCondition a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "환경 조건(오염 환경)"@ko .
 efi:MoistureExposure       a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "누수·결로·우천 노출"@ko .
@@ -412,9 +416,9 @@ efi:R_EF_sup3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; 
     efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
     rdfs:comment "외부 화염이 먼저 도달했다는 것과 정합"@ko .
 
-efi:R_PC_core  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:AbnormalTemperatureOrVoltageDrop ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_PC_core  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LooseConnection ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PC_sup1  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LongTermTerminalHeating ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
-efi:R_PC_sup2  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LooseConnection ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_PC_sup2  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:AbnormalTemperatureOrVoltageDrop ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
 efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
@@ -428,8 +432,7 @@ efi:R_PD_sup1  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionSce
 efi:R_PD_sup2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureAtStressPoint ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PD_ref   a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:WholeConductorCrushedOrCut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
-efi:R_ID_core  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ThermalDegradation ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
-efi:R_ID_sup1  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:AgedInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_ID_core  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_ID_sup2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ReducedInsulationResistance ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_ID_sup3  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationEmbrittlement ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:FlexingHistoryWithStrandFracture ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
@@ -574,6 +577,7 @@ efi:ConnectionCondition rdfs:label "접속 상태"@ko ; skos:prefLabel "접속 �
 efi:LooseConnection rdfs:label "접속부 헐거움"@ko ; skos:prefLabel "접속부 헐거움"@ko .
 efi:CorrodedConnection rdfs:label "접속부 부식"@ko ; skos:prefLabel "접속부 부식"@ko .
 efi:InsulationCondition rdfs:label "절연 상태"@ko ; skos:prefLabel "절연 상태"@ko .
+efi:InsulationDeterioration rdfs:label "절연 열화"@ko ; skos:prefLabel "절연 열화"@ko .
 efi:AgedInsulation rdfs:label "절연물 노후"@ko ; skos:prefLabel "절연물 노후"@ko .
 efi:ReducedInsulationResistance rdfs:label "절연저항 저하"@ko ; skos:prefLabel "절연저항 저하"@ko .
 efi:ThermalDegradation rdfs:label "열적 열화"@ko ; skos:prefLabel "열적 열화"@ko .
@@ -775,11 +779,12 @@ efi:attests a owl:ObjectProperty ;
     rdfs:comment "현장에서 확인된 사실이 어떤 선행 조건의 존재를 뒷받침하는가."@ko .
 
 # 선행 조건 → 발열 메커니즘
-efi:LooseConnection efi:enables efi:PoorContactHeating , efi:GlowingConnection , efi:SeriesArc .
+efi:LooseConnection efi:enables efi:PoorContactHeating , efi:GlowingConnection .
 efi:CorrodedConnection efi:enables efi:PoorContactHeating , efi:GlowingConnection .
 efi:AgedInsulation efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating .
 efi:ReducedInsulationResistance efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating , efi:ArcTracking .
 efi:ThermalDegradation efi:enables efi:InsulationBreakdownArc .
+efi:InsulationDeterioration efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating .
 efi:RepeatedFlexing efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
 efi:Vibration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
 efi:Tension efi:enables efi:PartialDisconnectionHeating .
@@ -2158,7 +2163,7 @@ efi:ExternalFlameScenario efi:canManifest
 # 발화 전 이상 징후 → 발열. 근거는 원문에 있다.
 #  §9.10.3  접속이 헐거워지면 저항이 늘고 접점에서 발열이 커진다 → 온도·전압강하 이상
 #  §9.5.2   중성선이 열리면 한쪽 다리가 과전압이 되어 조명이 지나치게 밝거나 어두워진다
-efi:AbnormalTemperatureOrVoltageDrop efi:enables efi:PoorContactHeating , efi:ResistiveHeating .
+efi:AbnormalTemperatureOrVoltageDrop efi:enables efi:PoorContactHeating , efi:ResistiveHeating , efi:PartialDisconnectionHeating .
 efi:IntermittentRcdTripping efi:enables efi:LeakageCurrentHeating .
 efi:FlickeringOrOdor efi:enables efi:PoorContactHeating , efi:OpenNeutralOvervoltage .
 
