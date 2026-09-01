@@ -191,6 +191,9 @@ efi:RepeatedFlexing        a owl:Class ; rdfs:subClassOf efi:MechanicalStressHis
 efi:Vibration              a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "진동"@ko .
 efi:Tension                a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "인장"@ko .
 efi:ExternalCrushing       a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "외력 압착·찍힘"@ko .
+efi:AbrasionAtPenetration  a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
+    skos:prefLabel "관통부·고정구 마찰"@ko ;
+    rdfs:comment "전선이 관통부 모서리·고정 철물과 쓸려 피복이 마모·박리되는 경로. 압착이 눌림이라면 이것은 쓸림이다. §9.10.6.1 이 설치 시 기계적 손상이 시간이 지나 발현함을 인정하고 §9.10.5 가 기계적 손상을 아크흔과 구별하라 한다."@ko .
 efi:LongTermRepeatedStress a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
     skos:prefLabel "장기 반복 응력 정황"@ko ;
     rdfs:comment "굴곡·진동·인장의 상위. 분류에만 쓰고 지표로는 쓰지 않는다 — 셋의 변별력이 서로 달라(굴곡·인장은 반단선 전용, 진동은 접촉불량도 만든다) 하나로 묶으면 굴곡의 변별력까지 깎인다."@ko ;
@@ -426,6 +429,7 @@ efi:R_PC_sup3  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; e
 efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
 efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_CD_core2 a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:AbrasionAtPenetration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_CD_sup0  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ImmediateTripAfterExternalForce ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_CD_sup1  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MechanicalDeformation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
@@ -592,6 +596,7 @@ efi:Vibration rdfs:label "진동"@ko ; skos:prefLabel "진동"@ko .
 efi:Tension rdfs:label "인장"@ko ; skos:prefLabel "인장"@ko .
 efi:ExternalCrushing rdfs:label "외력에 의한 압착"@ko ; skos:prefLabel "외력에 의한 압착"@ko .
 efi:LongTermRepeatedStress rdfs:label "장기 반복 응력"@ko ; skos:prefLabel "장기 반복 응력"@ko .
+efi:AbrasionAtPenetration rdfs:label "관통부·고정구 마찰"@ko ; skos:prefLabel "관통부·고정구 마찰"@ko .
 efi:EnvironmentalCondition rdfs:label "환경 조건"@ko ; skos:prefLabel "환경 조건"@ko .
 efi:ContaminatedEnvironment rdfs:label "오염 환경"@ko ; skos:prefLabel "오염 환경"@ko .
 efi:MoistureExposure rdfs:label "누수·결로 노출"@ko ; skos:prefLabel "누수·결로 노출"@ko .
@@ -795,6 +800,7 @@ efi:Vibration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc , efi:
 efi:Tension efi:enables efi:PartialDisconnectionHeating .
 efi:LongTermRepeatedStress efi:enables efi:PartialDisconnectionHeating .
 efi:ExternalCrushing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
+efi:AbrasionAtPenetration efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
 efi:ContaminatedEnvironment efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
 efi:MoistureExposure efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
 efi:DustAccumulation efi:enables efi:ArcTracking .
