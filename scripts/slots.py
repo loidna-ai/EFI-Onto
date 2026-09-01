@@ -45,23 +45,26 @@ RULES = {
     (r"수동|임의로\s*차단", "BreakerTripRecord"),
  ],
  "slot_fastening_torque": [
-    (r"꼬아|꼬임|비틀림|나선형|임의\s*접속|임의로\s*결합|수동\s*꼬임", "LooseConnection"),
-    (r"느슨|헐거|결속력\s*약화|풀림|이완", "LooseConnection"),
+    (r"꼬아|꼬여|꼬인|꼬임|비틀림|나선형|임의\s*접속|임의로\s*결합|수동\s*꼬임", "LooseConnection"),
+    (r"느슨|헐거|결속력\s*약화|풀림|이완|이탈|불완전", "LooseConnection"),
     (r"절연테이프|전기테이프", "LooseConnection"),
  ],
  "slot_environmental_contamination": [
     (r"먼지|분진|이물질|퇴적물|파지", "DustAccumulation"),
-    (r"습기|습한|습도|결로|누수|물기|빗물|강수|침수", "MoistureExposure"),
+    (r"습기|습한|습도|결로|누수|물기|수분|빗물|강수|침수|물청소", "MoistureExposure"),
     (r"기름|유증|염분|염해|화학|부식성", "SalineOrChemicalExposure"),
     (r"밀폐|방출되지\s*못|보온재|단열재\s*사이|감싸|덮인", "ThermalInsulationEnclosure"),
     (r"다발|묶음|여러\s*가닥.*묶", "BundledWiring"),
+    # 슬롯은 환경이지만 진술이 명백히 기계적 응력·관통부인 경우
+    (r"진동", "Vibration"),
+    (r"관통|천공", "AbrasionAtPenetration"),
     (r"건조|청결|오염\s*없", None),                                     # 부재 확인
  ],
  "slot_pre_ignition_symptoms": [
-    (r"불꽃|스파크|아크|섬광|번쩍|불빛|퍽\s*소리|펑\s*소리|파열음", "PreFireArcObservation"),
+    (r"불꽃|스파크|아크|섬광|번쩍|불빛|[\'\"‘’“”]?(퍽|펑|뻥)[\'\"‘’“”]?\s*(하는\s*)?소리|폭음|파열음", "PreFireArcObservation"),
     (r"타는\s*냄새|냄새|깜박|점멸|밝기|어둡", "FlickeringOrOdor"),
     (r"차단기.*(내려|떨어|작동)|누전\s*차단기.*이력", "IntermittentRcdTripping"),
-    (r"온도|과열|뜨거|전압\s*강하|정전", "AbnormalTemperatureOrVoltageDrop"),
+    (r"온도|과열|뜨거|발열|연기|전압\s*강하|정전", "AbnormalTemperatureOrVoltageDrop"),
     (r"없었음|없음|발견되지\s*않", None),
  ],
  "slot_insulation_damage_history": [
@@ -69,11 +72,13 @@ RULES = {
     (r"꺾|굴곡|굴절|접힌|반복.*움직|굽힘|구부", "RepeatedFlexing"),
     (r"진동", "Vibration"),
     (r"당겨|장력|인장", "Tension"),
-    (r"노후|경년|장기간\s*사용|장시간\s*사용|오래", "AgedInsulation"),
+    (r"노후|경년|장기간\s*사용|장시간\s*사용|장기간\s*경과|오래|\d+\s*년\s*(이상|전|간)?\s*(사용|경과|설치|된|가동)|\d{4}\s*년식|\d+\s*년식", "AgedInsulation"),
     (r"열화|경화|취성|딱딱", "ThermalDegradation"),
     (r"마모|쓸림|긁힘|찢|벗겨|피복\s*손상|피복\s*훼손|박리|천공|날카로", "AbrasionAtPenetration"),
     (r"갈라|균열", "CrackedInsulation"),
     (r"나사|새들|스테이플|고정\s*부품|타카|못", "MisdrivenStaple"),
+    # 이 슬롯에도 접속 불량 서술이 온다
+    (r"꼬아|꼬여|꼬인|절연테이프|전기테이프", "LooseConnection"),
     (r"소선.*끊|일부\s*단선|가닥.*끊", "StrandFracture"),
  ],
  "slot_additional_visual_evidence": [
