@@ -1,10 +1,10 @@
 {
  "cases": 150,
- "correct": 121,
+ "correct": 120,
  "undetermined": 26,
- "wrong": 3,
- "accuracy": 0.8067,
- "accuracy_when_answered": 0.9758,
+ "wrong": 4,
+ "accuracy": 0.8,
+ "accuracy_when_answered": 0.9677,
  "ceiling": 0.8933,
  "per_class": {
   "압착손상": {
@@ -15,7 +15,7 @@
   },
   "반단선": {
    "n": 30,
-   "correct": 21,
+   "correct": 20,
    "undetermined": 7,
    "ceiling": 24
   },

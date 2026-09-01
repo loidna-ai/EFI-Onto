@@ -323,9 +323,24 @@ class Session(BaseModel):
         for h in self.hypotheses:
             h.support_score, h.verdict = 50, Verdict.ACTIVE
             h.supported_by, h.refuted_by, h.rationale = [], [], []
+            # 더 구체적인 규칙이 함께 발동하면 상위 규칙은 세지 않는다.
+            #   굴곡 하나로 '장기 반복 응력'(6)과 '반복 굴곡'(9)이 함께 발동해
+            #   15점이 되던 이중 계상을 막는다. 같은 관측을 두 해상도로 두 번
+            #   세는 것이므로 좁힌 쪽만 남긴다.
+            # 형제(습기·분진)는 서로 다른 관측이므로 각각 센다 — 교재 p.147 이
+            # '수분을 많이 함유한 먼지'를 트래킹의 조건으로 드는 그 겹침이다.
+            # F-4 SHACL 규칙에 같은 것이 적혀 있다. 두 곳이 갈리면 안 된다.
+            fired = [r for r in o.rules
+                     if r.targets(h.scenario) and r.role in (Role.CORE, Role.SUPPORTING)
+                     and self._facts_matching(r, o)]
+            keep = {id(r) for r in fired
+                    if not any(s is not r and r.indicator in o.ancestors.get(s.indicator, set())
+                               for s in fired)}
             for r in (r for r in o.rules if r.targets(h.scenario)):
                 hits = self._facts_matching(r, o)
                 if not hits:
+                    continue
+                if r.role in (Role.CORE, Role.SUPPORTING) and id(r) not in keep:
                     continue
                 if r.role is Role.DECISIVE:                       # [F-1] 결정적 기각 (예: 비통전)
                     h.verdict, h.support_score = Verdict.REFUTED, 0

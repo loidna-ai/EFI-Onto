@@ -527,6 +527,23 @@ efi:SupportScoreRuleShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
               OPTIONAL {
                 $this rdf:type/rdfs:subClassOf* ?cat . ?s efi:hasFact ?f .
                 ?r a efi:IndicatorRule ; efi:forScenario ?cat ; efi:indicates ?C ; efi:requiresStatus ?st ; efi:scoreDelta ?d .
+                # 더 구체적인 규칙이 함께 발동하면 상위 규칙은 세지 않는다.
+                # 같은 관측을 두 해상도로 두 번 세는 것을 막는다.
+                # src/efi_schema.py 의 apply() 와 같은 규칙이며 두 곳이 갈리면 안 된다.
+                FILTER NOT EXISTS {
+                  ?r efi:hasRole ?role0 . FILTER ( ?role0 IN ( efi:Core, efi:Supporting ) )
+                  ?r2 a efi:IndicatorRule ; efi:forScenario ?cat2 ; efi:indicates ?C2 ;
+                      efi:requiresStatus ?st2 ; efi:hasRole ?role2 .
+                  FILTER ( ?role2 IN ( efi:Core, efi:Supporting ) )
+                  $this rdf:type/rdfs:subClassOf* ?cat2 .
+                  ?C2 rdfs:subClassOf+ ?C .
+                  ?s efi:hasFact ?f2 .
+                  { ?f2 efi:confirmationStatus ?st2 . FILTER(?st2 != efi:ConfirmedAbsent)
+                    ?f2 rdf:type/rdfs:subClassOf* ?C2 }
+                  UNION
+                  { ?f2 efi:confirmationStatus ?st2 . FILTER(?st2 = efi:ConfirmedAbsent)
+                    ?C2 rdfs:subClassOf* ?fc2 . ?f2 a ?fc2 }
+                }
                 { ?f efi:confirmationStatus ?st . FILTER(?st != efi:ConfirmedAbsent)
                   ?f rdf:type/rdfs:subClassOf* ?C }
                 UNION
@@ -3151,3 +3168,17 @@ efi:ArcMarkAwayFromOriginShape dcterms:references
 
 efi:AbnormalTemperatureOrVoltageDrop efi:enables
     efi:ArcTracking , efi:LeakageCurrentHeating , efi:InsulationBreakdownArc , efi:CrushInducedArc .
+
+# 오염 환경·절연 열화의 하위에도 규칙을 둔다.
+#
+# 상위만 지표로 두면 관측이 더 구체적일 때 그만큼 좁혀진 것을 못 쓴다.
+#   오염 환경    k=3  6점   ← 습기·분진·염해 중 무엇인지 모를 때
+#   습기·분진    k=2  9점   ← 절연열화와만 양립한다
+#   염해        k=2  9점   ← 접촉불량과만 양립한다
+#   열적 열화    k=2  9점
+# 한 조건은 한 번만 세되 가장 좁힌 값을 쓴다(efi_schema 의 조건 묶음).
+# 이중 계상이 아니라 해상도 차이다.
+efi:R_TR_sup4  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:MoistureExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_TR_sup5  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:DustAccumulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_TR_sup6  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:SalineOrChemicalExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_ID_sup6  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ThermalDegradation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .

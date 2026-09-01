@@ -213,10 +213,11 @@ def run(extra):
 def test_case_a_scores():
     gr = run(CASE_A)
     score = lambda n: int(next(gr.objects(EFI[n], EFI.supportScore)))
-    # 71 → 62. 오염 환경이 트래킹 전용이 아니게 되면서 핵심 단서가 15 에서 6 으로
-    # 내려갔다. 습기는 절연열화로도(실무Ⅳ p.245), 염해는 접촉불량으로도(p.206) 간다.
-    # 두 단서로는 확정선 70 에 닿지 못한다 — 그것이 지금 이 온톨로지의 주장이다.
-    assert score("hT") == 62, "트래킹 62점 (오염 환경 6 + 탄화 도전로 6)"
+    # 71 → 62 → 65. 오염 환경이 트래킹 전용이 아니게 되면서 상위 지표는 6 이
+    # 됐지만(습기는 절연열화로도, 염해는 접촉불량으로도 간다), 관측이 '습기'로
+    # 구체적이면 그만큼 좁혀진 것이라 9 를 쓴다. 상위 규칙은 세지 않는다 —
+    # 같은 관측을 두 해상도로 두 번 세는 것이기 때문이다.
+    assert score("hT") == 65, "트래킹 65점 (습기 9 + 탄화 도전로 6)"
     assert score("hP") == 50, "접촉불량은 헐거움 부재에도 기각되지 않고 50점"
 
 
@@ -642,7 +643,7 @@ def test_python_matches_shacl(onto):
                 facts=[Fact(cls="MoistureExposure", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR),
                        Fact(cls="CarbonizedConductivePath", status=Status.CONFIRMED, agent=Agent.AI_VLM)])
     s.apply(onto)
-    assert s.hypotheses[0].support_score == 62      # CASE_A 와 같은 값이어야 한다
+    assert s.hypotheses[0].support_score == 65      # CASE_A 와 같은 값이어야 한다
 
 
 def test_absence_direction_matches_in_both_engines():
