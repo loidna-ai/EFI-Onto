@@ -417,7 +417,8 @@ efi:R_PC_sup1  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; e
 efi:R_PC_sup2  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LooseConnection ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
-efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ImmediateTripAfterExternalForce ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_CD_sup0  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ImmediateTripAfterExternalForce ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_CD_sup1  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MechanicalDeformation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_CD_ref   a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:NoTripDespiteExternalForce ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
@@ -2217,3 +2218,41 @@ efi:R_EF_ref2 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ;
     efi:indicates efi:PreFireArcObservation ;
     efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 ;
     rdfs:comment "발화 전 배선 아크 목격 → 외부에서 옮겨붙은 화염이라는 가설과 양립하지 않는다"@ko .
+
+# ============================================================================
+# 31. 반단선의 사슬을 단락까지 잇는다
+#     공식 발화요인 분류는 '반단선에 의한 단락'이라고 적는다. 압착손상·절연열화도
+#     마찬가지로 '~에 의한 단락'이다. 즉 셋 다 단락으로 귀결되고, 변별은 그 단락을
+#     부른 원인에서 나온다.
+#
+#     우리는 반단선을 저항 발열과 직렬 아크에서 끝내 두어 단락까지 가지 않았다.
+#     문헌이 그 사이를 메운다 — 반단선부의 접촉저항으로 국부 발열이 일어나
+#     피복이 절연 파괴되고 선간 단락에 이른다.
+#
+#       반복 굴곡·진동 → 소선 파단 → 접촉저항 발열 → 피복 절연파괴 → 선간 단락
+#                                    (여기까지만 모형화돼 있었다)
+#
+#     이 사슬이 이어지면 단락흔이 세 가설 모두에서 나온다는 것이 구조로 설명된다.
+#     사례 실측에서 단락흔의 변별력이 27% 에 그친 것과 일치한다.
+# ============================================================================
+efi:PartialDisconnectionInducedArc a owl:Class ; rdfs:subClassOf efi:ShortCircuitArc ;
+    rdfs:label "반단선 유발 단락 아크"@ko ; skos:prefLabel "반단선 유발 단락 아크"@ko ;
+    rdfs:comment "반단선부 접촉저항 발열이 피복을 절연 파괴해 이르는 선간 단락"@ko .
+efi:PartialDisconnectionHeating efi:enablesProgressionTo efi:PartialDisconnectionInducedArc .
+efi:enablesProgressionTo a owl:ObjectProperty ;
+    rdfs:domain efi:HeatingMechanism ; rdfs:range efi:HeatingMechanism ;
+    rdfs:label "다음 단계 발열로 진행함"@ko ; skos:prefLabel "다음 단계 발열로 진행함"@ko ;
+    rdfs:comment "발화 경로가 여러 단계일 때 앞 단계가 뒤 단계를 부른다. 반단선이 그 예다"@ko .
+
+efi:PartialDisconnectionScenario efi:hasDeclaredMechanism efi:PartialDisconnectionInducedArc .
+efi:PartialDisconnectionInducedArc efi:producesDamage
+    efi:ArcMeltMark , efi:ArcBead , efi:StrandFracture , efi:SmallMeltBallOnStrandEnd .
+efi:PartialDisconnectionScenario efi:canManifest efi:ArcMeltMark .
+efi:PartialDisconnectionInducedArc efi:ignites efi:InsulationMaterialFuel .
+
+# 반복 굴곡은 반단선의 원인이다. 온톨로지가 이미 선행 조건으로 선언해 두었으나
+# 이를 쓰는 규칙이 없었다. 공식 분류가 원인을 앞세우므로 원인 쪽에 규칙을 둔다.
+efi:R_PD_core2 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ;
+    efi:indicates efi:RepeatedFlexing ;
+    efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 ;
+    rdfs:comment "반복 굴곡이 소선을 파단시킨다. 단락은 그 결과이지 변별점이 아니다"@ko .
