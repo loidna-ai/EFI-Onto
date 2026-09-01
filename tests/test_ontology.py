@@ -844,3 +844,49 @@ def test_refuting_rules_have_no_counterexamples(onto):
     sessions = json.loads(path.read_text(encoding="utf-8"))
     bad = [(rid, lbl) for rid, *_, n, cnt, lbl in refute_audit.existing(onto, sessions) if cnt]
     assert not bad, f"정답 라벨에서 발동하는 반증 규칙: {bad}"
+
+
+def test_verdicts_match_in_both_engines(onto):
+    """반증의 판정이 Python 과 SHACL 에서 같아야 한다.
+
+    SHACL F-1 은 반증 단서 하나로 곧바로 기각하고 Python 은 감점 후 40 미만이면
+    약화였다. test_python_matches_shacl 이 점수만 견주어 못 잡았다. 논문 3.2 는
+    결정적 사실만 기각 수준이고 나머지는 가감점 누적이므로 Python 쪽에 맞췄다.
+    """
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent
+    cases = {
+        # 반증 단서 하나: 접촉불량 -13 → 37 → 약화. 기각이 아니다
+        "weak": (Scenario.POOR_CONTACT, Mechanism.POOR_CONTACT_HEATING, "BurnCenterOnSurface"),
+        # 결정적 반증: 비통전 → 기각
+        "dead": (Scenario.TRACKING, Mechanism.ARC_TRACKING, "DeEnergizedState"),
+    }
+    for name, (sc, mech, fact) in cases.items():
+        s = Session(case_id=name, query_count=2,
+                    hypotheses=[Hypothesis(scenario=sc, mechanism=mech)],
+                    facts=[Fact(cls=fact, status=Status.CONFIRMED, agent=Agent.INVESTIGATOR)])
+        s.apply(onto)
+        py = s.hypotheses[0].verdict.value
+        gr = run(s.to_turtle(include_derived=False))
+        h = next(gr.subjects(EFI.inSession, None))
+        sh = sorted(q(v) for v in gr.objects(h, EFI.verdict))
+        assert sh == [py], f"{name}: Python {py} vs SHACL {sh}"
+        assert int(next(gr.objects(h, EFI.supportScore))) == s.hypotheses[0].support_score
+
+
+def test_rule_shapes_declare_execution_order(g):
+    """규칙을 가진 도형은 도형 수준 sh:order 를 가져야 한다.
+
+    P3 는 '반증이 점수보다 먼저'를 규칙의 sh:order 1→4 로 구현했다고 적었지만,
+    pySHACL 은 규칙 순서를 도형 안에서만 지키고 도형끼리는 도형의 sh:order 로
+    정렬한다. 도형에 값이 없으면 전부 0 이라 사전 순서로 돌았고, 실제로 F-4 가
+    F-1 보다 먼저 돌았다. F-4 가 판정을 읽지 않아 드러나지 않았을 뿐이다.
+    도형의 sh:order 는 그 도형 규칙의 최소 sh:order 와 같아야 한다.
+    """
+    from rdflib import SH
+    bad = []
+    for sh in set(g.subjects(SH.rule, None)):
+        want = min(int(g.value(r, SH.order) or 0) for r in g.objects(sh, SH.rule))
+        got = g.value(sh, SH.order)
+        if got is None or int(got) != want:
+            bad.append((q(sh), got and int(got), want))
+    assert not bad, f"도형 sh:order 가 없거나 규칙과 어긋남 (도형, 지금, 필요): {bad}"

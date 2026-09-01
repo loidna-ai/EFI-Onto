@@ -471,22 +471,39 @@ efi:R_EF_ref   a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ;
 # ============================================================================
 # 10. SHACL 규칙·제약 (폐세계 검증 — 반증 및 소거법 오류 방지)
 # ============================================================================
-# [F-1] 일반 반증 규칙: 세션에 '확인'된 사실이 가설의 Refuting/DecisiveRefuting 지표와 일치하면 기각
-efi:FalsificationRuleShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
+# [F-1] 일반 반증 규칙. 결정적 반증(DecisiveRefuting)만 기각한다. 논문 3.2 는
+# "물리적으로 결정적인 사실은 기각 수준으로 조정"이라 적고 나머지 반증 단서는
+# 가감점 누적이다. 반증 단서(Refuting)는 근거(refutedBy)만 남기고 점수는 F-4 가
+# 깎으며, 누적돼 40 미만이 되면 약화(Weakened)다. 반증 하나로 곧바로 기각하면
+# Refuting/DecisiveRefuting 의 구분과 score.py 가 유도한 -2 ~ -30 이 전부 무의미해진다.
+# src/efi_schema.py 의 apply() 와 같은 규칙이며 두 곳이 갈리면 안 된다 —
+# 실제로 갈려 있었다. test_verdicts_match_in_both_engines 가 잡는다.
+efi:FalsificationRuleShape a sh:NodeShape ; sh:order 1 ; sh:targetClass efi:IgnitionScenario ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
         sh:construct """
         CONSTRUCT { $this efi:verdict efi:Refuted ; efi:refutedBy ?f . }
         WHERE {
           $this rdf:type/rdfs:subClassOf* ?cat .
           ?r a efi:IndicatorRule ; efi:forScenario ?cat ; efi:indicates ?C ;
-             efi:hasRole ?role ; efi:requiresStatus ?st .
-          FILTER ( ?role IN ( efi:Refuting , efi:DecisiveRefuting ) )
+             efi:hasRole efi:DecisiveRefuting ; efi:requiresStatus ?st .
           $this efi:inSession ?s . ?s efi:hasFact ?f .
           ?f rdf:type/rdfs:subClassOf* ?C ; efi:confirmationStatus ?st .
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
+        sh:construct """
+        CONSTRUCT { $this efi:refutedBy ?f . }
+        WHERE {
+          $this rdf:type/rdfs:subClassOf* ?cat .
+          ?r a efi:IndicatorRule ; efi:forScenario ?cat ; efi:indicates ?C ;
+             efi:hasRole efi:Refuting ; efi:requiresStatus ?st .
+          $this efi:inSession ?s . ?s efi:hasFact ?f .
+          { FILTER ( ?st != efi:ConfirmedAbsent ) ?f rdf:type/rdfs:subClassOf* ?C ; efi:confirmationStatus ?st }
+          UNION
+          { FILTER ( ?st = efi:ConfirmedAbsent ) ?C rdfs:subClassOf* ?fc . ?f a ?fc ; efi:confirmationStatus ?st }
         }""" ] .
 
 # [F-2] 1차·2차 단락흔 판정: 아크 사건이 화염 노출 사건보다 앞서면 1차, 뒤이면 2차 (형태학 지표는 보조)
-efi:ArcMarkSequenceRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMeltMark ;
+efi:ArcMarkSequenceRuleShape a sh:NodeShape ; sh:order 2 ; sh:targetClass efi:ArcMeltMark ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 2 ;
         sh:construct """
         CONSTRUCT { $this rdf:type ?cls . }
@@ -500,7 +517,7 @@ efi:ArcMarkSequenceRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMeltMark ;
         WHERE { $this efi:formedBy ?arc . ?fire a efi:FireExposureEvent ; time:before ?arc . }""" ] .
 
 # [F-3] 착화 역량(competent ignition source): 메커니즘 최대 도달 온도 < 착화물 발화 온도 → 약화
-efi:IgnitionCompetenceRuleShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
+efi:IgnitionCompetenceRuleShape a sh:NodeShape ; sh:order 3 ; sh:targetClass efi:IgnitionScenario ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 3 ;
         sh:construct """
         CONSTRUCT { $this efi:verdict efi:Weakened ; efi:ignitionCompetenceGap true . }
@@ -517,7 +534,7 @@ efi:IgnitionCompetenceRuleShape a sh:NodeShape ; sh:targetClass efi:IgnitionScen
 # 관측된 것이지만, '헐거움 없음'은 '접속 상태 이상 없음'을 뜻하지 않는다 —
 # 부식이 있을 수 있다. 부재는 위에서 아래로만 함의한다. src/efi_schema.py 의
 # matches_absent 와 같은 규칙이며, 두 곳이 갈리면 안 되므로 함께 적는다.
-efi:SupportScoreRuleShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
+efi:SupportScoreRuleShape a sh:NodeShape ; sh:order 4 ; sh:targetClass efi:IgnitionScenario ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 4 ;
         sh:construct """
         CONSTRUCT { $this efi:supportScore ?score . }
@@ -551,6 +568,16 @@ efi:SupportScoreRuleShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
                   ?C rdfs:subClassOf* ?fc . ?f a ?fc } }
             } GROUP BY $this }
           BIND ( IF( 50 + ?sum > 100, 100, IF( 50 + ?sum < 0, 0, 50 + ?sum ) ) AS ?score )
+        }""" ] ;
+    # 반증 누적 → 약화. F-1 의 짝이지만 점수 뒤에 돌아야 하므로 여기 둔다 —
+    # pySHACL 은 sh:order 를 도형 안에서만 지킨다.
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 5 ;
+        sh:construct """
+        CONSTRUCT { $this efi:verdict efi:Weakened . }
+        WHERE {
+          $this efi:refutedBy ?f ; efi:supportScore ?sc .
+          FILTER ( ?sc < 40 )
+          FILTER NOT EXISTS { $this efi:verdict efi:Refuted }
         }""" ] .
 
 # [C-1] 기각 근거의 상태 제약: '확인 불가'·'미확인'은 반증 근거가 될 수 없다
@@ -762,7 +789,7 @@ efi:TrackingScenario efi:canManifest efi:CarbonizedConductivePath , efi:Insulati
 efi:ExternalFlameScenario efi:canManifest efi:GeneralMelting , efi:Sagging , efi:ThermalGradientFlow , efi:FireMeltMark , efi:SecondaryArcMark , efi:LargeMeltMark , efi:InsulationCarbonization .
 
 # [M-1] 손상 양상별 변별력 산출 — 몇 개 가설이 이 양상을 남길 수 있는가
-efi:MorphologyDiscriminationRuleShape a sh:NodeShape ; sh:targetObjectsOf efi:canManifest ;
+efi:MorphologyDiscriminationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetObjectsOf efi:canManifest ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this efi:sharedByScenarioCount ?n . $this efi:isDiscriminatingMorphology ?d . }
@@ -773,7 +800,7 @@ efi:MorphologyDiscriminationRuleShape a sh:NodeShape ; sh:targetObjectsOf efi:ca
         }""" ] .
 
 # [M-2] 형태학적 혼동 쌍 도출 — 손상 양상을 2개 이상 공유하면 사진 단독 확정 불가
-efi:MorphologicalAmbiguityRuleShape a sh:NodeShape ; sh:targetSubjectsOf efi:canManifest ;
+efi:MorphologicalAmbiguityRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetSubjectsOf efi:canManifest ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this efi:morphologicallyAmbiguousWith ?o . }
@@ -898,7 +925,7 @@ efi:NoArcOrSpatter efi:attests efi:DeEnergizedState .
 
 # [M-3] 가설의 형태 발현을 메커니즘에서 유도해 대조한다.
 #  선언된 canManifest 와 메커니즘의 producesDamage 가 어긋나면 근거 없는 선언이다.
-efi:DerivedManifestationRuleShape a sh:NodeShape ; sh:targetSubjectsOf efi:hasDeclaredMechanism ;
+efi:DerivedManifestationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetSubjectsOf efi:hasDeclaredMechanism ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this efi:derivedManifestation ?d . }
@@ -934,7 +961,7 @@ efi:loadExceedsRating a owl:DatatypeProperty ;
     rdfs:comment "loadCurrent_A > ratedCurrent_A 에서 도출. 과부하 '상태'(선행 조건)로 곧장 등치하지 않는다 — 축이 다르다."@ko .
 
 # [D-1] 과부하 = 부하전류 > 정격전류
-efi:OverloadDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:ElectricalArtifact ;
+efi:OverloadDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ElectricalArtifact ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this efi:loadExceedsRating true . }
@@ -946,7 +973,7 @@ efi:OverloadDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:ElectricalAr
 # [D-2] 부분단선 = 파단 소선이 있으나 전부는 아니다.
 #  전부 파단인 경우는 여기서 판정하지 않는다 — '도체 전체 압착·절단'은 원인을 담은 이름이라
 #  소선 수만으로 단정할 수 없다.
-efi:StrandFractureDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:StrandedConductor ;
+efi:StrandFractureDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:StrandedConductor ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this efi:exhibits efi:StrandFracture . }
@@ -956,7 +983,7 @@ efi:StrandFractureDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:Strand
         }""" ] .
 
 # [D-3] 아산화동 증식 = 접속부에서 아산화동이 확인됨
-efi:CuprousOxideDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:ConnectionPoint ;
+efi:CuprousOxideDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ConnectionPoint ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this efi:exhibits efi:CuprousOxideGrowth . }
@@ -1052,7 +1079,7 @@ efi:circuitProtection a owl:ObjectProperty ; rdfs:domain efi:ArcSurvey ; rdfs:ra
 
 # [F-5] 아크흔 부재의 확인 상태. 조사한 결과 없음과 용융에 가려 못 봄을 가른다.
 #  P4(결측 ≠ 확인 불가 ≠ 부정 확인)와 §9.13.4.5·§9.13.4.6 이 같은 요구를 한다.
-efi:ArcSiteAbsenceRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMapPoint ;
+efi:ArcSiteAbsenceRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ArcMapPoint ;
     dcterms:references "NFPA 921 (2024) §9.13.4.5 Documenting the Damage" ,
                        "NFPA 921 (2024) §9.13.4.6 Documenting the Damage" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
@@ -1108,7 +1135,7 @@ efi:ArcMeltAloneShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
         }""" ] .
 
 # [D-4] 전위가 다른 쪽에 대응 손상이 둘 이상 확인되면 진성 아크 지점일 확률이 오른다.
-efi:CorrespondingDamageRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMapPoint ;
+efi:CorrespondingDamageRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ArcMapPoint ;
     dcterms:references "NFPA 921 (2024) §9.13.4.2 Documenting the Damage" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
@@ -1129,7 +1156,7 @@ efi:furthestDownstream a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rd
     rdfs:label "회로 최하류 아크 지점"@ko ; skos:prefLabel "회로 최하류 아크 지점"@ko .
 
 # [D-5] 한 회로에 아크 지점이 여럿이면 최하류 지점을 표시한다 (§9.13.2.1).
-efi:FurthestDownstreamRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMapPoint ;
+efi:FurthestDownstreamRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ArcMapPoint ;
     dcterms:references "NFPA 921 (2024) §9.13.2.1 Arc Map" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
@@ -1445,7 +1472,7 @@ efi:protectiveDeviceOperated a owl:DatatypeProperty ; rdfs:domain efi:Electrical
 
 # [D-6] 과전류 보호가 없는 구간에서는 고장이 지속될 수 있다 (§9.3.4).
 #  인입구는 정의상 여기 해당한다.
-efi:SustainedFaultingRuleShape a sh:NodeShape ; sh:targetClass efi:ElectricalArtifact ;
+efi:SustainedFaultingRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ElectricalArtifact ;
     dcterms:references "NFPA 921 (2024) §9.3.4 Significance" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
@@ -1572,7 +1599,7 @@ efi:NoPresumptionShape a sh:NodeShape ; sh:targetClass efi:IgnitionScenario ;
 
 # [D-7] 어느 가설도 견디지 못한 세션은 원인미상으로 판정한다 (§4.3.6).
 #  판단보류가 결론의 부재가 아니라 하나의 결과라는 점을 구조로 남긴다.
-efi:UndeterminedDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:InvestigationSession ;
+efi:UndeterminedDerivationRuleShape a sh:NodeShape ; sh:order 5 ; sh:targetClass efi:InvestigationSession ;
     dcterms:references "NFPA 921 (2024) §4.3.6 Test the Hypotheses" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 5 ;
         sh:construct """
@@ -1669,7 +1696,7 @@ efi:CompetenceRequiredShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
 
 # [D-8] 둘 이상이 기각되지 않아도 원인미상이다 (§19.6.5.1).
 #  D-7 은 모두 기각된 경우만 잡았다. 원문은 그 반대 경우도 원인미상이라고 한다.
-efi:UndeterminedByTieRuleShape a sh:NodeShape ; sh:targetClass efi:InvestigationSession ;
+efi:UndeterminedByTieRuleShape a sh:NodeShape ; sh:order 5 ; sh:targetClass efi:InvestigationSession ;
     dcterms:references "NFPA 921 (2024) §19.6.5.1 Cause Undetermined" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 5 ;
         sh:construct """
@@ -2140,7 +2167,7 @@ efi:evidentiallyAmbiguousWith a owl:ObjectProperty ;
     rdfs:label "증거상 혼동 가설"@ko ; skos:prefLabel "증거상 혼동 가설"@ko ;
     rdfs:comment "선행 조건을 공유해 그 조건만으로는 갈리지 않는 가설 쌍 (§4.3.10)"@ko .
 
-efi:EvidentialAmbiguityRuleShape a sh:NodeShape ; sh:targetSubjectsOf efi:hasDeclaredMechanism ;
+efi:EvidentialAmbiguityRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetSubjectsOf efi:hasDeclaredMechanism ;
     dcterms:references "NFPA 921 (2024) §4.3.10 Confirmation Bias" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
@@ -2682,7 +2709,7 @@ efi:requiredInsulationResistance_MOhm a owl:DatatypeProperty ;
     rdfs:label "요구 절연저항"@ko ; skos:prefLabel "요구 절연저항"@ko ;
     rdfs:comment "그 회로의 사용전압에 대해 요구되는 최소 절연저항. 국내 기준은 실무Ⅳ 표 2-22 이며 정규화기가 채운다. 규칙은 잰 값과 이 값을 견주기만 한다"@ko .
 
-efi:InsulationResistanceDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:Insulation ;
+efi:InsulationResistanceDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:Insulation ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this a efi:ReducedInsulationResistance . }
@@ -2778,7 +2805,7 @@ efi:VinylCord a owl:Class ; rdfs:subClassOf efi:Conductor ; rdfs:label "비닐�
 efi:originIndicativeArcMark a owl:DatatypeProperty ; rdfs:domain efi:ArcMeltMark ; rdfs:range xsd:boolean ;
     rdfs:label "발화지점 지시 단락흔"@ko ; skos:prefLabel "발화지점 지시 단락흔"@ko .
 
-efi:ArcOriginIndicationRuleShape a sh:NodeShape ; sh:targetClass efi:ArcMeltMark ;
+efi:ArcOriginIndicationRuleShape a sh:NodeShape ; sh:order 1 ; sh:targetClass efi:ArcMeltMark ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
         sh:construct """
         CONSTRUCT { $this efi:originIndicativeArcMark true . }
@@ -2805,7 +2832,7 @@ efi:EnclosureMaterialFuel efi:hasIgnitability efi:HardlyIgnitable .
 # 지표를 고른다. 그 결과가 이 속성으로 표현되는 것인데 어휘만 있고 쓰이지
 # 않았다. 지표 규칙에서 질의를 물화한다 — 규칙이 가리키는 가설이 곧 그 질의가
 # 가르는 가설이다.
-efi:QueryDerivationRuleShape a sh:NodeShape ; sh:targetSubjectsOf efi:asksAbout ;
+efi:QueryDerivationRuleShape a sh:NodeShape ; sh:order 1 ; sh:targetSubjectsOf efi:asksAbout ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
         sh:construct """
         CONSTRUCT { $this efi:discriminates ?sc . }
@@ -2832,7 +2859,7 @@ efi:partialDisconnectionRatio a owl:DatatypeProperty ;
     rdfs:label "반단선 판정 비율"@ko ; skos:prefLabel "반단선 판정 비율"@ko ;
     rdfs:comment "이 비율 이상 소선이 끊기면 반단선으로 본다. 국내 실무 기준은 0.10 이며(실무Ⅳ p.149) 정규화기가 채운다"@ko .
 
-efi:PartialDisconnectionDerivationRuleShape a sh:NodeShape ; sh:targetClass efi:StrandedConductor ;
+efi:PartialDisconnectionDerivationRuleShape a sh:NodeShape ; sh:order 1 ; sh:targetClass efi:StrandedConductor ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
         sh:construct """
         CONSTRUCT { $this efi:exhibits [ a efi:StrandFractureOverTenPercent ] . }
@@ -2864,7 +2891,7 @@ efi:ProtectiveDeviceFailedToOperate a owl:Class ; rdfs:subClassOf efi:SceneEvide
     rdfs:label "보호장치 부동작"@ko ; skos:prefLabel "보호장치 부동작"@ko ;
     rdfs:comment "규정 동작시간을 넘겨 과전류가 흘렀는데도 동작하지 않은 상태. §9.9.3.2 는 보호가 정상 동작하면 과부하 발화가 드물다고 하므로 그 역이 성립할 조건이다"@ko .
 
-efi:ProtectiveDeviceOperationRuleShape a sh:NodeShape ; sh:targetClass efi:ProtectiveDevice ;
+efi:ProtectiveDeviceOperationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ProtectiveDevice ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this a efi:ProtectiveDeviceFailedToOperate . }
@@ -2891,7 +2918,7 @@ efi:protectedBy a owl:ObjectProperty ; rdfs:domain efi:Circuit ; rdfs:range efi:
     rdfs:label "이 보호장치가 지킨다"@ko ; skos:prefLabel "이 보호장치가 지킨다"@ko .
 
 # 누설전류가 정격감도전류 이상인데 누전차단기가 동작하지 않았다면 부동작이다.
-efi:GroundFaultProtectionRuleShape a sh:NodeShape ; sh:targetClass efi:Circuit ;
+efi:GroundFaultProtectionRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:Circuit ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { ?g a efi:ProtectiveDeviceFailedToOperate . }
@@ -2938,7 +2965,7 @@ efi:GlowingConnection efi:enablesProgressionTo efi:PoorContactHeating .
 #   "녹은 동선이 흐름에 따라 날카로운 경계선은 거의 나타나지 않지만 일부
 #    구형 구슬형태는 기공(Gas Pocket)에 형성될 수 있다"
 # hasSharpMeltBoundary 가 선언만 되고 쓰이지 않았다. 여기서 쓴다.
-efi:MeltBoundaryRuleShape a sh:NodeShape ; sh:targetClass efi:MeltMark ;
+efi:MeltBoundaryRuleShape a sh:NodeShape ; sh:order 1 ; sh:targetClass efi:MeltMark ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
         sh:construct """
         CONSTRUCT { $this a efi:FireMeltMark . }

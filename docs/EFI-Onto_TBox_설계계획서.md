@@ -539,7 +539,7 @@ DataProperty: efi:supportScore  Characteristics: Functional  Range: xsd:integer[
 
 | ID | 규칙 | 트리거 (세션 사실) | 효과 | 근거 | 순서 |
 |---|---|---|---|---|---|
-| **F-1** 일반 반증 | 가설의 상위 클래스를 `forScenario`로 갖는 `IndicatorRule` 중 역할이 `Refuting`/`DecisiveRefuting`인 지표 클래스(및 하위 클래스)의 사실이 `requiresStatus`(기본 `Confirmed`)로 존재 | `verdict Refuted`, `refutedBy 사실` | Table 2 반증단서 열 전체 + 3.2절 비통전 기각 | 1 |
+| **F-1** 일반 반증 | 가설의 상위 클래스를 `forScenario`로 갖는 `IndicatorRule` 중 역할이 `DecisiveRefuting`인 지표의 사실이 `requiresStatus`로 존재 → 기각. 역할이 `Refuting`이면 `refutedBy`만 남기고 점수는 F-4 가 깎는다. 누적돼 `supportScore < 40`이면 `Weakened` (순서 5) | `verdict Refuted`/`Weakened`, `refutedBy 사실` | 3.2절 "물리적으로 결정적인 사실은 기각 수준으로 조정", 나머지는 가감점 누적 | 1 · 5 |
 | **F-2** 1·2차 단락흔 | `ArcMeltMark formedBy ArcEvent` ∧ `ArcEvent time:before FireExposureEvent` / 그 역 | `rdf:type PrimaryArcMark` / `SecondaryArcMark` | NFPA 921 Ch.9 — 원인/피해 아크 판정은 형태학 단독이 아니라 발화 순서·아크 매핑으로 | 2 |
 | **F-3** 착화 역량 | `hasMechanism m`, `hasFirstFuel fuel`, `m.maxAttainableTemperature_C < fuel.ignitionTemperature_C` | `verdict Weakened`, `ignitionCompetenceGap true` | NFPA 921 경합 가능 발화원(competent ignition source) 요건 | 3 |
 | **F-4** 지지점수 | 50 + Σ(발화한 IndicatorRule의 `scoreDelta`), [0,100] 클램프 | `supportScore` | 3.2절 "약 50점에서 출발, 사전 정의된 가감점 누적" | 4 |
@@ -571,13 +571,15 @@ F-1이 실행하는 Table 2 반증단서의 지표 클래스 매핑:
 세션 레지스트리 (조사관 응답 정규화)
    │  Fact{cls, status, agent}  — C-4 검증
    ▼
-[L2-1] F-1 결정적 기각 · 반증단서     → Refuted 가설 제외
+[L2-1] F-1 결정적 기각                → Refuted 가설 제외 (반증단서는 근거만 기록)
    ▼
 [L2-2] F-2 1·2차 단락흔 재분류        → 외부화염 vs 전기 가설 경계 확정
    ▼
 [L2-3] F-3 착화 역량                  → Weakened
    ▼
 [L2-4] F-4 지지점수 = 50 + Σ delta    → 상위 두 가설 결정
+   ▼
+[L2-5] F-1 반증 누적 · 점수 < 40        → Weakened
    ▼
 CQ3: 상위 두 가설을 가르는 미확인 지표 중 |delta| 최대 → 다음 변별 질의  (Session.discriminating_slots)
    ▼
