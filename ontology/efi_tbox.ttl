@@ -1165,6 +1165,10 @@ efi:furthestDownstream a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rd
     rdfs:label "회로 최하류 아크 지점"@ko ; skos:prefLabel "회로 최하류 아크 지점"@ko .
 
 # [D-5] 한 회로에 아크 지점이 여럿이면 최하류 지점을 표시한다 (§9.13.2.1).
+#  조건부다 — 강한 화재에 노출된 회로는 전 구간에서 거의 동시에 아크가 생기므로 '가장 먼
+#  곳이 최초'라는 추론이 성립하지 않는다 (Babrauskas p.778, Bernstein). 실무Ⅳ p.185 ⑦㉯·
+#  p.305 '부하측이 1차용흔일 가능성이 가장 높다'도 같은 조건 아래서만 읽는다. 이 규칙은
+#  하류 지점을 표시할 뿐 1차 판정은 F-2(시간 선후)가 한다.
 efi:FurthestDownstreamRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ArcMapPoint ;
     dcterms:references "NFPA 921 (2024) §9.13.2.1 Arc Map" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
@@ -2543,6 +2547,10 @@ efi:ApplianceEntryPoint efi:enables efi:PartialDisconnectionHeating , efi:Series
 #   표 2-1(p.127) 은 스테이플손상(찔림)을 '단락' 아래 두고, p.245 는 같은 자리에서
 #   반단선이 관찰된다고 한다. 사슬을 한쪽으로만 적어 두면 원문을 어긴다.
 efi:MisdrivenStaple efi:enables efi:PartialDisconnectionHeating , efi:CrushInducedArc .
+# 스테이플 오타입의 넷째 경로는 트래킹이다 — Babrauskas p.790: "(4) the staple pierces
+# insulation from both conductors ... the connection is exposed to an adverse environment
+# and arc tracking eventually occurs." 15시간~수년 지연.
+efi:MisdrivenStaple efi:enables efi:ArcTracking .
 efi:MisdrivenStaple rdfs:subClassOf efi:StressConcentrationPoint .
 
 # ── 34.4 쥐 갉음 (p.253)
@@ -2556,12 +2564,17 @@ efi:ToothMarkOnInsulation a owl:Class ; rdfs:subClassOf efi:DamagePattern ; rdfs
 #          하여 줄열에 의해 발열하여 배선피복에 착화하여 출화한 경우.
 #          관찰 및 조사포인트 (1) 쥐 등의 존재상황 (2) 쥐똥이나 갉은 흔적여부"
 # 실무Ⅳ 목차 대조(silmu.py 3.3.6 나5)에서 나왔다. 사례 150건에 쥐는 0건이라 정확도는 안 움직인다.
-efi:RodentGnawing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc , efi:PartialDisconnectionHeating .
+# 갉음은 트래킹도 만든다 — 몸과 배설물이 도전성이다.
+#   Babrauskas p.787 (Hosaka 흐름도): 노출 도체 + 배설물 → 누설(지락) 또는 아크 트래킹;
+#   배설물 없음 → 볼트 단락 또는 소선 파단 과열. 실무Ⅳ p.252 쥐 오줌이 PTC 단자 사이 스파크.
+efi:RodentGnawing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc , efi:PartialDisconnectionHeating , efi:ArcTracking .
 efi:Insulation efi:exhibits efi:ToothMarkOnInsulation .
 efi:CrushInducedArc efi:producesDamage efi:ToothMarkOnInsulation .
 efi:PartialDisconnectionHeating efi:producesDamage efi:ToothMarkOnInsulation .
+efi:ArcTracking efi:producesDamage efi:ToothMarkOnInsulation .
 efi:CrushDamageScenario efi:canManifest efi:ToothMarkOnInsulation .
 efi:PartialDisconnectionScenario efi:canManifest efi:ToothMarkOnInsulation .
+efi:TrackingScenario efi:canManifest efi:ToothMarkOnInsulation .
 
 # ── 34.5 바닥 깔림에 의한 방열 저해 (p.245·253)
 #   "코드가 카펫의 아래를 통과하여 사용되고 있으면 코드자체의 방열효과가
@@ -2569,10 +2582,12 @@ efi:PartialDisconnectionScenario efi:canManifest efi:ToothMarkOnInsulation .
 efi:CoveredByFloorCovering a owl:Class ; rdfs:subClassOf efi:HeatDissipationImpairment ; rdfs:label "바닥재·카펫 밑 통과"@ko ; skos:prefLabel "바닥재·카펫 밑 통과"@ko ; rdfs:comment "코드가 카펫·매트 아래를 지나면 방열이 막혀 과열한다. 눌림(압착)과는 다른 경로다 — 도체가 상하지 않아도 발열한다 (실무Ⅳ p.245·253)"@ko .
 
 # ── 34.6 지표 규칙 — 국내 실무 층이므로 조항을 붙이지 않는다
-efi:R_CD_sup4  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_PD_sup11 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_PD_sup12 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_CD_sup4  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
+efi:R_PD_sup11 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PD_sup12 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
+efi:R_TR_sup8  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_TR_sup9  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
 
 ########################################################################
 # 35. 원인 축 편향 교정 — scripts/cause_audit.py 가 잡은 다섯 건
@@ -2745,9 +2760,10 @@ efi:R_PD_sup9  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionSce
 #   §9.11.4.3 스테이플 오타입이 피복을 눌러 고저항 접촉을 만든다
 # 셋 다 원문 근거가 있으므로 셋 다 붙인다. 한쪽에만 붙이면 사슬이 부정하는 말을
 # 하게 된다 — 진동에서 이미 겪었다.
-efi:R_CD_sup7  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_PD_sup10 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_PC_sup7  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_CD_sup7  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 3 .
+efi:R_PD_sup10 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 3 .
+efi:R_PC_sup7  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 3 .
+efi:R_TR_sup10 a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 3 .
 
 # 노후·경년열화는 절연열화와 트래킹만 부르지 않는다. 접속부도 헐겁게 만든다.
 #   p.267 "커넥터의 접속부분이 경년열화에 의해 헐거워져서 접촉저항이 증대하여
