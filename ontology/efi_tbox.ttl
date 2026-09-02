@@ -2555,6 +2555,28 @@ efi:DustAccumulation efi:enables efi:InsulationBreakdownArc .
 # 15 → 9 로 감쇠하는 데 쓰이고 절연열화에 점수를 주지 않는다 — scripts/score.py.
 # 붙였을 때 트래킹 96.7% → 10.0% (24건 동점). 조사서가 습기만 적기 때문이다.
 
+# ── 트래킹의 자리 — 이극 도체 사이의 절연물 표면 (실무Ⅳ p.147, 표 2-1 p.127)
+#   "전압이 인가된 이극 도체(전선·코드·케이블·배선기구 등의 전기제품) 사이
+#    고체절연물 표면에 수분을 많이 함유한 먼지, 오존 등 전해질의 미소물질이나 ...
+#    도체성분이 부착하면, 오염된 곳의 표면을 따라서 전류가 흐르면 ... 이극 도체
+#    사이 절연물 표면에 소규모 불꽃방전이 일어난다" (p.147)
+#   표 2-1 은 트래킹현상의 자리를 '각종 스위치류 양(兩)極間'이라 적는다 (p.127).
+# 반단선의 응력 집중 개소(34.1)처럼 원인이 아니라 위치다. 조사관은 이 자리(기판
+# 표면·버스바 사이·단자 양극 간)에서 트래킹을 읽는데 온톨로지에 자리가 없었다.
+# 정말 트래킹에서만인가 — 표 2-1 에서 '양극간'을 자리로 갖는 갈래는 트래킹과
+# 고압 보이드·은 이동(둘 다 범위 밖)뿐이다. 접촉불량은 한 극의 접점에서,
+# 절연열화는 절연물 내부에서 일어난다. scripts/cause_audit.py 에 판정을 적었다.
+efi:InterPoleInsulatingSurface a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ;
+    rdfs:label "이극 도체 간 절연물 표면"@ko ; skos:prefLabel "이극 도체 간 절연물 표면"@ko ;
+    skos:altLabel "양극간"@ko , "극간 절연 표면"@ko , "기판 표면"@ko , "버스바 사이"@ko ;
+    rdfs:comment "전압이 인가된 이극 도체 사이의 고체 절연물 표면. 트래킹이 일어나는 자리이며 표 2-1 이 '각종 스위치류 양극간'이라 적는 그것 (실무Ⅳ p.127·147)"@ko .
+efi:InterPoleInsulatingSurface efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
+efi:R_TR_sup7  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:InterPoleInsulatingSurface ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+
+# p.148 은 1단계 오염원을 "습기, 염분, 무기질, 섬유질 및 도전성물질"로 든다.
+# 실밥·섬유 분진은 분진 퇴적으로 읽는다.
+efi:DustAccumulation skos:altLabel "섬유질·실밥 분진"@ko , "무기질 퇴적"@ko .
+
 # 조명 깜박임·이취는 접촉불량 전용이 아니다.
 #   "반단선에 의한 발열이 발생하면 ... 접촉·단속을 반복하여 용융흔이 생기고" (p.149)
 # 접촉·단속의 반복은 곧 거주자가 목격하는 깜박임이다.

@@ -50,7 +50,11 @@ RULES = {
     (r"절연테이프|전기테이프", "LooseConnection"),
  ],
  "slot_environmental_contamination": [
-    (r"먼지|분진|이물질|퇴적물|파지", "DustAccumulation"),
+    # 트래킹의 자리 — 이극 도체 사이 절연물 표면 (실무Ⅳ p.147, 표 2-1 '각종 스위치류 양극간').
+    # '스위치·콘센트'라는 낱말만으로는 읽지 않는다 — 다섯 요인에 고루 나온다.
+    # 극 사이·기판 표면·버스바 사이처럼 자리가 명시될 때만 읽는다.
+    (r"(양극|이극|극|전극|단자)\s*(간|사이)|기판\s*(표면|내부)|(버스바|부스바)[^.]{0,6}(사이|간)", "InterPoleInsulatingSurface"),
+    (r"먼지|분진|이물질|퇴적물|파지|섬유|실밥|무기질", "DustAccumulation"),
     (r"습기|습한|습도|결로|누수|물기|수분|빗물|우천|강수|침수|물청소", "MoistureExposure"),
     (r"기름|유증|염분|염해|화학|부식성", "SalineOrChemicalExposure"),
     (r"밀폐|방출되지\s*못|보온재|단열재\s*사이|감싸|덮인", "ThermalInsulationEnclosure"),
@@ -85,6 +89,7 @@ RULES = {
     # 이극 도체 사이의 탄화가 곧 트랙이다 — "절연물 표면의 일부가 분해되어
     # 탄화되거나 침식됨에 따라 도전성 물질이 생긴다 ... 다른 극의 전극 간에는
     # 도전성의 통로(Track)가 형성된다" (실무Ⅳ p.147). 일반 탄화와 갈라야 한다.
+    (r"(양극|이극|극|전극|단자)\s*(간|사이)|(버스바|부스바)[^.]{0,6}(사이|간)|기판\s*표면", "InterPoleInsulatingSurface"),
     (r"탄화된?\s*경로|도전로|트랙", "CarbonizedConductivePath"),
     (r"(단자|전극|극|접점|접속부)\s*(사이|간)[^.]{0,16}탄화|탄화[^.]{0,16}(단자|전극|극)\s*(사이|간)", "CarbonizedConductivePath"),
     # 소선(素線) 끝단의 용융구와 전선 말단의 일반 비드는 다른 것이다.
@@ -128,7 +133,7 @@ RULES = {
  ],
 }
 
-UNVERIFIABLE = r"확인\s*불가|식별\s*불가|판단\s*불가|불명|소실.*확인.*어려"
+UNVERIFIABLE = r"확인\s*불가|식별\s*불가|판단\s*불가|(?<!원인)불명|소실.*확인.*어려"   # 원인불명 누수는 누수가 확인된 것이다
 ABSENT = r"없었음|없음|발견되지\s*않|미확인|아님|해당\s*없"
 
 
@@ -140,17 +145,33 @@ def status_of(text, mapped_none):
     return "Confirmed"
 
 
+CLAUSE = r"[,，.。;]|\s및\s|\s그리고\s|으나\s|지만\s|되며\s|되고\s|하며\s|하고\s"
+
+
 def map_slot(slot, text):
-    """(클래스, 상태) 목록과 매핑 실패 여부."""
+    """(클래스, 상태) 목록과 매핑 실패 여부.
+
+    확인 상태는 슬롯 전체가 아니라 그 표현이 든 절(節)에서 읽는다. "용융 흔적
+    식별됨, 내부 부품은 특이점 없음"에서 '없음'은 뒤 절의 것이지 용융흔의
+    것이 아니다. "노후 선로로 교체 이력 없음"의 '없음'도 노후의 부재가 아니다.
+    슬롯 전체로 읽자 부재 확인 5건 중 3건이 이런 오독이었다.
+    """
     out, none_hit = [], False
+    clauses = [c for c in re.split(CLAUSE, text) if c and c.strip()]
     for pat, cls in RULES.get(slot, []):
-        if re.search(pat, text):
-            if cls is None:
-                none_hit = True
-            elif cls not in [c for c, _ in out]:
-                out.append((cls, None))
-    st = status_of(text, none_hit)
-    return [(c, st) for c, _ in out], (not out and not none_hit)
+        m = re.search(pat, text)
+        if not m:
+            continue
+        if cls is None:
+            none_hit = True
+            continue
+        if cls in [c for c, _ in out]:
+            continue
+        clause = next((c for c in clauses if re.search(pat, c)), text)
+        out.append((cls, status_of(clause, False)))
+    if none_hit and not out:
+        return [], False
+    return out, (not out and not none_hit)
 
 
 def load():
