@@ -225,11 +225,25 @@ def origin_object(case_id):
     votes = collections.Counter()
     src = {}
     for x in sents:
-        for name, pat in OBJECT:
-            if re.search(pat, x):
-                votes[name] += 1
-                src.setdefault(name, x)
+        # "콘센트 하부에 소락되어 있던 전원선의 단락흔" — 특이점은 전원선에 있다.
+        # 특이점 낱말 바로 앞(40자)에서 가장 가까운 대상 낱말을 잡고, 없으면 문장 전체에서 잡는다.
+        # 다만 기기·단자가 문장에 있으면 그것이 자리다 — 트래킹은 기기 절연 표면에서 일어나고
+        # 녹는 것은 그 안의 전선이다 (p.201). '무엇이 녹았나'보다 '어디 안인가'가 먼저다.
+        picked = next((name for name, pat in OBJECT if name in ("단자", "기기 내부 절연부") and re.search(pat, x)), None)
+        for m in re.finditer(SIGN, x):
+            if picked:
                 break
+            head = x[max(0, m.start() - 40):m.start()]
+            best = max(((mm.end(), name) for name, pat in OBJECT for mm in re.finditer(pat, head)),
+                       default=None)
+            if best:
+                picked = best[1]
+                break
+        if picked is None:
+            picked = next((name for name, pat in OBJECT if re.search(pat, x)), None)
+        if picked:
+            votes[picked] += 1
+            src.setdefault(picked, x)
     if not votes:
         return None, "Missing", sents[0]
     best = max(votes, key=lambda n: (votes[n], -[o[0] for o in OBJECT].index(n)))
