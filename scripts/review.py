@@ -91,15 +91,26 @@ sheet('1 단서와 점수',
 # ── 2. 형태 발현 ──────────────────────────────────────────────────────────
 CH = O['chain']
 shared = O['shared']
+# 흔적 하나에 한 줄 — 메커니즘별로 뽑으면 같은 흔적이 열두 번 나와 조사관이 같은 질문을 열두 번 받는다.
+by_pat = {}
+for a, b in CH['producesDamage']:
+    by_pat.setdefault(b, set()).add(a)
+sc_of = {}
+_man = O['man'].items() if isinstance(O['man'], dict) else O['man']
+for s, bs in _man:
+    for b in (bs if isinstance(bs, (list, tuple, set)) else [bs]):
+        sc_of.setdefault(b, set()).add(SCEN.get(s, k(s)))
 d2 = []
-for a, b in sorted(CH['producesDamage'], key=lambda x: (k(x[0]), k(x[1]))):
+for b in sorted(by_pat, key=lambda x: (-shared.get(x, 0), k(x))):
     n = shared.get(b, 0)
-    d2.append([k(a), k(b), n if n else '',
-               f'{k(b)}은(는) 지금 {n or 1}개 가설이 남기는 흔적으로 되어 있습니다. '
-               f'{k(a)}이(가) 아닌 원인의 화재에서 {k(b)}을(를) 보신 사건이 있으면 사건번호를 적어 주십시오.'])
+    scs = ' · '.join(sorted(sc_of.get(b, set()))) or '(가설 없음 — 확장 슬롯)'
+    mechs = ' · '.join(sorted(k(a) for a in by_pat[b]))
+    d2.append([k(b), scs, n if n else '', mechs,
+               f'{k(b)}은(는) 지금 {scs}이(가) 남기는 흔적으로 되어 있습니다. '
+               f'그 밖의 원인의 화재(화재 자체의 열 포함)에서 {k(b)}을(를) 보신 사건이 있으면 사건번호를 적어 주십시오.'])
 sheet('2 형태 발현',
-      ['발열 메커니즘', '남길 수 있는 손상 양상', '이 흔적을 남기는 가설 수', '문장으로 읽으면'],
-      d2, [20, 24, 12, 52],
+      ['손상 양상', '이 흔적을 남긴다고 된 가설', '가설 수', '발열 메커니즘', '문장으로 읽으면'],
+      d2, [24, 26, 8, 30, 52],
       '이 시트가 혼동 쌍 판정의 근거입니다. 여러 가설이 같은 흔적을 남기면 사진만으로 못 가른다고 판단합니다. '
       '맞는지 틀린지가 아니라 반례를 묻습니다 — 다른 원인의 화재(화재 자체의 열 포함)에서 이 흔적을 보셨으면 '
       '사건번호를 적어 주십시오. 반례가 있는 흔적은 공유 흔적이 되어 변별력이 내려갑니다. '

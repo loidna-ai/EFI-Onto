@@ -2040,6 +2040,8 @@ efi:MetalTransferToFastener a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
     rdfs:label "못·스테이플로의 금속 전이"@ko ; skos:prefLabel "못·스테이플로의 금속 전이"@ko ;
     rdfs:comment "진행 중인 화재의 결과일 수 있다. 고저항 경로의 증거로 단정할 수 없다 (§9.11.4.3)"@ko .
 efi:ExternalFlameExposure efi:producesDamage efi:MetalTransferToFastener , efi:CrackedInsulation .
+# 가설 선언이 빠져 있었다 — 메커니즘만 잇고 시나리오를 안 이어 검토표에서 '가설수 없음'으로 떴다.
+efi:ExternalFlameScenario efi:canManifest efi:MetalTransferToFastener .
 efi:MisdrivenStaple efi:enables efi:PoorContactHeating .
 
 # [C-40] 피복 균열만으로 누설 경로를 주장할 수 없다 (§9.11.3).
