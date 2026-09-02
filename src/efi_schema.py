@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import StrEnum
-from typing import Literal
+from typing import ClassVar, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -190,6 +190,7 @@ class Fact(BaseModel):
     agent: Agent
     observation: Observation | None = None
     note: str | None = None
+    derived_types: list[str] = []                 # D- 규칙이 덧붙인 유형. 직렬화하지 않는다
 
     @field_validator("cls")
     @classmethod
@@ -312,14 +313,31 @@ class Session(BaseModel):
 
     def _facts_matching(self, r: IndicatorRule, o: Ontology) -> list[Fact]:
         hit = o.matches_absent if r.required_status is Status.CONFIRMED_ABSENT else o.matches
-        return [f for f in self.facts if hit(f.cls, r.indicator) and f.status == r.required_status]
+        return [f for f in self.facts if f.status == r.required_status
+                and (hit(f.cls, r.indicator) or any(o.matches(t, r.indicator) for t in f.derived_types))]
 
     def _slot_status(self, indicator: str, o: Ontology) -> Status:
-        sts = [f.status for f in self.facts if o.matches(f.cls, indicator)]
+        sts = [f.status for f in self.facts
+               if o.matches(f.cls, indicator) or any(o.matches(t, indicator) for t in f.derived_types)]
         return next((st for st in (Status.CONFIRMED, Status.CONFIRMED_ABSENT, Status.UNVERIFIABLE) if st in sts), Status.MISSING)
 
     # ---- 규칙 실행: 반증 우선 → 점수 → 착화 역량 ----
+    # ---- D-13 기기 내부·단자 + 오염 확인 → 그 대상은 이극 도체 간 절연물 표면 ----
+    #  새 사실을 만들지 않는다(C-4). 대상 사실에 유형을 덧붙인다. SHACL 의
+    #  TrackingSiteDerivationRuleShape 와 같은 규칙이며 두 곳이 갈리면 안 된다.
+    SITE_BASES: ClassVar[tuple[str, ...]] = ("DeviceInteriorSite", "TerminalSite")
+
+    def derive(self, o: Ontology) -> Session:
+        for f in self.facts:
+            f.derived_types = []
+        if any(o.matches(f.cls, "ContaminatedEnvironment") and f.status is Status.CONFIRMED for f in self.facts):
+            for f in self.facts:
+                if f.status is Status.CONFIRMED and any(o.matches(f.cls, b) for b in self.SITE_BASES):
+                    f.derived_types.append("InterPoleInsulatingSurface")
+        return self
+
     def apply(self, o: Ontology) -> Session:
+        self.derive(o)
         for h in self.hypotheses:
             h.support_score, h.verdict = 50, Verdict.ACTIVE
             h.supported_by, h.refuted_by, h.rationale = [], [], []

@@ -178,6 +178,7 @@ SHAPE_REFS = {
     "OverloadDerivationRuleShape":       ["9.6"],
     "StrandFractureDerivationRuleShape": ["9.11"],
     "CuprousOxideDerivationRuleShape":   ["9.10"],
+    "TrackingSiteDerivationRuleShape":   ["9.11"],
     # 아래 다섯은 TTL 안에 하위 절까지 직접 부착돼 있다 (§9.13.x).
     "ArcSiteAbsenceRuleShape":           ["9.13"],
     "ObscuredArcSiteShape":              ["9.13"],

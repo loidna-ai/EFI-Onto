@@ -203,6 +203,11 @@ OBJECT = [  # 구체적인 것부터. 같은 문장에 둘이면 앞이 이긴�
 ]
 
 
+OBJECT_CLASS = {"단자": "TerminalSite", "접속부": "ConnectionJointSite", "기기 내부 절연부": "DeviceInteriorSite",
+                "배선기구": "WiringDeviceSite", "권선·코일": "WindingSite", "콘덴서": "CapacitorSite",
+                "전선·코드": "CordMidspanSite"}
+
+
 def origin_object(case_id):
     """(대상, 상태, 근거 문장). 관찰 전문이 없거나 특이점 문장이 없으면 미기재."""
     f = next((x for x in OBS.glob("*.txt") if x.stem.upper() == case_id.upper()), None)
@@ -265,15 +270,10 @@ def build():
                     {"cls": cls, "status": st, "agent": "InvestigatorAgent",
                      "slot": s, "src": v})
         obj, ost, osrc = origin_object(str(rec["case_id"]))
-        # 기기 안의 오염이 트래킹의 자리다 (실무Ⅳ p.147·149). 슬롯 하나 안에서만
-        # 읽던 결합을 대상 슬롯과 환경 슬롯 사이로 넓힌다. 근거 두 문장을 함께 남긴다.
-        if obj in ("기기 내부 절연부", "단자") and not any(f["cls"] == "InterPoleInsulatingSurface" for f in facts):
-            env = next((f for f in facts if f["cls"] in ("MoistureExposure", "DustAccumulation")
-                        and f["status"] == "Confirmed"), None)
-            if env:
-                facts.append({"cls": "InterPoleInsulatingSurface", "status": "Confirmed",
-                              "agent": "InvestigatorAgent", "slot": "slot_origin_object",
-                              "src": f"{osrc} / {env['src']}"})
+        # 대상은 사실로 들어간다. 자리 도출은 온톨로지의 D-13 이 한다 — 판독기는 읽기만 한다.
+        if obj:
+            facts.append({"cls": OBJECT_CLASS[obj], "status": ost, "agent": "InvestigatorAgent",
+                          "slot": "slot_origin_object", "src": osrc})
         sessions.append({
             "case_id": str(rec["case_id"]),
             "actual_scenario": LABEL[str(rec["gt_label"])],

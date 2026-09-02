@@ -2589,6 +2589,54 @@ efi:R_TR_sup7  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:
 # 실밥·섬유 분진은 분진 퇴적으로 읽는다.
 efi:DustAccumulation skos:altLabel "섬유질·실밥 분진"@ko , "무기질 퇴적"@ko .
 
+# ── 대상 — 전기적 특이점이 식별된 자리 (실무Ⅳ p.149·201·253·305)
+# 반단선의 응력 집중 개소(34.1)와 같은 층이다. 원인이 아니라 위치이며, 대상 어휘는
+# 다섯 요인에 고루 나오므로 단독으로는 점수를 만들지 않는다(지표 규칙 없음).
+# 판정을 가르는 것은 다른 사실과의 결합이다 — D-13 이 그것을 도출한다.
+#   "화재원인 조사상 관례적으로 전기기계·기구에 나타나는 경우를 트래킹 현상이라 하고" (p.149)
+#   "1·2차접속단자나 몰드케이스의 절연체에 먼지 또는 습기에 의한 트래킹" (p.201)
+#   "전선 피복이 오래 되거나 손상되거나 하면 절연성이 나빠져 심선이 접촉하여 단락" (p.305)
+#   "코드와 플러그의 접속·접촉부 부근 등 ... 반단선" (p.149), "플러그 부분에서의 불완전 접촉" (p.253)
+efi:OriginSite a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ;
+    rdfs:label "특이점이 식별된 대상"@ko ; skos:prefLabel "특이점이 식별된 대상"@ko ;
+    rdfs:comment "전기적 특이점(용융흔·단선 등)이 붙어 있는 물건. 조사서의 '대상' 슬롯. 원인이 아니라 위치다"@ko .
+efi:DeviceInteriorSite a owl:Class ; rdfs:subClassOf efi:OriginSite ; rdfs:label "기기 내부 절연부"@ko ; skos:prefLabel "기기 내부 절연부"@ko ;
+    skos:altLabel "차단기"@ko , "분전반"@ko , "기판"@ko , "릴레이"@ko , "인버터"@ko ;
+    rdfs:comment "차단기·분전반·기판·릴레이 등 전기기계·기구의 내부. 오염이 확인되면 트래킹의 자리가 된다 (p.149·201)"@ko .
+efi:TerminalSite a owl:Class ; rdfs:subClassOf efi:OriginSite ; rdfs:label "접속단자·단자대"@ko ; skos:prefLabel "접속단자·단자대"@ko ;
+    rdfs:comment "양극이 나란한 단자. 오염이 확인되면 트래킹의 자리가 된다 (p.201). 체결 불량이면 접촉불량이다"@ko .
+efi:ConnectionJointSite a owl:Class ; rdfs:subClassOf efi:OriginSite ; rdfs:label "접속부(꼬임·결선)"@ko ; skos:prefLabel "접속부(꼬임·결선)"@ko ;
+    rdfs:comment "한 극의 이음. 접촉불량의 자리이며 반단선도 접속부 부근에서 생긴다 (p.149)"@ko .
+efi:WiringDeviceSite a owl:Class ; rdfs:subClassOf efi:OriginSite ; rdfs:label "배선기구(콘센트·플러그·스위치)"@ko ; skos:prefLabel "배선기구(콘센트·플러그·스위치)"@ko ;
+    rdfs:comment "접촉불량·반단선·트래킹이 모두 나타나는 자리 (p.147·149·253)"@ko .
+efi:WindingSite a owl:Class ; rdfs:subClassOf efi:OriginSite ; rdfs:label "권선·코일"@ko ; skos:prefLabel "권선·코일"@ko ;
+    rdfs:comment "모터·안정기·변압기 권선. 층간단락과 절연열화의 자리 (p.219·245)"@ko .
+efi:CapacitorSite a owl:Class ; rdfs:subClassOf efi:OriginSite ; rdfs:label "콘덴서"@ko ; skos:prefLabel "콘덴서"@ko ;
+    rdfs:comment "습기를 띠면 절연열화가 일어나 극간 누설로 발열한다 (p.289)"@ko .
+efi:CordMidspanSite a owl:Class ; rdfs:subClassOf efi:OriginSite ; rdfs:label "전선·코드 중간부"@ko ; skos:prefLabel "전선·코드 중간부"@ko ;
+    rdfs:comment "접속부가 아닌 전선·코드·케이블 구간. 절연열화 단락(p.305)·반단선·기계적 손상의 자리"@ko .
+efi:DeviceInteriorSite efi:enables efi:ArcTracking , efi:LeakageCurrentHeating , efi:PoorContactHeating .
+efi:TerminalSite efi:enables efi:ArcTracking , efi:LeakageCurrentHeating , efi:PoorContactHeating , efi:GlowingConnection .
+efi:ConnectionJointSite efi:enables efi:PoorContactHeating , efi:GlowingConnection , efi:SeriesArc , efi:PartialDisconnectionHeating .
+efi:WiringDeviceSite efi:enables efi:PoorContactHeating , efi:ArcTracking , efi:PartialDisconnectionHeating .
+efi:WindingSite efi:enables efi:InterTurnShortCircuit , efi:InsulationBreakdownArc .
+efi:CapacitorSite efi:enables efi:InsulationBreakdownArc .
+efi:CordMidspanSite efi:enables efi:InsulationBreakdownArc , efi:PartialDisconnectionHeating , efi:SeriesArc , efi:CrushInducedArc , efi:ShortCircuitArc .
+
+# [D-13] 기기 내부·단자에 오염이 확인되면 그 대상은 이극 도체 간 절연물 표면이다 (p.147·149·201).
+#  새 사실을 만들지 않는다(C-4). F-2 처럼 기존 대상 사실에 유형을 덧붙인다.
+#  src/efi_schema.py apply() 의 도출과 같아야 한다 — test_tracking_site_is_derived_in_both_engines.
+efi:TrackingSiteDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:InvestigationSession ;
+    dcterms:references "NFPA 921 (2024) §9.11.3 Deteriorated Insulation — 절연이 상해도 도전 경로가 서려면 도전성 오염이 절연 표면에 있어야 한다. 자리의 관례는 국내 실무(실무Ⅳ p.147·149·201)다"@ko ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
+        sh:construct """
+        CONSTRUCT { ?o rdf:type efi:InterPoleInsulatingSurface . }
+        WHERE {
+          $this efi:hasFact ?o . ?o rdf:type ?t ; efi:confirmationStatus efi:Confirmed .
+          ?t rdfs:subClassOf* ?base . VALUES ?base { efi:DeviceInteriorSite efi:TerminalSite }
+          $this efi:hasFact ?c . ?c rdf:type/rdfs:subClassOf* efi:ContaminatedEnvironment ; efi:confirmationStatus efi:Confirmed .
+        }""" ] .
+
 # 조명 깜박임·이취는 접촉불량 전용이 아니다.
 #   "반단선에 의한 발열이 발생하면 ... 접촉·단속을 반복하여 용융흔이 생기고" (p.149)
 # 접촉·단속의 반복은 곧 거주자가 목격하는 깜박임이다.

@@ -890,3 +890,25 @@ def test_rule_shapes_declare_execution_order(g):
         if got is None or int(got) != want:
             bad.append((q(sh), got and int(got), want))
     assert not bad, f"도형 sh:order 가 없거나 규칙과 어긋남 (도형, 지금, 필요): {bad}"
+
+
+def test_tracking_site_is_derived_in_both_engines(onto):
+    """D-13 — 기기 내부·단자 + 오염 확인 → 그 대상은 이극 도체 간 절연물 표면.
+
+    새 사실을 만들지 않고(C-4) 대상 사실에 유형을 덧붙인다. Python derive() 와
+    SHACL TrackingSiteDerivationRuleShape 가 같은 점수를 내야 한다. 오염이 없으면
+    대상만으로는 아무 점수도 없다 — 대상 어휘는 다섯 요인에 고루 나온다.
+    """
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent
+    for facts, want in ((["DeviceInteriorSite", "MoistureExposure"], 50 + 9 + 15),
+                        (["TerminalSite", "DustAccumulation"], 50 + 9 + 15),
+                        (["DeviceInteriorSite"], 50),
+                        (["CordMidspanSite", "MoistureExposure"], 50 + 9)):
+        s = Session(case_id="d13", query_count=2,
+                    hypotheses=[Hypothesis(scenario=Scenario.TRACKING, mechanism=Mechanism.ARC_TRACKING)],
+                    facts=[Fact(cls=c, status=Status.CONFIRMED, agent=Agent.INVESTIGATOR) for c in facts])
+        s.apply(onto)
+        assert s.hypotheses[0].support_score == want, f"Python {facts}"
+        gr = run(s.to_turtle(include_derived=False))
+        h = next(gr.subjects(EFI.inSession, None))
+        assert int(next(gr.objects(h, EFI.supportScore))) == want, f"SHACL {facts}"
