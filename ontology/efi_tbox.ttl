@@ -160,7 +160,6 @@ efi:BreakerTripRecord        a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; s
 efi:ImmediateTripAfterExternalForce a owl:Class ; rdfs:subClassOf efi:BreakerTripRecord ,
     [ a owl:Restriction ; owl:onProperty efi:breakerTripped ; owl:hasValue true ] ;
     skos:prefLabel "외력 직후 즉시 트립·아크"@ko .
-efi:NoTripDespiteExternalForce a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "외력 흔적 있으나 트립 이력 없음"@ko ; rdfs:comment "복합 사실 = ExternalForceTrace(확인) ∧ BreakerTripRecord(부정 확인)"@ko .
 efi:ExternalForceTrace       a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "외력 흔적"@ko .
 efi:MoistureTrace            a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "누수·결로 흔적"@ko .
 efi:ContaminationDeposit     a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "분진·오염 퇴적"@ko .
@@ -438,7 +437,19 @@ efi:R_CD_sup6  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; e
 efi:R_CD_sup0  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ImmediateTripAfterExternalForce ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_CD_sup1  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MechanicalDeformation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_CD_ref   a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:NoTripDespiteExternalForce ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
+# '외력 흔적 있으나 트립 이력 없음'(NoTripDespiteExternalForce, 논문 Table 2)을 압착손상
+# 반증으로 두었었다. 실무Ⅳ 가 반대로 적는다 —
+#   p.285 "금속을 개입하여 단락한 경우에 접촉저항이 크므로 배선차단기가 순간적으로
+#          작동하지 않은 경우가 있다"
+#   p.286 "손으로 비틀어 꼬은 접속 등에 의한 접촉부 과열의 경우에는 배선차단기는
+#          일시적으로는 작동하지 않는다"
+# 압착 단락에서 트립 없음은 양립한다. 양립하는 것은 반증이 아니다. 규칙과 클래스,
+# '트립 없음 → 비통전' attests 를 지웠다(실무Ⅳ 목차 대조, silmu.py 3.3.6 나4).
+# 대신 원문이 양립 불가를 말하는 대비를 쓴다 — R_PD_ref3 의 대칭:
+#   p.150 "반단선의 경우는 단선 부분의 양쪽에, 금속 등의 도체로 절단된 경우는
+#          단선 부분의 전원측의 한쪽 부분에 집중적으로 생겨 있다"
+# 양측 용흔이면 금속 절단(압착) 단락이 아니다. 사례 150건에 양측 용흔은 반단선 1건.
+efi:R_CD_ref3  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MeltMarkOnBothSidesOfBreak ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
 # 반단선의 핵심 단서는 '장기 반복 응력'이다 — 굴곡·진동·인장의 상위.
 # 필요조건 선언(hasAntecedent)이 정확히 그 셋의 합집합이고, 핵심 단서란
@@ -713,7 +724,6 @@ efi:Sagging rdfs:label "자중에 의한 처짐"@ko ; skos:prefLabel "자중에 
 efi:ThermalGradientFlow rdfs:label "열 구배에 따른 유동"@ko ; skos:prefLabel "열 구배에 따른 유동"@ko .
 efi:SceneEvidence rdfs:label "현장 사실"@ko ; skos:prefLabel "현장 사실"@ko .
 efi:BreakerTripRecord rdfs:label "차단기 트립 이력"@ko ; skos:prefLabel "차단기 트립 이력"@ko .
-efi:NoTripDespiteExternalForce rdfs:label "외력 흔적 있으나 트립 이력 없음"@ko ; skos:prefLabel "외력 흔적 있으나 트립 이력 없음"@ko .
 efi:ExternalForceTrace rdfs:label "외력 흔적"@ko ; skos:prefLabel "외력 흔적"@ko .
 efi:BurnPattern rdfs:label "연소 패턴"@ko ; skos:prefLabel "연소 패턴"@ko .
 efi:ContaminationDeposit rdfs:label "오염물 퇴적"@ko ; skos:prefLabel "오염물 퇴적"@ko .
@@ -917,7 +927,6 @@ efi:MoistureTrace efi:attests efi:MoistureExposure .
 efi:ContaminationDeposit efi:attests efi:DustAccumulation , efi:ContaminatedEnvironment .
 efi:ExternalForceTrace efi:attests efi:ExternalCrushing .
 efi:ImmediateTripAfterExternalForce efi:attests efi:ExternalCrushing .
-efi:NoTripDespiteExternalForce efi:attests efi:DeEnergizedState .
 efi:FlexingHistoryWithStrandFracture efi:attests efi:RepeatedFlexing , efi:LongTermRepeatedStress .
 efi:BreakerTripRecord efi:attests efi:EnergizedState .
 efi:MultipleArcBeadsAtOrigin efi:attests efi:EnergizedState .

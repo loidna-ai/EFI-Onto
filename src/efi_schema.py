@@ -91,7 +91,6 @@ class Damage(StrEnum):
 class SceneEvidence(StrEnum):
     BREAKER_TRIP_RECORD = "BreakerTripRecord"
     IMMEDIATE_TRIP_AFTER_EXTERNAL_FORCE = "ImmediateTripAfterExternalForce"
-    NO_TRIP_DESPITE_EXTERNAL_FORCE = "NoTripDespiteExternalForce"
     EXTERNAL_FORCE_TRACE = "ExternalForceTrace"
     NO_ARC_OR_SPATTER = "NoArcOrSpatter"
     MULTIPLE_ARC_BEADS_AT_ORIGIN = "MultipleArcBeadsAtOrigin"

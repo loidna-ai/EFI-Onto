@@ -306,8 +306,8 @@ SUBSECTIONS = [
     ("3.3.6", "나3", "전원선 프레임 지락 → 누전차단기 강제 재투입 → 발열 → 단락", PART,
      "AbrasionAtPenetration 은 구현. 누전차단기 작동 여부·고장검사·프레임 용흔·접지저항은 BreakerTripRecord·CorrespondingDamageArea 어휘만"),
     ("3.3.6", "나4", "전원선 진동 프레임 접촉 단락 · 가장 부하측 용흔 2차측 무이상 · 금속 개입 단락은 차단기가 순간 작동 안 함", PART,
-     "AbrasionAtPenetration+Vibration, D-5 는 구현. (3) '접촉저항이 커서 즉시 트립하지 않는다'는 R_CD_ref(NoTripDespiteExternalForce −30)와 "
-     "긴장한다 — 사례 반례 여부를 make refute 로 볼 것. CANDIDATES ⑤"),
+     "AbrasionAtPenetration+Vibration, D-5 는 구현. (3) '접촉저항이 커서 즉시 트립하지 않는다'가 옛 반증 규칙(트립 없음 → 압착 반증)과 "
+     "정면으로 어긋나 그 규칙을 지우고 p.150 양측 용흔 반증(R_CD_ref3)으로 바꿨다. CANDIDATES ⑤"),
     ("3.3.6", "나5", "쥐가 갉아 히터선 반단선", PART,
      "RodentGnawing 은 압착손상에만 이어져 있다(cause_audit EXCL, p.253). p.286 은 갉음이 반단선도 만든다고 적는다 — 사슬 재검토. CANDIDATES ④"),
     ("3.3.6", "나6", "손으로 비틀어 꼬아 접속 → 접촉부 과열 · 차단기 일시 미동작", DONE, "ConnectionJointSite. 미동작 문장은 나4 와 같은 항목"),
@@ -363,8 +363,8 @@ CANDIDATES = [
      "p.286 5)", "사슬 오류 — 사례와 무관. RodentGnawing 을 PartialDisconnectionScenario 에도 잇는다(cause_audit EXCL → SHARED). "
      "조사서 150건에 쥐는 0건이라 정확도는 안 움직인다. 원문대로 고친다"),
     ("⑤", "금속 개입 단락·꼬아 접속의 차단기 미동작", "접촉저항이 커서 순간 트립하지 않는다",
-     "p.285 (3), p.286 (3)", "R_CD_ref(NoTripDespiteExternalForce −30)의 근거 재검토. make refute 결과 발동 0·반례 0 이라 지금은 무해하나, "
-     "p.285 는 압착(금속 개입) 단락에서 트립 없음이 흔하다고 — 양립을 — 말한다. 반증은 원문이 양립 불가를 말할 때만 둔다(CLAUDE.md). 역할 재판정 대상"),
+     "p.285 (3), p.286 (3)", "구현 — 옛 반증 규칙(트립 없음 → 압착 반증 −30, 논문 Table 2)은 p.285·286 과 정면으로 어긋나 규칙·클래스·"
+     "'트립 없음 → 비통전' attests 를 지웠다. 대신 p.150 '양측 용흔이면 금속 절단이 아니다'를 R_CD_ref3 으로 — R_PD_ref3 의 대칭. 사례 반례 0"),
     ("⑥", "니크롬선 용융", "1,425℃ 는 화재열로 닿지 않는다",
      "p.293 라)", "후순위. 외부화염 반증 또는 F-3 착화 역량인데 사례 라벨에 외부화염이 0건. 열선 용융 2건은 둘 다 절연열화의 열선 단락흔이지 니크롬 자체 용융이 아니다"),
     ("⑦", "통전 입증 단서", "칼날 광택·변색 경계, 칼날받이 열림, 필라멘트 앵커 용착",
