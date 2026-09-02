@@ -48,6 +48,7 @@ scripts/{extract,build,graph,review,export}.py   시각화·검토표
 tests/test_ontology.py       정합성 불변식. 깨지면 안 되는 것
 tests/test_completeness.py   완성도 래칫. 얼마나 남았는가
 docs/인계.md                 다음 세션이 읽을 것 — 상태·남은 일·반복한 실수
+docs/자료_목록.md             구해야 할 원문 자료. 우선순위와 온톨로지의 어디를 채우는가
 docs/                        설계계획서 + 변경 이력
 build/                       생성물. git 에 넣지 않음
 ```
