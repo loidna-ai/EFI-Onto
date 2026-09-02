@@ -180,6 +180,57 @@ def map_slot(slot, text):
     return out, (not out and not none_hit)
 
 
+# ── 대상 슬롯 — 전기적 특이점이 식별된 대상 ──────────────────────────────
+# dataset.xlsx 에는 없다. 관찰 전문(cases/observed)에서 뽑는다.
+# 대상 어휘는 다섯 요인에 고루 나오므로 '특이점이 붙은 문장'으로 좁힌다.
+# 실무Ⅳ p.149 의 관례 — 전기기계·기구에 나타나면 트래킹 — 를 쓰려면 이 슬롯이 있어야 한다.
+OBS = ROOT / "cases" / "observed"
+SIGN = r"용융|단락흔|특이점|단선|아크|비드|도전로|탄화된?\s*경로|탄화흔|탄화\s*흔적|융착|소결|합선|멸실"
+# 특이점 문장이 없으면 발화지점 문장으로 대상을 잡는다 — p.149 는 "전기기계·기구에 나타나는 경우"라 하고
+# 조사관은 발화지점에서 그것을 안다. 근거 문장을 남기므로 되짚을 수 있다.
+ORIGIN = r"발화지점|발화개소|출화|화재가\s*시작|연소\s*패턴|집중\s*소훼|소훼·탄화\s*강도|발화\s*부위"
+NEG = r"식별되지\s*않|발견되지\s*않|발견할\s*수\s*없|관찰되지\s*않|특이점은?\s*인지하지"
+OBJECT = [  # 구체적인 것부터. 같은 문장에 둘이면 앞이 이긴다
+    # 접속단자·단자대는 양극이 나란한 절연 표면이라 트래킹의 자리다 — "1·2차접속단자나 몰드케이스의
+    # 절연체에 먼지 또는 습기에 의한 트래킹" (p.201). 꼬임·결선은 한 극의 이음이라 다르다.
+    ("단자",          r"접속단자|단자대|단자함|터미널|접속핀|연결\s*볼트|단자\s*(부|접속)"),
+    ("접속부",        r"접속부|결선|꼬임|비틀림\s*접속|압착\s*단자|커넥터|칼받이|칼날받이"),
+    ("기기 내부 절연부", r"차단기|분전반|배전반|분전함|기판|릴레이|제어기|버스바|부스바|전자개폐기|마그네트|인버터|장치\s*내부|기[기구]\s*내부"),
+    ("배선기구",      r"콘센트|플러그|스위치|멀티탭|소켓|리셉터클"),
+    ("권선·코일",     r"권선|코일|모터|컴프레서|압축기|안정기|트랜스|변압기"),
+    ("콘덴서",        r"콘덴서|캐패시터|커패시터"),
+    ("전선·코드",     r"전선|코드|케이블|열선|배선|전원선|인입선|리드선"),
+]
+
+
+def origin_object(case_id):
+    """(대상, 상태, 근거 문장). 관찰 전문이 없거나 특이점 문장이 없으면 미기재."""
+    f = next((x for x in OBS.glob("*.txt") if x.stem.upper() == case_id.upper()), None)
+    if not f:
+        return None, "Missing", ""
+    text = f.read_text(encoding="utf-8")
+    sents = [x.strip() for x in re.split(r"[.\n]", text)
+             if re.search(SIGN, x) and not re.search(NEG, x)]
+    if not sents:
+        sents = [x.strip() for x in re.split(r"[.]|" + chr(10), text) if re.search(ORIGIN, x)]
+    if not sents:
+        if re.search(UNVERIFIABLE, text):
+            return None, "Unverifiable", ""
+        return None, "Missing", ""
+    votes = collections.Counter()
+    src = {}
+    for x in sents:
+        for name, pat in OBJECT:
+            if re.search(pat, x):
+                votes[name] += 1
+                src.setdefault(name, x)
+                break
+    if not votes:
+        return None, "Missing", sents[0]
+    best = max(votes, key=lambda n: (votes[n], -[o[0] for o in OBJECT].index(n)))
+    return best, "Confirmed", src[best]
+
+
 def load():
     wb = openpyxl.load_workbook(XLSX, data_only=True)
     rows = list(wb["Sheet1"].iter_rows(values_only=True))
@@ -213,12 +264,23 @@ def build():
                 (fuels if s == "slot_surrounding_combustibles" else facts).append(
                     {"cls": cls, "status": st, "agent": "InvestigatorAgent",
                      "slot": s, "src": v})
+        obj, ost, osrc = origin_object(str(rec["case_id"]))
+        # 기기 안의 오염이 트래킹의 자리다 (실무Ⅳ p.147·149). 슬롯 하나 안에서만
+        # 읽던 결합을 대상 슬롯과 환경 슬롯 사이로 넓힌다. 근거 두 문장을 함께 남긴다.
+        if obj in ("기기 내부 절연부", "단자") and not any(f["cls"] == "InterPoleInsulatingSurface" for f in facts):
+            env = next((f for f in facts if f["cls"] in ("MoistureExposure", "DustAccumulation")
+                        and f["status"] == "Confirmed"), None)
+            if env:
+                facts.append({"cls": "InterPoleInsulatingSurface", "status": "Confirmed",
+                              "agent": "InvestigatorAgent", "slot": "slot_origin_object",
+                              "src": f"{osrc} / {env['src']}"})
         sessions.append({
             "case_id": str(rec["case_id"]),
             "actual_scenario": LABEL[str(rec["gt_label"])],
+            "origin_object": {"value": obj, "status": ost, "src": osrc},
             "facts": facts,
             "fuels": fuels,
-            "query_count": sum(1 for s in slots if str(rec.get(s) or "").strip()),
+            "query_count": sum(1 for s in slots if str(rec.get(s) or "").strip()) + (1 if obj else 0),
         })
     return sessions, cov, tot, miss
 
