@@ -3284,12 +3284,21 @@ efi:FlickeringOrOdor efi:enables efi:IntermittentContactSeparation .
 #    인가되어야 할 예열선에 릴레이 접점 융착으로 상시 전원이 공급됐다.
 efi:ContactWelding a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
     rdfs:label "접점 융착"@ko ; skos:prefLabel "접점 융착"@ko ;
-    rdfs:comment "접촉·분리 시의 아크로 접점이 변형·융착된 상태. 끊겨야 할 회로가 계속 통전되어 의도치 않은 발열로 이어진다 (실무Ⅴ p.238, 실무Ⅳ p.211)"@ko .
+    rdfs:comment "접촉·분리 시의 아크로 접점이 변형·융착된 상태. 끊겨야 할 회로가 계속 통전되어 의도치 않은 발열로 이어진다 (실무Ⅴ p.238, 실무Ⅳ p.211). 화재 열만으로도 융착된다 — 통전 없이 목재 화재에 노출된 접점·바이메탈 서모스탯·차단기 접점이 융착했다(Babrauskas, Ignition Handbook p.762, Béland). 외부 화재 융착은 부품의 심한 소손으로 가른다"@ko .
 efi:ProtectiveDevice efi:exhibits efi:ContactWelding .
 efi:ConnectionPoint efi:exhibits efi:ContactWelding .
 efi:IntermittentContactSeparation efi:producesDamage efi:ContactWelding .
 efi:PoorContactScenario efi:canManifest efi:ContactWelding .
-efi:R_PC_sup8  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:ContactWelding ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+# 접점 융착은 접촉불량 전용 단서가 아니다 — 일곱 번째 형태 편향.
+#   Babrauskas p.762 (Béland): "exposing contacts to an ongoing wood fire, without electric
+#   current flowing, is often sufficient to weld contacts together ... some bimetallic
+#   thermostats ... can respond in a fire environment by welding of their contacts. Similarly,
+#   circuit breaker contacts can become welded due to an external fire exposure."
+# 실무Ⅴ p.238 은 '아크가 융착시킨다'이지 '화재는 못 시킨다'가 아니었다. 사례 150건에 접점
+# 융착 관측은 0건이라 정확도는 안 움직인다. 화재 융착과 가르는 기준은 부품 소손 정도다.
+efi:ExternalFlameExposure efi:producesDamage efi:ContactWelding .
+efi:ExternalFlameScenario efi:canManifest efi:ContactWelding .
+efi:R_PC_sup8  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:ContactWelding ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 
 # ── 46.2 [C-56] 연소 중심과 이격된 단락흔은 발화원으로 삼지 않는다 (실무Ⅴ p.232)
 #   "엔진 상단에 배선된 일부 전선에서 단락흔이 식별되나, 이는 연소 중심과
