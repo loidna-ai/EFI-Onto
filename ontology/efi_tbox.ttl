@@ -2520,10 +2520,17 @@ efi:MisdrivenStaple rdfs:subClassOf efi:StressConcentrationPoint .
 # 기계적 피복 손상의 한 갈래인데 통째로 빠져 있었다. 이빨흔적이라는 전용 표지가 있다.
 efi:RodentGnawing a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; rdfs:label "쥐 갉음"@ko ; skos:prefLabel "쥐 갉음"@ko ; rdfs:comment "설치류가 피복을 갉아 도체가 드러나 단락에 이른다. 잔존 피복의 이빨흔적과 동물의 존재로 확인한다 (실무Ⅳ p.253)"@ko .
 efi:ToothMarkOnInsulation a owl:Class ; rdfs:subClassOf efi:DamagePattern ; rdfs:label "피복 이빨흔적"@ko ; skos:prefLabel "피복 이빨흔적"@ko ; rdfs:comment "잔존 코드 피복에 남은 설치류의 이빨 자국 (실무Ⅳ p.253)"@ko .
-efi:RodentGnawing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
+# 갉음은 단락(기계적 손상)만 만들지 않는다. 소선을 일부만 끊으면 반단선이다.
+#   p.286 "히터선(40W)을 쥐가 갉아서 반단선이 되어 있는데 이를 알지 못하고 냉방운전을
+#          하여 줄열에 의해 발열하여 배선피복에 착화하여 출화한 경우.
+#          관찰 및 조사포인트 (1) 쥐 등의 존재상황 (2) 쥐똥이나 갉은 흔적여부"
+# 실무Ⅳ 목차 대조(silmu.py 3.3.6 나5)에서 나왔다. 사례 150건에 쥐는 0건이라 정확도는 안 움직인다.
+efi:RodentGnawing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc , efi:PartialDisconnectionHeating .
 efi:Insulation efi:exhibits efi:ToothMarkOnInsulation .
 efi:CrushInducedArc efi:producesDamage efi:ToothMarkOnInsulation .
+efi:PartialDisconnectionHeating efi:producesDamage efi:ToothMarkOnInsulation .
 efi:CrushDamageScenario efi:canManifest efi:ToothMarkOnInsulation .
+efi:PartialDisconnectionScenario efi:canManifest efi:ToothMarkOnInsulation .
 
 # ── 34.5 바닥 깔림에 의한 방열 저해 (p.245·253)
 #   "코드가 카펫의 아래를 통과하여 사용되고 있으면 코드자체의 방열효과가
@@ -2531,8 +2538,10 @@ efi:CrushDamageScenario efi:canManifest efi:ToothMarkOnInsulation .
 efi:CoveredByFloorCovering a owl:Class ; rdfs:subClassOf efi:HeatDissipationImpairment ; rdfs:label "바닥재·카펫 밑 통과"@ko ; skos:prefLabel "바닥재·카펫 밑 통과"@ko ; rdfs:comment "코드가 카펫·매트 아래를 지나면 방열이 막혀 과열한다. 눌림(압착)과는 다른 경로다 — 도체가 상하지 않아도 발열한다 (실무Ⅳ p.245·253)"@ko .
 
 # ── 34.6 지표 규칙 — 국내 실무 층이므로 조항을 붙이지 않는다
-efi:R_CD_sup4  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
-efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_CD_sup4  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PD_sup11 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_PD_sup12 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 
 ########################################################################
 # 35. 원인 축 편향 교정 — scripts/cause_audit.py 가 잡은 다섯 건
