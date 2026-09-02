@@ -938,7 +938,9 @@ efi:ImmediateTripAfterExternalForce efi:attests efi:ExternalCrushing .
 efi:FlexingHistoryWithStrandFracture efi:attests efi:RepeatedFlexing , efi:LongTermRepeatedStress .
 efi:BreakerTripRecord efi:attests efi:EnergizedState .
 efi:MultipleArcBeadsAtOrigin efi:attests efi:EnergizedState .
-efi:NoArcOrSpatter efi:attests efi:DeEnergizedState .
+# 아크·스패터 부재는 비통전을 입증하지 않는다 — 통전 회로도 화재가 닿기 전에 끊기면 아크 없이 탄다.
+# 부재는 외부화염의 핵심 단서(R_EF_core)로만 쓰고 통전 상태는 직접 확인(서식 E)으로만 받는다.
+# 비통전은 결정적 반증(R_ANY_DeEnergized, -100)이라 부재에서 도출하면 위험하다 (P4).
 
 # [M-3] 가설의 형태 발현을 메커니즘에서 유도해 대조한다.
 #  선언된 canManifest 와 메커니즘의 producesDamage 가 어긋나면 근거 없는 선언이다.
@@ -2710,6 +2712,9 @@ efi:FlickeringOrOdor efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc
 # 누전차단기 간헐 동작은 누설전류가 있으면 일어난다. 트래킹만의 것이 아니다.
 #   "전선 또는 전기기계기구의 절연부분이 기계적 손상이나 변질(열화·노화·탄화)되어
 #    그 절연효력을 상실하게 되면 ... 대지로 누설되는 현상을 누전이라 한다" (p.155)
+# 발열 이름이 '아크'인 이유 — 절연열화 가설의 선언 메커니즘은 절연 파괴 아크 하나뿐이다.
+# 누설이 반복되는 자리는 열화로 절연이 무너진 자리이고, 그 자리가 결국 파괴 아크로 간다.
+# 누설전류 발열(LeakageCurrentHeating)은 트래킹 전용 정의라 여기로 잇지 않는다.
 efi:IntermittentRcdTripping efi:enables efi:InsulationBreakdownArc .
 
 # 반복 굴곡은 반단선만 만들지 않는다. 공식 분류표가 굽힘을 두 자리에 적는다.
@@ -3239,10 +3244,9 @@ efi:ExternalFlameScenario efi:canManifest efi:UniformDamageAlongConductor .
 #   열흔        통전 없음. 연소열로 용융한 것. 눈물모양으로 처져 있고 광택이 없다.
 ########################################################################
 
-# ── 45.1 열흔은 비통전 상태의 산물이다
-# 표 4-9 의 '통전' 칸이 1차·2차는 '있음', 열흔은 '없음'이다.
-# 열흔이 확인되면 그 지점은 화재 당시 비통전이었다는 뜻이다.
-efi:FireMeltMark efi:attests efi:DeEnergizedState .
+# ── 45.1 열흔은 통전 없이 생긴 흔적이다 — 그러나 회로가 비통전이었다는 증거는 아니다
+# 표 4-9 의 '통전' 칸은 흔적의 성인(成因)이지 회로 상태의 판정이 아니다. 통전 중인 도체도
+# 화재열로 녹으면 열흔이 남는다. 열흔 → 비통전(결정적 반증)으로 잇지 않는다 (P4).
 
 # ── 45.2 [C-55] 광택이 없다고 1차 단락흔이 아니라고 할 수 없다
 #   "※ 단락흔은 연소열로 가열되면 이 특징이 없어지는 경우가 있다" (표 4-9)
