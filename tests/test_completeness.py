@@ -18,7 +18,8 @@ EFI = Namespace("https://w3id.org/efi-onto#")
 q = lambda u: str(u).split("#")[-1]
 
 SCENARIOS = ["PoorContactScenario", "CrushDamageScenario", "PartialDisconnectionScenario",
-             "InsulationDegradationScenario", "TrackingScenario", "ExternalFlameScenario"]
+             "InsulationDegradationScenario", "TrackingScenario", "ExternalFlameScenario",
+             "OverloadScenario", "GroundFaultScenario", "InterTurnShortScenario"]
 
 # 왼쪽이 현재 허용 한계, 오른쪽이 도달 목표.
 BASELINE = {}

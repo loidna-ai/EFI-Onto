@@ -49,8 +49,8 @@ SECTIONS = [
      "라.콘덴서 5) 관찰 포인트만 판정에 쓴다(p.145~146). 나머지는 부품 이론. 하위 절 참조"),
     ("1.7", 148, "절연물 표면 도체 부착·도체로의 변질", DONE,
      "트래킹·반단선·아산화동 셋이 5대 요인의 핵심 절. 하위 절 참조"),
-    ("1.8", 156, "지락·누전 및 고압부 누설방전", PART,
-     "가.지락·누전은 LeakageCurrentHeating·GroundFaultProtectiveDevice. 나.고압부는 범위밖"),
+    ("1.8", 156, "지락·누전 및 고압부 누설방전", DONE,
+     "가.지락·누전은 GroundFaultScenario(GroundFaultHeating·GroundPath, 48.2절). 나.고압부는 범위밖"),
     ("1.9", 157, "정전기 방전에 의한 발화", OUT, "5대 요인 밖. §9.14 와 같은 판정"),
     ("1.10", 166, "뇌(雷)", OUT, "자연 요인. 표 2-1 에서도 별도 항목"),
     # ── 제2장 전기화재 감식 ──────────────────────────────────────────────────
@@ -160,7 +160,8 @@ SUBSECTIONS = [
      "DendriticTreePath 로 전기 트리만. 보이드 어휘 없음. 고압 설비라 5대 요인 밖"),
     ("1.7", "바", "은 이동", OUT, "직류기기 현상. domestic.py 와 같은 판정"),
     # 1.8
-    ("1.8", "가", "지락과 누전의 차이", DONE, "LeakageCurrentHeating. 지락/누전은 용어 차이라 한 클래스로 둔다"),
+    ("1.8", "가", "지락과 누전의 차이", DONE,
+     "GroundFaultScenario 하나로 둔다 — 지락/누전은 용어 차이. 트래킹의 LeakageCurrentHeating(절연물 표면)과 다른 자리(전로→대지)라 GroundFaultHeating 을 따로 둔다"),
     ("1.8", "나", "고압부 누설방전 · 수 트리", OUT,
      "고압 트랜스·네온. 수 트리는 DendriticTreePath 어휘만 있고 CV케이블 고압이라 판정에 쓰지 않는다"),
     # 2.1
@@ -188,11 +189,11 @@ SUBSECTIONS = [
     ("2.2", "사4②", "스위치 접점 용착", DONE, "ContactWelding. 용착 → 전원 차단 기능 상실 → 히터 과열은 고장(범위밖)"),
     ("2.2", "사4③", "퓨즈 4형태 — 단락·과부하·접촉불량·외부화염", DONE,
      "FuseGloballyMeltedScattered·FuseMeltedAtCenter·FuseEndsDarkened(R_PC_sup4)·FuseIrregularlyMelted(R_EF_sup4). "
-     "단락·과부하 형은 가설이 아니라 어휘만. 온도퓨즈는 범위밖"),
+     "과부하 형은 OverloadScenario 의 단서(R_OL_sup3). 단락 형은 어휘만. 온도퓨즈는 범위밖"),
     ("2.2", "사4④", "반도체", OUT, "부품 내부 파괴. domestic.py 와 같은 판정"),
     ("2.2", "사4⑤", "콘덴서 — 소자 중심부 소손이면 자체 출화", DONE, "InternalDamageExceedingSurface"),
-    ("2.2", "사4⑥", "코일 — 층간단락·과부하운전·고주파", PART,
-     "InterTurnShortCircuit·WindingSite. 과부하운전은 OverloadState 확장 슬롯, 고조파는 범위밖"),
+    ("2.2", "사4⑥", "코일 — 층간단락·과부하운전·고주파", DONE,
+     "InterTurnShortScenario(48.3절)·WindingSite. 과부하운전은 OverloadState → InterTurnShortCircuit(R_IT_sup5). 고조파는 범위밖"),
     ("2.2", "사4⑦㉮", "코드에만 용흔·부품 무이상 → 코드 단락", PART,
      "SupplyPathCoverageShape 가 부하측 검사 범위를 요구한다. '다른 데 없으니 코드'는 C-2 소거법 경계라 규칙으로 두지 않는다"),
     ("2.2", "사4⑦㉯", "여러 개소 용흔 → 가장 부하측이 화원", DONE, "FurthestDownstreamRuleShape(D-5)"),
@@ -301,10 +302,12 @@ SUBSECTIONS = [
     ("3.3.5", "다2마", "시스히터 과밀 권선·과전압 과열", OUT, "제조 결함·과전압"),
     ("3.3.5", "라", "토스터 — 통전 방치·접점 용착·승강기구 고장", OUT, "사용방법·고장 갈래. 접점 용착만 ContactWelding"),
     # 3.3.6
-    ("3.3.6", "나1", "컴프레서 모터 층간단락 — 환경 부적격·덕트 과부하운전·제조", PART, "층간단락은 구현. 과부하운전은 OverloadState 확장 슬롯"),
-    ("3.3.6", "나2", "배수모터 층간단락 — 먼지 퇴적 과부하", PART, "같다"),
-    ("3.3.6", "나3", "전원선 프레임 지락 → 누전차단기 강제 재투입 → 발열 → 단락", PART,
-     "AbrasionAtPenetration 은 구현. 누전차단기 작동 여부·고장검사·프레임 용흔·접지저항은 BreakerTripRecord·CorrespondingDamageArea 어휘만"),
+    ("3.3.6", "나1", "컴프레서 모터 층간단락 — 환경 부적격·덕트 과부하운전·제조", DONE,
+     "InterTurnShortScenario. 과부하운전 → 층간단락은 R_IT_sup5(OverloadState), 권선 층간 용흔은 InterTurnArcMarkOnWinding"),
+    ("3.3.6", "나2", "배수모터 층간단락 — 먼지 퇴적 과부하", DONE, "같다"),
+    ("3.3.6", "나3", "전원선 프레임 지락 → 누전차단기 강제 재투입 → 발열 → 단락", DONE,
+     "GroundFaultScenario(48.2절). 감식 포인트 다섯이 규칙이다 — 누전차단기 작동(R_GF_sup3)·고장검사 정상+미동작(RcdHealthyNoTrip 반증)·"
+     "프레임 용흔(MeltMarkOnGroundedMetal)·접지저항(LowGroundResistanceAtFaultPath). 연소방향성은 발화 지점 절차라 범위밖"),
     ("3.3.6", "나4", "전원선 진동 프레임 접촉 단락 · 가장 부하측 용흔 2차측 무이상 · 금속 개입 단락은 차단기가 순간 작동 안 함", PART,
      "AbrasionAtPenetration+Vibration, D-5 는 구현. (3) '접촉저항이 커서 즉시 트립하지 않는다'가 옛 반증 규칙(트립 없음 → 압착 반증)과 "
      "정면으로 어긋나 그 규칙을 지우고 p.150 양측 용흔 반증(R_CD_ref3)으로 바꿨다. CANDIDATES ⑤"),

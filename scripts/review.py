@@ -13,6 +13,7 @@ k = lambda x: KO.get(x, x)
 SCEN = {'PoorContactScenario': '접촉불량', 'CrushDamageScenario': '압착손상',
         'PartialDisconnectionScenario': '반단선', 'InsulationDegradationScenario': '절연열화',
         'TrackingScenario': '트래킹', 'ExternalFlameScenario': '외부화염',
+        'OverloadScenario': '과부하·과전류', 'GroundFaultScenario': '누전·지락', 'InterTurnShortScenario': '층간단락',
         'ElectricalIgnitionScenario': '전기적 발화 공통'}
 ROLE = {'Core': '핵심', 'Supporting': '보강', 'Refuting': '반증', 'DecisiveRefuting': '결정적 반증'}
 

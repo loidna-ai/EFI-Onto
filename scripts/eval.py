@@ -26,39 +26,29 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
 
-MECH = {
-    "PoorContactScenario": "PoorContactHeating",
-    "CrushDamageScenario": "CrushInducedArc",
-    "PartialDisconnectionScenario": "PartialDisconnectionHeating",
-    "InsulationDegradationScenario": "InsulationBreakdownArc",
-    "TrackingScenario": "ArcTracking",
-    "ExternalFlameScenario": "ExternalFlameExposure",
-}
 KO = {"PoorContactScenario": "접촉불량", "CrushDamageScenario": "압착손상",
       "PartialDisconnectionScenario": "반단선", "InsulationDegradationScenario": "절연열화",
       "TrackingScenario": "트래킹", "ExternalFlameScenario": "외부화염",
-      "Undetermined": "원인미상"}
+      "OverloadScenario": "과부하", "GroundFaultScenario": "누전지락", "InterTurnShortScenario": "층간단락",
+      "Undetermined": "원인미상", "UnidentifiedShortCircuit": "미확인단락"}
+
+
+HELD = {"Undetermined", "UnidentifiedShortCircuit"}     # 판단보류 둘. 둘 다 오답으로 센다
 
 
 def predict(sess, onto):
-    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, DEFAULT_MECHANISM
     s = Session(
         case_id=sess["case_id"],
         query_count=sess["query_count"],
         hypotheses=[Hypothesis(scenario=Scenario(k), mechanism=Mechanism(v))
-                    for k, v in MECH.items()],
+                    for k, v in DEFAULT_MECHANISM.items()],
         facts=[Fact(cls=f["cls"], status=Status(f["status"]), agent=Agent(f["agent"]))
                for f in sess["facts"]],
     )
     s.apply(onto)
-    live = [h for h in s.hypotheses if h.verdict.value != "Refuted"]
-    if not live:
-        return "Undetermined", s
-    top = max(h.support_score for h in live)
-    best = [h for h in live if h.support_score == top]
-    if len(best) > 1:
-        return "Undetermined", s          # §19.6.5.1 둘 이상 남으면 원인미상
-    return best[0].scenario.value, s
+    # 가설 하나, 원인미상(§19.6.5.1), 또는 미확인 단락(원인미상 + 단락흔 + 통전). Session.outcome 이 정한다
+    return s.outcome(onto), s
 
 
 def main():
@@ -68,7 +58,8 @@ def main():
 
     conf = collections.Counter()
     per = collections.defaultdict(lambda: [0, 0])       # 실제 → [맞음, 전체]
-    undet = collections.Counter()
+    undet = collections.Counter()                       # 판단보류 전체 (원인미상 + 미확인 단락)
+    unid = collections.Counter()                        # 그중 미확인 단락 (단락흔 + 통전)
     ties = []
     for sess in sessions:
         pred, s = predict(sess, onto)
@@ -77,7 +68,9 @@ def main():
         per[act][1] += 1
         if pred == act:
             per[act][0] += 1
-        if pred == "Undetermined":
+        if pred == "UnidentifiedShortCircuit":
+            unid[act] += 1
+        if pred in HELD:
             undet[act] += 1
             live = [h for h in s.hypotheses if h.verdict.value != "Refuted"]
             top = max((h.support_score for h in live), default=0)
@@ -99,7 +92,8 @@ def main():
     nd = sum(undet.values())
     print(f"사례 {n}건\n")
     print(f"  정확  {ok:3d}건  {ok / n * 100:5.1f}%")
-    print(f"  원인미상 {nd:3d}건  {nd / n * 100:5.1f}%   (동점 또는 전부 기각)")
+    nu = sum(unid.values())
+    print(f"  판단보류 {nd:3d}건  {nd / n * 100:5.1f}%   (동점 또는 전부 기각) — 그중 미확인 단락 {nu}건, 원인미상 {nd - nu}건")
     print(f"  오판  {n - ok - nd:3d}건  {(n - ok - nd) / n * 100:5.1f}%")
     ans = n - nd
     print(f"\n  답한 것 중 정확  {ok:3d}/{ans}  {ok / ans * 100:5.1f}%   (판단보류 제외)")
@@ -113,15 +107,15 @@ def main():
         print(f"{KO[a]:8s} {t:4d} {c:4d} {undet[a]:4d} {c / t * 100:6.1f}% {cl / t * 100:6.1f}% {(cl - c) / t * 100:7.1f}%p")
 
     print("\n혼동 행렬  (행=실제, 열=판정)")
-    labels = sorted({a for a, _ in conf} | {p for _, p in conf if p != "Undetermined"})
-    print(f"{'':10s}" + "".join(f"{KO[l][:6]:>7s}" for l in labels) + f"{'미상':>7s}")
+    labels = sorted({a for a, _ in conf} | {p for _, p in conf if p not in HELD})
+    print(f"{'':10s}" + "".join(f"{KO[l][:6]:>7s}" for l in labels) + f"{'미확인':>7s}{'미상':>7s}")
     for a in labels:
         row = "".join(f"{conf.get((a, p), 0):7d}" for p in labels)
-        print(f"{KO[a]:10s}{row}{undet.get(a, 0):7d}")
+        print(f"{KO[a]:10s}{row}{unid.get(a, 0):7d}{undet.get(a, 0) - unid.get(a, 0):7d}")
 
     # 기준선을 파일로 남긴다. 못 박아 두지 않으면 나중에 무엇 때문에 올랐는지
     # 말할 수 없다. 사건 정보는 담지 않고 집계만 남긴다.
-    base = {"cases": n, "correct": ok, "undetermined": nd, "wrong": n - ok - nd,
+    base = {"cases": n, "correct": ok, "undetermined": nd, "unidentified_short": nu, "wrong": n - ok - nd,
             "accuracy": round(ok / n, 4),
             "accuracy_when_answered": round(ok / ans, 4),
             "ceiling": round(cn / n, 4),

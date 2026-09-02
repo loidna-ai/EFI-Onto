@@ -25,7 +25,7 @@ cases/
 | `facts[].cls` | 아래 어휘 중 하나 |
 | `facts[].status` | `Confirmed` 확인 / `ConfirmedAbsent` 부재 확인 / `Unverifiable` 확인 불가 / `Missing` 미확인 |
 | `facts[].agent` | `InvestigatorAgent` 조사관 / `Instrument` 계측기 / `AIAgent` 판독 |
-| `hypotheses[]` | 검토한 가설 (없으면 6개 전부로 시작) |
+| `hypotheses[]` | 검토한 가설 (없으면 9개 전부로 시작) |
 | `query_count` | 확인 질의 횟수. 모르면 실제 확인 항목 수로 |
 
 **`status` 를 뭉개지 말 것.** 확인 불가와 미확인을 같은 칸에 넣으면 이 온톨로지의
@@ -36,7 +36,7 @@ cases/
 
 | 항목 | 설명 |
 |---|---|
-| `actual_scenario` | 그 사례의 실제 판정 (6개 가설 중 하나, 또는 `Undetermined`) |
+| `actual_scenario` | 그 사례의 실제 판정 (9개 가설 중 하나, 또는 `Undetermined`) |
 
 ### 비교군 — "조사관보다 낫다"를 말하려면 필요하다
 
@@ -62,10 +62,15 @@ python -c "import sys;sys.path.insert(0,'src');import efi_schema as E;[print(m.v
 | 현장 사실 `SceneEvidence` | 9 | `ImmediateTripAfterExternalForce`, `NoArcOrSpatter` |
 | 착화물 `Fuel` | 6 | `InsulationMaterialFuel`, `PaperTextileFuel` |
 
-가설은 여섯이다.
+가설은 아홉이다. 앞의 다섯이 사례 라벨에 있는 5대 요인이고, 뒤의 셋은 화재조사 보고규정의
+나머지 전기적 요인이다(라벨 0건 — 온톨로지는 갖되 사례로는 아직 못 잰다).
 `PoorContactScenario` 접촉불량 · `CrushDamageScenario` 압착손상 ·
 `PartialDisconnectionScenario` 반단선 · `InsulationDegradationScenario` 절연열화 ·
-`TrackingScenario` 트래킹 · `ExternalFlameScenario` 외부화염
+`TrackingScenario` 트래킹 · `ExternalFlameScenario` 외부화염 ·
+`OverloadScenario` 과부하·과전류 · `GroundFaultScenario` 누전·지락 · `InterTurnShortScenario` 층간단락
+
+판정은 가설 하나이거나 판단보류다. 판단보류는 둘로 갈린다 — 단락흔이 확인됐고 비통전이
+아니면 **미확인 단락**(국내 분류, D-14), 아니면 **원인미상**. `scripts/eval.py` 가 둘 다 오답으로 센다.
 
 **조사서 표현이 이 어휘에 없으면 억지로 끼워 맞추지 말고 그대로 두라.**
 매핑되지 않는 표현이 무엇인지가 어휘의 빈 곳을 알려준다.

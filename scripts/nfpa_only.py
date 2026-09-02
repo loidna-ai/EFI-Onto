@@ -23,10 +23,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 TTL = (ROOT / "ontology" / "efi_tbox.ttl").read_text(encoding="utf-8")
 
-MECH = {"PoorContactScenario": "PoorContactHeating", "CrushDamageScenario": "CrushInducedArc",
-        "PartialDisconnectionScenario": "PartialDisconnectionHeating",
-        "InsulationDegradationScenario": "InsulationBreakdownArc",
-        "TrackingScenario": "ArcTracking", "ExternalFlameScenario": "ExternalFlameExposure"}
+from efi_schema import DEFAULT_MECHANISM as MECH  # 가설 → 정의 메커니즘. 한 곳에서만 든다
 
 
 def abox(sess):

@@ -16,6 +16,7 @@ SCEN = {
     "PoorContactScenario": "접촉불량", "CrushDamageScenario": "압착손상",
     "PartialDisconnectionScenario": "반단선", "InsulationDegradationScenario": "절연열화",
     "TrackingScenario": "트래킹", "ExternalFlameScenario": "외부화염",
+    "OverloadScenario": "과부하", "GroundFaultScenario": "누전지락", "InterTurnShortScenario": "층간단락",
     "ElectricalIgnitionScenario": "전기적 발화(상위)",
 }
 ROLE = {"CoreIndicator": ("핵심", "core"), "SupportingIndicator": ("보강", "sup"),
@@ -93,8 +94,8 @@ for r in D['rules']:
     for s in r['sc']:
         by_sc.setdefault(s, []).append(r)
 order = ["PoorContactScenario", "CrushDamageScenario", "PartialDisconnectionScenario",
-         "InsulationDegradationScenario", "TrackingScenario", "ExternalFlameScenario",
-         "ElectricalIgnitionScenario"]
+         "InsulationDegradationScenario", "TrackingScenario", "OverloadScenario", "GroundFaultScenario",
+         "InterTurnShortScenario", "ExternalFlameScenario", "ElectricalIgnitionScenario"]
 rule_html = ''
 for s in order:
     rs = by_sc.get(s, [])
@@ -138,7 +139,8 @@ morph_cells = ''.join(
 
 prof_rows = ''
 for scn in ["PoorContactScenario","CrushDamageScenario","PartialDisconnectionScenario",
-            "InsulationDegradationScenario","TrackingScenario","ExternalFlameScenario"]:
+            "InsulationDegradationScenario","TrackingScenario","OverloadScenario","GroundFaultScenario",
+            "InterTurnShortScenario","ExternalFlameScenario"]:
     ds = MAN.get(scn, [])
     cells = ''.join(
         f'<span class="chip {"c-shared" if SHARED.get(d,1)>1 else "c-excl"}">{esc(kko(d))}</span>'

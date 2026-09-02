@@ -30,7 +30,8 @@ import score
 
 KO = {"PoorContactScenario": "접촉불량", "CrushDamageScenario": "기계손상",
       "PartialDisconnectionScenario": "반단선", "InsulationDegradationScenario": "절연열화",
-      "TrackingScenario": "트래킹", "ExternalFlameScenario": "외부화염"}
+      "TrackingScenario": "트래킹", "ExternalFlameScenario": "외부화염",
+      "OverloadScenario": "과부하", "GroundFaultScenario": "누전지락", "InterTurnShortScenario": "층간단락"}
 
 
 def empirical(onto, sessions):

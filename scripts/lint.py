@@ -133,8 +133,10 @@ def checks(g):
     #   CorrespondingDamageArea — hasCorrespondingDamage 로 붙는다
     #   BurnPattern — 발화 지점 특정용. 그 절차는 범위 밖(설계계획서 1.1)
     #   NoArcOrSpatter — 외부화염의 핵심 단서(R_EF_core)로 직접 붙는다. 비통전을 증언하지는 않는다
+    #   RcdHealthyNoTrip — 지락의 반증 단서(R_GF_ref2). 부재 증거라 아무 조건도 증언하지 않는다
     NOT_EVIDENCE = {"GroundingElectrodeDisconnection", "NickedOrStretchedConductor",
-                    "UndersizedConductorFuel", "CorrespondingDamageArea", "BurnPattern", "NoArcOrSpatter"}
+                    "UndersizedConductorFuel", "CorrespondingDamageArea", "BurnPattern", "NoArcOrSpatter",
+                    "RcdHealthyNoTrip"}
     out.append(("아무것도 증언하지 않는 현장 사실",
                 sorted(s for s in scene if not _abstract(g, s) and s not in NOT_EVIDENCE
                        and not _linked(g, s, attests, 0)),

@@ -98,7 +98,7 @@ const AXN={mech:'발열 메커니즘',evid:'물리 증거물',ante:'선행 조�
  shared:'여러 가설에 공통',excl:'한 가설에만 나타남'};
 const SCK={PoorContactScenario:'접촉불량',CrushDamageScenario:'압착손상',
  PartialDisconnectionScenario:'반단선',InsulationDegradationScenario:'절연열화',
- TrackingScenario:'트래킹',ExternalFlameScenario:'외부화염',
+ TrackingScenario:'트래킹',ExternalFlameScenario:'외부화염',OverloadScenario:'과부하',GroundFaultScenario:'누전지락',InterTurnShortScenario:'층간단락',
  ElectricalIgnitionScenario:'전기적 발화 공통'};
 const ROLEC={Core:'core',Supporting:'sup',Refuting:'ref',DecisiveRefuting:'dec'};
 const ROLEN={Core:'핵심 단서',Supporting:'보강 단서',Refuting:'반증 단서',DecisiveRefuting:'결정적 반증'};
@@ -108,7 +108,7 @@ const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAt
 /* ---------- view 0 : 가설 ↔ 증거 ---------- */
 function buildEvidence(){
   const order=['PoorContactScenario','CrushDamageScenario','PartialDisconnectionScenario',
-   'InsulationDegradationScenario','TrackingScenario','ExternalFlameScenario','ElectricalIgnitionScenario'];
+   'InsulationDegradationScenario','TrackingScenario','OverloadScenario','GroundFaultScenario','InterTurnShortScenario','ExternalFlameScenario','ElectricalIgnitionScenario'];
   const rules=D.rules.filter(r=>order.includes(r.s));
   const N=[],L=[];
   const SX=0, GAP=132, TOP=70;
@@ -136,7 +136,7 @@ function buildEvidence(){
 /* ---------- view 0b : 형태학적 중첩 ---------- */
 function buildMorph(){
   const SC=['PoorContactScenario','CrushDamageScenario','PartialDisconnectionScenario',
-   'InsulationDegradationScenario','TrackingScenario','ExternalFlameScenario'];
+   'InsulationDegradationScenario','TrackingScenario','OverloadScenario','GroundFaultScenario','InterTurnShortScenario','ExternalFlameScenario'];
   const man={};D.manifest.forEach(m=>{(man[m.s]=man[m.s]||new Set()).add(m.t);});
   const N=[],L=[],P={};
   const R=300;

@@ -236,7 +236,7 @@ def test_case_a_scores():
     # 됐지만(습기는 절연열화로도, 염해는 접촉불량으로도 간다), 관측이 '습기'로
     # 구체적이면 그만큼 좁혀진 것이라 9 를 쓴다. 상위 규칙은 세지 않는다 —
     # 같은 관측을 두 해상도로 두 번 세는 것이기 때문이다.
-    assert score("hT") == 65, "트래킹 65점 (습기 9 + 탄화 도전로 6)"
+    assert score("hT") == 65, "트래킹 65점 (습기 8 + 탄화 도전로 7 — 가설 9개 기준 유도값)"
     assert score("hP") == 50, "접촉불량은 헐거움 부재에도 기각되지 않고 50점"
 
 
@@ -509,12 +509,19 @@ def test_source_and_fuel_alone_are_not_a_cause():
 def test_two_surviving_hypotheses_are_undetermined():
     """D-8 — 둘 이상이 기각되지 않아도 원인미상이다 (§19.6.5.1).
     모두 기각된 경우만 잡던 D-7 의 반대편이다."""
-    gr = run("""
+    base = """
     efi:sQ a efi:InvestigationSession ; efi:queryCount 2 .
     efi:hQ1 a efi:TrackingScenario ; efi:inSession efi:sQ ; efi:supportScore 65 .
     efi:hQ2 a efi:PoorContactScenario ; efi:inSession efi:sQ ; efi:supportScore 65 .
-    """)
+    efi:q1 a efi:MoistureExposure ; efi:confirmationStatus efi:Confirmed .
+    efi:q2 a efi:LooseConnection ; efi:confirmationStatus efi:Confirmed .
+    """
+    gr = run(base + "efi:sQ efi:hasFact efi:q1 , efi:q2 .")
     assert list(gr.objects(EFI.sQ, EFI.outcomeUndetermined)), "원인미상 판정이 도출되지 않았다"
+    # D-15 — 접촉 상태가 자료에 없으면 접촉불량은 세워진 가설이 아니라 동점을 만들지 못한다
+    gr = run(base + "efi:sQ efi:hasFact efi:q1 .")
+    assert not list(gr.objects(EFI.sQ, EFI.outcomeUndetermined)), "형성되지 않은 가설이 동점을 만들었다"
+    assert (EFI.hQ1, EFI.formed, None) in gr and (EFI.hQ2, EFI.formed, None) not in gr
 
 
 # ── §9.9.1.2 방열 저해 ───────────────────────────────────────────────────
@@ -956,10 +963,11 @@ def test_tracking_site_is_derived_in_both_engines(onto):
     대상만으로는 아무 점수도 없다 — 대상 어휘는 다섯 요인에 고루 나온다.
     """
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent
-    for facts, want in ((["DeviceInteriorSite", "MoistureExposure"], 50 + 9 + 15),
-                        (["TerminalSite", "DustAccumulation"], 50 + 9 + 15),
+    d = {r.id: r.delta for r in onto.rules}          # 가감점은 유도값이라 숫자를 박지 않는다
+    for facts, want in ((["DeviceInteriorSite", "MoistureExposure"], 50 + d["R_TR_sup4"] + d["R_TR_sup7"]),
+                        (["TerminalSite", "DustAccumulation"], 50 + d["R_TR_sup5"] + d["R_TR_sup7"]),
                         (["DeviceInteriorSite"], 50),
-                        (["CordMidspanSite", "MoistureExposure"], 50 + 9)):
+                        (["CordMidspanSite", "MoistureExposure"], 50 + d["R_TR_sup4"])):
         s = Session(case_id="d13", query_count=2,
                     hypotheses=[Hypothesis(scenario=Scenario.TRACKING, mechanism=Mechanism.ARC_TRACKING)],
                     facts=[Fact(cls=c, status=Status.CONFIRMED, agent=Agent.INVESTIGATOR) for c in facts])
@@ -968,3 +976,51 @@ def test_tracking_site_is_derived_in_both_engines(onto):
         gr = run(s.to_turtle(include_derived=False))
         h = next(gr.subjects(EFI.inSession, None))
         assert int(next(gr.objects(h, EFI.supportScore))) == want, f"SHACL {facts}"
+
+
+def test_formation_matches_in_both_engines(onto):
+    """D-15 — 가설 형성이 Python 과 SHACL 에서 같아야 한다.
+
+    노후 절연만 적힌 조사서에서 절연열화는 세워지고 누전·지락·층간단락은 세워지지
+    않는다 — 지락 경로도 권선도 자료에 없다. 외부화염은 제한이 없어 언제나 세워진다.
+    """
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, DEFAULT_MECHANISM
+    s = Session(case_id="F", query_count=2,
+                hypotheses=[Hypothesis(scenario=Scenario(k), mechanism=Mechanism(v)) for k, v in DEFAULT_MECHANISM.items()],
+                facts=[Fact(cls="AgedInsulation", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR),
+                       Fact(cls="ArcMeltMark", status=Status.CONFIRMED, agent=Agent.AI_VLM),
+                       Fact(cls="EnergizedState", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR)])
+    s.apply(onto)
+    py = {h.scenario.value: h.formed for h in s.hypotheses}
+    assert py["InsulationDegradationScenario"] and py["ExternalFlameScenario"]
+    assert not py["GroundFaultScenario"] and not py["InterTurnShortScenario"] and not py["OverloadScenario"]
+    assert s.outcome(onto) == "InsulationDegradationScenario"
+    gr = run(s.to_turtle(include_derived=False))
+    sh = {q(h).split("_", 1)[1]: (h, EFI.formed, None) in gr for h in gr.subjects(EFI.inSession, None)}
+    assert sh == py, f"Python {py} vs SHACL {sh}"
+
+
+def test_unidentified_short_circuit_matches_in_both_engines(onto):
+    """D-14 — 원인미상 + 단락흔 + 통전이면 미확인 단락. 두 엔진이 같아야 한다.
+
+    단락흔이 없으면 원인미상이고, 비통전이 확인됐으면 전기적 요인이 아니라 원인미상이다.
+    """
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, DEFAULT_MECHANISM
+    def sess(facts):
+        s = Session(case_id="U", query_count=2,
+                    hypotheses=[Hypothesis(scenario=Scenario(k), mechanism=Mechanism(v)) for k, v in DEFAULT_MECHANISM.items()],
+                    facts=[Fact(cls=c, status=Status.CONFIRMED, agent=Agent.INVESTIGATOR) for c in facts])
+        return s.apply(onto)
+    s = sess(["ArcMeltMark", "EnergizedState"])          # 세워지는 가설이 외부화염뿐, 지지 없음 → 판단보류, 단락흔 있음
+    assert s.outcome(onto) == "UnidentifiedShortCircuit"
+    gr = run(s.to_turtle(include_derived=False))
+    assert (EFI.session_U, EFI.outcomeUndetermined, None) in gr
+    assert (EFI.session_U, EFI.outcomeUnidentifiedShortCircuit, None) in gr
+    s = sess(["EnergizedState"])                         # 단락흔 없음 → 원인미상
+    assert s.outcome(onto) == "Undetermined"
+    gr = run(s.to_turtle(include_derived=False))
+    assert (EFI.session_U, EFI.outcomeUndetermined, None) in gr
+    assert (EFI.session_U, EFI.outcomeUnidentifiedShortCircuit, None) not in gr
+    s = sess(["ArcMeltMark", "DeEnergizedState"])        # 비통전 → 전기 요인 아님 → 원인미상
+    assert s.outcome(onto) == "Undetermined"
+    assert (EFI.session_U, EFI.outcomeUnidentifiedShortCircuit, None) not in run(s.to_turtle(include_derived=False))

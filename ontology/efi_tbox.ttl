@@ -80,7 +80,7 @@ efi:ResistiveHeating          a owl:Class ; rdfs:subClassOf efi:ElectricalHeatin
 efi:PoorContactHeating        a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "접촉불량 고저항 발열"@ko ; skos:altLabel "High-resistance connection heating"@en .
 efi:GlowingConnection         a owl:Class ; rdfs:subClassOf efi:PoorContactHeating ; skos:prefLabel "아산화동 증식 발열(글로잉)"@ko ; skos:altLabel "Glowing connection (Cu2O growth)"@en .
 efi:PartialDisconnectionHeating a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "반단선 단면적 감소 과열"@ko .
-efi:OverloadHeating           a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "과부하 발열"@ko ; rdfs:comment "5대 요인 외 확장 슬롯"@ko .
+efi:OverloadHeating           a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "과부하 발열"@ko ; rdfs:comment "과부하·과전류 가설(OverloadScenario, 48.1)의 정의 메커니즘"@ko .
 
 efi:ArcHeating                a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; skos:prefLabel "아크 발열"@ko .
 efi:ShortCircuitArc           a owl:Class ; rdfs:subClassOf efi:ArcHeating ; skos:prefLabel "단락 아크(병렬 아크)"@ko .
@@ -288,6 +288,7 @@ efi:DecisiveRefuting a owl:NamedIndividual , efi:IndicatorRole ; skos:prefLabel 
 
 # ============================================================================
 # 6. 시나리오(가설) 클래스 — 논문 6개 감별 범주. 메커니즘으로 정의(≡), 선행조건은 필요조건(⊑)
+#    국내 분류의 나머지 셋(과부하·과전류, 누전·지락, 층간단락)은 48절에. 미확인 단락은 가설이 아니라 분류다.
 # ============================================================================
 efi:ElectricalIgnitionScenario a owl:Class ; rdfs:subClassOf efi:IgnitionScenario ,
     [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:ElectricalHeatingMechanism ] ,
@@ -328,7 +329,8 @@ efi:ExternalFlameScenario a owl:Class ; rdfs:subClassOf efi:IgnitionScenario ; s
 
 # --- 상호 배타 공리 ---
 [] a owl:AllDisjointClasses ; owl:members ( efi:PoorContactScenario efi:CrushDamageScenario efi:PartialDisconnectionScenario
-                                            efi:InsulationDegradationScenario efi:TrackingScenario efi:ExternalFlameScenario ) .
+                                            efi:InsulationDegradationScenario efi:TrackingScenario efi:ExternalFlameScenario
+                                            efi:OverloadScenario efi:GroundFaultScenario efi:InterTurnShortScenario ) .
 [] a owl:AllDisjointClasses ; owl:members ( efi:HeatingMechanism efi:PhysicalEvidence efi:DamagePattern efi:AntecedentCondition efi:FirstFuelIgnited ) .
 efi:PrimaryArcMark owl:disjointWith efi:SecondaryArcMark .
 efi:EnergizedState owl:disjointWith efi:DeEnergizedState .
@@ -427,18 +429,18 @@ efi:R_EF_sup3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; 
 
 efi:R_PC_core  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:ConnectionCondition ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_PC_sup1  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:LongTermTerminalHeating ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
-efi:R_ANY_HeatSymptom a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:AbnormalTemperatureOrVoltageDrop ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 2 .
-efi:R_PC_sup3  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:Vibration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -13 .
+efi:R_ANY_HeatSymptom a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:AbnormalTemperatureOrVoltageDrop ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
+efi:R_PC_sup3  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:Vibration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
+efi:R_PC_ref   a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -14 .
 
-efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_CD_core  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 # 마찰은 기계적 손상의 핵심 단서가 될 수 없다. 소선을 갈면 통전 단면적이 줄어
 # 반단선으로도 간다(실무Ⅳ p.149 반단선의 정의가 '통전 단면적의 감소'다).
 # 눌림(ExternalCrushing)만 전용으로 남아 핵심 자리를 지킨다.
 efi:R_CD_sup6  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:AbrasionAtPenetration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
-efi:R_CD_sup0  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ImmediateTripAfterExternalForce ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
+efi:R_CD_sup0  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ImmediateTripAfterExternalForce ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_CD_sup1  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MechanicalDeformation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
-efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_CD_sup2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:LargeMeltMark ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 .
 # '외력 흔적 있으나 트립 이력 없음'(NoTripDespiteExternalForce, 논문 Table 2)을 압착손상
 # 반증으로 두었었다. 실무Ⅳ 가 반대로 적는다 —
 #   p.285 "금속을 개입하여 단락한 경우에 접촉저항이 크므로 배선차단기가 순간적으로
@@ -459,28 +461,28 @@ efi:R_CD_ref3  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; e
 #
 # 셋 중 하나를 골라 올리지 않는다. p.149 는 '꺾어지고 구부리거나 끌어당기는'
 # 셋을 나란히 들 뿐 하나를 앞세우지 않는다.
-efi:R_PD_core  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:LongTermRepeatedStress ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PD_core  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:LongTermRepeatedStress ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
 efi:R_PD_sup4  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:Tension ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
-efi:R_PD_sup8  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RepeatedFlexing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_PD_sup1  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:SmallMeltBallOnStrandEnd ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PD_sup8  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RepeatedFlexing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_PD_sup1  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:SmallMeltBallOnStrandEnd ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 .
 efi:R_PD_sup2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureAtStressPoint ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PD_ref   a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:WholeConductorCrushedOrCut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
-efi:R_ID_core  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_ID_sup2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ReducedInsulationResistance ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_ID_sup3  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationEmbrittlement ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:FlexingHistoryWithStrandFracture ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -18 .
+efi:R_ID_core  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
+efi:R_ID_sup2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ReducedInsulationResistance ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_ID_sup3  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationEmbrittlement ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 .
+efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:FlexingHistoryWithStrandFracture ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 
 efi:R_TR_core  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_TR_sup1  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:CarbonizedConductivePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_TR_sup2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:IntermittentRcdTripping ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_TR_sup1  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:CarbonizedConductivePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 .
+efi:R_TR_sup2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:IntermittentRcdTripping ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 .
 # '절연저항 정상 → 트래킹 반증 −30'(논문 Table 2)을 뺐다. 탄화 경로는 말라 있으면 고저항이라
 # 정상값이 트래킹과 양립한다 — Babrauskas p.753 (Cooper): 페놀 램프홀더의 저항이 "acceptably
 # high" 였는데 재통전 시 파열음, 고임피던스 전원에서 "a glowing thread gradually extend from
 # one pin to the other". 양립하는 것은 반증이 아니다(7장 ⑨). 사례 150건에 절연저항 사실 0건.
 # 대칭으로 '절연저항 저하'를 트래킹 지지 단서로 둔다 — cause_audit 이 이미 "트래킹 진행의 결과"
 # 라 판정했고(공유), p.758 Ashizawa 는 플러그 절연저항이 1 kΩ 까지 내려간 것만 착화했다.
-efi:R_TR_sup11 a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ReducedInsulationResistance ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_TR_sup11 a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ReducedInsulationResistance ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 
 efi:R_EF_core  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:NoArcOrSpatter ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_EF_sup1  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:GeneralMelting ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
@@ -1747,12 +1749,20 @@ efi:UndeterminedByTieRuleShape a sh:NodeShape ; sh:order 5 ; sh:targetClass efi:
         sh:construct """
         CONSTRUCT { $this efi:outcomeUndetermined true . }
         WHERE {
-          ?h1 efi:inSession $this ; efi:supportScore ?n1 .
-          ?h2 efi:inSession $this ; efi:supportScore ?n2 .
+          ?h1 efi:inSession $this ; efi:supportScore ?n1 ; efi:formed true .
+          ?h2 efi:inSession $this ; efi:supportScore ?n2 ; efi:formed true .
           FILTER ( ?h1 != ?h2 && ?n1 = ?n2 )
           FILTER NOT EXISTS { ?h1 efi:verdict efi:Refuted }
           FILTER NOT EXISTS { ?h2 efi:verdict efi:Refuted }
+          # 최고점의 동점만 판정을 막는다. 아래쪽 동점은 판정과 무관하다
+          FILTER NOT EXISTS {
+            ?h3 efi:inSession $this ; efi:supportScore ?n3 ; efi:formed true .
+            FILTER ( ?n3 > ?n1 )
+            FILTER NOT EXISTS { ?h3 efi:verdict efi:Refuted }
+          }
         }""" ] .
+# D-8 는 형성된 가설(D-15) 사이의 동점만 센다. 필요조건이 자료에 없는 가설은 세워지지
+# 않은 것이라 동점을 만들지 못한다 — 그것이 §19.4.1 의 '자료에서 가설을 세운다'다.
 
 # ============================================================================
 # 20. 전기 에너지에 의한 발화 (NFPA 921 §9.9)
@@ -2443,9 +2453,9 @@ efi:PoorContactScenario efi:canManifest efi:RubyRedCrystal .
 efi:R_PC_sup4  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:FuseEndsDarkened ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PC_sup5  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:RubyRedCrystal ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_PD_sup5  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MeltMarkOnBothSidesOfBreak ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
-efi:R_PD_sup6  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureOverTenPercent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PD_sup6  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFractureOverTenPercent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 .
 efi:R_CD_sup3  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MeltMarkOnSupplySideOnly ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
-efi:R_TR_sup3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:OrganicInsulationPresent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_TR_sup3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:OrganicInsulationPresent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 efi:R_EF_sup4  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:FuseIrregularlyMelted ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 
 # 편향 점검 결과 반영 — 화재도 내는 양상은 외부화염에도 선언해야 한다.
@@ -2500,9 +2510,9 @@ efi:ExternalFlameScenario efi:canManifest efi:BurnCenterOnSurface .
 # ── 33.3 층간단락 — 공식 분류표의 '임피던스의 감소' 갈래 (표 2-1, p.219~220)
 # "안정기의 경년열화에 의해 권선코일의 절연열화된 선간에서 접촉하여 코일의 일부가
 #  전체에서 분리되어 링회로를 형성하면 큰 전류가 이 부분에 흘러 국부 발열하여 출화"
-efi:InterTurnShortCircuit a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; rdfs:label "층간단락"@ko ; skos:prefLabel "층간단락"@ko ; rdfs:comment "권선 층간 절연이 깨져 코일 일부가 링회로를 이루고 큰 순환 전류가 국부 발열한다. 아크가 아니라 순환 전류 발열이다 (실무Ⅳ p.219~220)"@ko .
+efi:InterTurnShortCircuit a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; rdfs:label "층간 순환전류 발열"@ko ; skos:prefLabel "층간 순환전류 발열"@ko ; rdfs:comment "권선 층간 절연이 깨져 코일 일부가 링회로를 이루고 큰 순환 전류가 국부 발열한다. 아크가 아니라 순환 전류 발열이다 (실무Ⅳ p.219~220)"@ko .
 efi:InsulationDeterioration efi:enables efi:InterTurnShortCircuit .
-efi:InsulationDegradationScenario efi:hasDeclaredMechanism efi:InterTurnShortCircuit .
+# 층간단락은 48.3 에서 독립 가설(InterTurnShortScenario)이 됐다. 절연열화는 그 원인이지 같은 것이 아니다.
 efi:InterTurnShortCircuit efi:producesDamage efi:InsulationCarbonization , efi:LocalizedDiscoloration , efi:LocalizedHeatWithSurroundingDamage .
 efi:InsulationDegradationScenario efi:canManifest efi:InsulationCarbonization .
 efi:InterTurnShortCircuit efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel .
@@ -2520,10 +2530,10 @@ efi:InterTurnShortCircuit efi:enablesProgressionTo efi:InsulationBreakdownArc .
 efi:InsulationBreakdownArc efi:enablesProgressionTo efi:ArcTracking .
 
 # ── 33.5 지표 규칙 — 국내 실무 층이므로 조항을 붙이지 않는다
-efi:R_ANY_LocalHeat a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 1 .
+efi:R_ANY_LocalHeat a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 2 .
 efi:R_ANY_Intact a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:IntactSurroundingsAroundComponent ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -21 .
 efi:R_EF_sup5 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:IntactSurroundingsAroundComponent ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
-efi:R_EF_ref3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -2 .
+efi:R_EF_ref3 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:LocalizedHeatWithSurroundingDamage ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -4 .
 
 ########################################################################
 # 34. 반단선의 발생 위치와 남은 기계적 경로 — 화재조사실무Ⅳ (2025)
@@ -2594,12 +2604,12 @@ efi:TrackingScenario efi:canManifest efi:ToothMarkOnInsulation .
 efi:CoveredByFloorCovering a owl:Class ; rdfs:subClassOf efi:HeatDissipationImpairment ; rdfs:label "바닥재·카펫 밑 통과"@ko ; skos:prefLabel "바닥재·카펫 밑 통과"@ko ; rdfs:comment "코드가 카펫·매트 아래를 지나면 방열이 막혀 과열한다. 눌림(압착)과는 다른 경로다 — 도체가 상하지 않아도 발열한다 (실무Ⅳ p.245·253)"@ko .
 
 # ── 34.6 지표 규칙 — 국내 실무 층이므로 조항을 붙이지 않는다
-efi:R_CD_sup4  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
-efi:R_PD_sup11 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_PD_sup12 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
-efi:R_TR_sup8  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
-efi:R_TR_sup9  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 .
+efi:R_CD_sup4  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 .
+efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 5 .
+efi:R_PD_sup11 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 .
+efi:R_PD_sup12 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 5 .
+efi:R_TR_sup8  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:RodentGnawing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 .
+efi:R_TR_sup9  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ToothMarkOnInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 5 .
 
 ########################################################################
 # 35. 원인 축 편향 교정 — scripts/cause_audit.py 가 잡은 다섯 건
@@ -2628,8 +2638,8 @@ efi:DustAccumulation efi:enables efi:InsulationBreakdownArc .
 # "전선 피복이 오래 되거나 손상되어 절연성이 나빠져 심선이 접촉하여 단락" (p.305).
 # 기기 안의 오염은 InterPoleInsulatingSurface(트래킹의 자리)로 읽는다.
 # 조사서가 대상을 적지 않고 습기만 적으면 두 가설이 동점이 된다. 그것이 원문이다.
-efi:R_ID_sup7  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:MoistureExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_ID_sup8  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:DustAccumulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_ID_sup7  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:MoistureExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 .
+efi:R_ID_sup8  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:DustAccumulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
 
 # ── 트래킹의 자리 — 이극 도체 사이의 절연물 표면 (실무Ⅳ p.147, 표 2-1 p.127)
 #   "전압이 인가된 이극 도체(전선·코드·케이블·배선기구 등의 전기제품) 사이
@@ -2767,7 +2777,7 @@ efi:SalineOrChemicalExposure efi:enables efi:PoorContactHeating .
 #
 # 화재도 도체를 끊는다(§9.10.2). 그 판정은 이미 되어 있고 외부화염에도 선언돼
 # 있어 가중치가 그만큼 깎인다 — 전용 단서로 쓰는 것이 아니다.
-efi:R_PD_sup9  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFracture ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PD_sup9  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:StrandFracture ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 .
 
 # 스테이플·못 오타입에 규칙을 붙인다. 선행 조건으로 선언만 돼 있었다.
 #   표 2-1  스테이플손상(찔림) → 단락
@@ -2775,10 +2785,10 @@ efi:R_PD_sup9  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionSce
 #   §9.11.4.3 스테이플 오타입이 피복을 눌러 고저항 접촉을 만든다
 # 셋 다 원문 근거가 있으므로 셋 다 붙인다. 한쪽에만 붙이면 사슬이 부정하는 말을
 # 하게 된다 — 진동에서 이미 겪었다.
-efi:R_CD_sup7  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 3 .
-efi:R_PD_sup10 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 3 .
-efi:R_PC_sup7  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 3 .
-efi:R_TR_sup10 a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 3 .
+efi:R_CD_sup7  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PD_sup10 a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PC_sup7  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_TR_sup10 a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:MisdrivenStaple ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 
 # 노후·경년열화는 절연열화와 트래킹만 부르지 않는다. 접속부도 헐겁게 만든다.
 #   p.267 "커넥터의 접속부분이 경년열화에 의해 헐거워져서 접촉저항이 증대하여
@@ -2805,7 +2815,7 @@ efi:InsulationBreakdownArc efi:producesDamage efi:DendriticTreePath , efi:Intern
 efi:InterTurnShortCircuit efi:producesDamage efi:InternalDamageExceedingSurface .
 efi:InsulationDegradationScenario efi:canManifest efi:DendriticTreePath , efi:InternalDamageExceedingSurface .
 efi:R_ID_sup4  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:DendriticTreePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
-efi:R_ID_sup5  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InternalDamageExceedingSurface ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_ID_sup5  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InternalDamageExceedingSurface ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 .
 
 ########################################################################
 # 38. 반증 경로를 채운다 — 필요조건의 부재 확인
@@ -2837,10 +2847,10 @@ efi:HammerMisHitDamage rdfs:subClassOf efi:MechanicalDamageAntecedent .
 # 필요조건이 '없음'으로 확인되면 기각한다. 결측이나 확인 불가는 해당하지 않는다.
 efi:R_PC_ref2  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:ConnectionCondition ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -30 .
 efi:R_CD_ref2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; efi:indicates efi:MechanicalDamageAntecedent ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -30 .
-efi:R_PD_ref2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:LongTermRepeatedStress ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -12 .
-efi:R_ID_ref2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -12 .
-efi:R_TR_ref2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -12 .
-efi:R_TR_ref3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:OrganicInsulationPresent ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -18 .
+efi:R_PD_ref2  a efi:IndicatorRule ; efi:forScenario efi:PartialDisconnectionScenario ; efi:indicates efi:LongTermRepeatedStress ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -8 .
+efi:R_ID_ref2  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -8 .
+efi:R_TR_ref2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -11 .
+efi:R_TR_ref3  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:OrganicInsulationPresent ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -21 .
 
 # 형태로 서는 반증 하나 — 용흔이 전원측 한쪽에 몰려 있으면 반단선이 아니다.
 #   "반단선의 경우는 단선 부분의 양쪽에, 금속 등의 도체로 절단된 경우는
@@ -3231,7 +3241,7 @@ efi:ArcTracking efi:producesDamage efi:CarbonizationFromInsideOut .
 efi:LeakageCurrentHeating efi:producesDamage efi:CarbonizationFromInsideOut .
 
 efi:R_ANY_InsideOut a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:CarbonizationFromInsideOut ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 1 .
-efi:R_EF_ref4 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:CarbonizationFromInsideOut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -2 .
+efi:R_EF_ref4 a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:CarbonizationFromInsideOut ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -1 .
 efi:ExternalFlameExposure efi:producesDamage efi:UniformDamageAlongConductor .
 efi:ExternalFlameScenario efi:canManifest efi:UniformDamageAlongConductor .
 
@@ -3328,7 +3338,7 @@ efi:PoorContactScenario efi:canManifest efi:ContactWelding .
 # 융착 관측은 0건이라 정확도는 안 움직인다. 화재 융착과 가르는 기준은 부품 소손 정도다.
 efi:ExternalFlameExposure efi:producesDamage efi:ContactWelding .
 efi:ExternalFlameScenario efi:canManifest efi:ContactWelding .
-efi:R_PC_sup8  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:ContactWelding ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+efi:R_PC_sup8  a efi:IndicatorRule ; efi:forScenario efi:PoorContactScenario ; efi:indicates efi:ContactWelding ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 .
 
 # ── 46.2 [C-56] 연소 중심과 이격된 단락흔은 발화원으로 삼지 않는다 (실무Ⅴ p.232)
 #   "엔진 상단에 배선된 일부 전선에서 단락흔이 식별되나, 이는 연소 중심과
@@ -3372,7 +3382,319 @@ efi:AbnormalTemperatureOrVoltageDrop efi:enables
 #   열적 열화    k=2  9점
 # 한 조건은 한 번만 세되 가장 좁힌 값을 쓴다(efi_schema 의 조건 묶음).
 # 이중 계상이 아니라 해상도 차이다.
-efi:R_TR_sup4  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:MoistureExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_TR_sup5  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:DustAccumulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_TR_sup6  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:SalineOrChemicalExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_ID_sup6  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ThermalDegradation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_TR_sup4  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:MoistureExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 .
+efi:R_TR_sup5  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:DustAccumulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_TR_sup6  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:SalineOrChemicalExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
+efi:R_ID_sup6  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:ThermalDegradation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
+
+########################################################################
+# 48. 국내 분류의 나머지 갈래 — 과부하·과전류, 누전·지락, 층간단락 가설과 미확인 단락
+#
+# 화재조사 보고규정의 발화요인 세부분류(전기적 요인)는 열 항목이고 이 온톨로지의
+# 5대 요인은 그중 다섯이었다. 나머지 넷 중 셋(과부하·과전류, 누전·지락, 층간단락)을
+# 가설로 세우고, '미확인 단락'은 가설이 아니라 판단보류의 국내 분류 이름으로 둔다.
+#
+# 근거는 실무Ⅳ 와 Babrauskas 를 함께 본다. 쪽수는 각 항목에.
+#   과부하·과전류  실무Ⅳ p.185·203 퓨즈 중앙부 용단, p.311~314 과전류 피복 소손·용단흔,
+#                 표 2-1 '부하의 증가'. Babrauskas p.779~781 gross overload 는 아크보다 훨씬
+#                 드물고 차단기 결함 또는 규격 미달 도체가 있어야 한다. 2배는 문제없고
+#                 자립 연소는 3~7배. 단열재 매입·다발 포설이 문턱을 낮춘다(p.780~781, 표 71).
+#                 슬리빙은 과부하 상태의 표지(p.780). NFPA §9.9.3.2·§9.10.4.1 은 이미 C-34·C-38.
+#   누전·지락      실무Ⅳ p.155~156 지락과 누전의 정의(금속제 외함 등 도전성 물질을 통해 대지로),
+#                 p.202 ④ 결로에 의한 지락, p.285 3) 지락 감식 포인트 다섯, 표 2-1 '회로 외로 누설'.
+#                 Babrauskas p.781~782 ground faults — 피복 손상 도체가 금속 사이딩·지붕에 닿아
+#                 고저항 경로가 발열, 5 A 로도 착화(Kinoshita). p.853 GFCI.
+#   층간단락       실무Ⅳ p.219~221 안정기 진행도, p.245~247 모터·트랜스, p.284~285 컴프레서·배수모터,
+#                 p.291 링회로 국부 발열, 표 2-1 '임피던스의 감소'. Babrauskas p.754 안정기의 통상
+#                 고장은 shorted turn, 충전재 유출, 외부 화재도 같은 손상을 내므로 열어서 내부
+#                 과열 양상을 봐야 한다. p.767 변압기 inter-turn 절연 파괴의 원인 목록.
+#   미확인 단락     단락흔은 있으나 단락에 이르게 한 요인을 확인하지 못한 것. NFPA §19.6.5.1 의
+#                 원인미상 안에서 전기적 요인이 확인된 부분집합이다. Babrauskas p.795~796 —
+#                 화재는 다수의 victim 비드를 남기고 cause 비드와 형태로 구별되지 않으므로 그
+#                 경우가 "otherwise be undetermined" 다.
+#
+# 가설이 셋 늘면 변별력 공식의 N 이 6 → 9 가 되어 모든 가감점이 다시 유도된다.
+# 공유 흔적(피복 탄화·국부 변색)은 k 도 늘어 기존 다섯의 점수가 내려간다. 그것이 맞다 —
+# 과부하도 피복을 태운다.
+########################################################################
+
+# ── 48.1 과부하·과전류 (OverloadScenario)
+efi:OverloadScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ;
+    rdfs:label "과부하·과전류"@ko ; skos:prefLabel "과부하·과전류"@ko ;
+    rdfs:comment "허용전류를 넘는 전류가 도체 전 길이를 가열해 피복을 태우거나 도체를 용단시킨다. 보호가 정상이면 드물다 (실무Ⅳ p.311, Babrauskas p.779, NFPA §9.9.3.2)"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
+        [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:OverloadHeating ] ) ] ;
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ;
+        owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:OverloadState efi:HeatDissipationImpairment ) ] ] .
+efi:OverloadScenario efi:hasDeclaredMechanism efi:OverloadHeating .
+
+# 과전류 용단 망울 — 외부화염 용융과 다르다 (p.313~314)
+#  "외부화염에 의한 용융형태는 광범위한 데 반하여 과전류에 의해 용융된 망울은 국부적으로
+#   정상적인 전선의 표면을 감싸고 있는 형태가 많다. 용융되지 않은 전선의 표면은 산화작용에
+#   의해 변색·산화되어 있으며, 구부리면 표면의 일부가 박리되어 떨어진다"
+efi:OvercurrentFusedBead a owl:Class ; rdfs:subClassOf efi:MeltMark ;
+    rdfs:label "과전류 용단 망울"@ko ; skos:prefLabel "과전류 용단 망울"@ko ;
+    rdfs:comment "국부적으로 정상 표면을 감싸는 망울. 주변 도체 표면은 산화 변색되고 구부리면 박리된다. 외부화염 용융(광범위)과 가른다 (실무Ⅳ p.313~314 그림 2-131~133)"@ko .
+efi:Conductor efi:exhibits efi:OvercurrentFusedBead .
+efi:OverloadHeating efi:producesDamage efi:OvercurrentFusedBead .
+efi:OverloadScenario efi:canManifest efi:OvercurrentFusedBead , efi:FuseMeltedAtCenter , efi:UniformDamageAlongConductor ,
+    efi:Sleeving , efi:MeltOffset , efi:InsulationCarbonization , efi:LocalizedDiscoloration , efi:CarbonizationFromInsideOut .
+
+# 과부하 운전은 권선을 절연열화로 몰아 층간단락을 부른다 (p.284 컴프레서, p.285 배수모터)
+efi:OverloadState efi:enables efi:InterTurnShortCircuit .
+# 냉각·통풍 저해도 권선에서 발화시킨다 (p.245 바, p.247 마)
+efi:HeatDissipationImpairment efi:enables efi:InterTurnShortCircuit .
+
+efi:R_OL_core  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:OverloadState ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "부하전류가 정격을 넘었음이 확인됨. D-1 이 계측에서 도출한다 (실무Ⅳ p.311, Babrauskas p.779)"@ko .
+efi:R_OL_sup1  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:HeatDissipationImpairment ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "단열재 매입·다발 포설·카펫 아래는 같은 전류로도 발화 문턱을 낮춘다 (Babrauskas p.780~781 표 71, NFPA §9.9.2.2)"@ko .
+efi:R_OL_sup2  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:ProtectiveDeviceFailedToOperate ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "규정 동작시간을 넘겨도 보호가 동작하지 않았다. 과부하 발화의 전제다 (NFPA §9.9.3.2, Babrauskas p.779 차단기 결함·규격 미달)"@ko .
+efi:R_OL_sup3  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:FuseMeltedAtCenter ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "100~300% 과부하는 퓨즈 중앙부를 용단시킨다 (실무Ⅳ p.185·203)"@ko .
+efi:R_OL_sup4  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:UniformDamageAlongConductor ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 ;
+    rdfs:comment "과전류는 전선 전반에 비슷한 손상을 내고 경계가 불명확하다 (실무Ⅳ p.312 4)·5))"@ko .
+efi:R_OL_sup5  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:OvercurrentFusedBead ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "과전류 용단 망울은 국부적으로 정상 표면을 감싼다 (실무Ⅳ p.313~314)"@ko .
+efi:R_OL_sup6  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:Sleeving ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "슬리빙은 과부하 상태가 있었음을 함의한다 (Babrauskas p.780, NFPA §9.10.4.1)"@ko .
+efi:R_OL_sup7  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:MeltOffset ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "회로가 열리는 순간 굳은 오프셋 (NFPA §9.10.4.1). 발화의 증거는 아니다 — C-38"@ko .
+efi:R_OL_ref1  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:OverloadState ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -21 ;
+    rdfs:comment "부하전류가 정격 이내였음이 확인되면 과부하가 아니다. 방열 저해가 따로 확인되지 않는 한"@ko .
+efi:R_OL_ref2  a efi:IndicatorRule ; efi:forScenario efi:OverloadScenario ; efi:indicates efi:ProtectiveDeviceFailedToOperate ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -21 ;
+    rdfs:comment "보호장치가 규정대로 동작했음이 확인되면 과부하 발화는 드물다 (NFPA §9.9.3.2, Babrauskas p.780 정격에 맞는 차단기는 3배 이상에서 빨리 트립한다)"@ko .
+
+# ── 48.2 누전·지락 (GroundFaultScenario)
+#  "절연부분이 기계적 손상이나 변질(열화·노화·탄화)되어 그 절연효력을 상실하게 되면
+#   권선이나 리드선, 전선으로부터 금속제 외함 등 도전성 물질을 통하여 대지로 누설되는
+#   현상을 누전이라 한다 ... 이 전류의 열에 의하여 주위의 인화성 물질이 발화되는 경우를
+#   누전화재라 한다" (p.156). 지락/누전은 용어 차이라 한 가설로 둔다 (p.155 가).
+#  트래킹의 누설전류 발열(LeakageCurrentHeating)과 다르다 — 그것은 이극 도체 사이 절연물
+#  표면을 따라 흐르는 전류고, 지락은 전로에서 대지로 가는 전류다. 발열 자리가 다르다:
+#  지락은 금속 프레임·외함·지붕·배관과의 고저항 접점에서 난다 (p.285 4), Babrauskas p.781~782).
+efi:GroundFaultHeating a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ;
+    rdfs:label "지락 발열"@ko ; skos:prefLabel "지락 발열"@ko ;
+    rdfs:comment "전로에서 대지로 가는 지락전류가 경로 위 고저항 접점(금속 외함·구조물·지붕·배관)에서 줄열을 낸다. 5 A 로도 착화한다 (실무Ⅳ p.156, Babrauskas p.782 Kinoshita)"@ko .
+efi:GroundPath a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ;
+    rdfs:label "지락 경로"@ko ; skos:prefLabel "지락 경로"@ko ;
+    rdfs:comment "충전부와 대지 사이를 잇는 도전성 물질 — 금속제 외함·프레임·건물 구조물·지붕·배관·사이딩. 지락의 필요조건이다 (실무Ⅳ p.156, 표 2-1 건물·구조물 등의 금속부에 접촉, Babrauskas p.781)"@ko .
+efi:GroundFaultScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ;
+    rdfs:label "누전·지락"@ko ; skos:prefLabel "누전·지락"@ko ;
+    rdfs:comment "절연을 잃은 충전부가 도전성 물질을 통해 대지로 누설하고 그 경로의 고저항 접점이 발열한다 (실무Ⅳ p.155~156·285, Babrauskas p.781~782)"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
+        [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:GroundFaultHeating ] ) ] ;
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:GroundPath ] .
+efi:GroundFaultScenario efi:hasDeclaredMechanism efi:GroundFaultHeating .
+
+# 선행 조건. 지락 경로가 필요조건이고, 절연을 잃게 하는 것은 여럿이다.
+efi:GroundPath efi:enables efi:GroundFaultHeating .
+# 표 2-1 피복 손상 후 건물·구조물 금속부에 접촉
+efi:ExternalCrushing efi:enables efi:GroundFaultHeating .
+# p.156 변질(열화·노화·탄화)
+efi:AgedInsulation efi:enables efi:GroundFaultHeating .
+efi:InsulationDeterioration efi:enables efi:GroundFaultHeating .
+# p.202 ④ 결로에 의한 지락
+efi:MoistureExposure efi:enables efi:GroundFaultHeating .
+# p.285 3) 진동으로 피복 손상 → 프레임 지락
+efi:Vibration efi:enables efi:GroundFaultHeating .
+# p.285 1) 지락하면 누전차단기가 작동
+efi:IntermittentRcdTripping efi:enables efi:GroundFaultHeating .
+
+# 지락 지점의 금속체 용흔 (p.285 4) "지락위치의 금속프레임에는 용흔이 있다")
+efi:GroundedMetalwork a owl:Class ; rdfs:subClassOf efi:PhysicalEvidence ;
+    rdfs:label "접지 금속체(프레임·외함·지붕·배관)"@ko ; skos:prefLabel "접지 금속체(프레임·외함·지붕·배관)"@ko .
+efi:MeltMarkOnGroundedMetal a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "접지 금속체의 용흔"@ko ; skos:prefLabel "접지 금속체의 용흔"@ko ;
+    rdfs:comment "충전부가 닿은 금속 프레임·외함·지붕에 남는 용흔. 화재열로 노출된 통전 도체가 금속에 닿아도 생긴다 — 전용 단서가 아니다 (실무Ⅳ p.285, Babrauskas p.795 외부 화재가 전선관 내부 아크를 만든다)"@ko .
+efi:GroundedMetalwork efi:exhibits efi:MeltMarkOnGroundedMetal .
+efi:GroundFaultHeating efi:producesDamage efi:MeltMarkOnGroundedMetal , efi:ArcMeltMark , efi:InsulationCarbonization , efi:LocalizedDiscoloration , efi:CarbonizationFromInsideOut .
+efi:ExternalFlameExposure efi:producesDamage efi:MeltMarkOnGroundedMetal .
+efi:ExternalFlameScenario efi:canManifest efi:MeltMarkOnGroundedMetal .
+efi:GroundFaultScenario efi:canManifest efi:MeltMarkOnGroundedMetal , efi:ArcMeltMark , efi:InsulationCarbonization , efi:LocalizedDiscoloration , efi:CarbonizationFromInsideOut .
+# p.225 목재, p.156 주위 인화성 물질
+efi:GroundFaultHeating efi:ignites efi:CelluloseFuel , efi:InsulationMaterialFuel .
+
+# 현장 사실
+efi:LowGroundResistanceAtFaultPath a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "지락 경로의 접지저항 낮음"@ko ; skos:prefLabel "지락 경로의 접지저항 낮음"@ko ;
+    rdfs:comment "고정 앵글 등 지락 경로 금속체의 접지저항을 재어 작은 값을 확인 (실무Ⅳ p.285 5), p.335 접지저항계)"@ko .
+efi:LowGroundResistanceAtFaultPath efi:attests efi:GroundPath .
+efi:RcdHealthyNoTrip a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
+    rdfs:label "누전차단기 정상·미동작"@ko ; skos:prefLabel "누전차단기 정상·미동작"@ko ;
+    rdfs:comment "누전차단기가 회로에 있고 고장검사에서 정상인데 동작하지 않았다. 지락이 있었다면 동작했어야 한다 (실무Ⅳ p.285 1)). 강제 재투입 이력이 있으면 적용하지 않는다"@ko .
+
+efi:R_GF_core  a efi:IndicatorRule ; efi:forScenario efi:GroundFaultScenario ; efi:indicates efi:GroundPath ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 ;
+    rdfs:comment "충전부와 대지를 잇는 도전성 물질이 확인됨 (실무Ⅳ p.156)"@ko .
+efi:R_GF_sup1  a efi:IndicatorRule ; efi:forScenario efi:GroundFaultScenario ; efi:indicates efi:MeltMarkOnGroundedMetal ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 ;
+    rdfs:comment "지락 위치의 금속 프레임 용흔 (실무Ⅳ p.285 4))"@ko .
+efi:R_GF_sup2  a efi:IndicatorRule ; efi:forScenario efi:GroundFaultScenario ; efi:indicates efi:LowGroundResistanceAtFaultPath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 ;
+    rdfs:comment "지락 경로 금속체의 접지저항이 작다 (실무Ⅳ p.285 5))"@ko .
+efi:R_GF_sup3  a efi:IndicatorRule ; efi:forScenario efi:GroundFaultScenario ; efi:indicates efi:IntermittentRcdTripping ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 ;
+    rdfs:comment "누전차단기 동작 이력 (실무Ⅳ p.285 1)). 관계자가 강제 재투입해 지락부가 발열한 사례"@ko .
+efi:R_GF_sup4  a efi:IndicatorRule ; efi:forScenario efi:GroundFaultScenario ; efi:indicates efi:ExternalCrushing ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "피복 손상 후 건물·구조물 금속부 접촉 (표 2-1)"@ko .
+efi:R_GF_sup5  a efi:IndicatorRule ; efi:forScenario efi:GroundFaultScenario ; efi:indicates efi:MoistureExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 ;
+    rdfs:comment "결로에 의한 지락 (실무Ⅳ p.202 ④)"@ko .
+efi:R_GF_sup6  a efi:IndicatorRule ; efi:forScenario efi:GroundFaultScenario ; efi:indicates efi:AgedInsulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 ;
+    rdfs:comment "절연부분의 변질(열화·노화·탄화)로 절연효력 상실 (실무Ⅳ p.156)"@ko .
+efi:R_GF_ref1  a efi:IndicatorRule ; efi:forScenario efi:GroundFaultScenario ; efi:indicates efi:GroundPath ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -30 ;
+    rdfs:comment "충전부 주위에 대지로 이어지는 도전성 물질이 없음이 확인되면 지락이 아니다"@ko .
+efi:R_GF_ref2  a efi:IndicatorRule ; efi:forScenario efi:GroundFaultScenario ; efi:indicates efi:RcdHealthyNoTrip ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 ;
+    rdfs:comment "정상인 누전차단기가 동작하지 않았다 (실무Ⅳ p.285 1)). 누전차단기가 없거나 강제 재투입됐으면 이 사실은 성립하지 않는다"@ko .
+
+# ── 48.3 층간단락 (InterTurnShortScenario)
+#  33.3 절이 층간단락을 절연열화의 선언 메커니즘으로 두었던 것을 독립 가설로 올린다.
+#  국내 분류가 '층간단락'을 '절연열화에 의한 단락'과 별개 항목으로 두고, 발열 방식이
+#  아크가 아니라 링회로 순환 전류라 다르며(p.291), 자리가 권선으로 한정된다.
+#  절연열화는 층간단락의 원인이지 같은 것이 아니다 — p.221 진행도의 첫 칸이다.
+efi:InterTurnShortScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ;
+    rdfs:label "층간단락"@ko ; skos:prefLabel "층간단락"@ko ;
+    rdfs:comment "권선 층간 절연이 깨져 코일 일부가 링회로를 이루고 큰 순환 전류가 국부 발열한다. 자리는 권선·코일뿐이다 (실무Ⅳ p.219~221·291, Babrauskas p.754·767)"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
+        [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:InterTurnShortCircuit ] ) ] ;
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:WindingSite ] .
+efi:InterTurnShortScenario efi:hasDeclaredMechanism efi:InterTurnShortCircuit .
+# p.221 ㉯ 출화 직전 이음·이취
+efi:FlickeringOrOdor efi:enables efi:InterTurnShortCircuit .
+# p.247 (자) 진동 등에 의한 절연피복 손상
+efi:Vibration efi:enables efi:InterTurnShortCircuit .
+
+# 권선의 층간단락 용흔 (p.284 (2), p.285 (2), p.291 그림 2-109)
+efi:Winding a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ;
+    rdfs:label "권선(모터·안정기·변압기 코일)"@ko ; skos:prefLabel "권선(모터·안정기·변압기 코일)"@ko .
+efi:InterTurnArcMarkOnWinding a owl:Class ; rdfs:subClassOf efi:MeltMark ;
+    rdfs:label "권선 층간 용흔"@ko ; skos:prefLabel "권선 층간 용흔"@ko ;
+    rdfs:comment "코일을 풀어 관찰되는 층간 선간의 전기용흔·국부 용융. 외부 화재도 권선 절연을 태워 같은 흔적을 낼 수 있어 내부 과열 양상으로 가른다 (실무Ⅳ p.284~285·291, Babrauskas p.754)"@ko .
+efi:PottingCompoundLeak a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
+    rdfs:label "충전재 유출"@ko ; skos:prefLabel "충전재 유출"@ko ;
+    rdfs:comment "안정기·트랜스 내부 충전재가 열을 받아 케이스 틈으로 흘러나옴. 화재열로도 녹는다 (실무Ⅳ p.221 ㉰, Babrauskas p.754)"@ko .
+efi:Winding efi:exhibits efi:InterTurnArcMarkOnWinding , efi:PottingCompoundLeak .
+efi:InterTurnShortCircuit efi:producesDamage efi:InterTurnArcMarkOnWinding , efi:PottingCompoundLeak , efi:CarbonizationFromInsideOut .
+efi:ExternalFlameExposure efi:producesDamage efi:InterTurnArcMarkOnWinding , efi:PottingCompoundLeak .
+efi:ExternalFlameScenario efi:canManifest efi:InterTurnArcMarkOnWinding , efi:PottingCompoundLeak .
+efi:InterTurnShortScenario efi:canManifest efi:InterTurnArcMarkOnWinding , efi:PottingCompoundLeak , efi:InternalDamageExceedingSurface ,
+    efi:InsulationCarbonization , efi:LocalizedDiscoloration , efi:LocalizedHeatWithSurroundingDamage , efi:CarbonizationFromInsideOut .
+
+efi:R_IT_core  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario ; efi:indicates efi:WindingSite ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "특이점이 권선·코일에 있다 (실무Ⅳ p.219·245·291)"@ko .
+efi:R_IT_sup1  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario ; efi:indicates efi:InterTurnArcMarkOnWinding ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 ;
+    rdfs:comment "권선을 풀어 확인한 층간 용흔 (실무Ⅳ p.284~285·291)"@ko .
+efi:R_IT_sup2  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario ; efi:indicates efi:PottingCompoundLeak ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 ;
+    rdfs:comment "충전재가 케이스 틈으로 흘러나옴 (실무Ⅳ p.221 ㉰, Babrauskas p.754)"@ko .
+efi:R_IT_sup3  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario ; efi:indicates efi:InternalDamageExceedingSurface ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 7 ;
+    rdfs:comment "내부 소손이 표면보다 심하면 안에서 시작했다 (실무Ⅳ p.254, Babrauskas p.754 내부 과열 양상)"@ko .
+efi:R_IT_sup4  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario ; efi:indicates efi:FlickeringOrOdor ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 8 ;
+    rdfs:comment "출화 직전 점등 불량·이음·이취 (실무Ⅳ p.221 ㉯)"@ko .
+efi:R_IT_sup5  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario ; efi:indicates efi:OverloadState ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 ;
+    rdfs:comment "과부하 운전이 권선 절연열화를 앞당긴다 (실무Ⅳ p.284~285)"@ko .
+efi:R_IT_sup6  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario ; efi:indicates efi:InsulationDeterioration ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 4 ;
+    rdfs:comment "코일 절연열화가 진행도의 첫 칸이다 (실무Ⅳ p.220~221)"@ko .
+efi:R_IT_ref1  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario ; efi:indicates efi:WindingSite ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:ConfirmedAbsent ; efi:scoreDelta -21 ;
+    rdfs:comment "특이점에 권선이 없으면 층간단락이 아니다"@ko .
+efi:R_IT_ref2  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario ; efi:indicates efi:BurnCenterOnSurface ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -14 ;
+    rdfs:comment "소손 중심이 표면에 있으면 밖에서 왔다. 층간단락은 안에서 시작한다 (실무Ⅳ p.246 (다)·p.254, Babrauskas p.754)"@ko .
+
+# ── 48.4 미확인 단락 — 원인미상의 국내 분류 이름
+#  화재조사 보고규정의 발화요인 세부분류에는 '미확인 단락'이 있다. 단락흔은 있으나
+#  단락에 이르게 한 요인(접촉불량·압착·반단선·절연열화·트래킹·지락·층간)을 확인하지
+#  못한 것이다. NFPA §19.6.5.1 의 원인미상과 다른 판정이 아니라, 그 안에서 전기적 요인이
+#  확인된 부분집합에 붙는 이름이다. §19.8.2 가 말하듯 분류는 결론이 아니다 — 가설로
+#  세우지 않고, 판단보류의 결과에 붙는 라벨로만 둔다.
+#
+#  조건: 원인미상(D-7·D-8) ∧ 아크 용융흔(단락흔) 확인 ∧ 비통전 확인 없음.
+#  단락흔이 없으면 그냥 원인미상이다. 비통전이 확인됐으면 전기적 요인이 아니다.
+efi:KoreaFireReportClassification a owl:NamedIndividual , efi:ClassificationSystem ;
+    rdfs:label "화재조사 및 보고규정 발화요인 세부분류"@ko ; skos:prefLabel "화재조사 및 보고규정 발화요인 세부분류"@ko ;
+    rdfs:comment "전기적 요인 세부: 누전·지락, 접촉불량에 의한 단락, 절연열화에 의한 단락, 과부하·과전류, 압착·손상에 의한 단락, 층간단락, 반단선, 미확인 단락, 트래킹에 의한 단락, 기타"@ko .
+efi:outcomeUnidentifiedShortCircuit a owl:DatatypeProperty ; rdfs:domain efi:InvestigationSession ; rdfs:range xsd:boolean ;
+    rdfs:label "미확인 단락 처리"@ko ; skos:prefLabel "미확인 단락 처리"@ko ;
+    rdfs:comment "원인미상인데 단락흔이 확인됐고 비통전이 아니면 국내 분류의 '미확인 단락'이다. 결론이 아니라 분류다 (§19.8.2)"@ko .
+
+# [D-14] 원인미상 + 단락흔 확인 + 비통전 아님 → 미확인 단락 (§19.6.5.1 안의 국내 분류)
+#  D-7·D-8(sh:order 5) 뒤에 돈다. efi_schema.Session.outcome() 과 같아야 한다.
+efi:UnidentifiedShortCircuitDerivationRuleShape a sh:NodeShape ; sh:order 6 ; sh:targetClass efi:InvestigationSession ;
+    dcterms:references "NFPA 921 (2024) §19.6.5.1 Cause Undetermined, §19.8.2 Fire Cause Classification for Reports" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 6 ;
+        sh:construct """
+        CONSTRUCT { $this efi:outcomeUnidentifiedShortCircuit true . }
+        WHERE {
+          $this efi:outcomeUndetermined true .
+          $this efi:hasFact ?f .
+          ?f rdf:type/rdfs:subClassOf* efi:ArcMeltMark ; efi:confirmationStatus efi:Confirmed .
+          FILTER NOT EXISTS {
+            $this efi:hasFact ?d .
+            ?d rdf:type/rdfs:subClassOf* efi:DeEnergizedState ; efi:confirmationStatus efi:Confirmed .
+          }
+        }""" ] .
+
+# ── 48.5 가설 형성 — 필요조건이 자료에 없는 가설은 세우지 않는다
+#  가설이 아홉이 되자 절연열화 사례 30건 중 19건이 누전·지락·층간단락과 동점이 됐다.
+#  노후 절연은 셋 모두의 원인으로 원문에 열거돼 있고(p.156·p.220·p.202), 조사서는 지락
+#  경로나 권선의 유무를 적지 않는다. '적지 않음'은 '없음'이 아니므로(P4) 반증할 수 없다.
+#  그러나 NFPA §19.4.1 은 가설을 자료에서 세우라고 한다 — 지락 경로가 어디에도 없는
+#  자료에서 지락 가설은 세워지지 않은 것이지 기각된 것이 아니다. 형성되지 않은 가설은
+#  점수를 받고(F-4) 질의 후보에도 오르지만, 판정에서 이기지도 동점을 만들지도 못한다.
+#  각 가설의 필요조건은 6절·48절의 hasAntecedent 제한 공리에서 읽는다. 외부화염처럼
+#  제한이 없는 가설은 언제나 형성된다 — 부재 근거로 서는 가설이다.
+#  efi_schema.Session.apply() 의 formed 와 같아야 한다 — test_formation_matches_in_both_engines.
+efi:formed a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:range xsd:boolean ;
+    rdfs:label "가설 형성 여부"@ko ; skos:prefLabel "가설 형성 여부"@ko ;
+    rdfs:comment "선언된 필요조건(hasAntecedent 제한) 중 하나라도 확인된 사실이 있으면 참. 제한이 없는 가설은 항상 참 (§19.4.1)"@ko .
+
+# [D-15] 필요조건이 확인된 가설만 형성된다 (§19.4.1). D-7·D-8(sh:order 5) 앞에 돈다.
+efi:HypothesisFormationRuleShape a sh:NodeShape ; sh:order 4 ; sh:targetClass efi:IgnitionScenario ;
+    dcterms:references "NFPA 921 (2024) §19.4.1 Develop a Hypothesis — 가설은 수집된 자료에 근거해 세운다" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 4 ;
+        sh:construct """
+        CONSTRUCT { $this efi:formed true . }
+        WHERE {
+          $this efi:inSession ?s ; rdf:type ?c .
+          ?c rdfs:subClassOf ?r .
+          ?r owl:onProperty efi:hasAntecedent ; owl:someValuesFrom ?v .
+          # ?v 가 클래스면 그 자신, 합집합이면 그 원소들. BIND/FILTER 를 쓰면 rdflib 이
+          # 결합 전에 평가해 ?need 가 풀려 버린다 — 경로의 ?(0 또는 1) 로 쓴다.
+          ?v (owl:unionOf/rdf:rest*/rdf:first)? ?need .
+          ?s efi:hasFact ?f .
+          ?f efi:confirmationStatus efi:Confirmed ; rdf:type/rdfs:subClassOf* ?need .
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 4 ;
+        sh:construct """
+        CONSTRUCT { $this efi:formed true . }
+        WHERE {
+          $this efi:inSession ?s ; rdf:type ?c .
+          FILTER NOT EXISTS { ?c rdfs:subClassOf ?r . ?r owl:onProperty efi:hasAntecedent . }
+        }""" ] ;
+    # 특이 흔적도 가설을 세운다 — 논문 1단계(사진 → 가설 후보)가 이것이다. 다만 공유 흔적은
+    # 세우지 못한다(C-5 와 같은 이유). 양립 가설이 둘 이하인 흔적만 — 화재는 거의 모든
+    # 흔적을 낼 수 있으므로(scripts/audit.py) 전기 가설 하나 + 외부화염이 그 바닥이다.
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 4 ;
+        sh:construct """
+        CONSTRUCT { $this efi:formed true . }
+        WHERE {
+          { SELECT ?d (COUNT(DISTINCT ?sc) AS ?k) WHERE { ?sc efi:canManifest ?d } GROUP BY ?d }
+          FILTER ( ?k <= 2 )
+          $this efi:inSession ?s ; rdf:type ?c .
+          ?c efi:canManifest ?d .
+          ?s efi:hasFact ?f .
+          ?f efi:confirmationStatus efi:Confirmed ; rdf:type/rdfs:subClassOf* ?d .
+        }""" ] .
+
+# [D-16] 지지 사실이 있는 형성된 가설이 하나도 없으면 원인미상이다 (§19.6.5.1, §19.7.2).
+#  외부화염은 제한이 없어 언제나 형성되는데, 아무 단서도 없는 조사서에서 50점으로 홀로
+#  남아 '판정'이 되던 것을 막는다. 자료가 지지하지 않는 가설은 기껏해야 '가능'이다.
+#  efi_schema.Session.outcome() 과 같아야 한다 (승자는 형성·비기각·50점 초과).
+efi:NoSupportedHypothesisRuleShape a sh:NodeShape ; sh:order 5 ; sh:targetClass efi:InvestigationSession ;
+    dcterms:references "NFPA 921 (2024) §19.6.5.1 Cause Undetermined, §19.7.2 Levels of Certainty — 자료가 지지하지 않는 가설은 개연이 아니다" ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 5 ;
+        sh:construct """
+        CONSTRUCT { $this efi:outcomeUndetermined true . }
+        WHERE {
+          FILTER EXISTS { ?h efi:inSession $this }
+          FILTER NOT EXISTS {
+            ?h2 efi:inSession $this ; efi:formed true ; efi:supportScore ?n .
+            FILTER ( ?n > 50 )
+            FILTER NOT EXISTS { ?h2 efi:verdict efi:Refuted }
+          }
+        }""" ] .

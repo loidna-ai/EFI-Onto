@@ -23,6 +23,10 @@ class Scenario(StrEnum):
     INSULATION_DEGRADATION = "InsulationDegradationScenario"
     TRACKING = "TrackingScenario"
     EXTERNAL_FLAME = "ExternalFlameScenario"
+    # 국내 분류(화재조사 및 보고규정)의 나머지 셋. TTL 48절
+    OVERLOAD = "OverloadScenario"
+    GROUND_FAULT = "GroundFaultScenario"
+    INTER_TURN_SHORT = "InterTurnShortScenario"
 
 
 ELECTRICAL: frozenset[Scenario] = frozenset(Scenario) - {Scenario.EXTERNAL_FLAME}
@@ -38,6 +42,23 @@ class Mechanism(StrEnum):
     INSULATION_BREAKDOWN_ARC = "InsulationBreakdownArc"
     ARC_TRACKING = "ArcTracking"
     EXTERNAL_FLAME_EXPOSURE = "ExternalFlameExposure"
+    OVERLOAD_HEATING = "OverloadHeating"
+    GROUND_FAULT_HEATING = "GroundFaultHeating"
+    INTER_TURN_SHORT_CIRCUIT = "InterTurnShortCircuit"
+
+
+# 가설 → 정의 메커니즘. 6개 가설 전부로 시작할 때 쓴다 (eval.py·calibrate.py 가 같은 표를 읽는다)
+DEFAULT_MECHANISM: dict[str, str] = {
+    "PoorContactScenario": "PoorContactHeating",
+    "CrushDamageScenario": "CrushInducedArc",
+    "PartialDisconnectionScenario": "PartialDisconnectionHeating",
+    "InsulationDegradationScenario": "InsulationBreakdownArc",
+    "TrackingScenario": "ArcTracking",
+    "ExternalFlameScenario": "ExternalFlameExposure",
+    "OverloadScenario": "OverloadHeating",
+    "GroundFaultScenario": "GroundFaultHeating",
+    "InterTurnShortScenario": "InterTurnShortCircuit",
+}
 
 
 class Antecedent(StrEnum):
@@ -223,6 +244,7 @@ class Ontology(BaseModel):
     """TTL에서 적재한 규칙 + 클래스 상위 계층 (사실↔지표 매칭에 subClassOf* 반영)."""
     rules: list[IndicatorRule]
     ancestors: dict[str, set[str]]
+    needs: dict[str, set[str]] = {}         # 가설 → 선언된 필요조건 (hasAntecedent 제한). 없으면 항상 형성
     manifest: dict[str, set[str]] = {}      # 가설 → 남길 수 있는 손상 양상
     shared_by: dict[str, int] = {}          # 손상 양상 → 이 양상을 남기는 가설 수
     damage_cls: set[str] = set()            # DamagePattern 하위 전체
@@ -268,6 +290,22 @@ class Ontology(BaseModel):
         anc: dict[str, set[str]] = {}
         for c in {x for x in g.subjects(RDFS.subClassOf, None) if isinstance(x, URIRef)}:
             anc[loc(c)] = {loc(a) for a in g.transitive_objects(c, RDFS.subClassOf) if isinstance(a, URIRef)}
+        from rdflib import OWL
+        import rdflib.collection as rc
+        needs: dict[str, set[str]] = {}
+        for sc in g.subjects(RDFS.subClassOf, EFI.IgnitionScenario):
+            for sub in [sc] + list(g.subjects(RDFS.subClassOf, sc)):
+                if loc(sub) == "ElectricalIgnitionScenario":
+                    continue          # 통전은 모든 전기 가설의 공통 필요조건이라 형성 기준이 아니다 (C-57 이 결론에서 요구)
+                for r in g.objects(sub, RDFS.subClassOf):
+                    if (r, OWL.onProperty, EFI.hasAntecedent) not in g:
+                        continue
+                    v = g.value(r, OWL.someValuesFrom)
+                    if isinstance(v, URIRef):
+                        needs.setdefault(loc(sub), set()).add(loc(v))
+                    else:
+                        for u in g.objects(v, OWL.unionOf):
+                            needs.setdefault(loc(sub), set()).update(loc(x) for x in rc.Collection(g, u))
         man: dict[str, set[str]] = {}
         for s, o in g.subject_objects(EFI.canManifest):
             man.setdefault(loc(s), set()).add(loc(o))
@@ -276,7 +314,7 @@ class Ontology(BaseModel):
             for d in ds:
                 shared[d] = shared.get(d, 0) + 1
         dmg = {k for k, v in anc.items() if "DamagePattern" in v} | {"DamagePattern"}
-        return cls(rules=load_rules(ttl_path), ancestors=anc,
+        return cls(rules=load_rules(ttl_path), ancestors=anc, needs=needs,
                    manifest=man, shared_by=shared, damage_cls=dmg)
 
 
@@ -290,6 +328,7 @@ class Hypothesis(BaseModel):
     fuel_ignition_temp_c: float | None = None
     support_score: int = Field(50, ge=0, le=100)  # 이미지 단독 ≈ 50 출발 (논문 3.2절)
     verdict: Verdict = Verdict.ACTIVE
+    formed: bool = True                           # D-15: 필요조건이 자료에 있는가. 없으면 세워지지 않은 가설
     supported_by: list[str] = []                  # Fact.cls
     refuted_by: list[str] = []
     rationale: list[str] = []
@@ -340,6 +379,17 @@ class Session(BaseModel):
         for h in self.hypotheses:
             h.support_score, h.verdict = 50, Verdict.ACTIVE
             h.supported_by, h.refuted_by, h.rationale = [], [], []
+            # [D-15] 가설 형성 — 선언된 필요조건 중 하나라도 확인돼야 세워진다 (§19.4.1).
+            #  형성되지 않아도 점수는 매긴다(질의 후보를 고르는 데 쓴다). 판정에서만 빠진다.
+            #  세우는 길은 둘 — 필요조건이 확인됐거나, 특이 흔적(양립 가설 둘 이하)이 확인됐거나.
+            #  공유 흔적은 세우지 못한다. SHACL D-15 와 같아야 한다.
+            need = o.needs.get(h.scenario.value)
+            specific = [d for d in o.manifest.get(h.scenario.value, ()) if o.shared_by.get(d, 0) <= 2]
+            h.formed = not need or any(
+                f.status is Status.CONFIRMED and (
+                    any(o.matches(c, n) for n in need for c in [f.cls] + f.derived_types)
+                    or any(o.matches(f.cls, d) for d in specific))
+                for f in self.facts)
             # 더 구체적인 규칙이 함께 발동하면 상위 규칙은 세지 않는다.
             #   굴곡 하나로 '장기 반복 응력'(6)과 '반복 굴곡'(9)이 함께 발동해
             #   15점이 되던 이중 계상을 막는다. 같은 관측을 두 해상도로 두 번
@@ -376,6 +426,27 @@ class Session(BaseModel):
                 h.verdict = Verdict.WEAKENED
                 h.rationale.append("착화 역량 미달: 메커니즘 최대 온도 < 착화물 발화 온도")
         return self
+
+    # ---- 판정 결과: 가설 하나, 원인미상, 또는 미확인 단락 ----
+    #  §19.6.5.1 — 전부 기각되거나(D-7) 최고점이 동점이면(D-8) 원인미상이다.
+    #  세워지지 않은 가설(D-15, formed=False)은 이기지도 동점을 만들지도 못한다.
+    #  자료가 지지하지 않는 가설(50점 이하)도 판정이 못 된다(D-16) — 외부화염이 빈 조사서에서 홀로 남는 것.
+    #  그 원인미상 중 단락흔이 확인됐고 비통전이 아니면 국내 분류의 '미확인 단락'(D-14).
+    #  분류지 결론이 아니다(§19.8.2). SHACL D-14 와 같아야 한다.
+    UNDETERMINED: ClassVar[str] = "Undetermined"
+    UNIDENTIFIED_SHORT: ClassVar[str] = "UnidentifiedShortCircuit"
+
+    def outcome(self, o: Ontology) -> str:
+        # 승자 후보: 형성됐고(D-15) 기각되지 않았고 자료가 지지하는(D-16, 50점 초과) 가설
+        live = [h for h in self.hypotheses if h.verdict is not Verdict.REFUTED and h.formed and h.support_score > 50]
+        if live:
+            top = max(h.support_score for h in live)
+            best = [h for h in live if h.support_score == top]
+            if len(best) == 1:
+                return best[0].scenario.value
+        arc = any(f.status is Status.CONFIRMED and o.matches(f.cls, "ArcMeltMark") for f in self.facts)
+        dead = any(f.status is Status.CONFIRMED and o.matches(f.cls, "DeEnergizedState") for f in self.facts)
+        return self.UNIDENTIFIED_SHORT if arc and not dead else self.UNDETERMINED
 
     # ---- CQ3: 상위 두 가설을 가르는 미확인 지표 (동적 질의 후보) ----
     def discriminating_slots(self, o: Ontology) -> list[tuple[str, Scenario, int]]:

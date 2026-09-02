@@ -89,6 +89,8 @@ def main():
         print(f"  전체        {b['accuracy']*100:5.1f}%   "
               f"오판 {b['wrong']/b['cases']*100:.1f}%  미상 {b['undetermined']/b['cases']*100:.1f}%")
         print(f"  답한 것 중   {b.get('accuracy_when_answered',0)*100:5.1f}%   판단보류 제외")
+        nu = b.get('unidentified_short', 0)
+        print(f"  판단보류    {b['undetermined']}건 — 미확인 단락 {nu}(단락흔+통전, D-14) · 원인미상 {b['undetermined'] - nu}")
         print(f"  상한        {b.get('ceiling',0)*100:5.1f}%   조사서에 자기 요인 단서가 있는 사례")
         for k, v in sorted(b["per_class"].items(), key=lambda x: -x[1]["correct"] / x[1]["n"]):
             gap = (v.get("ceiling", v["n"]) - v["correct"]) / v["n"] * 100

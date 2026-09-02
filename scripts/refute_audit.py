@@ -29,6 +29,7 @@ TTL = ROOT / "ontology" / "efi_tbox.ttl"
 KO = {"PoorContactScenario": "접촉불량", "CrushDamageScenario": "압착손상",
       "PartialDisconnectionScenario": "반단선", "InsulationDegradationScenario": "절연열화",
       "TrackingScenario": "트래킹", "ExternalFlameScenario": "외부화염",
+      "OverloadScenario": "과부하", "GroundFaultScenario": "누전지락", "InterTurnShortScenario": "층간단락",
       "ElectricalIgnitionScenario": "전기 전체"}
 
 

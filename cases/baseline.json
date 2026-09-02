@@ -1,40 +1,41 @@
 {
  "cases": 150,
- "correct": 124,
- "undetermined": 20,
- "wrong": 6,
- "accuracy": 0.8267,
- "accuracy_when_answered": 0.9538,
+ "correct": 126,
+ "undetermined": 16,
+ "unidentified_short": 7,
+ "wrong": 8,
+ "accuracy": 0.84,
+ "accuracy_when_answered": 0.9403,
  "ceiling": 0.9,
  "per_class": {
   "압착손상": {
    "n": 30,
-   "correct": 29,
+   "correct": 28,
    "undetermined": 1,
    "ceiling": 30
   },
   "반단선": {
    "n": 30,
-   "correct": 20,
-   "undetermined": 7,
+   "correct": 22,
+   "undetermined": 6,
    "ceiling": 24
   },
   "절연열화": {
    "n": 30,
-   "correct": 24,
+   "correct": 23,
    "undetermined": 4,
    "ceiling": 27
   },
   "접촉불량": {
    "n": 30,
    "correct": 24,
-   "undetermined": 5,
+   "undetermined": 4,
    "ceiling": 25
   },
   "트래킹": {
    "n": 30,
-   "correct": 27,
-   "undetermined": 3,
+   "correct": 29,
+   "undetermined": 1,
    "ceiling": 29
   }
  }

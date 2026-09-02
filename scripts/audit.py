@@ -101,6 +101,10 @@ VERDICTS = {
     "RubyRedCrystal":              (ELEC, "실무Ⅳ p.153 적색 결정은 출화개소에 대응하는 접촉부에서 나온다. 상위 CuprousOxideGrowth 와 같이 §9.10.3 발광 접속부 산물"),
     "PrimaryArcMark":              (ELEC, "정의상 화재 이전 형성"),
     "Sleeving":                    (ELEC, "§9.10.4.1 과부하 구간 전 길이의 내부 발열"),
+    "OvercurrentFusedBead":        (ELEC, "실무Ⅳ p.313~314 과전류 용단 망울은 국부적으로 정상 표면을 감싼다. 외부화염 용융은 광범위하다"),
+    "MeltMarkOnGroundedMetal":     (FIRE, "Babrauskas p.795 외부 화재가 전선관 내부 절연을 태워 아크를 일으킨다. 화재열에 노출된 통전 도체가 금속에 닿으면 같은 용흔이 남는다"),
+    "InterTurnArcMarkOnWinding":   (FIRE, "Babrauskas p.754 진행 중인 화재가 안정기를 손상시킨다. 내부 과열 양상을 열어 봐야 내부 고장과 외부 가열이 갈린다"),
+    "PottingCompoundLeak":         (FIRE, "Babrauskas p.754 충전재는 온도가 오르면 녹아 나온다 — 화재열도 그 온도를 낸다"),
     "MeltOffset":                  (ELEC, "§9.10.4.1 회로가 열리는 순간 굳은 형태"),
     "StrandFractureAtStressPoint": (ELEC, "§9.10.5 변별점은 파단 자체가 아니라 기계적 응력 부위와의 "
                                           "위치 일치다. 화재는 응력 부위를 골라 끊지 않는다"),
