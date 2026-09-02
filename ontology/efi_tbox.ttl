@@ -2548,12 +2548,21 @@ efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; e
 #   "먼지 또는 분진 등이 누적되어 통풍, 냉각 저해로 발열되어 권선에서 발화" (p.246)
 efi:MoistureExposure efi:enables efi:InsulationBreakdownArc .
 efi:DustAccumulation efi:enables efi:InsulationBreakdownArc .
-# 여기에 절연열화 쪽 규칙(습기·분진 → 절연열화 +9)을 붙였다가 되돌렸다.
-# 사슬(enables)은 '일어날 수 있는가'이고 규칙은 '그 요인의 표지로 열거됐는가'다.
-# Table 2 는 오염 환경을 트래킹의 핵심 단서(필요조건)로 들고 절연열화의 단서로는
-# 들지 않는다. p.245 는 모터 권선에 한정된 문장이다. k=2 는 트래킹 쪽 점수를
-# 15 → 9 로 감쇠하는 데 쓰이고 절연열화에 점수를 주지 않는다 — scripts/score.py.
-# 붙였을 때 트래킹 96.7% → 10.0% (24건 동점). 조사서가 습기만 적기 때문이다.
+# 습기·분진은 절연열화의 표지로도 열거돼 있다 — 모터(p.245)만이 아니다.
+#   "경년 변화에 따른 절연열화의 원인은 다음과 같다. ① 절연체에 먼지 또는 습기의
+#    영향 … ⑤ 결로에 의한 지락·단락사고 유발. 절연열화로 인한 발화형태는
+#    트래킹(Tracking)과 흑연화(Graphite) 현상" (p.196 배선용차단기, p.201 누전차단기)
+#   "케이스의 기밀이 저하되어 습기를 띠면 절연열화를 발생시키고" (p.289 콘덴서)
+# 그래서 규칙을 양쪽에 둔다(k=2, 각 9). 한 번 붙였다 되돌린 적이 있다 — p.245 만
+# 읽고 모터 한정이라 판단했기 때문이다. 원문 전체를 검색하니 일반 목록이었다.
+# 그러면 습기만으로는 두 요인이 갈리지 않는다. 원문도 그렇게 말한다 — 절연열화의
+# 발화형태가 트래킹이다. 가르는 것은 p.149 의 관례, 대상이다: "화재원인 조사상
+# 관례적으로 전기기계·기구에 나타나는 경우를 트래킹 현상이라 하고", 절연열화 단락은
+# "전선 피복이 오래 되거나 손상되어 절연성이 나빠져 심선이 접촉하여 단락" (p.305).
+# 기기 안의 오염은 InterPoleInsulatingSurface(트래킹의 자리)로 읽는다.
+# 조사서가 대상을 적지 않고 습기만 적으면 두 가설이 동점이 된다. 그것이 원문이다.
+efi:R_ID_sup7  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:MoistureExposure ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
+efi:R_ID_sup8  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationScenario ; efi:indicates efi:DustAccumulation ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 
 # ── 트래킹의 자리 — 이극 도체 사이의 절연물 표면 (실무Ⅳ p.147, 표 2-1 p.127)
 #   "전압이 인가된 이극 도체(전선·코드·케이블·배선기구 등의 전기제품) 사이
@@ -2563,6 +2572,9 @@ efi:DustAccumulation efi:enables efi:InsulationBreakdownArc .
 #   표 2-1 은 트래킹현상의 자리를 '각종 스위치류 양(兩)極間'이라 적는다 (p.127).
 # 반단선의 응력 집중 개소(34.1)처럼 원인이 아니라 위치다. 조사관은 이 자리(기판
 # 표면·버스바 사이·단자 양극 간)에서 트래킹을 읽는데 온톨로지에 자리가 없었다.
+# p.149 는 경계를 관례로 적는다 — "화재원인 조사상 관례적으로 전기기계·기구에
+# 나타나는 경우를 트래킹 현상이라 하고 전기기계·기구 이외의 곳에 나타난 경우를
+# 그래파이트 현상으로 파악". 기기 안의 오염(분전반·차단기·기판·단자)이 이 자리다.
 # 정말 트래킹에서만인가 — 표 2-1 에서 '양극간'을 자리로 갖는 갈래는 트래킹과
 # 고압 보이드·은 이동(둘 다 범위 밖)뿐이다. 접촉불량은 한 극의 접점에서,
 # 절연열화는 절연물 내부에서 일어난다. scripts/cause_audit.py 에 판정을 적었다.
