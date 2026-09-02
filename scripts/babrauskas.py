@@ -148,7 +148,7 @@ SUBSECTIONS = [
     ("14.7", "c", "램프홀더 스프링 이완 → 접촉 없이 아크로 통전 → 글로잉 → 요소수지 갈변·흑변 → 훈소", DONE, AGREE,
      "IntermittentContactSeparation·GlowingConnection. 실무Ⅳ p.221 소켓 접촉불량"),
     ("14.7", "d", "페놀 램프홀더의 습기 아크 트래킹 — 저항은 정상이었는데 재통전 시 파열음", DONE, AGREE,
-     "TrackingScenario·DeviceInteriorSite·MoistureExposure. **'절연저항 정상'이 트래킹을 반증하지 못한 사례** — R_TR_ref(NormalInsulationResistance −30)의 반례. CANDIDATES ⑥"),
+     "TrackingScenario·DeviceInteriorSite·MoistureExposure. **'절연저항 정상'이 트래킹을 반증하지 못한 사례** — 옛 '절연저항 정상 → 트래킹 반증 −30' 규칙의 반례. CANDIDATES ⑥"),
     # 14.9 Outlets/plugs/connections
     ("14.9", "a", "일본 조사 28,112개 — 손상 27개: 칼날 주위 탄화 17, 칼날 변색 17, 칼날 굽음 11, 아크 흔적 8, **칼날 사이 탄화 5**, 녹청 6", DONE, AGREE,
      "'칼날 변색'=접촉불량 발열, '칼날 사이 탄화'=트래킹. 실무Ⅳ p.185 극별 용융 기준의 통계적 배경. silmu 후보 ①(서식)"),
@@ -262,7 +262,7 @@ CANDIDATES = [
     ("⑤", "나사 재질(강철/황동)과 체결 토크", "강철 나사가 황동보다 훨씬 글로잉 취약, 자석으로 식별. 14 AWG 최소 0.7 N·m, 수명 ∝ 토크³",
      "p.759·764 (Meese, NIST, Hicks)", "관측 가능한 접촉불량 선행조건 둘. 토크는 dataset 슬롯이 이미 있음(slot_fastening_torque) — 온톨로지 속성 없음. 나사 재질은 새 어휘. 서식 항목 D 에 '나사 재질' 추가 검토"),
     ("⑥", "절연저항 정상은 트래킹을 반증하지 못한다", "페놀 램프홀더 습기 트래킹 — 저항 정상, 재통전 시 파열. 고임피던스 전원에서 '빛나는 실이 핀에서 핀으로'",
-     "p.753 (Cooper)", "R_TR_ref(NormalInsulationResistance → 트래킹 −30)의 반례. 탄화 경로는 건조하면 고저항, 통전·습윤 시 저저항. 사례 발동 0. make refute 후 역할 재검토"),
+     "p.753 (Cooper)", "구현 — 옛 '절연저항 정상 → 트래킹 반증 −30'(논문 Table 2)을 뺐다. 탄화 경로는 건조하면 고저항이라 정상값이 트래킹과 양립한다. 대칭으로 ReducedInsulationResistance 를 트래킹 지지 단서로(R_TR_sup11). 사례에 절연저항 사실 0건"),
     ("⑦", "열선(동파방지)의 고장 모드", "번아웃(노후·과단열) / 열분해(도약 아크) / 자기제어형 습기 침입 wet fire 40 밀리암페어. 수명 3년",
      "p.854~856", "사례 150건의 열선 2건(절연열화)이 이 절. 열선은 CordMidspanSite 와 다른 자리 — 어휘 없음. 3건 미만이라 만들지 않는다"),
 ]

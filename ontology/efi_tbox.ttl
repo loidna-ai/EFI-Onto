@@ -248,6 +248,8 @@ efi:InsulationResistance a sosa:ObservableProperty , owl:NamedIndividual ; skos:
 efi:ConductorTemperature a sosa:ObservableProperty , owl:NamedIndividual ; skos:prefLabel "도체 온도"@ko .
 
 # 절연저항 정상 (트래킹·절연열화 반증단서). 기준값 1.0 MΩ은 KEC 132 저압 500 V 이하 참조 — 발화 전 계측 또는 비손상 구간 계측에 한함
+# 절연저항 정상은 D-9 가 계측값에서 도출하는 사실이지 반증 단서가 아니다 — 건조한 탄화 경로는
+# 고저항으로 읽힌다(Babrauskas p.753). 규칙은 없고 기록만 남는다.
 efi:NormalInsulationResistance a owl:Class ; skos:prefLabel "절연저항 정상"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf (
         efi:InsulationResistanceObservation
@@ -472,7 +474,13 @@ efi:R_ID_ref   a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationSc
 efi:R_TR_core  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ContaminatedEnvironment ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_TR_sup1  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:CarbonizedConductivePath ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 6 .
 efi:R_TR_sup2  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:IntermittentRcdTripping ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
-efi:R_TR_ref   a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:NormalInsulationResistance ; efi:hasRole efi:Refuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -30 .
+# '절연저항 정상 → 트래킹 반증 −30'(논문 Table 2)을 뺐다. 탄화 경로는 말라 있으면 고저항이라
+# 정상값이 트래킹과 양립한다 — Babrauskas p.753 (Cooper): 페놀 램프홀더의 저항이 "acceptably
+# high" 였는데 재통전 시 파열음, 고임피던스 전원에서 "a glowing thread gradually extend from
+# one pin to the other". 양립하는 것은 반증이 아니다(7장 ⑨). 사례 150건에 절연저항 사실 0건.
+# 대칭으로 '절연저항 저하'를 트래킹 지지 단서로 둔다 — cause_audit 이 이미 "트래킹 진행의 결과"
+# 라 판정했고(공유), p.758 Ashizawa 는 플러그 절연저항이 1 kΩ 까지 내려간 것만 착화했다.
+efi:R_TR_sup11 a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:indicates efi:ReducedInsulationResistance ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 9 .
 
 efi:R_EF_core  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:NoArcOrSpatter ; efi:hasRole efi:Core ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 15 .
 efi:R_EF_sup1  a efi:IndicatorRule ; efi:forScenario efi:ExternalFlameScenario ; efi:indicates efi:GeneralMelting ; efi:hasRole efi:Supporting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta 10 .
