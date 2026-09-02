@@ -67,7 +67,7 @@ SUBSECTIONS = [
     ("9.5.2",    "중성선 단선 과전압과 거주자 진술",          DONE, "OpenNeutral, OpenNeutralOvervoltage, 진술 2종"),
     ("9.5.2b",   "접지극 제거는 중성선 단선의 원인이 아니다",   DONE, "C-21 OpenNeutralInferenceShape"),
     ("9.6.1",    "보호장치는 자동 동작이 요건이다",           DONE, "C-22 ProtectedSustainedFaultShape"),
-    ("9.9.1",    "발화 성립의 두 조건 — 통전과 충분한 열",     PART, "통전은 R_ANY_DeEnergized. 열 충분성은 F-3 온도만"),
+    ("9.9.1",    "발화 성립의 두 조건 — 통전과 충분한 열",     PART, "통전은 C-57 EnergizedRequiredShape 가 결론의 필요조건으로 요구(비통전은 R_ANY_DeEnergized). 열 충분성은 F-3 온도만"),
     ("9.9.1.1",  "열전달이 충분히 오래 유지돼야 한다",         OUT,  "지속 시간은 잔해에서 관측되지 않는다. 가설 시험 시 "
                                                           "참조하는 공학 지식이지 감식 대상이 아니다(판단)"),
     ("9.9.1.2",  "에너지가 충분해도 착화가 보장되지 않는다",     DONE, "HeatDissipationImpairment 갈래. 와트 계산이 아니라 "
@@ -213,6 +213,7 @@ SHAPE_REFS = {
     "CompetenceRequiredShape":           ["19.6"],
     "UndeterminedByTieRuleShape":        ["19.6"],
     "HeatTransferPathShape":             ["9.9"],
+    "EnergizedRequiredShape":            ["9.9"],
     "ArcInitiationShape":                ["9.9"],
     "OverloadIgnitionRarityShape":       ["9.9"],
     "FuelProximityShape":                ["9.9"],

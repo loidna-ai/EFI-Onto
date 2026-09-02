@@ -1542,6 +1542,28 @@ efi:UntestableHypothesisShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
           FILTER NOT EXISTS { ?sc efi:supportedBy ?g . ?g efi:confirmationStatus efi:Confirmed }
         }""" ] .
 
+# [C-57] 전기적 결론에는 통전 확인이 있어야 한다.
+#  §9.9.1(1) 전기적 발화가 성립하려면 대상이 통전 상태였어야 한다 — 필요조건이다.
+#  실무Ⅳ p.178 "전기기계기구에서의 발화유무 감식은 우선 당해 기기의 통전을 입증하는
+#  것부터 시작한다 ... 통전되어 있었던 것을 증명해야 한다."
+#  지지 규칙으로 두지 않는다 — 여섯 가설 전부와 양립하므로 변별력이 0 이다(score.py).
+#  통전 확인은 점수가 아니라 확정의 문턱이다. 확인 불가는 반증이 아니고(C-1) 결론을
+#  세우지 못하게 할 뿐이다 — 판단보류로 남는다. 사례 150건 중 7건이 여기 걸린다.
+efi:EnergizedRequiredShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.9.1 Ignition by Electrical Energy" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "통전 확인 없이 전기적 발화를 확정했다. 통전은 전기적 발화의 필요조건이며 입증의 출발점이다 (§9.9.1, 실무Ⅳ p.178)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?sc .
+          ?sc rdf:type/rdfs:subClassOf* efi:ElectricalIgnitionScenario ; efi:inSession ?s .
+          FILTER NOT EXISTS {
+            ?s efi:hasFact ?f .
+            ?f rdf:type/rdfs:subClassOf* efi:EnergizedState ; efi:confirmationStatus efi:Confirmed
+          }
+        }""" ] .
+
 # [C-24] 대안 가설을 고려하지 않는 것은 중대한 오류다 (§4.3.7).
 #  결론 전에 세션의 모든 가설이 시험돼 판정을 가지고 있어야 한다.
 efi:AllHypothesesTestedShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;

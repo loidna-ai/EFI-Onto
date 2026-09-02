@@ -283,6 +283,40 @@ def test_c5_blocks_shared_morphology_only():
     """), "비시각적 현장 사실을 넣었는데 막혔다"
 
 
+def test_conclusion_requires_energized_state():
+    """C-57 — 통전 확인 없이 전기적 발화를 확정할 수 없다 (§9.9.1, 실무Ⅳ p.178).
+    지지 규칙이 아니라 문턱이다: 여섯 가설 전부와 양립하므로 점수로는 0 이지만
+    필요조건이다. 확인 불가는 반증이 아니므로 가설을 기각하지는 않는다 — 결론만 막는다."""
+    base = """
+    efi:sesE a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:invE a efi:InvestigatorAgent .
+    efi:e1 a efi:MoistureExposure ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invE .
+    efi:e2 a efi:InterPoleInsulatingSurface ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invE .
+    efi:sesE efi:hasFact efi:e1 , efi:e2 .
+    efi:hE a efi:TrackingScenario ; efi:inSession efi:sesE ; efi:supportScore 75 ; efi:supportedBy efi:e1 , efi:e2 .
+    efi:cE a efi:Conclusion ; efi:concludes efi:hE .
+    """
+    fires = lambda extra: "통전 확인 없이" in validate(
+        Graph().parse(data=TTL.read_text(encoding="utf-8") + extra, format="turtle"),
+        advanced=True, allow_infos=True, allow_warnings=True)[2]
+    assert fires(base), "통전 확인이 없는데 확정이 통과했다"
+    assert not fires(base + """
+    efi:e3 a efi:EnergizedState ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invE .
+    efi:sesE efi:hasFact efi:e3 .
+    """), "통전을 확인했는데 막혔다"
+    # 확인 불가는 확인이 아니다 — 여전히 막힌다. 그러나 가설을 기각하지는 않는다(C-1).
+    assert fires(base + """
+    efi:e4 a efi:EnergizedState ; efi:confirmationStatus efi:Unverifiable .
+    efi:sesE efi:hasFact efi:e4 .
+    """), "확인 불가를 확인으로 쳤다"
+    # 외부화염은 전기적 가설이 아니므로 통전을 요구하지 않는다.
+    assert not fires("""
+    efi:sesX a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:hX a efi:ExternalFlameScenario ; efi:inSession efi:sesX ; efi:supportScore 75 .
+    efi:cX a efi:Conclusion ; efi:concludes efi:hX .
+    """), "외부화염 결론에 통전을 요구했다"
+
+
 # ── §19.8 분류는 판정이 아니다 ───────────────────────────────────────────
 def _msg(extra):
     return validate(Graph().parse(data=TTL.read_text(encoding="utf-8") + extra, format="turtle"),
@@ -600,7 +634,10 @@ def test_a_complete_conclusion_can_pass():
            prov:wasAttributedTo efi:invG ; efi:analyzed true .
     efi:f5 a efi:IntermittentRcdTripping ; efi:confirmationStatus efi:Confirmed ;
            prov:wasAttributedTo efi:invG ; efi:analyzed true .
-    efi:sG efi:hasFact efi:dG , efi:f1 , efi:f2 , efi:f3 , efi:f4 , efi:f5 .
+    # C-57 — 통전 확인은 점수에 들어가지 않지만 없으면 결론이 서지 않는다.
+    efi:f6 a efi:EnergizedState ; efi:confirmationStatus efi:Confirmed ;
+           prov:wasAttributedTo efi:invG ; efi:analyzed true .
+    efi:sG efi:hasFact efi:dG , efi:f1 , efi:f2 , efi:f3 , efi:f4 , efi:f5 , efi:f6 .
     efi:fuelG a efi:InsulationMaterialFuel ; efi:distanceToHeatSource_mm 2 .
     efi:hG a efi:TrackingScenario ; efi:inSession efi:sG ;
            efi:hasMechanism [ a efi:ArcTracking ] ; efi:hasFirstFuel efi:fuelG ;
