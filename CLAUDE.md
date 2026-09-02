@@ -22,6 +22,7 @@ make readers     # 사전 판독 vs LLM 판독 — 판독의 한계를 온톨로
 make refute      # 반증 규칙을 사례로 검증 — 정답 라벨에서 발동하면 반례다
 make domestic    # 국내 공식 분류(실무Ⅳ 표 2-1) 이식률
 make silmu       # 실무Ⅳ 제2편을 목차 단위로 대조 — '없음'과 그 후보가 여기서 나온다
+make babrauskas  # Ignition Handbook 전기 절 대조 — 국내 교재와 '상충'하는 곳이 여기서 나온다
 make review      # 조사관 검토용 xlsx 만 생성
 make clean
 ```
@@ -34,7 +35,8 @@ src/efi_schema.py            Pydantic 파이프라인. 점수 산출과 질의 �
 scripts/score.py             가감점 산출. 가중치의 단일 진실 원천
 scripts/nfpa.py              NFPA 921 절 대조표. 이식률의 분모
 scripts/domestic.py          실무Ⅳ 표 2-1 갈래 대조표. 국내 실무 층의 분모
-scripts/silmu.py             실무Ⅳ 제2편 절 대조표. '없음'을 남기는 유일한 분모 — CANDIDATES 가 다음 작업
+scripts/silmu.py             실무Ⅳ 제2편 절 대조표. '없음'을 남기는 분모 — CANDIDATES 가 다음 작업
+scripts/babrauskas.py        Ignition Handbook 전기 절 대조표. 국내 교재와의 일치/상충/보강 열이 있다
 scripts/audit.py             형태 발현 편향 점검. '화재도 이 흔적을 내는가'
 scripts/cause_audit.py       선행 조건 편향 점검. '정말 그 요인에서만 일어나는가'
 scripts/lint.py              구조 점검. 어휘가 사슬에 붙어 있는가

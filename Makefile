@@ -1,4 +1,4 @@
-.PHONY: install test build status reason lint review graph export clean calibrate cause-audit readers refute domestic silmu
+.PHONY: install test build status reason lint review graph export clean calibrate cause-audit readers refute domestic silmu babrauskas
 
 PY := python
 export PYTHONIOENCODING := utf-8
@@ -59,3 +59,6 @@ domestic:
 
 silmu:
 	python scripts/silmu.py
+
+babrauskas:
+	python scripts/babrauskas.py

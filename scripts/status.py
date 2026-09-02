@@ -59,6 +59,16 @@ def main():
           f"{ss[silmu.DONE]}/{ssins} = {ss[silmu.DONE] / ssins * 100:.0f}%  없음 {ss[silmu.NONE]}")
     print(f"  없음에서 나온 후보 {len(silmu.CANDIDATES)}개 — make silmu")
 
+    import babrauskas as bab
+    bn, bins = bab.counts()
+    bs, bsins = bab.sub_counts()
+    br = bab.relations()
+    print("\n── 국제 문헌 (Babrauskas Ignition Handbook 전기 절) " + "─" * 12)
+    print(f"  절 {len(bab.SECTIONS)}개 중 범위 내 {bins}개 — 구현 {bn[bab.DONE]}  일부 {bn[bab.PART]}  없음 {bn[bab.NONE]}")
+    print(f"  이식률 {bn[bab.DONE]}/{bins} = {bn[bab.DONE] / bins * 100:.0f}%,  하위 절 {bs[bab.DONE]}/{bsins} = {bs[bab.DONE] / bsins * 100:.0f}%")
+    print(f"  실무Ⅳ와의 관계 — 일치 {br[bab.AGREE]}  상충 {br[bab.CONFLICT]}  보강 {br[bab.ADDS]}")
+    print(f"  상충에서 나온 후보 {len(bab.CANDIDATES)}개 — make babrauskas")
+
     print("\n── 형태 발현 편향 점검 " + "─" * 38)
     print(f"  손상 양상 {len(dp)}개(직속) / 판정 {len(audit.VERDICTS)}건 / 미검토 {len(un)}건")
     print(f"  판정과 선언의 불일치 {len(audit.inconsistent(g))}건")

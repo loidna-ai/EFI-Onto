@@ -180,19 +180,21 @@ def test_every_shape_cites_nfpa(g):
     assert not bad, f"조항 근거 없는 도형: {bad}"
 
 
-def test_silmu_table_names_existing_vocabulary(g):
-    """실무Ⅳ 대조표(scripts/silmu.py)의 근거 칸이 부르는 클래스·규칙·도형·속성은
+def test_source_tables_name_existing_vocabulary(g):
+    """원문 대조표(scripts/silmu.py, scripts/babrauskas.py)의 근거 칸이 부르는 클래스·규칙·도형·속성은
     TTL 에 있어야 한다. 이름이 바뀌거나 지워지면 대조표가 조용히 낡는다 —
     nfpa.py 의 SHAPE_REFS 가 test_every_shape_cites_nfpa 로 묶여 있는 것과 같다."""
     import re
     from rdflib import URIRef
     sys.path.insert(0, str(ROOT / "scripts"))
-    import silmu
+    import silmu, babrauskas
     names = {q(s) for s in g.subjects() if isinstance(s, URIRef) and str(s).startswith(str(EFI))}
     pat = re.compile(r"(?<![A-Za-z_])(?:[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]*)+|[a-z]+(?:[A-Z][a-z0-9]*)+|R_[A-Z]{2,3}_[A-Za-z0-9]+)")
-    rows = ([(r[0], r[-1]) for r in silmu.SECTIONS]
-            + [(r[0] + r[1], r[-1]) for r in silmu.SUBSECTIONS]
-            + [(c[0], c[-1]) for c in silmu.CANDIDATES])
+    rows = []
+    for mod in (silmu, babrauskas):
+        rows += ([(mod.__name__ + r[0], r[-1]) for r in mod.SECTIONS]
+                 + [(mod.__name__ + r[0] + r[1], r[-1]) for r in mod.SUBSECTIONS]
+                 + [(mod.__name__ + c[0], c[-1]) for c in mod.CANDIDATES])
     bad = sorted({(sec, tok) for sec, note in rows for tok in pat.findall(note) if tok not in names})
     assert not bad, f"대조표가 부르는 이름이 TTL 에 없다: {bad}"
 
