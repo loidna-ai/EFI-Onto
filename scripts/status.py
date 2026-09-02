@@ -47,6 +47,18 @@ def main():
           f"없음 {dn[domestic.NONE]}  범위밖 {dn[domestic.OUT]}")
     print(f"  이식률 {dn[domestic.DONE]}/{dins} = {dn[domestic.DONE] / dins * 100:.0f}%")
 
+    import silmu
+    sn, sins = silmu.counts()
+    ss, ssins = silmu.sub_counts()
+    print("\n── 국내 실무서 (실무Ⅳ 제2편 절 대조) 이식률 " + "─" * 19)
+    print(f"  절 {len(silmu.SECTIONS)}개 중 범위 내 {sins}개")
+    print(f"  구현 {sn[silmu.DONE]}  일부 {sn[silmu.PART]}  없음 {sn[silmu.NONE]}  "
+          f"범위밖 {sn[silmu.OUT]}  현장절차 {sn[silmu.PROC]}")
+    print(f"  이식률 {sn[silmu.DONE]}/{sins} = {sn[silmu.DONE] / sins * 100:.0f}%")
+    print(f"  하위 절까지 내려간 것 {len(silmu.SUBSECTIONS)}개 중 대상 {ssins}개, "
+          f"{ss[silmu.DONE]}/{ssins} = {ss[silmu.DONE] / ssins * 100:.0f}%  없음 {ss[silmu.NONE]}")
+    print(f"  없음에서 나온 후보 {len(silmu.CANDIDATES)}개 — make silmu")
+
     print("\n── 형태 발현 편향 점검 " + "─" * 38)
     print(f"  손상 양상 {len(dp)}개(직속) / 판정 {len(audit.VERDICTS)}건 / 미검토 {len(un)}건")
     print(f"  판정과 선언의 불일치 {len(audit.inconsistent(g))}건")

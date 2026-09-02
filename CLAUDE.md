@@ -20,6 +20,8 @@ make lint        # 구조 점검 — 사슬에 붙지 않은 어휘 찾기
 make calibrate   # 유도 가감점을 사례로 검증 (보정하지 않는다)
 make readers     # 사전 판독 vs LLM 판독 — 판독의 한계를 온톨로지의 한계와 가른다
 make refute      # 반증 규칙을 사례로 검증 — 정답 라벨에서 발동하면 반례다
+make domestic    # 국내 공식 분류(실무Ⅳ 표 2-1) 이식률
+make silmu       # 실무Ⅳ 제2편을 목차 단위로 대조 — '없음'과 그 후보가 여기서 나온다
 make review      # 조사관 검토용 xlsx 만 생성
 make clean
 ```
@@ -31,6 +33,8 @@ ontology/efi_tbox.ttl        TBox 본체 (규모는 make status)
 src/efi_schema.py            Pydantic 파이프라인. 점수 산출과 질의 선택
 scripts/score.py             가감점 산출. 가중치의 단일 진실 원천
 scripts/nfpa.py              NFPA 921 절 대조표. 이식률의 분모
+scripts/domestic.py          실무Ⅳ 표 2-1 갈래 대조표. 국내 실무 층의 분모
+scripts/silmu.py             실무Ⅳ 제2편 절 대조표. '없음'을 남기는 유일한 분모 — CANDIDATES 가 다음 작업
 scripts/audit.py             형태 발현 편향 점검. '화재도 이 흔적을 내는가'
 scripts/cause_audit.py       선행 조건 편향 점검. '정말 그 요인에서만 일어나는가'
 scripts/lint.py              구조 점검. 어휘가 사슬에 붙어 있는가
@@ -136,6 +140,10 @@ build/                       생성물. git 에 넣지 않음
    원문을 받은 절만 하위 절까지 내려가 있고 나머지는 절 제목 수준의 근사치다.
    **내려갈 때마다 이식률은 대체로 낮아진다** — 제목으로는 덮인 듯 보이던 요건이 드러나기 때문이다.
    낮아진 숫자가 정확한 숫자다.
+   **국내 실무서는 `scripts/silmu.py` 가 같은 일을 한다.** 실무Ⅳ 제2편을 목차 단위로 대조했고,
+   nfpa·domestic 과 달리 **'없음'을 남긴다** — 원문이 감식 기준을 주는데 어휘가 없는 것.
+   그 후보(CANDIDATES)를 붙일 때도 아래 두 질문을 먼저 거친다. 대조 전에는 TTL 이 인용한
+   쪽이 357쪽 중 22쪽뿐이었고 그것은 낱말 검색으로 찾아간 곳이었다.
 3. **인과 사슬(`canManifest`·`enables`·`producesDamage`·`ignites`·`exhibits`·`attests`)은 작성자 구성이다.**
    일부는 원문 대조로 교정됐다. `build/EFI-Onto_검토표.xlsx` 로 조사관 검토 진행 중.
 
