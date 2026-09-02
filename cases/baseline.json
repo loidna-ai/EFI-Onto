@@ -1,10 +1,10 @@
 {
  "cases": 150,
- "correct": 123,
- "undetermined": 19,
+ "correct": 124,
+ "undetermined": 18,
  "wrong": 8,
- "accuracy": 0.82,
- "accuracy_when_answered": 0.9389,
+ "accuracy": 0.8267,
+ "accuracy_when_answered": 0.9394,
  "ceiling": 0.8933,
  "per_class": {
   "압착손상": {
@@ -15,8 +15,8 @@
   },
   "반단선": {
    "n": 30,
-   "correct": 20,
-   "undetermined": 7,
+   "correct": 21,
+   "undetermined": 6,
    "ceiling": 24
   },
   "절연열화": {

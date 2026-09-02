@@ -103,6 +103,9 @@ build/                       생성물. git 에 넣지 않음
 - **규칙 도형에는 도형 수준 `sh:order` 를 적는다.** pySHACL 은 규칙의 순서를 도형 안에서만
   지키고 도형끼리는 도형의 `sh:order` 로 정렬한다. 없으면 사전 순이라 점수가 반증보다 먼저 돈다.
   `test_rule_shapes_declare_execution_order` 가 잡는다.
+- **점수는 그 요인의 표지로 열거된 가설만 받는다.** 사슬(`enables`)의 양립 수 k 는 값의 크기만
+  감쇠한다. 양립한다고 그 가설에 규칙을 더하지 않는다 — 필요조건과 단순 가능성이 같은 무게가 된다.
+  실제로 그렇게 했더니 트래킹이 96.7% → 10.0% 였다. `scripts/score.py` 머리말.
 - **반증 단서(Refuting)는 기각이 아니라 감점이다.** 기각은 결정적 반증(DecisiveRefuting)만.
   누적돼 40 미만이면 약화. `efi_schema.apply()` 와 SHACL F-1·F-4 가 같아야 한다.
 - SPARQL 에서 `owl:unionOf` 는 순회되지 않는다. 하위 클래스는 `rdfs:subClassOf` 로 명시할 것.

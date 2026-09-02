@@ -71,7 +71,7 @@ RULES = {
     (r"압착|눌린|눌리|눌림|눌려|짓눌|뭉개|하중|중량물|적치|끼인|맞닿", "ExternalCrushing"),
     (r"꺾|굴곡|굴절|접힌|반복.*움직|굽힘|구부", "RepeatedFlexing"),
     (r"진동", "Vibration"),
-    (r"당겨|장력|인장", "Tension"),
+    (r"당겨|장력|인장|늘어[남나]", "Tension"),
     (r"노후|경년|장기간|장시간|오래|\d+\s*년\s*(이상|전|간)?\s*(사용|경과|설치|된|가동)|\d{4}\s*년식|\d+\s*년식|상시\s*연결", "AgedInsulation"),
     (r"열화|경화|취성|딱딱|성상\s*변화|상태\s*변화|열\s*스트레스", "ThermalDegradation"),
     (r"마모|쓸림|긁힘|찢|벗겨|피복\s*손상|피복\s*훼손|박리|천공|날카로", "AbrasionAtPenetration"),

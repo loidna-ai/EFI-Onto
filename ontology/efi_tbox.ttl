@@ -2548,6 +2548,12 @@ efi:R_CD_sup5  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; e
 #   "먼지 또는 분진 등이 누적되어 통풍, 냉각 저해로 발열되어 권선에서 발화" (p.246)
 efi:MoistureExposure efi:enables efi:InsulationBreakdownArc .
 efi:DustAccumulation efi:enables efi:InsulationBreakdownArc .
+# 여기에 절연열화 쪽 규칙(습기·분진 → 절연열화 +9)을 붙였다가 되돌렸다.
+# 사슬(enables)은 '일어날 수 있는가'이고 규칙은 '그 요인의 표지로 열거됐는가'다.
+# Table 2 는 오염 환경을 트래킹의 핵심 단서(필요조건)로 들고 절연열화의 단서로는
+# 들지 않는다. p.245 는 모터 권선에 한정된 문장이다. k=2 는 트래킹 쪽 점수를
+# 15 → 9 로 감쇠하는 데 쓰이고 절연열화에 점수를 주지 않는다 — scripts/score.py.
+# 붙였을 때 트래킹 96.7% → 10.0% (24건 동점). 조사서가 습기만 적기 때문이다.
 
 # 조명 깜박임·이취는 접촉불량 전용이 아니다.
 #   "반단선에 의한 발열이 발생하면 ... 접촉·단속을 반복하여 용융흔이 생기고" (p.149)
