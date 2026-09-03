@@ -1,0 +1,112 @@
+{
+  "case_id": "T16_SYNTHETIC",
+  "hypotheses": [],
+  "investigation": {
+    "system": {
+      "id": "system",
+      "status": "Confirmed",
+      "attributed_to": "investigator",
+      "source": "[합성] 현장 계통도",
+      "components": [
+        {"id": "branch", "cls": "BranchCircuit"},
+        {"id": "wire", "cls": "Conductor", "circuit": "branch", "role": "Ungrounded"},
+        {"id": "breaker", "cls": "ProtectiveDevice", "circuit": "branch"},
+        {"id": "outlet", "cls": "PlugReceptacle", "circuit": "branch"}
+      ]
+    },
+    "conductor_installations": [
+      {
+        "id": "installation",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 표기·계측·배선 확인 기록",
+        "component": "wire",
+        "circuit": "branch",
+        "protective_device": "breaker",
+        "equipment": "outlet",
+        "conductor_material": "Copper",
+        "conductor_material_basis": "[합성] 성분 분석과 제조 표기",
+        "size_system": "mm2",
+        "size_value": "2.5",
+        "size_basis": "[합성] 피복 표기와 단면 측정",
+        "insulation_designation": "XLPE-90C",
+        "insulation_basis": "[합성] 제조 표기와 재질 분석",
+        "installation_method": "InConduit",
+        "installation_method_basis": "[합성] 현장 배선 경로 확인",
+        "bundle_condition": "CableAssembly",
+        "current_carrying_conductor_count": 3,
+        "bundle_basis": "[합성] 전류 운반 도체 세 가닥 확인",
+        "ambient_temperature_C": 30,
+        "ambient_basis": "[합성] 사고 전 환경 기록",
+        "circuit_use": "GeneralBranch",
+        "circuit_use_basis": "[합성] 회로도와 부하 목록",
+        "load_current_A": 18,
+        "load_current_basis": "[합성] 사고 전 계측과 부하 재구성",
+        "protective_device_rating_A": 20,
+        "protective_device_rating_basis": "[합성] 차단기 명판 사진",
+        "equipment_rating_A": 20,
+        "equipment_rating_basis": "[합성] 콘센트 명판 사진",
+        "assessment_complete": true
+      }
+    ],
+    "ampacity_references": [
+      {
+        "id": "applicable",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 국내 전기 기준 예시. 실제 사건에 사용 금지",
+        "reference_role": "ApplicableRating",
+        "basis_kind": "GoverningCode",
+        "jurisdiction": "Republic of Korea",
+        "document_id": "SYNTH-KR-ELECTRICAL-CODE",
+        "edition": "2026 synthetic",
+        "section": "Synthetic Table 1",
+        "conductor_material": "Copper",
+        "size_system": "mm2",
+        "size_value": "2.5",
+        "insulation_designation": "XLPE-90C",
+        "installation_method": "InConduit",
+        "bundle_condition": "CableAssembly",
+        "current_carrying_conductor_count": 3,
+        "circuit_use": "GeneralBranch",
+        "ambient_min_C": 0,
+        "ambient_max_C": 40,
+        "ampacity_max_A": 20,
+        "maximum_protective_device_rating_A": 20,
+        "minimum_equipment_rating_A": 20,
+        "applicability_scope": "[합성] 국내 관할·판본과 지정 포설 조건에만 쓰는 예시 기준"
+      },
+      {
+        "id": "nfpa-context",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "NFPA 921 (2024), Table 9.7.2",
+        "reference_role": "ContextOnly",
+        "basis_kind": "ContextTable",
+        "jurisdiction": "United States",
+        "document_id": "NFPA 921",
+        "edition": "2024",
+        "section": "Table 9.7.2",
+        "conductor_material": "Copper",
+        "size_system": "AWG",
+        "size_value": "12",
+        "circuit_use": "SmallApplianceBranch",
+        "ampacity_min_A": 20,
+        "ampacity_max_A": 25,
+        "applicability_scope": "미국 분기회로의 도체 크기·용도 설명 문맥. 국내 적용 정격이 아님"
+      }
+    ],
+    "ampacity_assessments": [
+      {
+        "id": "assessment",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 조건별 기준 적용 검토",
+        "installation": "installation",
+        "reference": "applicable",
+        "applicability_basis": "[합성] 관할·판본과 모든 설치 조건을 항목별 대조",
+        "assessment_complete": true
+      }
+    ]
+  }
+}

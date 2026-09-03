@@ -4429,7 +4429,7 @@ efi:MetalDepositionSequenceShape a sh:NodeShape ; sh:targetClass efi:MetalDeposi
 
 efi:InvestigationDetailReferenceShape a sh:NodeShape ; sh:targetClass efi:InvestigationRecord ;
     dcterms:references "NFPA 921 (2024) §4.3.3; §4.3.6; §9.12" ;
-    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "다른 세션·누락된 기록을 조사 근거로 연결할 수 없다."@ko ; sh:select """SELECT $this WHERE { $this efi:recordSession ?s . $this ?link ?record . FILTER (?link IN (efi:characteristicComparison, efi:addressesProblem, efi:verifiesPlan, efi:verificationEvidence, efi:requestedReviewPlan, efi:hasScopeAssessment, efi:assessesReviewPlan, efi:sourceContactArcRecord, efi:subsequentBreakdownRecord, efi:relatedIgnitionRecord, efi:terminationConnection, efi:fastenerTermination, efi:measuredTermination, efi:measuredFastener, efi:torqueIgnitionRecord, efi:comparedTorqueMeasurement, efi:comparedTorqueReference, efi:historyExamination, efi:historyHeating, efi:historyMoisture, efi:historyIgnitionRecord, efi:matingContactTermination, efi:comparedMetalTermination, efi:comparedMatingContact, efi:comparedMetalReference)) FILTER NOT EXISTS { ?record efi:recordSession ?s } }""" ] .
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "다른 세션·누락된 기록을 조사 근거로 연결할 수 없다."@ko ; sh:select """SELECT $this WHERE { $this efi:recordSession ?s . $this ?link ?record . FILTER (?link IN (efi:characteristicComparison, efi:addressesProblem, efi:verifiesPlan, efi:verificationEvidence, efi:requestedReviewPlan, efi:hasScopeAssessment, efi:assessesReviewPlan, efi:sourceContactArcRecord, efi:subsequentBreakdownRecord, efi:relatedIgnitionRecord, efi:terminationConnection, efi:fastenerTermination, efi:measuredTermination, efi:measuredFastener, efi:torqueIgnitionRecord, efi:comparedTorqueMeasurement, efi:comparedTorqueReference, efi:historyExamination, efi:historyHeating, efi:historyMoisture, efi:historyIgnitionRecord, efi:matingContactTermination, efi:comparedMetalTermination, efi:comparedMatingContact, efi:comparedMetalReference, efi:comparedConductorInstallation, efi:comparedAmpacityReference)) FILTER NOT EXISTS { ?record efi:recordSession ?s } }""" ] .
 
 # 계획·문제·검토 의견 자체는 그 계획을 검증한 관측 근거가 아니다.
 efi:InvestigationEvidenceRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "검증에 인용할 조사 관측 기록"@ko ; skos:prefLabel "검증에 인용할 조사 관측 기록"@ko .
@@ -5108,3 +5108,232 @@ efi:MetalInterfaceComparisonShape a sh:NodeShape ; sh:targetClass efi:MetalInter
      efi:metalReferenceInstallationYearTo ?to .
    $this efi:installationRegion ?region ; efi:installationYear ?year . FILTER (?year>=?from && ?year<=?to) })
  } }""" ] .
+
+# 58. T16 — 출처 범위를 갖춘 허용전류·보호장치 정격 대조
+# NFPA 921 표 9.7.2는 미국 분기회로를 설명하는 조사 지침의 문맥표다. 국내 법규의
+# 보편 허용전류 표로 바꾸지 않는다. 실제 적합성 대조에는 관할·문서·판본과 그 기준이
+# 요구하는 재질·크기 체계·절연·설치·다발·용도 조건을 모두 명시한 기준만 사용한다.
+efi:ConductorInstallationRecord a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ;
+    rdfs:label "도체 설치·부하·보호 정격 확인 기록"@ko ; skos:prefLabel "도체 설치·부하·보호 정격 확인 기록"@ko .
+efi:AmpacityReference a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ;
+    rdfs:label "적용 범위가 명시된 허용전류 기준"@ko ; skos:prefLabel "적용 범위가 명시된 허용전류 기준"@ko ;
+    rdfs:comment "NFPA 921 표 9.7.2 같은 설명용 문맥표와 사건 관할의 적용 가능한 전기 기준을 구별한다. 값만 떼어 보편 임계값으로 사용하지 않는다."@ko .
+efi:AmpacityAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ;
+    rdfs:label "현장 도체 조건과 허용전류 기준 대조"@ko ; skos:prefLabel "현장 도체 조건과 허용전류 기준 대조"@ko ;
+    rdfs:comment "조건 일치와 부하·보호장치·기기 정격의 수치 관계만 기록한다. 초과 결과만으로 과부하 발화·원인 가점을 생성하지 않는다."@ko .
+
+efi:installedCircuit a owl:ObjectProperty ; rdfs:range efi:Circuit ; skos:prefLabel "도체가 속한 회로"@ko .
+efi:installedProtectiveDevice a owl:ObjectProperty ; rdfs:range efi:ProtectiveDevice ; skos:prefLabel "도체를 보호하는 장치"@ko .
+efi:installedEquipment a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "회로에 연결된 정격 확인 기기"@ko .
+efi:comparedConductorInstallation a owl:ObjectProperty ; rdfs:range efi:ConductorInstallationRecord ; skos:prefLabel "대조한 실제 도체 설치 기록"@ko .
+efi:comparedAmpacityReference a owl:ObjectProperty ; rdfs:range efi:AmpacityReference ; skos:prefLabel "대조한 허용전류 기준"@ko .
+
+efi:installationConductorMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 재질"@ko .
+efi:installationConductorMaterialBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 재질 식별 근거"@ko .
+efi:conductorSizeSystem a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 크기 체계"@ko .
+efi:conductorSizeValue a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 크기 값"@ko .
+efi:conductorSizeBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 크기 식별 근거"@ko .
+efi:installationInsulationDesignation a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 절연 종류·등급 표기"@ko .
+efi:installationInsulationBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "절연 종류·등급 식별 근거"@ko .
+efi:conductorInstallationMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 포설·배선 방식"@ko .
+efi:conductorInstallationMethodBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "포설·배선 방식 확인 근거"@ko .
+efi:conductorBundleCondition a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 다발·케이블 집합 조건"@ko .
+efi:currentCarryingConductorCount a owl:DatatypeProperty ; rdfs:range xsd:positiveInteger ; skos:prefLabel "함께 배치된 전류 운반 도체 수"@ko .
+efi:conductorBundleBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "다발 조건과 도체 수 확인 근거"@ko .
+efi:installationAmbientTemperature_C a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:DEG_C ; skos:prefLabel "실제 주변 온도"@ko .
+efi:installationAmbientBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "주변 온도 근거"@ko .
+efi:ampacityCircuitUse a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "허용전류 대조용 회로 용도"@ko .
+efi:ampacityCircuitUseBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "회로 용도 확인 근거"@ko .
+efi:assessedLoadCurrent_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "출처가 있는 실제·재구성 부하전류"@ko .
+efi:assessedLoadCurrentBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "부하전류의 계측·재구성 근거"@ko .
+efi:observedProtectiveDeviceRating_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "보호장치 표시 정격"@ko .
+efi:protectiveDeviceRatingBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "보호장치 정격 확인 근거"@ko .
+efi:observedEquipmentRating_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "연결 기기의 표시 정격"@ko .
+efi:equipmentRatingBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "연결 기기 정격 확인 근거"@ko .
+efi:conductorInstallationAssessmentComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "도체 설치 조건 확인 완료 주장"@ko .
+efi:conductorInstallationIdentified a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "도체·회로·보호장치와 적용 조건의 근거 연결됨"@ko .
+
+efi:ampacityReferenceRole a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "설명 문맥 또는 적용 정격 역할"@ko .
+efi:ampacityReferenceKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "허용전류 기준의 자료 종류"@ko .
+efi:ampacityReferenceJurisdiction a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 관할"@ko .
+efi:ampacityReferenceDocument a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준 문서 식별자"@ko .
+efi:ampacityReferenceEdition a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준 판본·시행판"@ko .
+efi:ampacityReferenceSection a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준 표·조항"@ko .
+efi:ampacityReferenceConductorMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "허용전류 기준의 도체 재질"@ko .
+efi:ampacityReferenceSizeSystem a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 도체 크기 체계"@ko .
+efi:ampacityReferenceSizeValue a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 도체 크기 값"@ko .
+efi:ampacityReferenceInsulationDesignation a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 절연 종류·등급"@ko .
+efi:ampacityReferenceInstallationMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 포설·배선 방식"@ko .
+efi:ampacityReferenceBundleCondition a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 다발·케이블 집합 조건"@ko .
+efi:ampacityReferenceConductorCount a owl:DatatypeProperty ; rdfs:range xsd:positiveInteger ; skos:prefLabel "기준의 전류 운반 도체 수"@ko .
+efi:ampacityReferenceCircuitUse a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 회로 용도"@ko .
+efi:ampacityReferenceAmbientMin_C a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:DEG_C ; skos:prefLabel "기준 주변 온도 하한"@ko .
+efi:ampacityReferenceAmbientMax_C a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:DEG_C ; skos:prefLabel "기준 주변 온도 상한"@ko .
+efi:referenceAmpacityMin_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "기준 허용전류 범위 하한"@ko .
+efi:referenceAmpacityMax_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "기준 허용전류 상한"@ko .
+efi:referenceMaximumProtection_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "기준이 허용하는 보호장치 정격 상한"@ko .
+efi:referenceMinimumEquipmentRating_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "기준이 요구하는 연결 기기 정격 하한"@ko .
+efi:ampacityReferenceScope a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "허용전류 기준의 적용 범위·제한"@ko .
+efi:ampacityApplicabilityBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 조건과 기준의 항목별 대조 근거"@ko .
+efi:ampacityAssessmentComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "허용전류 대조 완료 주장"@ko .
+efi:ampacityReferenceApplicable a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "출처 조건이 실제 설치와 일치함"@ko .
+efi:loadAmpacityResult a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "부하전류와 허용전류 비교 결과"@ko .
+efi:protectiveDeviceRatingResult a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "보호장치 정격과 기준 상한 비교 결과"@ko .
+efi:equipmentRatingResult a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "연결 기기 정격과 기준 하한 비교 결과"@ko .
+efi:ampacityAssessmentSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "조건 일치 후 정격 대조 결과가 생성됨"@ko .
+
+efi:ConductorInstallationRecordShape a sh:NodeShape ; sh:targetClass efi:ConductorInstallationRecord ;
+    dcterms:references "NFPA 921 (2024) §9.7.2; §9.7.2.2; §9.8.2; §4.3.3" ;
+    sh:order -1 ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:Conductor ] ;
+    sh:property [ sh:path efi:installedCircuit ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:Circuit ] ;
+    sh:property [ sh:path efi:installedProtectiveDevice ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ProtectiveDevice ] ;
+    sh:property [ sh:path efi:installedEquipment ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:installationConductorMaterial ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Copper" "PureAluminum" "AluminumAlloy" "CopperCladAluminum" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:installationConductorMaterialBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorSizeSystem ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "AWG" "mm2" "ManufacturerDesignation" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:conductorSizeValue ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorSizeBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:installationInsulationDesignation ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:installationInsulationBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorInstallationMethod ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorInstallationMethodBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorBundleCondition ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "NotBundled" "Bundled" "CableAssembly" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:currentCarryingConductorCount ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ] ;
+    sh:property [ sh:path efi:conductorBundleBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:installationAmbientTemperature_C ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path efi:installationAmbientBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityCircuitUse ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "GeneralBranch" "SmallApplianceBranch" "LargeApplianceBranch" "ServiceEntrance" "ServiceDrop" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityCircuitUseBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:assessedLoadCurrent_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path efi:assessedLoadCurrentBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:observedProtectiveDeviceRating_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:protectiveDeviceRatingBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:observedEquipmentRating_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:equipmentRatingBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorInstallationAssessmentComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:conductorInstallationIdentified ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order -1 ; sh:construct """CONSTRUCT { $this efi:conductorInstallationIdentified true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?conductor ;
+   efi:installedCircuit ?circuit ; efi:installedProtectiveDevice ?protection ;
+   efi:installationConductorMaterial ?material ; efi:installationConductorMaterialBasis ?materialBasis ;
+   efi:conductorSizeSystem ?sizeSystem ; efi:conductorSizeValue ?size ; efi:conductorSizeBasis ?sizeBasis ;
+   efi:installationInsulationDesignation ?insulation ; efi:installationInsulationBasis ?insulationBasis ;
+   efi:conductorInstallationMethod ?method ; efi:conductorInstallationMethodBasis ?methodBasis ;
+   efi:conductorBundleCondition ?bundle ; efi:currentCarryingConductorCount ?count ; efi:conductorBundleBasis ?bundleBasis ;
+   efi:ampacityCircuitUse ?use ; efi:ampacityCircuitUseBasis ?useBasis ;
+   efi:assessedLoadCurrent_A ?load ; efi:assessedLoadCurrentBasis ?loadBasis ;
+   efi:observedProtectiveDeviceRating_A ?protectRating ; efi:protectiveDeviceRatingBasis ?protectBasis .
+ ?conductor a efi:Conductor ; efi:componentModel ?model ; efi:componentCircuit ?circuit .
+ ?circuit rdf:type/rdfs:subClassOf* efi:Circuit ; efi:componentModel ?model .
+ ?protection rdf:type/rdfs:subClassOf* efi:ProtectiveDevice ; efi:componentModel ?model ; efi:componentCircuit ?circuit .
+ ?model efi:recordSession ?s .
+ FILTER (?material NOT IN ("Unknown","Other") && ?sizeSystem NOT IN ("Unknown","Other")
+   && ?bundle NOT IN ("Unknown","Other") && ?use NOT IN ("Unknown","Other") && ?count>=1
+   && STRLEN(?materialBasis)>0 && STRLEN(?size)>0 && STRLEN(?sizeBasis)>0 && STRLEN(?insulation)>0
+   && STRLEN(?insulationBasis)>0 && STRLEN(?method)>0 && STRLEN(?methodBasis)>0 && STRLEN(?bundleBasis)>0
+   && STRLEN(?useBasis)>0 && STRLEN(?loadBasis)>0 && STRLEN(?protectBasis)>0)
+ FILTER NOT EXISTS { $this efi:installationAmbientTemperature_C ?ambient . FILTER NOT EXISTS { $this efi:installationAmbientBasis ?ambientBasis . FILTER (STRLEN(?ambientBasis)>0) } }
+ FILTER NOT EXISTS { $this efi:installedEquipment ?equipment . FILTER NOT EXISTS {
+   ?equipment efi:componentModel ?model ; efi:componentCircuit ?circuit .
+   $this efi:observedEquipmentRating_A ?equipmentRating ; efi:equipmentRatingBasis ?equipmentBasis . FILTER (STRLEN(?equipmentBasis)>0) } }
+}""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "같은 회로의 도체·보호장치와 재질·크기 체계·절연·설치 방식·다발 수·용도·부하전류·정격의 근거를 모두 확인해야 한다."@ko ; sh:select """SELECT $this WHERE { $this efi:conductorInstallationAssessmentComplete true . FILTER NOT EXISTS { $this efi:conductorInstallationIdentified true } }""" ] .
+
+efi:AmpacityReferenceShape a sh:NodeShape ; sh:targetClass efi:AmpacityReference ;
+    dcterms:references "NFPA 921 (2024) §9.7.2; §9.7.2.2; §4.3.3" ;
+    sh:property [ sh:path efi:ampacityReferenceRole ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "ContextOnly" "ApplicableRating" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "GoverningCode" "Manufacturer" "EngineeringCalculation" "ContextTable" "Other" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceJurisdiction ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceDocument ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceEdition ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceSection ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceConductorMaterial ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Copper" "PureAluminum" "AluminumAlloy" "CopperCladAluminum" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceSizeSystem ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "AWG" "mm2" "ManufacturerDesignation" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceSizeValue ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceInsulationDesignation ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceInstallationMethod ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceBundleCondition ; sh:maxCount 1 ; sh:in ( "NotBundled" "Bundled" "CableAssembly" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceConductorCount ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ] ;
+    sh:property [ sh:path efi:ampacityReferenceCircuitUse ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "GeneralBranch" "SmallApplianceBranch" "LargeApplianceBranch" "ServiceEntrance" "ServiceDrop" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceAmbientMin_C ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path efi:ampacityReferenceAmbientMax_C ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path efi:referenceAmpacityMin_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path efi:referenceAmpacityMax_A ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:referenceMaximumProtection_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:referenceMinimumEquipmentRating_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:ampacityReferenceScope ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "허용전류·주변온도 범위의 하한은 상한보다 클 수 없다."@ko ; sh:select """SELECT $this WHERE {
+ { $this efi:referenceAmpacityMin_A ?a ; efi:referenceAmpacityMax_A ?b . FILTER (?a>?b) }
+ UNION { $this efi:ampacityReferenceAmbientMin_C ?a ; efi:ampacityReferenceAmbientMax_C ?b . FILTER (?a>?b) }
+}""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "ContextTable은 설명용으로만 저장할 수 있으며 적용 정격으로 사용할 수 없다."@ko ; sh:select """SELECT $this WHERE { $this efi:ampacityReferenceKind "ContextTable" . FILTER NOT EXISTS { $this efi:ampacityReferenceRole "ContextOnly" } }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "적용 정격은 관할·문서·판본·조항과 도체 재질·크기 체계·절연·설치·다발 수·용도 및 보호장치 상한을 모두 명시해야 한다."@ko ; sh:select """SELECT $this WHERE {
+ $this efi:ampacityReferenceRole "ApplicableRating" . FILTER NOT EXISTS {
+   $this efi:ampacityReferenceKind ?kind ; efi:ampacityReferenceJurisdiction ?jurisdiction ;
+     efi:ampacityReferenceDocument ?document ; efi:ampacityReferenceEdition ?edition ; efi:ampacityReferenceSection ?section ;
+     efi:ampacityReferenceConductorMaterial ?material ; efi:ampacityReferenceSizeSystem ?sizeSystem ;
+     efi:ampacityReferenceSizeValue ?size ; efi:ampacityReferenceInsulationDesignation ?insulation ;
+     efi:ampacityReferenceInstallationMethod ?method ; efi:ampacityReferenceBundleCondition ?bundle ;
+     efi:ampacityReferenceConductorCount ?count ; efi:ampacityReferenceCircuitUse ?use ;
+     efi:referenceAmpacityMax_A ?ampacity ; efi:referenceMaximumProtection_A ?protection ; efi:ampacityReferenceScope ?scope .
+   FILTER (?kind IN ("GoverningCode","Manufacturer","EngineeringCalculation")
+     && ?material NOT IN ("Unknown","Other") && ?sizeSystem NOT IN ("Unknown","Other")
+     && ?bundle NOT IN ("Unknown","Other") && ?use NOT IN ("Unknown","Other") && ?count>=1
+     && STRLEN(?jurisdiction)>0 && STRLEN(?document)>0 && STRLEN(?edition)>0 && STRLEN(?section)>0
+     && STRLEN(?size)>0 && STRLEN(?insulation)>0 && STRLEN(?method)>0 && STRLEN(?scope)>0) }
+}""" ] .
+
+efi:AmpacityAssessmentShape a sh:NodeShape ; sh:targetClass efi:AmpacityAssessment ;
+    dcterms:references "NFPA 921 (2024) §9.7.2; §9.7.2.2; §9.8.2; §4.3.5" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:comparedConductorInstallation ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ConductorInstallationRecord ] ;
+    sh:property [ sh:path efi:comparedAmpacityReference ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:AmpacityReference ] ;
+    sh:property [ sh:path efi:ampacityApplicabilityBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityAssessmentComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:ampacityReferenceApplicable ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:loadAmpacityResult ; sh:maxCount 1 ; sh:in ( "Within" "Exceeds" ) ] ;
+    sh:property [ sh:path efi:protectiveDeviceRatingResult ; sh:maxCount 1 ; sh:in ( "Within" "Exceeds" ) ] ;
+    sh:property [ sh:path efi:equipmentRatingResult ; sh:maxCount 1 ; sh:in ( "Meets" "Below" ) ] ;
+    sh:property [ sh:path efi:ampacityAssessmentSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:ampacityReferenceApplicable true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:comparedConductorInstallation ?actual ; efi:comparedAmpacityReference ?reference ; efi:ampacityApplicabilityBasis ?basis .
+ ?actual a efi:ConductorInstallationRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:conductorInstallationIdentified true ; efi:installationConductorMaterial ?material ;
+   efi:conductorSizeSystem ?sizeSystem ; efi:conductorSizeValue ?size ;
+   efi:installationInsulationDesignation ?insulation ; efi:conductorInstallationMethod ?method ;
+   efi:conductorBundleCondition ?bundle ; efi:currentCarryingConductorCount ?count ; efi:ampacityCircuitUse ?use .
+ ?reference a efi:AmpacityReference ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:ampacityReferenceRole "ApplicableRating" ; efi:ampacityReferenceKind ?kind ;
+   efi:ampacityReferenceConductorMaterial ?material ; efi:ampacityReferenceSizeSystem ?sizeSystem ;
+   efi:ampacityReferenceSizeValue ?size ; efi:ampacityReferenceInsulationDesignation ?insulation ;
+   efi:ampacityReferenceInstallationMethod ?method ; efi:ampacityReferenceBundleCondition ?bundle ;
+   efi:ampacityReferenceConductorCount ?count ; efi:ampacityReferenceCircuitUse ?use ;
+   efi:referenceAmpacityMax_A ?ampacity ; efi:referenceMaximumProtection_A ?maxProtection .
+ FILTER (?kind IN ("GoverningCode","Manufacturer","EngineeringCalculation") && STRLEN(?basis)>0)
+ FILTER NOT EXISTS { ?reference efi:ampacityReferenceAmbientMin_C ?min . FILTER NOT EXISTS { ?actual efi:installationAmbientTemperature_C ?ambient . FILTER (?ambient>=?min) } }
+ FILTER NOT EXISTS { ?reference efi:ampacityReferenceAmbientMax_C ?max . FILTER NOT EXISTS { ?actual efi:installationAmbientTemperature_C ?ambient . FILTER (?ambient<=?max) } }
+ FILTER NOT EXISTS { ?reference efi:referenceMinimumEquipmentRating_A ?required . FILTER NOT EXISTS {
+   ?actual efi:installedEquipment ?equipment ; efi:observedEquipmentRating_A ?rating ; efi:equipmentRatingBasis ?ratingBasis . FILTER (STRLEN(?ratingBasis)>0) } }
+}""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ; sh:construct """CONSTRUCT {
+ $this efi:loadAmpacityResult ?loadResult ; efi:protectiveDeviceRatingResult ?protectionResult .
+} WHERE {
+ $this efi:ampacityReferenceApplicable true ; efi:comparedConductorInstallation ?actual ; efi:comparedAmpacityReference ?reference .
+ ?actual efi:assessedLoadCurrent_A ?load ; efi:observedProtectiveDeviceRating_A ?protection .
+ ?reference efi:referenceAmpacityMax_A ?ampacity ; efi:referenceMaximumProtection_A ?maxProtection .
+ BIND (IF(?load<=?ampacity,"Within","Exceeds") AS ?loadResult)
+ BIND (IF(?protection<=?maxProtection,"Within","Exceeds") AS ?protectionResult)
+}""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ; sh:construct """CONSTRUCT { $this efi:equipmentRatingResult ?result . } WHERE {
+ $this efi:ampacityReferenceApplicable true ; efi:comparedConductorInstallation ?actual ; efi:comparedAmpacityReference ?reference .
+ ?actual efi:observedEquipmentRating_A ?rating . ?reference efi:referenceMinimumEquipmentRating_A ?required .
+ BIND (IF(?rating>=?required,"Meets","Below") AS ?result)
+}""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 2 ; sh:construct """CONSTRUCT { $this efi:ampacityAssessmentSupported true . } WHERE {
+ $this efi:ampacityReferenceApplicable true ; efi:loadAmpacityResult ?load ;
+   efi:protectiveDeviceRatingResult ?protection ; efi:comparedAmpacityReference ?reference .
+ FILTER NOT EXISTS { ?reference efi:referenceMinimumEquipmentRating_A ?required . FILTER NOT EXISTS { $this efi:equipmentRatingResult ?equipment } }
+}""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "허용전류 대조 완료에는 같은 세션의 현장 조건과 적용 가능한 관할 기준이 정확히 일치하고 부하·보호장치·기기 정격 비교 결과가 있어야 한다."@ko ; sh:select """SELECT $this WHERE { $this efi:ampacityAssessmentComplete true . FILTER NOT EXISTS { $this efi:ampacityAssessmentSupported true } }""" ] .

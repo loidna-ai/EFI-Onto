@@ -203,6 +203,10 @@ ContactCoating = Literal['Zinc', 'Nickel', 'Tin', 'Silver', 'Indium', 'Copper', 
 OxideBehavior = Literal['Semiconductive', 'NegligibleConductivity', 'Other', 'Unknown']
 InstallationUse = Literal['BranchCircuit', 'ServiceEntrance', 'ServiceDrop', 'Other', 'Unknown']
 DeviceMarking = Literal['AL-CU', 'CO-ALR', 'CopperOnly', 'Other', 'None', 'Unknown']
+ConductorSizeSystem = Literal['AWG', 'mm2', 'ManufacturerDesignation', 'Other', 'Unknown']
+BundleCondition = Literal['NotBundled', 'Bundled', 'CableAssembly', 'Other', 'Unknown']
+AmpacityUse = Literal['GeneralBranch', 'SmallApplianceBranch', 'LargeApplianceBranch',
+                      'ServiceEntrance', 'ServiceDrop', 'Other', 'Unknown']
 
 
 class TerminationRecord(Record):
@@ -273,6 +277,67 @@ class MetalInterfaceComparison(Record):
     device_marking_basis: str | None = None
     connector_approval_status: Literal['Confirmed', 'ConfirmedAbsent', 'Unverifiable', 'Missing'] = 'Missing'
     approval_basis: str | None = None
+    applicability_basis: str | None = None
+    assessment_complete: bool = False
+
+
+class ConductorInstallationRecord(Record):
+    component: str
+    circuit: str
+    protective_device: str
+    equipment: str | None = None
+    conductor_material: ConductorMetal = 'Unknown'
+    conductor_material_basis: str | None = None
+    size_system: ConductorSizeSystem = 'Unknown'
+    size_value: str | None = None
+    size_basis: str | None = None
+    insulation_designation: str | None = None
+    insulation_basis: str | None = None
+    installation_method: str | None = None
+    installation_method_basis: str | None = None
+    bundle_condition: BundleCondition = 'Unknown'
+    current_carrying_conductor_count: int | None = Field(default=None, ge=1)
+    bundle_basis: str | None = None
+    ambient_temperature_C: Decimal | None = Field(default=None, allow_inf_nan=False)
+    ambient_basis: str | None = None
+    circuit_use: AmpacityUse = 'Unknown'
+    circuit_use_basis: str | None = None
+    load_current_A: Decimal | None = Field(default=None, ge=0, allow_inf_nan=False)
+    load_current_basis: str | None = None
+    protective_device_rating_A: Decimal | None = Field(default=None, gt=0, allow_inf_nan=False)
+    protective_device_rating_basis: str | None = None
+    equipment_rating_A: Decimal | None = Field(default=None, gt=0, allow_inf_nan=False)
+    equipment_rating_basis: str | None = None
+    assessment_complete: bool = False
+
+
+class AmpacityReference(Record):
+    reference_role: Literal['ContextOnly', 'ApplicableRating']
+    basis_kind: Literal['GoverningCode', 'Manufacturer', 'EngineeringCalculation', 'ContextTable', 'Other']
+    jurisdiction: str = Field(min_length=1)
+    document_id: str = Field(min_length=1)
+    edition: str = Field(min_length=1)
+    section: str = Field(min_length=1)
+    conductor_material: ConductorMetal
+    size_system: ConductorSizeSystem
+    size_value: str = Field(min_length=1)
+    insulation_designation: str | None = None
+    installation_method: str | None = None
+    bundle_condition: BundleCondition | None = None
+    current_carrying_conductor_count: int | None = Field(default=None, ge=1)
+    circuit_use: AmpacityUse
+    ambient_min_C: Decimal | None = Field(default=None, allow_inf_nan=False)
+    ambient_max_C: Decimal | None = Field(default=None, allow_inf_nan=False)
+    ampacity_min_A: Decimal | None = Field(default=None, ge=0, allow_inf_nan=False)
+    ampacity_max_A: Decimal = Field(gt=0, allow_inf_nan=False)
+    maximum_protective_device_rating_A: Decimal | None = Field(default=None, gt=0, allow_inf_nan=False)
+    minimum_equipment_rating_A: Decimal | None = Field(default=None, gt=0, allow_inf_nan=False)
+    applicability_scope: str = Field(min_length=1)
+
+
+class AmpacityAssessment(Record):
+    installation: str
+    reference: str
     applicability_basis: str | None = None
     assessment_complete: bool = False
 
@@ -358,6 +423,9 @@ class InvestigationData(BaseModel):
     mating_contacts: list[MatingContactRecord] = Field(default_factory=list)
     metal_interface_references: list[MetalInterfaceReference] = Field(default_factory=list)
     metal_interface_comparisons: list[MetalInterfaceComparison] = Field(default_factory=list)
+    conductor_installations: list[ConductorInstallationRecord] = Field(default_factory=list)
+    ampacity_references: list[AmpacityReference] = Field(default_factory=list)
+    ampacity_assessments: list[AmpacityAssessment] = Field(default_factory=list)
     torque_measurements: list[TorqueMeasurement] = Field(default_factory=list)
     torque_references: list[TorqueReference] = Field(default_factory=list)
     torque_comparisons: list[TorqueComparison] = Field(default_factory=list)
@@ -370,7 +438,8 @@ class InvestigationData(BaseModel):
                    *self.comparisons, *self.heating_observations, *self.problems, *self.plans,
                    *self.verifications, *self.technical_reviews, *self.depositions,
                    *self.terminations, *self.fasteners, *self.mating_contacts, *self.metal_interface_references,
-                   *self.metal_interface_comparisons, *self.torque_measurements, *self.torque_references, *self.torque_comparisons,
+                   *self.metal_interface_comparisons, *self.conductor_installations, *self.ampacity_references,
+                   *self.ampacity_assessments, *self.torque_measurements, *self.torque_references, *self.torque_comparisons,
                    *(scope for review in self.technical_reviews for scope in review.scopes)]
         if self.system:
             records += [*self.system.connections, *self.system.paths]
@@ -378,7 +447,7 @@ class InvestigationData(BaseModel):
             raise ValueError('duplicate investigation record ID')
         for r in [*self.device_states, *self.events, *self.examinations, *self.comparisons,
                   *self.heating_observations, *self.depositions, *self.terminations, *self.fasteners,
-                  *self.mating_contacts, *self.insulation_exposures]:
+                  *self.mating_contacts, *self.insulation_exposures, *self.conductor_installations]:
             if r.component not in components:
                 raise ValueError('record references unknown component')
         for r in self.device_states:
@@ -407,7 +476,8 @@ class InvestigationData(BaseModel):
             evidence = [*self.device_states, *self.events, *self.power_records, *self.first_fuels,
                         *self.heat_transfers, *self.examinations, *self.insulation_exposures, *self.comparisons,
                         *self.heating_observations, *self.depositions, *self.terminations,
-                        *self.fasteners, *self.mating_contacts, *self.torque_measurements]
+                        *self.fasteners, *self.mating_contacts, *self.torque_measurements,
+                        *self.conductor_installations]
             if self.system:
                 evidence += [*self.system.connections, *self.system.paths]
             known(r.evidence_records, evidence, 'evidence record')
@@ -440,6 +510,17 @@ class InvestigationData(BaseModel):
             known([r.termination], self.terminations, 'metal interface termination')
             known([r.mating_contact], self.mating_contacts, 'mating contact')
             known([r.reference], self.metal_interface_references, 'metal interface reference')
+        for r in self.conductor_installations:
+            known([r.circuit, r.protective_device, r.equipment], self.system.components, 'ampacity component')
+            if components[r.component].cls != 'Conductor':
+                raise ValueError('ampacity installation target must be Conductor')
+            if components[r.circuit].cls not in ('Circuit', 'BranchCircuit'):
+                raise ValueError('ampacity installation circuit must be Circuit')
+            if components[r.protective_device].cls not in ('ProtectiveDevice', 'GroundFaultProtectiveDevice', 'ArcFaultProtectiveDevice'):
+                raise ValueError('ampacity installation protection must be protective device')
+        for r in self.ampacity_assessments:
+            known([r.installation], self.conductor_installations, 'conductor installation')
+            known([r.reference], self.ampacity_references, 'ampacity reference')
         for r in self.torque_measurements:
             known([r.termination], self.terminations, 'torque termination')
             known([r.fastener], self.fasteners, 'torque fastener')
@@ -683,6 +764,64 @@ class InvestigationData(BaseModel):
                        ('connectorApprovalBasis', comparison.approval_basis),
                        ('metalInterfaceApplicabilityBasis', comparison.applicability_basis),
                        ('metalInterfaceAssessmentComplete', comparison.assessment_complete)])
+        for installation in self.conductor_installations:
+            n = record(installation, 'ConductorInstallationRecord')
+            graph.add((n, E.recordComponent, comp(installation.component)))
+            graph.add((n, E.installedCircuit, comp(installation.circuit)))
+            graph.add((n, E.installedProtectiveDevice, comp(installation.protective_device)))
+            if installation.equipment is not None:
+                graph.add((n, E.installedEquipment, comp(installation.equipment)))
+            values(n, [('installationConductorMaterial', installation.conductor_material),
+                       ('installationConductorMaterialBasis', installation.conductor_material_basis),
+                       ('conductorSizeSystem', installation.size_system), ('conductorSizeValue', installation.size_value),
+                       ('conductorSizeBasis', installation.size_basis),
+                       ('installationInsulationDesignation', installation.insulation_designation),
+                       ('installationInsulationBasis', installation.insulation_basis),
+                       ('conductorInstallationMethod', installation.installation_method),
+                       ('conductorInstallationMethodBasis', installation.installation_method_basis),
+                       ('conductorBundleCondition', installation.bundle_condition),
+                       ('currentCarryingConductorCount', installation.current_carrying_conductor_count),
+                       ('conductorBundleBasis', installation.bundle_basis),
+                       ('installationAmbientTemperature_C', installation.ambient_temperature_C),
+                       ('installationAmbientBasis', installation.ambient_basis),
+                       ('ampacityCircuitUse', installation.circuit_use),
+                       ('ampacityCircuitUseBasis', installation.circuit_use_basis),
+                       ('assessedLoadCurrent_A', installation.load_current_A),
+                       ('assessedLoadCurrentBasis', installation.load_current_basis),
+                       ('observedProtectiveDeviceRating_A', installation.protective_device_rating_A),
+                       ('protectiveDeviceRatingBasis', installation.protective_device_rating_basis),
+                       ('observedEquipmentRating_A', installation.equipment_rating_A),
+                       ('equipmentRatingBasis', installation.equipment_rating_basis),
+                       ('conductorInstallationAssessmentComplete', installation.assessment_complete)])
+        for reference in self.ampacity_references:
+            n = record(reference, 'AmpacityReference')
+            values(n, [('ampacityReferenceRole', reference.reference_role),
+                       ('ampacityReferenceKind', reference.basis_kind),
+                       ('ampacityReferenceJurisdiction', reference.jurisdiction),
+                       ('ampacityReferenceDocument', reference.document_id),
+                       ('ampacityReferenceEdition', reference.edition),
+                       ('ampacityReferenceSection', reference.section),
+                       ('ampacityReferenceConductorMaterial', reference.conductor_material),
+                       ('ampacityReferenceSizeSystem', reference.size_system),
+                       ('ampacityReferenceSizeValue', reference.size_value),
+                       ('ampacityReferenceInsulationDesignation', reference.insulation_designation),
+                       ('ampacityReferenceInstallationMethod', reference.installation_method),
+                       ('ampacityReferenceBundleCondition', reference.bundle_condition),
+                       ('ampacityReferenceConductorCount', reference.current_carrying_conductor_count),
+                       ('ampacityReferenceCircuitUse', reference.circuit_use),
+                       ('ampacityReferenceAmbientMin_C', reference.ambient_min_C),
+                       ('ampacityReferenceAmbientMax_C', reference.ambient_max_C),
+                       ('referenceAmpacityMin_A', reference.ampacity_min_A),
+                       ('referenceAmpacityMax_A', reference.ampacity_max_A),
+                       ('referenceMaximumProtection_A', reference.maximum_protective_device_rating_A),
+                       ('referenceMinimumEquipmentRating_A', reference.minimum_equipment_rating_A),
+                       ('ampacityReferenceScope', reference.applicability_scope)])
+        for assessment in self.ampacity_assessments:
+            n = record(assessment, 'AmpacityAssessment')
+            graph.add((n, E.comparedConductorInstallation, node('record', assessment.installation)))
+            graph.add((n, E.comparedAmpacityReference, node('record', assessment.reference)))
+            values(n, [('ampacityApplicabilityBasis', assessment.applicability_basis),
+                       ('ampacityAssessmentComplete', assessment.assessment_complete)])
         for p in self.problems:
             n = record(p, 'InvestigationProblemRecord')
             values(n, [('problemStatement', p.statement)])
@@ -794,6 +933,8 @@ def detail_questions(graph: Graph, session: URIRef) -> list[dict]:
         ('InsulationHistoryReview', 'insulationHistoryDocumented', '같은 절연재의 재질·충전재와 가열·표면 수분의 발생 시각·근거를 확인하십시오. 110°C만으로 습윤이나 발화 원인을 확정하지 마십시오.'),
         ('MatingContactRecord', 'matingContactIdentified', '실제로 맞닿는 단자·나사·스프링의 모재와 도금, 각각의 식별 근거를 확인하십시오.'),
         ('MetalInterfaceComparison', 'metalInterfaceComparisonSupported', '도체 재질·등급·크기·형태와 접속 금속·도금·방식·사용 위치·설치 시기·지역·적합 표시가 문헌의 적용 범위와 맞는지 확인하십시오.'),
+        ('ConductorInstallationRecord', 'conductorInstallationIdentified', '같은 회로의 도체·보호장치와 재질·크기 체계·절연·설치 방식·다발 수·용도·부하전류·각 정격의 출처를 확인하십시오.'),
+        ('AmpacityAssessment', 'ampacityAssessmentSupported', '관할·문서·판본이 특정된 적용 기준에서 재질·크기·절연·설치·다발·용도 조건을 대조하십시오. NFPA 설명표를 국내 보편 정격으로 사용하지 마십시오.'),
     ]
     questions = []
     for cls, flag, question in queries:
