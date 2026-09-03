@@ -69,8 +69,8 @@ python -c "import sys;sys.path.insert(0,'src');import efi_schema as E;[print(m.v
 `TrackingScenario` 트래킹 · `ExternalFlameScenario` 외부화염 ·
 `OverloadScenario` 과부하·과전류 · `GroundFaultScenario` 누전·지락 · `InterTurnShortScenario` 층간단락
 
-판정은 가설 하나이거나 판단보류다. 판단보류는 둘로 갈린다 — 단락흔이 확인됐고 비통전이
-아니면 **미확인 단락**(국내 분류, D-14), 아니면 **원인미상**. `scripts/eval.py` 가 둘 다 오답으로 센다.
+판정은 가설 하나이거나 판단보류다. 판단보류는 둘로 갈린다 — 단락흔과 통전이 확인됐으면
+**미확인 단락**(국내 분류, D-14), 아니면 **원인미상**. `scripts/eval.py` 가 둘 다 오답으로 센다.
 
 **조사서 표현이 이 어휘에 없으면 억지로 끼워 맞추지 말고 그대로 두라.**
 매핑되지 않는 표현이 무엇인지가 어휘의 빈 곳을 알려준다.

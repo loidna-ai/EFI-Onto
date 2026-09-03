@@ -431,7 +431,7 @@ class Session(BaseModel):
     #  §19.6.5.1 — 전부 기각되거나(D-7) 최고점이 동점이면(D-8) 원인미상이다.
     #  세워지지 않은 가설(D-15, formed=False)은 이기지도 동점을 만들지도 못한다.
     #  자료가 지지하지 않는 가설(50점 이하)도 판정이 못 된다(D-16) — 외부화염이 빈 조사서에서 홀로 남는 것.
-    #  그 원인미상 중 단락흔이 확인됐고 비통전이 아니면 국내 분류의 '미확인 단락'(D-14).
+    #  그 원인미상 중 단락흔과 통전이 확인됐으면 국내 분류의 '미확인 단락'(D-14). 통전 미확인은 원인미상.
     #  분류지 결론이 아니다(§19.8.2). SHACL D-14 와 같아야 한다.
     UNDETERMINED: ClassVar[str] = "Undetermined"
     UNIDENTIFIED_SHORT: ClassVar[str] = "UnidentifiedShortCircuit"
@@ -445,8 +445,8 @@ class Session(BaseModel):
             if len(best) == 1:
                 return best[0].scenario.value
         arc = any(f.status is Status.CONFIRMED and o.matches(f.cls, "ArcMeltMark") for f in self.facts)
-        dead = any(f.status is Status.CONFIRMED and o.matches(f.cls, "DeEnergizedState") for f in self.facts)
-        return self.UNIDENTIFIED_SHORT if arc and not dead else self.UNDETERMINED
+        live_ = any(f.status is Status.CONFIRMED and o.matches(f.cls, "EnergizedState") for f in self.facts)
+        return self.UNIDENTIFIED_SHORT if arc and live_ else self.UNDETERMINED     # 통전 기준은 C-57 과 같다
 
     # ---- CQ3: 상위 두 가설을 가르는 미확인 지표 (동적 질의 후보) ----
     def discriminating_slots(self, o: Ontology) -> list[tuple[str, Scenario, int]]:

@@ -1001,9 +1001,10 @@ def test_formation_matches_in_both_engines(onto):
 
 
 def test_unidentified_short_circuit_matches_in_both_engines(onto):
-    """D-14 — 원인미상 + 단락흔 + 통전이면 미확인 단락. 두 엔진이 같아야 한다.
+    """D-14 — 원인미상 + 단락흔 + 통전 확인이면 미확인 단락. 두 엔진이 같아야 한다.
 
-    단락흔이 없으면 원인미상이고, 비통전이 확인됐으면 전기적 요인이 아니라 원인미상이다.
+    단락흔이 없으면 원인미상이고, 통전이 확인되지 않았으면(비통전이든 미확인이든) 전기적 요인이라
+    분류할 수 없어 원인미상이다 — C-57 과 같은 기준.
     """
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, DEFAULT_MECHANISM
     def sess(facts):
@@ -1022,6 +1023,9 @@ def test_unidentified_short_circuit_matches_in_both_engines(onto):
     assert (EFI.session_U, EFI.outcomeUndetermined, None) in gr
     assert (EFI.session_U, EFI.outcomeUnidentifiedShortCircuit, None) not in gr
     s = sess(["ArcMeltMark", "DeEnergizedState"])        # 비통전 → 전기 요인 아님 → 원인미상
+    assert s.outcome(onto) == "Undetermined"
+    assert (EFI.session_U, EFI.outcomeUnidentifiedShortCircuit, None) not in run(s.to_turtle(include_derived=False))
+    s = sess(["ArcMeltMark"])                            # 통전 미확인 → 모르는 것은 통전이 아니다(P4, C-57) → 원인미상
     assert s.outcome(onto) == "Undetermined"
     assert (EFI.session_U, EFI.outcomeUnidentifiedShortCircuit, None) not in run(s.to_turtle(include_derived=False))
 
@@ -1115,3 +1119,20 @@ def test_secondary_arc_refutation_is_recorded():
     """)
     assert (EFI.mS, RDF.type, EFI.SecondaryArcMark) in gr
     assert (EFI.hS, EFI.refutedBy, EFI.mS) in gr, "2차 단락흔 반증이 기록되지 않았다"
+
+
+@pytest.mark.skipif(not _hermit_available(), reason="HermiT 은 Java 와 owlready2 가 있어야 돈다")
+def test_mechanism_subsumption_is_caught(tmp_path):
+    """정의 메커니즘이 서로소여야 정의의 겹침이 불만족 클래스로 드러난다.
+
+    가설 클래스만 배타면 "층간 순환전류 발열 ⊑ 절연파괴 단락 아크" 같은 실수를 HermiT 가 못 잡는다 —
+    이름 있는 클래스는 여전히 만족 가능하기 때문이다. 메커니즘에 배타 공리를 두면 그 포섭이
+    층간단락 가설을 절연열화 가설 안으로 넣어 두 배타 가설의 교집합, 즉 불만족 클래스가 된다.
+    """
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import consistency
+    poison = tmp_path / "subsume.ttl"
+    poison.write_text(TTL.read_text(encoding="utf-8") +
+                      "\nefi:InterTurnShortCircuit rdfs:subClassOf efi:InsulationBreakdownArc .\n", encoding="utf-8")
+    bad, inconsistent, _ = consistency.check(poison)
+    assert inconsistent or bad, "메커니즘 포섭 실수를 DL 검사가 잡지 못했다"

@@ -333,6 +333,14 @@ efi:ExternalFlameScenario a owl:Class ; rdfs:subClassOf efi:IgnitionScenario ; s
                                             efi:OverloadScenario efi:GroundFaultScenario efi:InterTurnShortScenario ) .
 [] a owl:AllDisjointClasses ; owl:members ( efi:HeatingMechanism efi:PhysicalEvidence efi:DamagePattern efi:AntecedentCondition efi:FirstFuelIgnited ) .
 efi:PrimaryArcMark owl:disjointWith efi:SecondaryArcMark .
+# 가설을 정의하는 메커니즘들은 서로소다. 가설 클래스만 배타면 정의가 겹쳐도 HermiT 가 못 잡는다 —
+# 누가 "층간 순환전류 발열 ⊑ 절연파괴 단락 아크"를 적어도 이름 있는 클래스는 만족 가능하기 때문이다.
+# 메커니즘이 배타면 그런 포섭이 곧 두 가설의 정의를 겹치게 해 불만족 클래스로 드러난다.
+# test_mechanism_subsumption_is_caught 가 그것을 확인한다. 하위(GlowingConnection 등)는 부모 안에 있다.
+[] a owl:AllDisjointClasses ; owl:members ( efi:PoorContactHeating efi:PartialDisconnectionHeating efi:OverloadHeating
+                                            efi:GroundFaultHeating efi:CrushInducedArc efi:InsulationBreakdownArc
+                                            efi:PartialDisconnectionInducedArc efi:SeriesArc efi:ArcTracking
+                                            efi:LeakageCurrentHeating efi:InterTurnShortCircuit efi:ExternalFlameExposure ) .
 efi:EnergizedState owl:disjointWith efi:DeEnergizedState .
 efi:ElectricalHeatingMechanism owl:disjointWith efi:NonElectricalHeatingMechanism .
 
@@ -3658,16 +3666,17 @@ efi:R_IT_ref2  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario 
 #  확인된 부분집합에 붙는 이름이다. §19.8.2 가 말하듯 분류는 결론이 아니다 — 가설로
 #  세우지 않고, 판단보류의 결과에 붙는 라벨로만 둔다.
 #
-#  조건: 원인미상(D-7·D-8) ∧ 아크 용융흔(단락흔) 확인 ∧ 비통전 확인 없음.
-#  단락흔이 없으면 그냥 원인미상이다. 비통전이 확인됐으면 전기적 요인이 아니다.
+#  조건: 원인미상(D-7·D-8·D-16) ∧ 아크 용융흔(단락흔) 확인 ∧ 통전 확인.
+#  단락흔이 없으면 그냥 원인미상이다. 통전이 확인되지 않았으면 전기적 요인이라 분류할 수 없다 —
+#  C-57 이 전기적 결론에 요구하는 것과 같은 기준이다. '비통전 확인 없음'은 모르는 것이지 통전이 아니다(P4).
 efi:KoreaFireReportClassification a owl:NamedIndividual , efi:ClassificationSystem ;
     rdfs:label "화재조사 및 보고규정 발화요인 세부분류"@ko ; skos:prefLabel "화재조사 및 보고규정 발화요인 세부분류"@ko ;
     rdfs:comment "전기적 요인 세부: 누전·지락, 접촉불량에 의한 단락, 절연열화에 의한 단락, 과부하·과전류, 압착·손상에 의한 단락, 층간단락, 반단선, 미확인 단락, 트래킹에 의한 단락, 기타"@ko .
 efi:outcomeUnidentifiedShortCircuit a owl:DatatypeProperty ; rdfs:domain efi:InvestigationSession ; rdfs:range xsd:boolean ;
     rdfs:label "미확인 단락 처리"@ko ; skos:prefLabel "미확인 단락 처리"@ko ;
-    rdfs:comment "원인미상인데 단락흔이 확인됐고 비통전이 아니면 국내 분류의 '미확인 단락'이다. 결론이 아니라 분류다 (§19.8.2)"@ko .
+    rdfs:comment "원인미상인데 단락흔과 통전이 확인됐으면 국내 분류의 '미확인 단락'이다. 결론이 아니라 분류다 (§19.8.2, 통전 기준은 C-57 과 같다)"@ko .
 
-# [D-14] 원인미상 + 단락흔 확인 + 비통전 아님 → 미확인 단락 (§19.6.5.1 안의 국내 분류)
+# [D-14] 원인미상 + 단락흔 확인 + 통전 확인 → 미확인 단락 (§19.6.5.1 안의 국내 분류)
 #  D-7·D-8(sh:order 5) 뒤에 돈다. efi_schema.Session.outcome() 과 같아야 한다.
 efi:UnidentifiedShortCircuitDerivationRuleShape a sh:NodeShape ; sh:order 6 ; sh:targetClass efi:InvestigationSession ;
     dcterms:references "NFPA 921 (2024) §19.6.5.1 Cause Undetermined, §19.8.2 Fire Cause Classification for Reports" ;
@@ -3678,10 +3687,8 @@ efi:UnidentifiedShortCircuitDerivationRuleShape a sh:NodeShape ; sh:order 6 ; sh
           $this efi:outcomeUndetermined true .
           $this efi:hasFact ?f .
           ?f rdf:type/rdfs:subClassOf* efi:ArcMeltMark ; efi:confirmationStatus efi:Confirmed .
-          FILTER NOT EXISTS {
-            $this efi:hasFact ?d .
-            ?d rdf:type/rdfs:subClassOf* efi:DeEnergizedState ; efi:confirmationStatus efi:Confirmed .
-          }
+          $this efi:hasFact ?e .
+          ?e rdf:type/rdfs:subClassOf* efi:EnergizedState ; efi:confirmationStatus efi:Confirmed .
         }""" ] .
 
 # ── 48.5 가설 형성 — 필요조건이 자료에 없는 가설은 세우지 않는다
