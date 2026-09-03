@@ -36,6 +36,7 @@
   같은 무게를 줄 수 없다는 P1·논문 4.2의 취지를 계수로 옮긴 것이다.
   근거를 바꾸려면 이 상수만 바꾼다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import math, sys, io, re, collections, pathlib
 from rdflib import Graph, Namespace, RDF, RDFS, URIRef
 

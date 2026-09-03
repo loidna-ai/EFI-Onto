@@ -1,4 +1,5 @@
 """원문 대조표의 미완료 행과 실행 작업을 대조하고 검토 문서를 생성한다."""
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import argparse
 import collections
 import importlib

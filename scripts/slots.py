@@ -15,6 +15,7 @@
   '확인 불가'는 Unverifiable, '없음·특이사항 없음'은 ConfirmedAbsent,
   나머지는 Confirmed. 이 셋을 뭉개면 P4 가 무너진다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import openpyxl, re, json, sys, pathlib, collections
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]

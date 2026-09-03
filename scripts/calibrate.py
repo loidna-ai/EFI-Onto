@@ -21,6 +21,7 @@
   하나가 틀린 것이고, 사슬을 다시 보는 것이 먼저다 — 실제로 그렇게 여섯 건을
   고쳤다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, json, math, pathlib, collections
 from rdflib import Graph
 

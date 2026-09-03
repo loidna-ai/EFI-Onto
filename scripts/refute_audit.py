@@ -18,6 +18,7 @@
   라벨은 조사관 판정이다. 반례 1건은 라벨 오류일 수도 있다.
   관측 0건인 규칙은 이 파일이 검증하지 못한다. 원문만이 근거다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, json, pathlib, collections
 from rdflib import Graph
 

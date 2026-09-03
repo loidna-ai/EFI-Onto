@@ -25,6 +25,7 @@
   '가리키는 힘이 세다'와 '거기서만 일어난다'는 다르다. 전자는 가중치의 문제이고
   이 파일이 묻는 것은 후자다. 자주 같이 나온다는 이유로 EXCL 을 주지 않는다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, pathlib, collections
 from rdflib import Graph, Namespace, RDFS, URIRef
 

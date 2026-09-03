@@ -27,6 +27,7 @@
   새로 붙이기 전에 CLAUDE.md 의 질문 둘을 거친다 — 이 흔적을
   화재 자체가 낼 수 있는가, 정말 그 요인에서만 일어나는가.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 from collections import Counter
 
 DONE, PART, NONE, OUT, PROC = "구현", "일부", "없음", "범위밖", "현장절차"

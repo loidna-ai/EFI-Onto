@@ -8,6 +8,7 @@ status.py 는 규모를, nfpa.py 는 이론 대비 이식률을, audit.py 는 �
 '어휘만 있고 절차가 없다'는 이 프로젝트가 반복해 겪은 실패다. ArcMapPoint 가
 그랬고 downstreamIndex 가 그랬고 outcomeUndetermined 가 그랬다. 그래서 센다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, pathlib, collections
 from rdflib import Graph, Namespace, RDF, RDFS, OWL, SH, URIRef, Literal
 

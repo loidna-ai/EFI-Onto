@@ -15,6 +15,7 @@
   막히는 건수는 조사서의 부실이거나 우리 제약의 과도함이다. 어느 쪽인지는
   막은 조항을 보면 갈린다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import json, sys, pathlib, collections, re
 from rdflib import Graph
 from pyshacl import validate

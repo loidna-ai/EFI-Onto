@@ -32,6 +32,7 @@ Ch.14 A–Z 의 Electric 항목군(p.737~806) + GFCI·히터(p.853~858).
   틀려 있었다(후자). CANDIDATES 는 완료·보류를 포함한 과거 후보 기록이다.
   현재 작업 상태는 docs/TBox_미완료_목록.md에서 관리한다. 붙이기 전에 두 질문을 거친다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 from collections import Counter
 
 DONE, PART, NONE, OUT, PROC = "구현", "일부", "없음", "범위밖", "현장절차"

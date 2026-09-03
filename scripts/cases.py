@@ -13,6 +13,7 @@
 떼어낸 뒤 반드시 확인할 것
   잔여 누출 0건. 관찰 텍스트에 가설 이름이 남아 있으면 안 된다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import zipfile, glob, os, re, json, sys, pathlib, collections
 import xml.etree.ElementTree as ET
 

@@ -11,6 +11,7 @@
   상한도 함께 본다. 상한이 오른다는 것은 조사서에 있던 것을 새로 읽었다는 뜻이고,
   상한이 그대로인데 정확도만 오르면 이미 읽던 것을 더 잘 쓴 것이다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, json, pathlib, collections
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]

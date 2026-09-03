@@ -26,6 +26,7 @@ OPEN 은 남지 않았다 (8 → 0)
   그 결과 트래킹에는 전용 형태 단서가 하나도 남지 않았고, 그래서 트래킹을
   세우려면 비시각적 현장 사실(오염 환경)이 있어야 한다. C-5 가 요구하는 그것이다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, pathlib, collections
 from rdflib import Graph, Namespace, RDFS, URIRef
 

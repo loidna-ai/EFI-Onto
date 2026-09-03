@@ -11,6 +11,7 @@
 주의 — 단서 규칙(Table 2)은 NFPA 가 아니라 국내 실무·선행연구에서 왔다.
 여기에 조항을 붙이면 출처가 왜곡된다. 조항은 방법론 층에만 붙인다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, pathlib
 
 DONE, PART, NONE, OUT, PROC = "구현", "일부", "없음", "범위밖", "현장절차"

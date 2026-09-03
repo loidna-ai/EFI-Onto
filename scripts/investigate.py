@@ -1,4 +1,5 @@
 """조사 JSON을 TBox로 검증하고 경로·시간·비교·검토의 추가 확인 질문을 출력한다."""
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import argparse
 import json
 from pathlib import Path

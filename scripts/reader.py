@@ -27,6 +27,7 @@ LLM 판독은 어떻게 기록되는가
   기록이다. 누가 언제 무엇을 왜 그렇게 읽었는지가 남고, 사전 판독과 diff 가 된다.
   읽지 못한 것도 이유와 함께 남긴다 — 그것이 서식 문제의 목록이 된다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import json, pathlib, sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]

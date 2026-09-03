@@ -20,6 +20,7 @@
   절연저항 슬롯이 0건이라 트래킹 반증 규칙은 발동하지 않는다.
   조사관 최초 판단이 없어 사람과 비교할 수 없다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import json, sys, pathlib, collections
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]

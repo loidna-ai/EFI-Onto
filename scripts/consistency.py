@@ -15,6 +15,7 @@
   상위 온톨로지가 부과하는 공리는 이 검사에 반영되지 않는다. 우리가 쓴 공리끼리의
   모순만 본다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, os, pathlib, tempfile, subprocess
 from rdflib import Graph, Namespace, OWL, RDF
 

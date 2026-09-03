@@ -4,6 +4,7 @@
 문서에 숫자를 손으로 적으면 반드시 낡는다. 실제로 낡았다 — SHACL 도형이 12개라고
 적혀 있는 동안 55개가 됐다. 그래서 숫자는 여기서만 만들고 문서는 원칙만 적는다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, json, pathlib, collections
 from rdflib import Graph, Namespace, RDF, RDFS, OWL, SH, URIRef
 

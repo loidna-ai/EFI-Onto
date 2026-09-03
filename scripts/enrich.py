@@ -19,6 +19,7 @@
   달라지는 것은 'NFPA 결론 요건을 충족하는가' 하나다. 그리고 그것이 이 측정이
   원래 물으려던 것이다 — 슬롯이 아니라 조사서가 요건을 채우는가.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import zipfile, glob, os, re, json, pathlib, collections
 import xml.etree.ElementTree as ET
 
