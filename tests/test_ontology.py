@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """EFI-Onto 회귀 시험. TTL 을 고쳤으면 반드시 통과해야 한다."""
-import sys, pathlib
+import re, sys, pathlib
 import pytest
 from rdflib import Graph, Namespace, RDF, RDFS
 from pyshacl import validate
@@ -1191,3 +1191,37 @@ def test_every_ontology_file_is_loaded(g):
     from efi_schema import ontology_files
     assert {p.name for p in ontology_files()} == {p.name for p in (ROOT / "ontology").glob("*.ttl")}
     assert len(g) == len(load_graph()), "적재 경로가 갈렸다"
+
+
+# ── 절 배치 (재편 2단계) ────────────────────────────────────────────────
+SECTION_OF = {"PoorContactScenario": "7.1", "CrushDamageScenario": "7.2",
+              "PartialDisconnectionScenario": "7.3", "InsulationDegradationScenario": "7.4",
+              "TrackingScenario": "7.5", "ExternalFlameScenario": "7.6",
+              "OverloadScenario": "7.7", "GroundFaultScenario": "7.8",
+              "InterTurnShortScenario": "7.9"}
+ANCHOR = re.compile(r"^# \[([\d.]+)\][^\n]*\n(?:#[^\n]*\n)*# ={10,}\n", re.M)
+
+
+def _sections():
+    parts = ANCHOR.split(TTL.read_text(encoding="utf-8"))
+    return {parts[i]: parts[i + 1] for i in range(1, len(parts), 2)}
+
+
+def test_indicator_rule_lives_in_its_hypothesis_section(g):
+    """지표 규칙은 자기 가설의 절 안에 있다.
+
+    한 가설을 이해하려면 한 자리만 읽으면 되게 하려고 재편했다. 새 규칙을 파일
+    끝에 덧붙이면 다시 흩어진다 — 그것이 재편 전의 상태였다.
+    """
+    secs, stray = _sections(), []
+    for r in g.subjects(RDF.type, EFI.IndicatorRule):
+        sc = next((q(x) for x in g.objects(r, EFI.forScenario)), None)
+        want = SECTION_OF.get(sc)
+        if want and f"efi:{q(r)} " not in secs.get(want, ""):
+            stray.append((q(r), want))
+    assert not stray, f"자기 가설 절 밖에 있는 지표 규칙: {stray}"
+
+
+def test_every_section_anchor_is_present():
+    """절 앵커가 다 있어야 문서·backlog 가 가리킬 자리가 있다."""
+    assert set(_sections()) == {"1", "2", "3", "4", "5", "6", "7", "8"} | set(SECTION_OF.values())
