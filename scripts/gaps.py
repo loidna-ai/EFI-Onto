@@ -13,6 +13,7 @@
 규칙을 붙이기 전에 조항부터 찾는다. 근거 없이 붙이면 이 프로젝트가 지켜온
 '모든 방법론 층은 NFPA 조항에 닿는다'는 원칙이 무너진다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 RULE, FORM, NA = "규칙없음", "서식부족", "해당없음"
 
 # (관측 클래스, 사례 내 등장 횟수, 분류, 근거 또는 이유)

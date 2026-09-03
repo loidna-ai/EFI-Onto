@@ -58,7 +58,7 @@
       "depends_on": [],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:SupplyPathAssessmentShape a sh:NodeShape"
         },
         {
@@ -93,7 +93,7 @@
       ],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:DeviceStateRecordShape a sh:NodeShape"
         },
         {
@@ -130,7 +130,7 @@
       ],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:SupplyTimelineConflictShape a sh:NodeShape"
         },
         {
@@ -194,7 +194,7 @@
       ],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:DamageComparisonShape a sh:NodeShape"
         },
         {
@@ -225,7 +225,7 @@
       "depends_on": [],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:TechnicalReviewCoverageShape a sh:NodeShape"
         },
         {
@@ -261,11 +261,11 @@
       ],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:TorqueComparisonShape a sh:NodeShape"
         },
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:PreFireAppliedTorqueShape a sh:NodeShape"
         },
         {
@@ -427,7 +427,7 @@
       ],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:MetalDepositionSequenceShape a sh:NodeShape"
         },
         {
@@ -488,7 +488,7 @@
       ],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:InsulationHistoryReviewShape"
         },
         {
@@ -526,7 +526,7 @@
       ],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:MetalInterfaceComparisonShape"
         },
         {
@@ -563,15 +563,15 @@
       "depends_on": [],
       "evidence": [
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:ConductorInstallationRecordShape"
         },
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:AmpacityReferenceShape"
         },
         {
-          "file": "ontology/efi_tbox.ttl",
+          "file": "ontology/efi_investigation.ttl",
           "anchor": "efi:AmpacityAssessmentShape"
         }
       ]

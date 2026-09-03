@@ -28,6 +28,8 @@
 import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, pathlib, collections
 from rdflib import Graph, Namespace, RDFS, URIRef
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
@@ -119,7 +121,7 @@ def reach(g=None):
     하위가 닿는 곳 전부와 양립한다. 두 읽기를 섞으면 상위만 전용으로 남는다.
     """
     import score
-    g = g or Graph().parse(TTL, format="turtle")
+    g = g or load_graph()
     comp = score.compatibility(g)
     out = {}
     for a in sorted(_subclasses(g, E.AntecedentCondition)):
@@ -148,7 +150,7 @@ def inconsistent(g=None):
             bad.append((a, "공유라 했는데 사슬이 하나뿐이다 — 넓혀야 한다", sorted(scs)))
     # 상위가 전용인데 하위가 공유면 상위도 공유다. compatibility 는 각 클래스의
     # 자기 enables 만 읽으므로 상위에 적어 두지 않으면 이 어긋남이 조용히 남는다.
-    g2 = g or Graph().parse(TTL, format="turtle")
+    g2 = g or load_graph()
     r = reach(g2)
     for a in r:
         if VERDICTS.get(a, (OPEN,))[0] != EXCL:
@@ -160,7 +162,7 @@ def inconsistent(g=None):
 
 
 if __name__ == "__main__":
-    g = Graph().parse(TTL, format="turtle")
+    g = load_graph()
     r = reach(g)
     lab = {a: str(g.value(E[a], SKOS.prefLabel) or a) for a in r}
     n = collections.Counter(VERDICTS.get(a, (OPEN,))[0] for a in r)

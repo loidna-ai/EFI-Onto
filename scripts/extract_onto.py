@@ -2,9 +2,11 @@
 """efi_tbox.ttl → build/onto.json (구조도 build.py 입력)"""
 from rdflib import Graph, RDF, RDFS, OWL, Namespace, URIRef
 import json
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph
 
 EFI = Namespace("https://w3id.org/efi-onto#")
-g = Graph().parse('ontology/efi_tbox.ttl', format='turtle')
+g = load_graph()
 q = lambda u: str(u).split('#')[-1].split('/')[-1]
 
 

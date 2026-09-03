@@ -43,7 +43,7 @@ def run(sessions, onto):
 
 if __name__ == "__main__":
     from efi_schema import Ontology
-    onto = Ontology.load(str(ROOT / "ontology" / "efi_tbox.ttl"))
+    onto = Ontology.load()
     d = run(reader.dictionary(), onto)
     l = run(reader.llm()[0], onto)
 

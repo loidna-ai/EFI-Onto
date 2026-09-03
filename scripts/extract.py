@@ -2,8 +2,10 @@
 from rdflib import Graph, RDF, RDFS, OWL, URIRef, BNode, Namespace
 from rdflib.collection import Collection
 import json
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph
 EFI=Namespace("https://w3id.org/efi-onto#")
-g=Graph().parse('ontology/efi_tbox.ttl',format='turtle')
+g=load_graph()
 def q(u): return str(u).split('#')[-1].split('/')[-1]
 def ko(s):
     for o in g.objects(s,RDFS.label):

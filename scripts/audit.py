@@ -29,6 +29,8 @@ OPEN 은 남지 않았다 (8 → 0)
 import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, pathlib, collections
 from rdflib import Graph, Namespace, RDFS, URIRef
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
@@ -139,13 +141,13 @@ def owners(g):
 
 def unreviewed(g=None):
     """원문 근거 없이 판정되지 않은 양상. 조사관 검토 또는 추가 조항이 필요하다."""
-    g = g or Graph().parse(TTL, format="turtle")
+    g = g or load_graph()
     return [p for p in patterns(g) if p not in VERDICTS]
 
 
 def inconsistent(g=None):
     """판정과 선언이 어긋난 것. 화재도 낸다고 판정했는데 외부화염에 없거나 그 반대."""
-    g = g or Graph().parse(TTL, format="turtle")
+    g = g or load_graph()
     own, bad = owners(g), []
     for p, (v, _) in VERDICTS.items():
         scs = own.get(p, set())
@@ -160,7 +162,7 @@ def inconsistent(g=None):
 
 
 if __name__ == "__main__":
-    g = Graph().parse(TTL, format="turtle")
+    g = load_graph()
     KO = {}
     for s, o in g.subject_objects(SKOS.prefLabel):
         KO.setdefault(ln(s), str(o))

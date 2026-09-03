@@ -8,6 +8,7 @@ from pyshacl import validate
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
 sys.path.insert(0, str(ROOT / "src"))
+from efi_schema import load_graph, ontology_text
 EFI = Namespace("https://w3id.org/efi-onto#")
 PROV = Namespace("http://www.w3.org/ns/prov#")
 q = lambda u: str(u).split("#")[-1]
@@ -15,12 +16,12 @@ q = lambda u: str(u).split("#")[-1]
 
 @pytest.fixture(scope="module")
 def g():
-    return Graph().parse(TTL, format="turtle")
+    return load_graph()
 
 
 @pytest.fixture(scope="module")
 def inferred():
-    gr = Graph().parse(TTL, format="turtle")
+    gr = load_graph()
     validate(gr, advanced=True, inplace=True, allow_infos=True, allow_warnings=True)
     return gr
 
@@ -28,7 +29,7 @@ def inferred():
 @pytest.fixture(scope="module")
 def onto():
     from efi_schema import Ontology
-    return Ontology.load(str(TTL))
+    return Ontology.load()
 
 
 # ── 구조 ──────────────────────────────────────────────────────────────────
@@ -224,7 +225,7 @@ efi:hP a efi:PoorContactScenario ; efi:inSession efi:sesA .
 
 
 def run(extra):
-    gr = Graph().parse(data=TTL.read_text(encoding="utf-8") + extra, format="turtle")
+    gr = Graph().parse(data=ontology_text() + extra, format="turtle")
     validate(gr, advanced=True, inplace=True, allow_infos=True, allow_warnings=True)
     return gr
 
@@ -276,7 +277,7 @@ def test_c5_blocks_shared_morphology_only():
     efi:cM a efi:Conclusion ; efi:concludes efi:hM .
     """
     fires = lambda extra: "공유 형태" in validate(
-        Graph().parse(data=TTL.read_text(encoding="utf-8") + extra, format="turtle"),
+        Graph().parse(data=ontology_text() + extra, format="turtle"),
         advanced=True, allow_infos=True, allow_warnings=True)[2]
     assert fires(base), "공유 양상만인데 통과했다"
     assert not fires(base + """
@@ -299,7 +300,7 @@ def test_conclusion_requires_energized_state():
     efi:cE a efi:Conclusion ; efi:concludes efi:hE .
     """
     fires = lambda extra: "통전 확인 없이" in validate(
-        Graph().parse(data=TTL.read_text(encoding="utf-8") + extra, format="turtle"),
+        Graph().parse(data=ontology_text() + extra, format="turtle"),
         advanced=True, allow_infos=True, allow_warnings=True)[2]
     assert fires(base), "통전 확인이 없는데 확정이 통과했다"
     assert not fires(base + """
@@ -321,7 +322,7 @@ def test_conclusion_requires_energized_state():
 
 # ── §19.8 분류는 판정이 아니다 ───────────────────────────────────────────
 def _msg(extra):
-    return validate(Graph().parse(data=TTL.read_text(encoding="utf-8") + extra, format="turtle"),
+    return validate(Graph().parse(data=ontology_text() + extra, format="turtle"),
                     advanced=True, allow_infos=True, allow_warnings=True)[2]
 
 
@@ -613,7 +614,7 @@ def test_consistency_checker_actually_detects(tmp_path):
     sys.path.insert(0, str(ROOT / "scripts"))
     import consistency
     poison = tmp_path / "poison.ttl"
-    poison.write_text(TTL.read_text(encoding="utf-8") + """
+    poison.write_text(ontology_text() + """
 efi:DeliberatelyBroken a owl:Class ;
     rdfs:subClassOf efi:HeatingMechanism , efi:DamagePattern ;
     rdfs:label "고의로 깨뜨린 클래스"@ko .
@@ -732,7 +733,7 @@ def test_absence_direction_matches_in_both_engines():
     골든 케이스가 깨졌다.
     """
     from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, Ontology
-    onto = Ontology.load(str(TTL))
+    onto = Ontology.load()
 
     def both(cls):
         s = Session(case_id="N", query_count=2,
@@ -772,7 +773,7 @@ def test_python_delegates_conclusion_checks_to_shacl():
     # 같은 ABox 를 pySHACL 로 직접 돌린 결과와 일치해야 한다. 특정 제약에 기대면
     # 그 제약이 바뀔 때 시험이 깨지고, 정작 위임이 끊겨도 모른다.
     direct = _msg(s.to_turtle(include_derived=False))
-    got = s.validate(str(TTL))
+    got = s.validate()
     assert all(m in direct for m in got), f"위임 결과가 직접 실행과 다르다: {got}"
     assert ("Conforms: True" in direct) == (not got)
 
@@ -855,7 +856,7 @@ def test_constraint_numbers_are_unique(g):
     도형 id 와 달리 주석이라 RDF 도 시험도 잡지 못한다 — 여기서 센다.
     """
     import re, collections
-    text = TTL.read_text(encoding="utf-8")
+    text = ontology_text()
     n = collections.Counter(re.findall(r"\[([CMFD]-\d+)\]", text))
     dup = {k: v for k, v in n.items() if v > 1}
     assert not dup, f"번호가 겹친다: {dup}"
@@ -1146,7 +1147,47 @@ def test_mechanism_subsumption_is_caught(tmp_path):
     sys.path.insert(0, str(ROOT / "scripts"))
     import consistency
     poison = tmp_path / "subsume.ttl"
-    poison.write_text(TTL.read_text(encoding="utf-8") +
+    poison.write_text(ontology_text() +
                       "\nefi:InterTurnShortCircuit rdfs:subClassOf efi:InsulationBreakdownArc .\n", encoding="utf-8")
     bad, inconsistent, _ = consistency.check(poison)
     assert inconsistent or bad, "메커니즘 포섭 실수를 DL 검사가 잡지 못했다"
+
+
+# ── 층 경계 (재편 1단계) ────────────────────────────────────────────────
+INVESTIGATION = ROOT / "ontology" / "efi_investigation.ttl"
+JUDGMENT_PROPS = ("scoreDelta", "canManifest", "enables", "producesDamage",
+                  "ignites", "exhibits", "attests", "hasDeclaredMechanism",
+                  "supportScore", "formed")
+
+
+def _investigation_names():
+    import re
+    return set(re.findall(r"^efi:(\w+)", INVESTIGATION.read_text(encoding="utf-8"), re.M))
+
+
+def test_investigation_layer_never_touches_scoring(g):
+    """조사 기록 층은 점수·사슬·형성에 닿지 않는다.
+
+    기록의 완비는 원인 판정이 아니다 — 연결이 확인돼도 통전이 아니고, 토크 기록이
+    있어도 체결 상태가 유지됐다는 뜻이 아니다. 이 경계가 무너지면 서식을 채운 것이
+    가점이 되고, 그것은 이 온톨로지가 막으려는 바로 그 일이다.
+    판정에 닿아야 하는 도형은 efi_tbox.ttl 에 둔다.
+    """
+    names, bad = _investigation_names(), {}
+    for p in JUDGMENT_PROPS:
+        for s, o in g.subject_objects(EFI[p]):
+            for x in (s, o):
+                if q(x) in names:
+                    bad.setdefault(p, set()).add(q(x))
+    assert not bad, f"기록 층이 판정에 닿았다: {bad}"
+
+
+def test_every_ontology_file_is_loaded(g):
+    """온톨로지 파일 목록의 단일 진실 원천이 실제 파일과 같다.
+
+    파일 이름을 손으로 든 곳이 열아홉이었다. 하나를 빠뜨리면 그 층이 통째로
+    사라진 채 시험이 전부 통과한다 — 없는 것을 검사하는 시험은 없기 때문이다.
+    """
+    from efi_schema import ontology_files
+    assert {p.name for p in ontology_files()} == {p.name for p in (ROOT / "ontology").glob("*.ttl")}
+    assert len(g) == len(load_graph()), "적재 경로가 갈렸다"

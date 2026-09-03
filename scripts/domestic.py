@@ -20,6 +20,7 @@
   국내 실무가 쓰는 5대 요인을 가르는 것이고, 표 전체를 덮는 것이 목표가 아니다.
   그래도 분모를 적어 두는 이유는 '무엇을 안 덮는지'를 말할 수 있어야 하기 때문이다.
 """
+import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 DONE, PART, NONE, OUT = "구현", "일부", "없음", "범위밖"
 
 # (대분류, 중분류, 갈래, 상태, 근거)

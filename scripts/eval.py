@@ -54,7 +54,7 @@ def predict(sess, onto):
 
 def main():
     from efi_schema import Ontology
-    onto = Ontology.load(str(TTL))
+    onto = Ontology.load()
     sessions = json.loads((ROOT / "cases" / "sessions.json").read_text(encoding="utf-8"))
 
     conf = collections.Counter()

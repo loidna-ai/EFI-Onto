@@ -25,6 +25,7 @@ from rdflib import Graph
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src")); sys.path.insert(0, str(ROOT / "scripts"))
 import score
+from efi_schema import load_graph
 
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
 KO = {"PoorContactScenario": "접촉불량", "CrushDamageScenario": "압착손상",
@@ -113,8 +114,8 @@ def simulate(onto, sessions, rules):
 
 if __name__ == "__main__":
     from efi_schema import Ontology
-    g = Graph().parse(TTL, format="turtle")
-    onto = Ontology.load(str(TTL))
+    g = load_graph()
+    onto = Ontology.load()
     sessions = json.loads((ROOT / "cases" / "sessions.json").read_text(encoding="utf-8"))
     lab = {}
     for s, o in g.subject_objects(score.SKOS.prefLabel):

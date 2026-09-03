@@ -18,6 +18,8 @@
 import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, os, pathlib, tempfile, subprocess
 from rdflib import Graph, Namespace, OWL, RDF
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
@@ -26,7 +28,7 @@ SH = Namespace("http://www.w3.org/ns/shacl#")
 
 def _rdfxml_without_imports(ttl=None):
     """HermiT 은 Turtle 을 읽지 않는다. imports 를 떼고 RDF/XML 로 바꾼다."""
-    g = Graph().parse(ttl or TTL, format="turtle")
+    g = load_graph([ttl] if ttl else None)
     for s, p, o in list(g.triples((None, OWL.imports, None))):
         g.remove((s, p, o))
     # SHACL 삼중항은 DL 추론 대상이 아니다. 빼서 추론기 부담을 줄인다.

@@ -39,6 +39,8 @@
 import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import math, sys, io, re, collections, pathlib
 from rdflib import Graph, Namespace, RDF, RDFS, URIRef
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
@@ -54,7 +56,7 @@ DECISIVE = -100       # 비통전. 점수가 아니라 차단기다
 def _scenarios():
     """가설 목록을 TTL 에서 읽는다. 손으로 들고 있으면 시나리오가 늘 때 어긋나고,
     변별력 공식의 N 이 조용히 틀린 값이 된다."""
-    g = Graph().parse(TTL, format="turtle")
+    g = load_graph()
     out = set()
 
     def walk(c):
@@ -131,7 +133,7 @@ def rules(g):
 
 def deltas(g=None):
     """규칙 이름 → 가감점. TTL 이 아니라 이 함수가 가중치의 단일 진실 원천이다."""
-    g = g or Graph().parse(TTL, format="turtle")
+    g = g or load_graph()
     compat = compatibility(g)
     # 대체 근거. 인과 사슬이 없는 지표는 규칙 자체에서 k 를 얻는다. 부재 증거
     # (아크·스패터 부재, 트립 이력 없음, 절연저항 정상)는 어떤 가설과도 양립하지
@@ -159,7 +161,7 @@ def deltas(g=None):
 
 def write(g=None):
     """TTL 의 scoreDelta 를 계산값으로 덮어쓴다."""
-    g = g or Graph().parse(TTL, format="turtle")
+    g = g or load_graph()
     d = deltas(g)
     s = io.open(TTL, encoding="utf-8").read()
     n = 0
@@ -172,7 +174,7 @@ def write(g=None):
 
 
 if __name__ == "__main__":
-    g = Graph().parse(TTL, format="turtle")
+    g = load_graph()
     KO = {}
     for s, o in g.subject_objects(SKOS.prefLabel):
         KO.setdefault(ln(s), str(o))

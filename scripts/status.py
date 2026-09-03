@@ -7,6 +7,8 @@
 import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, json, pathlib, collections
 from rdflib import Graph, Namespace, RDF, RDFS, OWL, SH, URIRef
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -16,7 +18,7 @@ ln = lambda u: str(u).split("#")[-1]
 
 
 def main():
-    g = Graph().parse(TTL, format="turtle")
+    g = load_graph()
     named = lambda t: [s for s in g.subjects(RDF.type, t) if isinstance(s, URIRef)]
     shapes = named(SH.NodeShape)
     dp = [s for s in g.subjects(RDFS.subClassOf, E.DamagePattern)]

@@ -3,6 +3,8 @@ import sys
 from rdflib import Graph, RDF, SH, OWL
 from pyshacl import validate
 from test_ontology import ROOT, TTL, EFI, PROV, run
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import ontology_text
 
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -64,7 +66,7 @@ def test_material_assessment_is_required_without_banning_supported_arc_evidence(
         efi:f{i} a efi:ArcMeltMark .
         efi:wire{i} a efi:{material} ; {basis} efi:exhibits efi:f{i} .
         """
-    gr = Graph().parse(data=TTL.read_text(encoding="utf-8") + data, format="turtle")
+    gr = Graph().parse(data=ontology_text() + data, format="turtle")
     assert (EFI.PureAluminumConductor, OWL.disjointWith, EFI.AlloyConductor) in gr
     _, report, _ = validate(gr, advanced=True, allow_infos=True, allow_warnings=True)
     affected = {report.value(r, SH.focusNode) for r in report.subjects(SH.sourceShape, EFI.AlloyConductorArcMarkShape)}

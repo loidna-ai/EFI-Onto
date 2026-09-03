@@ -16,7 +16,8 @@ make test        # 온톨로지 정합성 검사 (SHACL + Pydantic 양쪽)
 make build       # 시각화·검토표 전부 생성 → build/
 make status      # 현재 규모·이식률·래칫을 한 화면에
 make reason      # OWL 2 DL 일관성 검사 (HermiT). Java 필요
-make lint        # 구조 점검 — 사슬에 붙지 않은 어휘 찾기
+make lint        # 구조 점검 — 사슬에 붙지 않은 어휘 찾기. 기록 전용 어휘는 따로 센다
+make iso         # 그래프가 기준선과 같은지 — 절을 옮기거나 파일을 나눌 때
 make calibrate   # 유도 가감점을 사례로 검증 (보정하지 않는다)
 make readers     # 사전 판독 vs LLM 판독 — 판독의 한계를 온톨로지의 한계와 가른다
 make refute      # 반증 규칙을 사례로 검증 — 정답 라벨에서 발동하면 반례다
@@ -30,7 +31,8 @@ make clean
 ## 구조
 
 ```
-ontology/efi_tbox.ttl        TBox 본체 (규모는 make status)
+ontology/efi_tbox.ttl        추론 어휘 — 4축·가설·사슬·지표·판정 도형 (규모는 make status)
+ontology/efi_investigation.ttl 조사 기록 층 (T01~T16). 기록의 완비만 본다. 점수·사슬·형성에 닿지 않는다
 src/efi_schema.py            Pydantic 파이프라인. 점수 산출과 질의 선택
 src/investigation.py         계통·시간·연료·비교·검토의 출처 있는 입력과 RDF 직렬화. 결론 제약은 TTL에 둔다
 scripts/investigate.py        조사 JSON → SHACL 검증·경로/시간/비교/검토 질문
@@ -117,6 +119,13 @@ build/                       생성물. git 에 넣지 않음
 - **`scoreDelta` 를 TTL 에서 직접 고치지 않는다.** `python scripts/score.py --write` 로 다시 만든다.
   손으로 고치면 `test_score_deltas_are_derived` 가 잡는다.
 - TTL 을 고치면 `make test` 를 돌린다. M-3 불일치가 0이 아니면 커밋하지 않는다.
+- **온톨로지는 파일이 둘이고 그래프는 하나다.** 파일 목록의 단일 진실 원천은
+  `efi_schema.ontology_files()` 다. `Graph().parse("efi_tbox.ttl")` 를 새로 적지 않는다 —
+  기록 층이 통째로 빠진 채 시험이 전부 통과한다. `load_graph()` · `ontology_text()` 를 쓴다.
+- **기록 층은 판정에 닿지 않는다.** 기록의 완비는 원인 판정이 아니다. 점수·사슬·형성·결론에
+  닿아야 하는 도형은 `efi_tbox.ttl` 에 둔다. `test_investigation_layer_never_touches_scoring` 이 잡는다.
+- **TTL 을 옮기거나 나누면 `make iso` 가 동형이어야 한다.** 재편은 의미를 바꾸지 않는다.
+  블록 단위 이동은 `scripts/ttlblocks.py` 로 하고 손으로 잘라 붙이지 않는다.
 - 한 줄에 한 주어만 쓴다 (Turtle 다중 주어는 파싱 사고의 원인이었다).
 - **규칙 도형에는 도형 수준 `sh:order` 를 적는다.** pySHACL 은 규칙의 순서를 도형 안에서만
   지키고 도형끼리는 도형의 `sh:order` 로 정렬한다. 없으면 사전 순이라 점수가 반증보다 먼저 돈다.

@@ -1,0 +1,1495 @@
+# ============================================================================
+#  EFI-Onto : 조사 기록 층 (T01~T16)
+#  출처가 있는 현장 기록의 어휘와 완비 검사. efi_tbox.ttl 과 한 그래프를 이룬다.
+#
+#  **이 파일의 자원은 점수·반증·형성·결론에 닿지 않는다.** 기록이 갖춰졌는지만
+#  본다. 완비는 원인 판정이 아니다 — 연결이 확인돼도 통전이 아니고, 토크 기록이
+#  있어도 체결 상태가 유지됐다는 뜻이 아니다. 판정에 닿는 도형은 efi_tbox.ttl 에
+#  둔다(결론 제약 ConclusionFirstFuelEvidenceShape·ConclusionHeatTransferEvidenceShape).
+#  경계는 tests/test_ontology.py 의 test_investigation_layer_never_touches_scoring 이 지킨다.
+# ============================================================================
+
+@prefix efi:     <https://w3id.org/efi-onto#> .
+@prefix obo:     <http://purl.obolibrary.org/obo/> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix ssn:     <http://www.w3.org/ns/ssn/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix time:    <http://www.w3.org/2006/time#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix unit:    <http://qudt.org/vocab/unit/> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+
+# ============================================================================
+# 50. 조사 계통과 출처가 있는 연결 기록 (T01)
+#     구조적 연결은 통전·발화 원인의 증명이 아니다. 모델별 부품 식별자를 사용한다.
+# ============================================================================
+efi:InvestigationRecord a owl:Class ; rdfs:subClassOf efi:Observation ; rdfs:label "출처가 있는 조사 기록"@ko ; skos:prefLabel "출처가 있는 조사 기록"@ko .
+efi:ElectricalSystemModel a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "관심 영역의 전기 계통 모델"@ko ; skos:prefLabel "관심 영역의 전기 계통 모델"@ko .
+efi:ConnectionRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "계통 연결 관찰 기록"@ko ; skos:prefLabel "계통 연결 관찰 기록"@ko .
+efi:SupplyPathAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "전원별 공급 경로 검토"@ko ; skos:prefLabel "전원별 공급 경로 검토"@ko .
+efi:PowerSource a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전력 공급원"@ko ; skos:prefLabel "전력 공급원"@ko .
+efi:ElectricalLoad a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전기 부하"@ko ; skos:prefLabel "전기 부하"@ko .
+efi:ElectricalSwitch a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전기 개폐기"@ko ; skos:prefLabel "전기 개폐기"@ko .
+efi:Conduit a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전선관"@ko ; skos:prefLabel "전선관"@ko .
+efi:GroundedSurface a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "접지된 금속면"@ko ; skos:prefLabel "접지된 금속면"@ko .
+efi:hasSystemModel a owl:ObjectProperty ; rdfs:range efi:ElectricalSystemModel ; skos:prefLabel "검토한 계통 모델"@ko .
+efi:hasInvestigationRecord a owl:ObjectProperty ; rdfs:range efi:InvestigationRecord ; skos:prefLabel "조사 기록"@ko .
+efi:recordSession a owl:ObjectProperty ; rdfs:range efi:InvestigationSession ; skos:prefLabel "기록의 세션"@ko .
+efi:systemComponent a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "계통 구성요소"@ko .
+efi:componentModel a owl:ObjectProperty ; rdfs:range efi:ElectricalSystemModel ; skos:prefLabel "구성요소의 계통 모델"@ko .
+efi:componentContainer a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "설치 함체·기구"@ko .
+efi:componentCircuit a owl:ObjectProperty ; rdfs:range efi:Circuit ; skos:prefLabel "구성요소의 회로"@ko .
+efi:recordSystem a owl:ObjectProperty ; rdfs:range efi:ElectricalSystemModel ; skos:prefLabel "기록 대상 계통"@ko .
+efi:connectionFrom a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "연결 시작 구성요소"@ko .
+efi:connectionTo a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "연결 끝 구성요소"@ko .
+efi:confirmedFeeds a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "확인된 구조적 공급 연결"@ko .
+efi:assessedSource a owl:ObjectProperty ; rdfs:range efi:PowerSource ; skos:prefLabel "검토 대상 공급원"@ko .
+efi:assessedLoad a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "검토 대상 부하·구성요소"@ko .
+efi:recordSource a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "원자료 식별·위치"@ko .
+efi:recordObservedAt a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; skos:prefLabel "기록 관찰 시각"@ko .
+efi:componentRole a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "도체·단자의 전기적 역할"@ko .
+efi:connectionKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "연결의 기능"@ko .
+efi:systemReviewComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "공급 경로 검토 완료 주장"@ko .
+efi:sourceInventoryComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "관련 공급원 식별 완료 확인"@ko .
+efi:pathConnected a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "확인 연결로 도달함"@ko .
+
+efi:InvestigationRecordShape a sh:NodeShape ; sh:targetClass efi:InvestigationRecord ; sh:targetObjectsOf efi:hasInvestigationRecord ;
+    dcterms:references "NFPA 921 (2024) §4.3.3; §9.12" ;
+    sh:property [ sh:path efi:confirmationStatus ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( efi:Confirmed efi:ConfirmedAbsent efi:Unverifiable efi:Missing ) ] ;
+    sh:property [ sh:path prov:wasAttributedTo ; sh:minCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path efi:recordSource ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:recordObservedAt ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] ;
+    sh:property [ sh:path efi:recordSession ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:InvestigationSession ] .
+
+efi:SystemComponentShape a sh:NodeShape ; sh:targetObjectsOf efi:systemComponent ;
+    dcterms:references "NFPA 921 (2024) §9.7; §9.8; §9.12.4" ;
+    sh:property [ sh:path efi:componentModel ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalSystemModel ] ;
+    sh:property [ sh:path efi:componentContainer ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:componentCircuit ; sh:class efi:Circuit ] ;
+    sh:property [ sh:path efi:componentRole ; sh:maxCount 1 ; sh:in ( "Ungrounded" "Neutral" "Grounding" "Unknown" ) ] .
+
+efi:ConnectionRecordShape a sh:NodeShape ; sh:targetClass efi:ConnectionRecord ;
+    dcterms:references "NFPA 921 (2024) §9.4; §9.7; §9.8; §9.12.4" ;
+    sh:property [ sh:path efi:connectionFrom ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:connectionTo ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:recordSystem ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalSystemModel ] ;
+    sh:property [ sh:path efi:connectionKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Supply" "Grounding" "SwitchControl" "Protection" ) ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "연결 대상은 같은 세션·계통에 속해야 한다"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:recordSystem ?sys ; efi:recordSession ?s ; efi:connectionFrom ?a ; efi:connectionTo ?b .
+          FILTER (?a = ?b || NOT EXISTS { ?sys efi:recordSession ?s ; efi:systemComponent ?a, ?b . ?a efi:componentModel ?sys . ?b efi:componentModel ?sys . })
+        }""" ] .
+
+efi:ConfirmedConnectionRuleShape a sh:NodeShape ; sh:targetClass efi:ConnectionRecord ;
+    dcterms:references "NFPA 921 (2024) §9.7; §9.8; §9.12.4" ;
+    sh:order -3 ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order -3 ;
+        sh:construct """
+        CONSTRUCT { ?a efi:confirmedFeeds ?b . }
+        WHERE {
+          $this efi:connectionFrom ?a ; efi:connectionTo ?b ; efi:connectionKind "Supply" ;
+            efi:recordSystem ?sys ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+            prov:wasAttributedTo ?who ; efi:recordSource ?src .
+          ?sys efi:recordSession ?s ; efi:systemComponent ?a, ?b .
+          ?a efi:componentModel ?sys . ?b efi:componentModel ?sys .
+          FILTER (STRLEN(STR(?src)) > 0)
+        }""" ] .
+
+efi:SupplyPathAssessmentShape a sh:NodeShape ; sh:targetClass efi:SupplyPathAssessment ;
+    dcterms:references "NFPA 921 (2024) §9.12.4" ;
+    sh:order -2 ;
+    sh:property [ sh:path efi:assessedSource ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:PowerSource ] ;
+    sh:property [ sh:path efi:assessedLoad ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:recordSystem ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalSystemModel ] ;
+    sh:property [ sh:path efi:pathConnected ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order -2 ;
+        sh:construct """
+        CONSTRUCT { $this efi:pathConnected true . }
+        WHERE {
+          $this efi:assessedSource ?source ; efi:assessedLoad ?load ; efi:recordSystem ?sys ; efi:recordSession ?s ;
+            efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo ?who ; efi:recordSource ?src .
+          ?sys efi:recordSession ?s ; efi:systemComponent ?source, ?load .
+          ?source efi:confirmedFeeds+ ?load .
+          FILTER (STRLEN(STR(?src)) > 0)
+        }""" ] .
+
+efi:SystemReviewCoverageShape a sh:NodeShape ; sh:targetClass efi:ElectricalSystemModel ;
+    dcterms:references "NFPA 921 (2024) §9.12.1; §9.12.4" ;
+    sh:property [ sh:path efi:systemReviewComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:sourceInventoryComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "공급원 식별과 전원별 요구 경로를 확인하기 전에는 계통 검토를 완료로 표시할 수 없다 (§9.12.4)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:systemReviewComplete true .
+          FILTER (NOT EXISTS { $this efi:sourceInventoryComplete true ; efi:confirmationStatus efi:Confirmed }
+            || NOT EXISTS { ?p a efi:SupplyPathAssessment ; efi:recordSystem $this }
+            || EXISTS { $this efi:systemComponent ?source . ?source a efi:PowerSource .
+                 FILTER NOT EXISTS { ?p a efi:SupplyPathAssessment ; efi:recordSystem $this ; efi:assessedSource ?source } }
+            || EXISTS { ?p a efi:SupplyPathAssessment ; efi:recordSystem $this .
+                 FILTER NOT EXISTS { ?p efi:confirmationStatus efi:Confirmed ; efi:pathConnected true } })
+        }""" ] .
+
+# 51. 보호장치 발견 상태와 동작·취급 사건을 분리한다 (T02).
+efi:DeviceStateRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "보호장치 발견 상태 기록"@ko ; skos:prefLabel "보호장치 발견 상태 기록"@ko .
+efi:ElectricalEventRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "전기 계통 사건 기록"@ko ; skos:prefLabel "전기 계통 사건 기록"@ko .
+efi:recordComponent a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "기록 대상 구성요소"@ko .
+efi:eventSupplySource a owl:ObjectProperty ; rdfs:range efi:PowerSource ; skos:prefLabel "사건의 공급원"@ko .
+efi:replacementComponent a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "교체된 새 구성요소"@ko .
+efi:deviceFoundState a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "발견 시 보호장치 위치·상태"@ko .
+efi:electricalEventKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "계통 사건 종류"@ko .
+efi:replacementCompatibility a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "교체품 적합성 확인값"@ko .
+
+efi:DeviceStateRecordShape a sh:NodeShape ; sh:targetClass efi:DeviceStateRecord ;
+    dcterms:references "NFPA 921 (2024) §9.8.2.1; §9.12.6.2; §9.13.2.2" ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ProtectiveDevice ] ;
+    sh:property [ sh:path efi:deviceFoundState ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "On" "Off" "Tripped" "FuseOpen" "Unknown" ) ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "장치 상태 기록의 대상은 같은 세션의 계통에 속해야 한다"@ko ;
+        sh:select """SELECT $this WHERE { $this efi:recordSession ?s ; efi:recordComponent ?c .
+          FILTER NOT EXISTS { ?s efi:hasSystemModel/efi:systemComponent ?c } }""" ] .
+
+efi:ElectricalEventRecordShape a sh:NodeShape ; sh:targetClass efi:ElectricalEventRecord ;
+    dcterms:references "NFPA 921 (2024) §9.12.5.3; §9.12.6.2; §9.12.7.2" ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:eventSupplySource ; sh:maxCount 1 ; sh:class efi:PowerSource ] ;
+    sh:property [ sh:path efi:replacementComponent ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:replacementCompatibility ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:electricalEventKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "PowerDisconnected" "PowerRestored" "AutomaticTrip" "ManualSwitchOff" "ManualSwitchOn" "ManualReset" "Replacement" "Removal" "Modification" "Disassembly" "Bending" "TensionHandling" "Sampling" "ArcOccurrence" "FireArrival" "Ignition" "ContactArcOccurrence" "InsulationBreakdown" "MetalDeposition" ) ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "사건·상태 기록의 대상은 같은 세션에서 조사한 계통 구성요소여야 한다"@ko ; sh:select """
+      SELECT $this WHERE {
+        $this efi:recordSession ?s ; efi:recordComponent ?c .
+        FILTER NOT EXISTS { ?s efi:hasSystemModel/efi:systemComponent ?c }
+      }""" ] .
+
+# 52. 사건 시간 범위·공급원별 이력·AMI 수집 범위 (T03).
+# 시간 구간이 겹치거나 복전 이력이 불완전하면 단정하지 않는다.
+efi:PowerRecordCoverage a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "전력 기록의 수집·시간 범위"@ko ; skos:prefLabel "전력 기록의 수집·시간 범위"@ko .
+efi:describesElectricalEvent a owl:ObjectProperty ; rdfs:range time:TemporalEntity ; skos:prefLabel "기록이 기술하는 실제 사건"@ko .
+efi:recordPrecedes a owl:ObjectProperty ; rdfs:range efi:ElectricalEventRecord ; skos:prefLabel "확인 시간 범위가 앞서는 기록"@ko .
+efi:eventEarliest a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; skos:prefLabel "사건의 가장 이른 가능 시각"@ko .
+efi:eventLatest a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; skos:prefLabel "사건의 가장 늦은 가능 시각"@ko .
+efi:coverageStart a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; skos:prefLabel "전력 기록 범위 시작"@ko .
+efi:coverageEnd a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; skos:prefLabel "전력 기록 범위 끝"@ko .
+efi:recordAvailability a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "전력 기록 확보 상태"@ko .
+efi:collectedEventKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "수집된 전력 기록 종류"@ko .
+efi:powerHistoryComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "해당 범위의 복전 이력 완전성 확인"@ko .
+
+efi:EventTimeRangeShape a sh:NodeShape ; sh:targetClass efi:ElectricalEventRecord ;
+    dcterms:references "NFPA 921 (2024) §9.12.5.3; §19.4.4.2; §19.6.4.5" ;
+    sh:property [ sh:path efi:eventEarliest ; sh:maxCount 1 ; sh:datatype xsd:dateTime ; sh:pattern "(Z|[+-][0-9]{2}:[0-9]{2})$" ; sh:lessThanOrEquals efi:eventLatest ] ;
+    sh:property [ sh:path efi:eventLatest ; sh:maxCount 1 ; sh:datatype xsd:dateTime ; sh:pattern "(Z|[+-][0-9]{2}:[0-9]{2})$" ] ;
+    sh:property [ sh:path efi:describesElectricalEvent ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "사건 선후 기록이 순환하거나 같은 세션의 시간 범위와 모순된다"@ko ; sh:select """
+      SELECT $this WHERE {
+        { $this efi:recordPrecedes+ $this }
+        UNION { $this efi:recordPrecedes ?other ; efi:recordSession ?s .
+          FILTER NOT EXISTS { ?other efi:recordSession ?s } }
+        UNION { $this efi:recordPrecedes ?other ; efi:eventEarliest ?a .
+          ?other efi:eventLatest ?b . FILTER (?a >= ?b) }
+      }""" ] .
+
+efi:PowerRecordCoverageShape a sh:NodeShape ; sh:targetClass efi:PowerRecordCoverage ;
+    dcterms:references "NFPA 921 (2024) §9.12.5.5.1" ;
+    sh:property [ sh:path efi:eventSupplySource ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:PowerSource ] ;
+    sh:property [ sh:path efi:coverageStart ; sh:maxCount 1 ; sh:datatype xsd:dateTime ; sh:pattern "(Z|[+-][0-9]{2}:[0-9]{2})$" ; sh:lessThanOrEquals efi:coverageEnd ] ;
+    sh:property [ sh:path efi:coverageEnd ; sh:maxCount 1 ; sh:datatype xsd:dateTime ; sh:pattern "(Z|[+-][0-9]{2}:[0-9]{2})$" ] ;
+    sh:property [ sh:path efi:recordAvailability ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Available" "Unavailable" "Unknown" ) ] ;
+    sh:property [ sh:path efi:collectedEventKind ; sh:in ( "PowerDisconnected" "PowerRestored" "Usage" ) ] ;
+    sh:property [ sh:path efi:powerHistoryComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "복전 이력 완전성을 주장하려면 실제 기록·수집 종류·시간 범위가 확인되어야 한다"@ko ; sh:select """
+      SELECT $this WHERE {
+        $this efi:powerHistoryComplete true .
+        FILTER NOT EXISTS { $this efi:recordAvailability "Available" ; efi:confirmationStatus efi:Confirmed ;
+          efi:collectedEventKind "PowerRestored" ; efi:coverageStart ?a ; efi:coverageEnd ?b . FILTER (?a <= ?b) }
+      }""" ] .
+
+efi:EventTimeOrderRuleShape a sh:NodeShape ; sh:targetClass efi:ElectricalEventRecord ;
+    dcterms:references "NFPA 921 (2024) §9.12.5.3; §19.4.4.2" ;
+    sh:order -2 ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order -2 ; sh:construct """
+      CONSTRUCT { $this efi:recordPrecedes ?other . }
+      WHERE {
+        $this efi:recordSession ?s ; efi:eventEarliest ?start ; efi:eventLatest ?end ;
+          efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo ?who ; efi:recordSource ?src .
+        ?other a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:eventEarliest ?start2 ; efi:eventLatest ?end2 ;
+          efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo ?who2 ; efi:recordSource ?src2 .
+        FILTER (?start <= ?end && ?start2 <= ?end2 && ?end < ?start2 && STRLEN(STR(?src)) > 0 && STRLEN(STR(?src2)) > 0)
+      }""" ] .
+
+efi:LocalArcFireSequenceRuleShape a sh:NodeShape ; sh:targetClass efi:ElectricalEventRecord ;
+    dcterms:references "NFPA 921 (2024) §9.10.1; §9.12.5.3; §19.4.4.2" ;
+    sh:order -1 ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order -1 ; sh:construct """
+      CONSTRUCT { ?event time:before ?event2 . }
+      WHERE {
+        $this efi:recordPrecedes ?other ; efi:recordComponent ?component ; efi:recordSession ?s ;
+          efi:electricalEventKind ?kind ; efi:describesElectricalEvent ?event ; efi:confirmationStatus efi:Confirmed ;
+          efi:eventLatest ?end .
+        ?other efi:recordComponent ?component ; efi:recordSession ?s ; efi:electricalEventKind ?kind2 ;
+          efi:describesElectricalEvent ?event2 ; efi:confirmationStatus efi:Confirmed ; efi:eventEarliest ?start .
+        FILTER (?end < ?start && ((?kind IN ("ArcOccurrence", "ContactArcOccurrence") && ?kind2 = "FireArrival") || (?kind = "FireArrival" && ?kind2 IN ("ArcOccurrence", "ContactArcOccurrence"))))
+      }""" ] .
+
+efi:SupplyTimelineConflictShape a sh:NodeShape ; sh:targetClass efi:ElectricalEventRecord ;
+    dcterms:references "NFPA 921 (2024) §9.12.5.3; §9.12.5.5.1; §19.6.4.5" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "동일 공급원의 차단·복전 기록과 아크 시간이 충돌한다. 다른 공급원·기록 누락·시각 근거를 재검토한다"@ko ; sh:select """
+      SELECT $this WHERE {
+        $this efi:electricalEventKind ?arcKind ; efi:recordSession ?s ; efi:eventSupplySource ?source ;
+          efi:confirmationStatus efi:Confirmed ; efi:eventEarliest ?arcMin ; efi:eventLatest ?arcMax .
+        FILTER (?arcKind IN ("ArcOccurrence", "ContactArcOccurrence"))
+        ?cut a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:eventSupplySource ?source ;
+          efi:electricalEventKind "PowerDisconnected" ; efi:confirmationStatus efi:Confirmed ;
+          efi:eventEarliest ?cutMin ; efi:eventLatest ?cutMax .
+        ?coverage a efi:PowerRecordCoverage ; efi:recordSession ?s ; efi:eventSupplySource ?source ;
+          efi:confirmationStatus efi:Confirmed ; efi:recordAvailability "Available" ;
+          efi:powerHistoryComplete true ; efi:collectedEventKind "PowerRestored" ;
+          efi:coverageStart ?from ; efi:coverageEnd ?to .
+        FILTER (?cutMin <= ?cutMax && ?arcMin <= ?arcMax && ?cutMax < ?arcMin && ?from <= ?cutMin && ?to >= ?arcMax)
+        FILTER NOT EXISTS {
+          ?restore a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:eventSupplySource ?source ;
+            efi:electricalEventKind "PowerRestored" ; efi:confirmationStatus ?status .
+          FILTER (?status != efi:ConfirmedAbsent)
+          OPTIONAL { ?restore efi:eventEarliest ?rMin }
+          OPTIONAL { ?restore efi:eventLatest ?rMax }
+          FILTER (!BOUND(?rMin) || !BOUND(?rMax) || (?rMax >= ?cutMin && ?rMin <= ?arcMax))
+        }
+      }""" ] .
+
+# 53. 최초 착화물·열전달 검토의 근거 (T04). 후보에는 결측을 허용한다.
+efi:FirstFuelAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "발화 당시 최초 착화물 존재 검토"@ko ; skos:prefLabel "발화 당시 최초 착화물 존재 검토"@ko .
+efi:HeatTransferAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "발열원에서 연료까지의 열전달 검토"@ko ; skos:prefLabel "발열원에서 연료까지의 열전달 검토"@ko .
+efi:assessedScenario a owl:ObjectProperty ; rdfs:range efi:IgnitionScenario ; skos:prefLabel "검토 대상 발화 가설"@ko .
+efi:assessedFuel a owl:ObjectProperty ; rdfs:range efi:FirstFuelIgnited ; skos:prefLabel "검토 대상 최초 착화물"@ko .
+efi:assessedMechanism a owl:ObjectProperty ; rdfs:range efi:HeatingMechanism ; skos:prefLabel "검토 대상 발열 메커니즘"@ko .
+efi:fuelPresenceBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "발화 당시 연료 존재의 근거"@ko .
+efi:transferDescription a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "발열원과 연료 사이의 열전달 설명"@ko .
+efi:heatAdequacyBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "착화에 필요한 열 충분성 근거"@ko .
+efi:durationBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "가열 지속 시간의 근거·한계"@ko .
+efi:fuelConditionBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "연료 배치·형상·상태의 근거"@ko .
+
+efi:FirstFuelAssessmentShape a sh:NodeShape ; sh:targetClass efi:FirstFuelAssessment ;
+    dcterms:references "NFPA 921 (2024) §9.9.1; §19.5.3" ;
+    sh:property [ sh:path efi:assessedScenario ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:IgnitionScenario ] ;
+    sh:property [ sh:path efi:assessedFuel ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:FirstFuelIgnited ] ;
+    sh:property [ sh:path efi:fuelPresenceBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] .
+
+efi:HeatTransferAssessmentShape a sh:NodeShape ; sh:targetClass efi:HeatTransferAssessment ;
+    dcterms:references "NFPA 921 (2024) §9.9.1.1; §9.9.1.2; §9.9.1.3; §9.9.1.4" ;
+    sh:property [ sh:path efi:assessedScenario ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:IgnitionScenario ] ;
+    sh:property [ sh:path efi:assessedFuel ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:FirstFuelIgnited ] ;
+    sh:property [ sh:path efi:assessedMechanism ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:HeatingMechanism ] ;
+    sh:property [ sh:path efi:transferDescription ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:heatAdequacyBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:durationBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:fuelConditionBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] .
+
+# T01: 계통 구성요소별 검사·손상 범위. 아크 미발견은 아크 사건 부재가 아니다.
+efi:ComponentExamination a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "계통 구성요소 검사 기록"@ko ; skos:prefLabel "계통 구성요소 검사 기록"@ko .
+efi:ElectricMeter a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전력 계량기"@ko ; skos:prefLabel "전력 계량기"@ko .
+efi:componentDamageState a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "구성요소에서 관찰한 손상 상태"@ko .
+efi:observedInsulationMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "관찰한 절연 재질"@ko .
+efi:observedArcSiteStatus a owl:ObjectProperty ; rdfs:range efi:ConfirmationStatus ; skos:prefLabel "구성요소 아크 지점의 관찰 상태"@ko .
+
+efi:ComponentExaminationShape a sh:NodeShape ; sh:targetClass efi:ComponentExamination ;
+    dcterms:references "NFPA 921 (2024) §9.6.4.3; §9.12.1; §9.13.3.1; §9.13.4.5" ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:componentDamageState ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Damaged" "NoDamageObserved" "NotAccessible" "Unknown" ) ] ;
+    sh:property [ sh:path efi:observedArcSiteStatus ; sh:maxCount 1 ; sh:in ( efi:Confirmed efi:ConfirmedAbsent efi:Unverifiable efi:Missing ) ] ;
+    sh:property [ sh:path efi:observedInsulationMaterial ; sh:maxCount 1 ; sh:in ( "Rubber" "PVC" "Polyethylene" "Other" "Unknown" ) ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "검사 대상 구성요소는 같은 세션의 계통에 속해야 한다"@ko ; sh:select """
+      SELECT $this WHERE { $this efi:recordSession ?s ; efi:recordComponent ?c .
+        FILTER NOT EXISTS { ?s efi:hasSystemModel/efi:systemComponent ?c } }
+    """ ] .
+
+# 54. 비교 관찰·조사 설계·금속분 부착 기록 (T05·T06·T12)
+efi:DamageComparison a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "동일 노출·분전반 내외 손상 비교"@ko ; skos:prefLabel "동일 노출·분전반 내외 손상 비교"@ko .
+efi:HeatingCharacteristicObservation a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "접속부 과열 특징 관찰"@ko ; skos:prefLabel "접속부 과열 특징 관찰"@ko .
+efi:InvestigationProblemRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "조사 문제 진술 기록"@ko ; skos:prefLabel "조사 문제 진술 기록"@ko .
+efi:InvestigationPlanRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "조사 검증 계획 기록"@ko ; skos:prefLabel "조사 검증 계획 기록"@ko .
+efi:VerificationRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "검증 수행 결과 기록"@ko ; skos:prefLabel "검증 수행 결과 기록"@ko .
+efi:TechnicalReviewRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "기술 검토 범위 기록"@ko ; skos:prefLabel "기술 검토 범위 기록"@ko .
+efi:ReviewScopeAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "범위별 전문성·자료·비평 검토"@ko ; skos:prefLabel "범위별 전문성·자료·비평 검토"@ko .
+efi:MetalDepositionRecord a owl:Class ; rdfs:subClassOf efi:ElectricalEventRecord ; rdfs:label "절연면 금속분 부착 사건 기록"@ko ; skos:prefLabel "절연면 금속분 부착 사건 기록"@ko .
+efi:HeatingCharacteristic a owl:Class ; rdfs:subClassOf skos:Concept ; rdfs:label "접속부 과열 관찰 항목"@ko ; skos:prefLabel "접속부 과열 관찰 항목"@ko .
+efi:comparisonComponent a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "비교 대상 구성요소"@ko .
+efi:equivalentFireExposureStatus a owl:ObjectProperty ; skos:prefLabel "동등 화재 노출 확인 상태"@ko .
+efi:observedHeatingCharacteristic a owl:ObjectProperty ; rdfs:range efi:HeatingCharacteristic ; skos:prefLabel "관찰한 과열 특징 항목"@ko .
+efi:characteristicComparison a owl:ObjectProperty ; rdfs:range efi:DamageComparison ; skos:prefLabel "특징의 비교 기록"@ko .
+efi:addressesProblem a owl:ObjectProperty ; rdfs:range efi:InvestigationProblemRecord ; skos:prefLabel "계획이 다루는 조사 문제"@ko .
+efi:verifiesPlan a owl:ObjectProperty ; rdfs:range efi:InvestigationPlanRecord ; skos:prefLabel "검증한 조사 계획"@ko .
+efi:verificationEvidence a owl:ObjectProperty ; rdfs:range efi:InvestigationRecord ; skos:prefLabel "검증에 사용한 근거 기록"@ko .
+efi:documentsReview a owl:ObjectProperty ; rdfs:range efi:TechnicalReview ; skos:prefLabel "기록한 기술 검토 활동"@ko .
+efi:requestedReviewPlan a owl:ObjectProperty ; rdfs:range efi:InvestigationPlanRecord ; skos:prefLabel "요청한 검토 범위의 계획"@ko .
+efi:hasScopeAssessment a owl:ObjectProperty ; rdfs:range efi:ReviewScopeAssessment ; skos:prefLabel "범위별 검토 기록"@ko .
+efi:assessesReviewPlan a owl:ObjectProperty ; rdfs:range efi:InvestigationPlanRecord ; skos:prefLabel "실제 검토한 계획 범위"@ko .
+efi:scopeDocumentationAccess a owl:ObjectProperty ; skos:prefLabel "해당 범위 자료 접근 확인 상태"@ko .
+efi:sourceContactArcRecord a owl:ObjectProperty ; rdfs:range efi:ElectricalEventRecord ; skos:prefLabel "부착 금속분의 접점 아크 발생 기록"@ko .
+efi:subsequentBreakdownRecord a owl:ObjectProperty ; rdfs:range efi:ElectricalEventRecord ; skos:prefLabel "동일 절연면의 후속 절연파괴 기록"@ko .
+efi:relatedIgnitionRecord a owl:ObjectProperty ; rdfs:range efi:ElectricalEventRecord ; skos:prefLabel "선후 비교 대상 발화 사건 기록"@ko .
+efi:comparisonKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "손상 비교 종류"@ko .
+efi:comparisonLocation a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "관찰 대상 위치"@ko .
+efi:comparatorLocation a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "대조 대상 위치"@ko .
+efi:comparisonFinding a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "관찰 대상 손상 기술"@ko .
+efi:comparatorFinding a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "대조 대상 손상 기술"@ko .
+efi:comparisonMetal a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "관찰 대상 금속 재질"@ko .
+efi:comparatorMetal a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "대조 대상 금속 재질"@ko .
+efi:exposureComparisonBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "화재 노출 비교 근거"@ko .
+efi:characteristicDetail a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "특징 관찰 상세"@ko .
+efi:problemStatement a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "조사에서 해결할 질문"@ko .
+efi:plannedScope a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "계획한 검증 범위"@ko .
+efi:plannedMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "계획한 검증 방법"@ko .
+efi:requiredExpertise a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "범위에 필요한 전문성"@ko .
+efi:verificationResult a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 검증 결과"@ko .
+efi:reviewScopeKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "요청 검토 범위 종류"@ko .
+efi:competenceBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "검토자의 해당 범위 전문성 근거"@ko .
+efi:scopeAccessBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "범위 관련 원자료 접근 근거"@ko .
+efi:scopeCritique a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "해당 범위 실질 비평"@ko .
+efi:reviewerRelationship a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "조사자와 검토자의 관계 설명"@ko .
+efi:depositBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "절연면 금속분 부착 관찰 근거"@ko .
+efi:sourceArcLinkBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "발생 아크와 부착물의 연결 근거"@ko .
+efi:comparisonComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "비교 조건 검토 완료 주장"@ko .
+efi:comparisonContextComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "비교 조건 확인됨"@ko .
+efi:planComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "계획 검증 완료 주장"@ko .
+efi:planVerificationSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "계획의 검증 결과·근거 연결됨"@ko .
+efi:reviewComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "요청 범위 기술 검토 완료 주장"@ko .
+efi:reviewCoverageSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "범위별 전문성·자료·비평 연결됨"@ko .
+efi:depositionAssessmentComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "발화 전 부착 사건열 검토 완료 주장"@ko .
+efi:preIgnitionDepositionSequence a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "아크·부착·절연파괴·발화의 기록상 선후 확인됨"@ko .
+efi:characteristicNumber a owl:DatatypeProperty ; rdfs:range xsd:integer ; skos:prefLabel "원문 과열 특징 항목 번호"@ko .
+efi:relatedObservationVocabulary a owl:AnnotationProperty ; skos:prefLabel "대응하는 기존 관찰 어휘"@ko .
+efi:HeatingCharacteristic01 a efi:HeatingCharacteristic ; skos:prefLabel "동등 노출 동종 금속보다 심한 산화"@ko ; efi:characteristicNumber 1 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(1)" ; efi:relatedObservationVocabulary efi:LocalizedDiscoloration .
+efi:HeatingCharacteristic02 a efi:HeatingCharacteristic ; skos:prefLabel "접속 도체·단자의 패임 또는 질량 소실"@ko ; efi:characteristicNumber 2 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(2)" .
+efi:HeatingCharacteristic03 a efi:HeatingCharacteristic ; skos:prefLabel "금속 결손 또는 도체 분리"@ko ; efi:characteristicNumber 3 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(3)" .
+efi:HeatingCharacteristic04 a efi:HeatingCharacteristic ; skos:prefLabel "산화물 성장에 의한 도체·질량 팽창"@ko ; efi:characteristicNumber 4 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(4)" ; efi:relatedObservationVocabulary efi:CuprousOxideGrowth .
+efi:HeatingCharacteristic05 a efi:HeatingCharacteristic ; skos:prefLabel "접속부 인접 재료의 열손상·탄화"@ko ; efi:characteristicNumber 5 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(5)" ; efi:relatedObservationVocabulary efi:LocalizedHeatWithSurroundingDamage .
+efi:HeatingCharacteristic06 a efi:HeatingCharacteristic ; skos:prefLabel "연결 도체를 따라 전달된 열에 의한 피복 탄화·소실"@ko ; efi:characteristicNumber 6 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(6)" .
+efi:HeatingCharacteristic07 a efi:HeatingCharacteristic ; skos:prefLabel "손상부와 비손상부의 선명한 경계"@ko ; efi:characteristicNumber 7 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(7)" .
+efi:HeatingCharacteristic08 a efi:HeatingCharacteristic ; skos:prefLabel "인접 표면의 용융 산화물 비산 흔적"@ko ; efi:characteristicNumber 8 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(8)" .
+efi:HeatingCharacteristic09 a efi:HeatingCharacteristic ; skos:prefLabel "산화물 필라멘트 잔존"@ko ; efi:characteristicNumber 9 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(9)" .
+efi:HeatingCharacteristic10 a efi:HeatingCharacteristic ; skos:prefLabel "직렬 아크 또는 파팅 아크 흔적"@ko ; efi:characteristicNumber 10 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(10)" ; efi:relatedObservationVocabulary efi:ArcMeltMark .
+efi:HeatingCharacteristic11 a efi:HeatingCharacteristic ; skos:prefLabel "취성 산화물 덩어리의 분리·파절"@ko ; efi:characteristicNumber 11 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(11)" ; efi:relatedObservationVocabulary efi:MoltenOxideMass .
+efi:HeatingCharacteristic12 a efi:HeatingCharacteristic ; skos:prefLabel "응고 산화물 표면의 띠·물결 무늬"@ko ; efi:characteristicNumber 12 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(12)" ; efi:relatedObservationVocabulary efi:OxideBanding .
+efi:HeatingCharacteristic13 a efi:HeatingCharacteristic ; skos:prefLabel "금속 비드와 닮은 응고 산화물 방울"@ko ; efi:characteristicNumber 13 ; dcterms:references "NFPA 921 (2024) §9.10.3.1(13)" ; efi:relatedObservationVocabulary efi:MoltenOxideMass .
+efi:HeatingCharacteristic rdfs:comment "한 가지 이상의 특징이 나타날 수 있다. 전체 항목을 요구하거나 원인 전용 단서로 쓰지 않는다. 기존 어휘 대응은 동일성·인과 추론을 뜻하지 않는다."@ko .
+efi:MetalDepositionRecord dcterms:references "소방청 화재조사실무Ⅳ(2025) 제2편 3.3.5 가1, 인쇄 p.261" ; rdfs:comment "접점 아크의 금속분이 절연면에 부착하고 후속 절연파괴에 관여하는 경로의 기록. 시간선 확인은 인과 확정·트래킹 판정·hasFact 추가가 아니다. p.211의 아크 열화 경로(T13)와 구별한다."@ko ; efi:relatedObservationVocabulary efi:Spatter, efi:ContaminatedEnvironment .
+efi:comparisonSide a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "비교 관찰의 분전반 안쪽 위치"@ko .
+efi:comparatorSide a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "비교 관찰의 분전반 바깥쪽 위치"@ko .
+
+efi:DamageComparisonShape a sh:NodeShape ; sh:targetClass efi:DamageComparison ;
+    dcterms:references "NFPA 921 (2024) §9.10.3.1(1); §9.6.4.1; §9.6.4.3" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:comparisonComponent ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:comparisonKind ; sh:minCount 1 ; sh:in ( "MetalExposure" "PanelInsideOutside" ) ] ;
+    sh:property [ sh:path efi:comparisonLocation ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:comparatorLocation ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:comparisonFinding ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:comparatorFinding ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:comparisonMetal ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:comparatorMetal ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:exposureComparisonBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:comparisonSide ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:comparatorSide ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:comparisonComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:comparisonContextComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:comparisonContextComplete true } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:recordComponent ?a ; efi:comparisonComponent ?b ; efi:comparisonKind ?kind ;
+   efi:comparisonLocation ?la ; efi:comparatorLocation ?lb ;
+   efi:comparisonFinding ?fa ; efi:comparatorFinding ?fb ;
+   efi:exposureComparisonBasis ?eb .
+ ?a efi:componentModel ?model . ?b efi:componentModel ?model . ?model efi:recordSession ?s .
+ FILTER (?a != ?b && STRLEN(?la)>0 && STRLEN(?lb)>0 && STRLEN(?fa)>0 && STRLEN(?fb)>0 && STRLEN(?eb)>0)
+ OPTIONAL { $this efi:comparisonMetal ?metal ; efi:comparatorMetal ?otherMetal ; efi:equivalentFireExposureStatus ?exposure }
+ OPTIONAL { $this efi:comparisonSide ?side ; efi:comparatorSide ?otherSide . ?a efi:componentContainer ?panel . ?panel a efi:Enclosure ; efi:componentModel ?model }
+ FILTER ((?kind = "MetalExposure" && ?exposure = efi:Confirmed && STRLEN(?metal)>0 && ?metal = ?otherMetal)
+   || (?kind = "PanelInsideOutside" && ?side = "Inside" && ?otherSide = "Outside" && BOUND(?panel)
+       && NOT EXISTS { ?b efi:componentContainer+ ?panel }))
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "비교 대상·위치·노출 근거를 확인해야 한다. 금속 비교는 동종 금속, 분전반 비교는 내부·외부 위치를 확인한다."@ko ; sh:select """SELECT $this WHERE { $this efi:comparisonComplete true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:recordComponent ?a ; efi:comparisonComponent ?b ; efi:comparisonKind ?kind ;
+   efi:comparisonLocation ?la ; efi:comparatorLocation ?lb ;
+   efi:comparisonFinding ?fa ; efi:comparatorFinding ?fb ;
+   efi:exposureComparisonBasis ?eb .
+ ?a efi:componentModel ?model . ?b efi:componentModel ?model . ?model efi:recordSession ?s .
+ FILTER (?a != ?b && STRLEN(?la)>0 && STRLEN(?lb)>0 && STRLEN(?fa)>0 && STRLEN(?fb)>0 && STRLEN(?eb)>0)
+ OPTIONAL { $this efi:comparisonMetal ?metal ; efi:comparatorMetal ?otherMetal ; efi:equivalentFireExposureStatus ?exposure }
+ OPTIONAL { $this efi:comparisonSide ?side ; efi:comparatorSide ?otherSide . ?a efi:componentContainer ?panel . ?panel a efi:Enclosure ; efi:componentModel ?model }
+ FILTER ((?kind = "MetalExposure" && ?exposure = efi:Confirmed && STRLEN(?metal)>0 && ?metal = ?otherMetal)
+   || (?kind = "PanelInsideOutside" && ?side = "Inside" && ?otherSide = "Outside" && BOUND(?panel)
+       && NOT EXISTS { ?b efi:componentContainer+ ?panel }))
+ } }""" ] .
+
+efi:HeatingCharacteristicObservationShape a sh:NodeShape ; sh:targetClass efi:HeatingCharacteristicObservation ;
+    dcterms:references "NFPA 921 (2024) §9.10.3.1" ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:observedHeatingCharacteristic ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:HeatingCharacteristic ] ;
+    sh:property [ sh:path efi:characteristicComparison ; sh:maxCount 1 ; sh:class efi:DamageComparison ] ;
+    sh:property [ sh:path efi:characteristicDetail ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "동종 금속 대비 산화는 같은 대상의 확인된 비교 기록을 요구한다. 단독 산화는 비교 특징이 아니다."@ko ; sh:select """
+ SELECT $this WHERE {
+ $this efi:confirmationStatus efi:Confirmed ; efi:observedHeatingCharacteristic efi:HeatingCharacteristic01 ; efi:recordComponent ?a ; efi:recordSession ?s .
+ FILTER NOT EXISTS { $this efi:characteristicComparison ?c . ?c efi:recordComponent ?a ; efi:recordSession ?s ; efi:comparisonKind "MetalExposure" ; efi:comparisonContextComplete true }
+ }""" ] .
+
+efi:InvestigationProblemShape a sh:NodeShape ; sh:targetClass efi:InvestigationProblemRecord ;
+    dcterms:references "NFPA 921 (2024) §4.3.1" ;
+    sh:property [ sh:path efi:problemStatement ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "확인된 조사 문제에는 해결할 질문의 진술이 필요하다."@ko ; sh:select """SELECT $this WHERE {
+ $this efi:confirmationStatus efi:Confirmed . FILTER NOT EXISTS { $this efi:problemStatement ?p . FILTER(STRLEN(?p)>0) } }""" ] .
+
+efi:InvestigationPlanShape a sh:NodeShape ; sh:targetClass efi:InvestigationPlanRecord ;
+    dcterms:references "NFPA 921 (2024) §4.3.1; §4.3.2; §4.3.6" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:addressesProblem ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:InvestigationProblemRecord ] ;
+    sh:property [ sh:path efi:plannedScope ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:plannedMethod ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:requiredExpertise ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:planComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:planVerificationSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:planVerificationSupported true } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:addressesProblem ?problem ;
+  efi:plannedScope ?scope ; efi:plannedMethod ?method ; efi:requiredExpertise ?expertise .
+ ?problem efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:problemStatement ?statement .
+ ?v a efi:VerificationRecord ; efi:recordSession ?s ; efi:verifiesPlan $this ;
+  efi:confirmationStatus efi:Confirmed ; efi:verificationResult ?result ; efi:verificationEvidence ?evidence .
+ ?evidence a/rdfs:subClassOf* efi:InvestigationEvidenceRecord ; efi:recordSession ?s ; efi:confirmationStatus ?eStatus . FILTER (?eStatus IN (efi:Confirmed, efi:ConfirmedAbsent))
+ FILTER (?v != ?evidence && STRLEN(?statement)>0 && STRLEN(?scope)>0 && STRLEN(?method)>0 && STRLEN(?expertise)>0 && STRLEN(?result)>0)
+ FILTER NOT EXISTS { ?v efi:verificationEvidence ?missing . FILTER NOT EXISTS { ?missing a/rdfs:subClassOf* efi:InvestigationEvidenceRecord ; efi:recordSession ?s ; efi:confirmationStatus ?mStatus . FILTER (?mStatus IN (efi:Confirmed, efi:ConfirmedAbsent)) } }
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "문제·검증 계획·수행 결과·확인된 근거를 연결하기 전에는 계획 검증을 완료로 표시할 수 없다."@ko ; sh:select """SELECT $this WHERE { $this efi:planComplete true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:addressesProblem ?problem ;
+  efi:plannedScope ?scope ; efi:plannedMethod ?method ; efi:requiredExpertise ?expertise .
+ ?problem efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:problemStatement ?statement .
+ ?v a efi:VerificationRecord ; efi:recordSession ?s ; efi:verifiesPlan $this ;
+  efi:confirmationStatus efi:Confirmed ; efi:verificationResult ?result ; efi:verificationEvidence ?evidence .
+ ?evidence a/rdfs:subClassOf* efi:InvestigationEvidenceRecord ; efi:recordSession ?s ; efi:confirmationStatus ?eStatus . FILTER (?eStatus IN (efi:Confirmed, efi:ConfirmedAbsent))
+ FILTER (?v != ?evidence && STRLEN(?statement)>0 && STRLEN(?scope)>0 && STRLEN(?method)>0 && STRLEN(?expertise)>0 && STRLEN(?result)>0)
+ FILTER NOT EXISTS { ?v efi:verificationEvidence ?missing . FILTER NOT EXISTS { ?missing a/rdfs:subClassOf* efi:InvestigationEvidenceRecord ; efi:recordSession ?s ; efi:confirmationStatus ?mStatus . FILTER (?mStatus IN (efi:Confirmed, efi:ConfirmedAbsent)) } }
+ } }""" ] .
+
+efi:VerificationRecordShape a sh:NodeShape ; sh:targetClass efi:VerificationRecord ;
+    dcterms:references "NFPA 921 (2024) §4.3.2; §4.3.6" ;
+    sh:property [ sh:path efi:verifiesPlan ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:InvestigationPlanRecord ] ;
+    sh:property [ sh:path efi:verificationResult ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:verificationEvidence ; sh:class efi:InvestigationEvidenceRecord ] .
+
+efi:ReviewScopeAssessmentShape a sh:NodeShape ; sh:targetClass efi:ReviewScopeAssessment ;
+    dcterms:references "NFPA 921 (2024) §4.6.2" ;
+    sh:property [ sh:path efi:assessesReviewPlan ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:InvestigationPlanRecord ] ;
+    sh:property [ sh:path efi:competenceBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:scopeAccessBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:scopeCritique ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:scopeDocumentationAccess ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( efi:Confirmed efi:ConfirmedAbsent efi:Unverifiable efi:Missing ) ] .
+
+efi:TechnicalReviewCoverageShape a sh:NodeShape ; sh:targetClass efi:TechnicalReviewRecord ;
+    dcterms:references "NFPA 921 (2024) §4.6.2" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:documentsReview ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:TechnicalReview ] ;
+    sh:property [ sh:path efi:reviewScopeKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:requestedReviewPlan ; sh:class efi:InvestigationPlanRecord ] ;
+    sh:property [ sh:path efi:hasScopeAssessment ; sh:class efi:ReviewScopeAssessment ] ;
+    sh:property [ sh:path efi:reviewComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:reviewCoverageSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:reviewCoverageSupported true } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:documentsReview ?activity ;
+  efi:reviewScopeKind ?kind ; efi:requestedReviewPlan ?one .
+ ?activity a efi:TechnicalReview ; efi:reviews ?s ; efi:reviewer ?reviewer ; efi:hasDocumentationAccess true .
+ FILTER (?kind IN ("Selected", "All"))
+ FILTER NOT EXISTS { $this efi:requestedReviewPlan ?plan .
+  FILTER NOT EXISTS {
+   ?plan a efi:InvestigationPlanRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:requiredExpertise ?expertise .
+   $this efi:hasScopeAssessment ?assessment .
+   ?assessment efi:recordSession ?s ; efi:assessesReviewPlan ?plan ; efi:confirmationStatus efi:Confirmed ;
+    efi:competenceBasis ?competence ; efi:scopeDocumentationAccess efi:Confirmed ; efi:scopeAccessBasis ?access ; efi:scopeCritique ?critique .
+   FILTER (STRLEN(?expertise)>0 && STRLEN(?competence)>0 && STRLEN(?access)>0 && STRLEN(?critique)>0)
+  }
+ }
+ FILTER NOT EXISTS { $this efi:reviewScopeKind "All" . ?p a efi:InvestigationPlanRecord ; efi:recordSession ?s . FILTER NOT EXISTS { $this efi:requestedReviewPlan ?p } }
+ FILTER NOT EXISTS { $this efi:hasScopeAssessment ?extra . ?extra efi:assessesReviewPlan ?p . FILTER NOT EXISTS { $this efi:requestedReviewPlan ?p } }
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "요청 범위마다 해당 전문성·자료 접근·실질 비평이 필요하다. 전체 검토는 모든 계획 범위를 포함해야 한다."@ko ; sh:select """SELECT $this WHERE { $this efi:reviewComplete true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:documentsReview ?activity ;
+  efi:reviewScopeKind ?kind ; efi:requestedReviewPlan ?one .
+ ?activity a efi:TechnicalReview ; efi:reviews ?s ; efi:reviewer ?reviewer ; efi:hasDocumentationAccess true .
+ FILTER (?kind IN ("Selected", "All"))
+ FILTER NOT EXISTS { $this efi:requestedReviewPlan ?plan .
+  FILTER NOT EXISTS {
+   ?plan a efi:InvestigationPlanRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:requiredExpertise ?expertise .
+   $this efi:hasScopeAssessment ?assessment .
+   ?assessment efi:recordSession ?s ; efi:assessesReviewPlan ?plan ; efi:confirmationStatus efi:Confirmed ;
+    efi:competenceBasis ?competence ; efi:scopeDocumentationAccess efi:Confirmed ; efi:scopeAccessBasis ?access ; efi:scopeCritique ?critique .
+   FILTER (STRLEN(?expertise)>0 && STRLEN(?competence)>0 && STRLEN(?access)>0 && STRLEN(?critique)>0)
+  }
+ }
+ FILTER NOT EXISTS { $this efi:reviewScopeKind "All" . ?p a efi:InvestigationPlanRecord ; efi:recordSession ?s . FILTER NOT EXISTS { $this efi:requestedReviewPlan ?p } }
+ FILTER NOT EXISTS { $this efi:hasScopeAssessment ?extra . ?extra efi:assessesReviewPlan ?p . FILTER NOT EXISTS { $this efi:requestedReviewPlan ?p } }
+ } }""" ] .
+
+efi:ReviewerRelationshipDescriptionShape a sh:NodeShape ; sh:targetSubjectsOf efi:reviewerRelationship ;
+    dcterms:references "NFPA 921 (2024) §4.6.2.1" ;
+    sh:property [ sh:path efi:reviewerRelationship ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] .
+
+efi:MetalDepositionSequenceShape a sh:NodeShape ; sh:targetClass efi:MetalDepositionRecord ;
+    dcterms:references "NFPA 921 (2024) §4.3.6; §9.9.5; §9.12.5.3; §19.6.4.5" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:Insulation ] ;
+    sh:property [ sh:path efi:sourceContactArcRecord ; sh:maxCount 1 ; sh:class efi:ElectricalEventRecord ] ;
+    sh:property [ sh:path efi:subsequentBreakdownRecord ; sh:maxCount 1 ; sh:class efi:ElectricalEventRecord ] ;
+    sh:property [ sh:path efi:relatedIgnitionRecord ; sh:maxCount 1 ; sh:class efi:ElectricalEventRecord ] ;
+    sh:property [ sh:path efi:depositBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:sourceArcLinkBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:depositionAssessmentComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:preIgnitionDepositionSequence ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:preIgnitionDepositionSequence true } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?surface ;
+  efi:sourceContactArcRecord ?arc ; efi:subsequentBreakdownRecord ?breakdown ; efi:relatedIgnitionRecord ?ignition ;
+  efi:depositBasis ?db ; efi:sourceArcLinkBasis ?ab ; efi:eventEarliest ?dmin ; efi:eventLatest ?dmax .
+ ?surface a efi:Insulation ; efi:componentModel ?model . ?model efi:recordSession ?s .
+ ?arc a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+  efi:electricalEventKind "ContactArcOccurrence" ; efi:recordComponent ?contact ; efi:eventEarliest ?amin ; efi:eventLatest ?amax .
+ ?contact efi:componentModel ?model .
+ ?breakdown a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+  efi:electricalEventKind "InsulationBreakdown" ; efi:recordComponent ?surface ; efi:eventEarliest ?bmin ; efi:eventLatest ?bmax .
+ ?ignition a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+  efi:electricalEventKind "Ignition" ; efi:recordComponent ?ignited ; efi:eventEarliest ?imin ; efi:eventLatest ?imax .
+ ?ignited efi:componentModel ?model .
+ FILTER (?contact != ?surface && STRLEN(?db)>0 && STRLEN(?ab)>0 && ?amin<=?amax && ?dmin<=?dmax && ?bmin<=?bmax && ?imin<=?imax && ?amax<?dmin && ?dmax<?bmin && ?bmax<?imin)
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "접점 아크 발생원·특정 절연면 부착·같은 면의 후속 절연파괴·발화의 확인된 시간 범위를 연결해야 한다. 사후 관찰 시각은 발생 시각을 대신하지 않는다."@ko ; sh:select """SELECT $this WHERE { $this efi:depositionAssessmentComplete true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?surface ;
+  efi:sourceContactArcRecord ?arc ; efi:subsequentBreakdownRecord ?breakdown ; efi:relatedIgnitionRecord ?ignition ;
+  efi:depositBasis ?db ; efi:sourceArcLinkBasis ?ab ; efi:eventEarliest ?dmin ; efi:eventLatest ?dmax .
+ ?surface a efi:Insulation ; efi:componentModel ?model . ?model efi:recordSession ?s .
+ ?arc a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+  efi:electricalEventKind "ContactArcOccurrence" ; efi:recordComponent ?contact ; efi:eventEarliest ?amin ; efi:eventLatest ?amax .
+ ?contact efi:componentModel ?model .
+ ?breakdown a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+  efi:electricalEventKind "InsulationBreakdown" ; efi:recordComponent ?surface ; efi:eventEarliest ?bmin ; efi:eventLatest ?bmax .
+ ?ignition a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+  efi:electricalEventKind "Ignition" ; efi:recordComponent ?ignited ; efi:eventEarliest ?imin ; efi:eventLatest ?imax .
+ ?ignited efi:componentModel ?model .
+ FILTER (?contact != ?surface && STRLEN(?db)>0 && STRLEN(?ab)>0 && ?amin<=?amax && ?dmin<=?dmax && ?bmin<=?bmax && ?imin<=?imax && ?amax<?dmin && ?dmax<?bmin && ?bmax<?imin)
+ } }""" ] .
+
+efi:InvestigationDetailReferenceShape a sh:NodeShape ; sh:targetClass efi:InvestigationRecord ;
+    dcterms:references "NFPA 921 (2024) §4.3.3; §4.3.6; §9.12" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "다른 세션·누락된 기록을 조사 근거로 연결할 수 없다."@ko ; sh:select """SELECT $this WHERE { $this efi:recordSession ?s . $this ?link ?record . FILTER (?link IN (efi:characteristicComparison, efi:addressesProblem, efi:verifiesPlan, efi:verificationEvidence, efi:requestedReviewPlan, efi:hasScopeAssessment, efi:assessesReviewPlan, efi:sourceContactArcRecord, efi:subsequentBreakdownRecord, efi:relatedIgnitionRecord, efi:terminationConnection, efi:fastenerTermination, efi:measuredTermination, efi:measuredFastener, efi:torqueIgnitionRecord, efi:comparedTorqueMeasurement, efi:comparedTorqueReference, efi:historyExamination, efi:historyHeating, efi:historyMoisture, efi:historyIgnitionRecord, efi:matingContactTermination, efi:comparedMetalTermination, efi:comparedMatingContact, efi:comparedMetalReference, efi:comparedConductorInstallation, efi:comparedAmpacityReference)) FILTER NOT EXISTS { ?record efi:recordSession ?s } }""" ] .
+
+# 계획·문제·검토 의견 자체는 그 계획을 검증한 관측 근거가 아니다.
+efi:InvestigationEvidenceRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "검증에 인용할 조사 관측 기록"@ko ; skos:prefLabel "검증에 인용할 조사 관측 기록"@ko .
+efi:DeviceStateRecord rdfs:subClassOf efi:InvestigationEvidenceRecord .
+efi:ElectricalEventRecord rdfs:subClassOf efi:InvestigationEvidenceRecord .
+efi:PowerRecordCoverage rdfs:subClassOf efi:InvestigationEvidenceRecord .
+efi:FirstFuelAssessment rdfs:subClassOf efi:InvestigationEvidenceRecord .
+efi:HeatTransferAssessment rdfs:subClassOf efi:InvestigationEvidenceRecord .
+efi:ComponentExamination rdfs:subClassOf efi:InvestigationEvidenceRecord .
+efi:DamageComparison rdfs:subClassOf efi:InvestigationEvidenceRecord .
+efi:HeatingCharacteristicObservation rdfs:subClassOf efi:InvestigationEvidenceRecord .
+efi:ConnectionRecord rdfs:subClassOf efi:InvestigationEvidenceRecord .
+efi:SupplyPathAssessment rdfs:subClassOf efi:InvestigationEvidenceRecord .
+
+# 55. 접속 구조·나사 재질·적용 범위를 갖춘 토크 비교 (T07)
+efi:TerminalFastener a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전기 단자 나사·볼트"@ko ; skos:prefLabel "전기 단자 나사·볼트"@ko .
+efi:TerminationRecord a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "도체·단자 접속 방식 기록"@ko ; skos:prefLabel "도체·단자 접속 방식 기록"@ko .
+efi:FastenerRecord a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "단자 나사 재질 식별 기록"@ko ; skos:prefLabel "단자 나사 재질 식별 기록"@ko .
+efi:TorqueMeasurement a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "체결·잔류·풀림 토크 측정 기록"@ko ; skos:prefLabel "체결·잔류·풀림 토크 측정 기록"@ko .
+efi:TorqueReference a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "제품 기준 또는 문헌 시험 토크 기록"@ko ; skos:prefLabel "제품 기준 또는 문헌 시험 토크 기록"@ko .
+efi:TorqueComparison a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "동일 조건 토크 비교 기록"@ko ; skos:prefLabel "동일 조건 토크 비교 기록"@ko .
+efi:TerminationRecord dcterms:references "NFPA 921 (2024) §9.8.2.2; Babrauskas, Ignition Handbook (2003), pp.759–760" ; rdfs:comment "뒤쪽 구멍의 스프링 고정과 삽입 후 나사로 조이는 구조를 구별한다. 방법명 자체는 접촉불량 사실이 아니다."@ko .
+efi:FastenerRecord dcterms:references "Babrauskas, Ignition Handbook (2003), p.759" ; rdfs:comment "자석 반응은 관찰값이며 재질 판정과 별도다. 도금 외관 또는 자석 비흡착만으로 황동을 도출하지 않는다. 재질만으로 글로잉 또는 원인 가점을 만들지 않는다."@ko .
+efi:TorqueReference dcterms:references "Babrauskas, Ignition Handbook (2003), pp.759,764" ; rdfs:comment "0.7 N·m는 특정 14 AWG 구리선·콘센트 시험의 문헌값이다. 제품 공통 기준으로 두지 않는다. 나사 단자와 트위스트 커넥터의 시험도 구별한다."@ko .
+efi:TorqueComparison rdfs:comment "제품·접속 구조·도체·토크 종류를 대조한 기록이다. 기준 대비 결과는 관측값 비교이며 접촉압·발화 원인 또는 화재 당시 체결 상태를 자동 확정하지 않는다."@ko .
+efi:terminationDevice a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "접속 단자가 속한 기기"@ko .
+efi:terminationConductor a owl:ObjectProperty ; rdfs:range efi:Conductor ; skos:prefLabel "단자에 연결한 도체"@ko .
+efi:terminationConnection a owl:ObjectProperty ; rdfs:range efi:ConnectionRecord ; skos:prefLabel "근거인 계통 연결 기록"@ko .
+efi:fastenerTermination a owl:ObjectProperty ; rdfs:range efi:TerminationRecord ; skos:prefLabel "나사가 속한 접속 기록"@ko .
+efi:measuredTermination a owl:ObjectProperty ; rdfs:range efi:TerminationRecord ; skos:prefLabel "토크를 측정한 접속 기록"@ko .
+efi:measuredFastener a owl:ObjectProperty ; rdfs:range efi:FastenerRecord ; skos:prefLabel "토크를 측정한 나사 기록"@ko .
+efi:torqueIgnitionRecord a owl:ObjectProperty ; rdfs:range efi:ElectricalEventRecord ; skos:prefLabel "토크 발생 시각과 대조할 발화 기록"@ko .
+efi:comparedTorqueMeasurement a owl:ObjectProperty ; rdfs:range efi:TorqueMeasurement ; skos:prefLabel "비교한 토크 측정"@ko .
+efi:comparedTorqueReference a owl:ObjectProperty ; rdfs:range efi:TorqueReference ; skos:prefLabel "비교한 토크 기준"@ko .
+efi:terminationMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "도체 고정 방식"@ko .
+efi:terminationConductorMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "접속 도체의 확인 재질"@ko .
+efi:terminationConductorSize a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "접속 도체의 크기와 단위"@ko .
+efi:terminationProduct a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "접속 기기 제품 식별자"@ko .
+efi:terminalMarking a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "대상 단자 표시·색·극 식별"@ko .
+efi:terminationIdentificationBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "접속 구조 식별 근거"@ko .
+efi:fastenerMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "해당 단자 나사의 판정 재질"@ko .
+efi:magneticResponse a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "나사의 자석 반응 관찰"@ko .
+efi:fastenerIdentificationMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "나사 재질 식별 방법"@ko .
+efi:fastenerIdentificationBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "나사 재질 판정 근거"@ko .
+efi:torqueQuantityKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "측정한 토크의 종류"@ko .
+efi:torqueMeasurementPhase a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "화재·사후 취급에 대한 측정 시점"@ko .
+efi:torqueMeasurementMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "토크 계측 방법·기기 근거"@ko .
+efi:torqueTimingBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "토크 발생 시점 근거"@ko .
+efi:torqueReferenceKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "토크 기준의 제조사·연구 구분"@ko .
+efi:torqueReferenceProduct a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "토크 기준의 대상 제품"@ko .
+efi:torqueReferenceTerminationMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "토크 기준의 도체 고정 방식"@ko .
+efi:torqueReferenceConductorMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "토크 기준의 도체 재질"@ko .
+efi:torqueReferenceConductorSize a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "토크 기준의 도체 크기와 단위"@ko .
+efi:torqueReferenceFastenerMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "토크 기준의 나사 재질 제한"@ko .
+efi:torqueReferenceScope a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "토크 기준의 적용 범위·시험 조건"@ko .
+efi:torqueApplicabilityBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "해당 측정에 기준을 적용한 근거"@ko .
+efi:torqueComparisonResult a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "조건이 일치하는 기준 대비 토크 결과"@ko .
+efi:torqueValue_Nm a owl:DatatypeProperty ; rdfs:range xsd:decimal ; skos:prefLabel "측정 토크(N·m)"@ko .
+efi:torqueMinimum_Nm a owl:DatatypeProperty ; rdfs:range xsd:decimal ; skos:prefLabel "기준 하한 토크(N·m)"@ko .
+efi:torqueMaximum_Nm a owl:DatatypeProperty ; rdfs:range xsd:decimal ; skos:prefLabel "기준 상한 토크(N·m)"@ko .
+efi:torqueMeasuredAt a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; skos:prefLabel "토크를 실제 측정·적용한 시각"@ko .
+efi:terminationAssessmentComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "접속 구조 식별 완료 주장"@ko .
+efi:terminationContextSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "접속 구조의 대상·근거 연결됨"@ko .
+efi:fastenerMaterialSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "나사 재질 식별 근거 연결됨"@ko .
+efi:torqueAssessmentComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "제품 토크 기준 비교 완료 주장"@ko .
+efi:torqueComparisonSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "제품 기준과 측정 조건이 일치함"@ko .
+efi:claimsPreFireAppliedTorque a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "발화 전 적용 토크 기록이라는 주장"@ko .
+efi:preFireAppliedTorqueSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "발화 전에 적용한 토크의 기록상 시각 확인됨"@ko .
+
+efi:TerminationRecordShape a sh:NodeShape ; sh:targetClass efi:TerminationRecord ;
+    dcterms:references "NFPA 921 (2024) §9.8.2.2; §9.12.4" ;
+    sh:order -1 ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:or ( [ sh:class efi:ConnectionPoint ] [ sh:class efi:TerminalBlock ] ) ] ;
+    sh:property [ sh:path efi:terminationDevice ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:terminationConductor ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:Conductor ] ;
+    sh:property [ sh:path efi:terminationConnection ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ConnectionRecord ] ;
+    sh:property [ sh:path efi:terminationMethod ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "ScrewTerminal" "PushInSpring" "PushInScrewClamp" "WireWrapPin" "Soldered" "Crimped" "TwistOnConnector" "Twisted" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:terminationConductorMaterial ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Copper" "PureAluminum" "AluminumAlloy" "CopperCladAluminum" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:terminationConductorSize ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:terminationProduct ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:terminalMarking ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:terminationIdentificationBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:terminationAssessmentComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:terminationContextSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order -1 ; sh:construct """CONSTRUCT { $this efi:terminationContextSupported true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?terminal ;
+   efi:terminationDevice ?device ; efi:terminationConductor ?wire ; efi:terminationConnection ?link ;
+   efi:terminationMethod ?method ; efi:terminationIdentificationBasis ?basis .
+ ?terminal a/rdfs:subClassOf* ?terminalType ; efi:componentContainer ?device ; efi:componentModel ?model .
+ FILTER (?terminalType IN (efi:ConnectionPoint, efi:TerminalBlock))
+ ?wire a efi:Conductor ; efi:componentModel ?model . ?device efi:componentModel ?model .
+ ?model efi:recordSession ?s .
+ ?link a efi:ConnectionRecord ; efi:recordSession ?s ; efi:recordSystem ?model ; efi:confirmationStatus efi:Confirmed ;
+   efi:connectionFrom ?from ; efi:connectionTo ?to ; efi:connectionKind ?kind .
+ FILTER (?terminal != ?device && ?wire != ?terminal && ?wire != ?device && ?method NOT IN ("Unknown", "Other") && STRLEN(?basis)>0
+   && ?kind IN ("Supply", "Grounding") && ((?from=?wire && ?to=?terminal) || (?from=?terminal && ?to=?wire)))
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "도체·단자·기기의 같은 계통 연결과 접속 구조 식별 근거를 확인해야 완료로 표시할 수 있다."@ko ; sh:select """SELECT $this WHERE { $this efi:terminationAssessmentComplete true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?terminal ;
+   efi:terminationDevice ?device ; efi:terminationConductor ?wire ; efi:terminationConnection ?link ;
+   efi:terminationMethod ?method ; efi:terminationIdentificationBasis ?basis .
+ ?terminal a/rdfs:subClassOf* ?terminalType ; efi:componentContainer ?device ; efi:componentModel ?model .
+ FILTER (?terminalType IN (efi:ConnectionPoint, efi:TerminalBlock))
+ ?wire a efi:Conductor ; efi:componentModel ?model . ?device efi:componentModel ?model .
+ ?model efi:recordSession ?s .
+ ?link a efi:ConnectionRecord ; efi:recordSession ?s ; efi:recordSystem ?model ; efi:confirmationStatus efi:Confirmed ;
+   efi:connectionFrom ?from ; efi:connectionTo ?to ; efi:connectionKind ?kind .
+ FILTER (?terminal != ?device && ?wire != ?terminal && ?wire != ?device && ?method NOT IN ("Unknown", "Other") && STRLEN(?basis)>0
+   && ?kind IN ("Supply", "Grounding") && ((?from=?wire && ?to=?terminal) || (?from=?terminal && ?to=?wire)))
+ } }""" ] .
+
+efi:FastenerRecordShape a sh:NodeShape ; sh:targetClass efi:FastenerRecord ;
+    dcterms:references "NFPA 921 (2024) §9.8.2.2; §4.3.3" ;
+    sh:order -1 ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:TerminalFastener ] ;
+    sh:property [ sh:path efi:fastenerTermination ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:TerminationRecord ] ;
+    sh:property [ sh:path efi:fastenerMaterial ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Steel" "Brass" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:magneticResponse ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Attracted" "NotAttracted" "Unknown" ) ] ;
+    sh:property [ sh:path efi:fastenerIdentificationMethod ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Magnet" "ProductDocumentation" "MaterialAnalysis" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:fastenerIdentificationBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:fastenerMaterialSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order -1 ; sh:construct """CONSTRUCT { $this efi:fastenerMaterialSupported true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?screw ;
+   efi:fastenerTermination ?term ; efi:fastenerMaterial ?material ; efi:fastenerIdentificationMethod ?method ;
+   efi:fastenerIdentificationBasis ?basis .
+ ?term a efi:TerminationRecord ; efi:recordSession ?s ; efi:recordComponent ?terminal .
+ ?screw a efi:TerminalFastener ; efi:componentContainer ?terminal ; efi:componentModel ?model .
+ ?terminal efi:componentModel ?model . ?model efi:recordSession ?s .
+ FILTER (?material != "Unknown" && ?method != "Unknown" && STRLEN(?basis)>0)
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "나사 기록은 같은 계통의 해당 단자에 속한 물리 나사를 가리켜야 한다."@ko ; sh:select """SELECT $this WHERE {
+ $this efi:recordSession ?s ; efi:recordComponent ?screw ; efi:fastenerTermination ?term .
+ FILTER NOT EXISTS { ?term efi:recordSession ?s ; efi:recordComponent ?terminal .
+ ?screw efi:componentContainer ?terminal ; efi:componentModel ?model . ?terminal efi:componentModel ?model . ?model efi:recordSession ?s } }""" ] .
+
+efi:TorqueMeasurementShape a sh:NodeShape ; sh:targetClass efi:TorqueMeasurement ;
+    dcterms:references "NFPA 921 (2024) §4.3.3; §9.12.5.3; §9.12.6.2" ;
+    sh:property [ sh:path efi:measuredTermination ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:TerminationRecord ] ;
+    sh:property [ sh:path efi:measuredFastener ; sh:maxCount 1 ; sh:class efi:FastenerRecord ] ;
+    sh:property [ sh:path efi:torqueIgnitionRecord ; sh:maxCount 1 ; sh:class efi:ElectricalEventRecord ] ;
+    sh:property [ sh:path efi:torqueValue_Nm ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path efi:torqueQuantityKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "AppliedTightening" "ResidualTightening" "BreakawayLoosening" "Unknown" ) ] ;
+    sh:property [ sh:path efi:torqueMeasurementPhase ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "BeforeFire" "AsFoundAfterFire" "AfterHandling" "Unknown" ) ] ;
+    sh:property [ sh:path efi:torqueMeasuredAt ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] ;
+    sh:property [ sh:path efi:torqueMeasurementMethod ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:torqueTimingBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "측정한 나사와 접속 기록이 일치해야 한다."@ko ; sh:select """SELECT $this WHERE {
+ $this efi:measuredTermination ?term ; efi:measuredFastener ?fastener ; efi:recordSession ?s .
+ FILTER NOT EXISTS { ?fastener efi:fastenerTermination ?term ; efi:recordSession ?s } }""" ] .
+
+efi:TorqueReferenceShape a sh:NodeShape ; sh:targetClass efi:TorqueReference ;
+    dcterms:references "NFPA 921 (2024) §4.3.6; §19.6.4.1" ;
+    sh:property [ sh:path efi:torqueReferenceKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Manufacturer" "Study" "Other" ) ] ;
+    sh:property [ sh:path efi:torqueReferenceProduct ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:torqueReferenceTerminationMethod ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "ScrewTerminal" "PushInSpring" "PushInScrewClamp" "WireWrapPin" "Soldered" "Crimped" "TwistOnConnector" "Twisted" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:torqueReferenceConductorMaterial ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Copper" "PureAluminum" "AluminumAlloy" "CopperCladAluminum" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:torqueReferenceConductorSize ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:torqueReferenceFastenerMaterial ; sh:maxCount 1 ; sh:in ( "Steel" "Brass" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:torqueQuantityKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "AppliedTightening" "ResidualTightening" "BreakawayLoosening" "Unknown" ) ] ;
+    sh:property [ sh:path efi:torqueMinimum_Nm ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:lessThanOrEquals efi:torqueMaximum_Nm ] ;
+    sh:property [ sh:path efi:torqueMaximum_Nm ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path efi:torqueReferenceScope ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] .
+
+efi:TorqueComparisonShape a sh:NodeShape ; sh:targetClass efi:TorqueComparison ;
+    dcterms:references "NFPA 921 (2024) §4.3.6; §9.8.2.2; §19.6.4.1" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:comparedTorqueMeasurement ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:TorqueMeasurement ] ;
+    sh:property [ sh:path efi:comparedTorqueReference ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:TorqueReference ] ;
+    sh:property [ sh:path efi:torqueApplicabilityBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:torqueAssessmentComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:torqueComparisonSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:claimsPreFireAppliedTorque ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:torqueComparisonResult ; sh:maxCount 1 ; sh:in ( "BelowMinimum" "AboveMaximum" "WithinRange" "AtOrAboveMinimum" "AtOrBelowMaximum" ) ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:torqueComparisonSupported true ; efi:torqueComparisonResult ?result . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:comparedTorqueMeasurement ?measurement ;
+   efi:comparedTorqueReference ?reference ; efi:torqueApplicabilityBasis ?application .
+ ?measurement a efi:TorqueMeasurement ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:measuredTermination ?term ; efi:torqueValue_Nm ?value ; efi:torqueQuantityKind ?quantity ;
+   efi:torqueMeasurementPhase ?phase ; efi:torqueMeasuredAt ?measuredAt ; efi:torqueTimingBasis ?timing ; efi:torqueMeasurementMethod ?measurementMethod .
+ ?term a efi:TerminationRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:terminationContextSupported true ;
+   efi:recordComponent ?terminal ; efi:terminationProduct ?product ; efi:terminationMethod ?method ;
+   efi:terminationConductorMaterial ?metal ; efi:terminationConductorSize ?size .
+ ?reference a efi:TorqueReference ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:torqueReferenceKind "Manufacturer" ; efi:torqueReferenceProduct ?product ; efi:torqueReferenceTerminationMethod ?method ;
+   efi:torqueReferenceConductorMaterial ?metal ; efi:torqueReferenceConductorSize ?size ; efi:torqueQuantityKind ?quantity ; efi:torqueReferenceScope ?scope .
+ OPTIONAL { ?reference efi:torqueMinimum_Nm ?min }
+ OPTIONAL { ?reference efi:torqueMaximum_Nm ?max }
+ FILTER (STRLEN(?application)>0 && STRLEN(?product)>0 && STRLEN(?size)>0 && STRLEN(?scope)>0 && STRLEN(?timing)>0 && STRLEN(?measurementMethod)>0
+   && ?metal NOT IN ("Unknown", "Other") && ?quantity != "Unknown" && ?phase != "Unknown" && ?value>=0
+   && (BOUND(?min) || BOUND(?max)) && (!BOUND(?min) || ?min>=0) && (!BOUND(?max) || ?max>=0)
+   && (!BOUND(?min) || !BOUND(?max) || ?min<=?max))
+ FILTER (?method NOT IN ("ScrewTerminal", "PushInScrewClamp") || EXISTS {
+   ?measurement efi:measuredFastener ?fastener . ?fastener a efi:FastenerRecord ; efi:recordSession ?s ;
+     efi:confirmationStatus efi:Confirmed ; efi:fastenerTermination ?term ; efi:recordComponent ?screw .
+   ?screw a efi:TerminalFastener ; efi:componentContainer ?terminal ; efi:componentModel ?model .
+   ?terminal efi:componentModel ?model . ?model efi:recordSession ?s . })
+ FILTER NOT EXISTS { ?measurement efi:measuredFastener ?wrong . FILTER NOT EXISTS { ?wrong efi:recordSession ?s ; efi:fastenerTermination ?term } }
+ FILTER NOT EXISTS { ?reference efi:torqueReferenceFastenerMaterial ?requiredMetal .
+   FILTER NOT EXISTS { ?measurement efi:measuredFastener ?fm . ?fm efi:recordSession ?s ; efi:fastenerTermination ?term ;
+     efi:confirmationStatus efi:Confirmed ; efi:fastenerMaterial ?requiredMetal ; efi:fastenerMaterialSupported true .
+     FILTER (?requiredMetal NOT IN ("Unknown", "Other")) } }
+
+ BIND (IF(BOUND(?min) && ?value<?min, "BelowMinimum",
+       IF(BOUND(?max) && ?value>?max, "AboveMaximum",
+       IF(BOUND(?min) && BOUND(?max), "WithinRange", IF(BOUND(?min), "AtOrAboveMinimum", "AtOrBelowMaximum")))) AS ?result)
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "제품·접속 방식·도체·측정 종류·시점이 맞는 제품 기준과 적용 근거가 필요하다. 연구 시험값은 보편적인 제품 기준이 아니다."@ko ; sh:select """SELECT $this WHERE { $this efi:torqueAssessmentComplete true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:comparedTorqueMeasurement ?measurement ;
+   efi:comparedTorqueReference ?reference ; efi:torqueApplicabilityBasis ?application .
+ ?measurement a efi:TorqueMeasurement ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:measuredTermination ?term ; efi:torqueValue_Nm ?value ; efi:torqueQuantityKind ?quantity ;
+   efi:torqueMeasurementPhase ?phase ; efi:torqueMeasuredAt ?measuredAt ; efi:torqueTimingBasis ?timing ; efi:torqueMeasurementMethod ?measurementMethod .
+ ?term a efi:TerminationRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:terminationContextSupported true ;
+   efi:recordComponent ?terminal ; efi:terminationProduct ?product ; efi:terminationMethod ?method ;
+   efi:terminationConductorMaterial ?metal ; efi:terminationConductorSize ?size .
+ ?reference a efi:TorqueReference ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:torqueReferenceKind "Manufacturer" ; efi:torqueReferenceProduct ?product ; efi:torqueReferenceTerminationMethod ?method ;
+   efi:torqueReferenceConductorMaterial ?metal ; efi:torqueReferenceConductorSize ?size ; efi:torqueQuantityKind ?quantity ; efi:torqueReferenceScope ?scope .
+ OPTIONAL { ?reference efi:torqueMinimum_Nm ?min }
+ OPTIONAL { ?reference efi:torqueMaximum_Nm ?max }
+ FILTER (STRLEN(?application)>0 && STRLEN(?product)>0 && STRLEN(?size)>0 && STRLEN(?scope)>0 && STRLEN(?timing)>0 && STRLEN(?measurementMethod)>0
+   && ?metal NOT IN ("Unknown", "Other") && ?quantity != "Unknown" && ?phase != "Unknown" && ?value>=0
+   && (BOUND(?min) || BOUND(?max)) && (!BOUND(?min) || ?min>=0) && (!BOUND(?max) || ?max>=0)
+   && (!BOUND(?min) || !BOUND(?max) || ?min<=?max))
+ FILTER (?method NOT IN ("ScrewTerminal", "PushInScrewClamp") || EXISTS {
+   ?measurement efi:measuredFastener ?fastener . ?fastener a efi:FastenerRecord ; efi:recordSession ?s ;
+     efi:confirmationStatus efi:Confirmed ; efi:fastenerTermination ?term ; efi:recordComponent ?screw .
+   ?screw a efi:TerminalFastener ; efi:componentContainer ?terminal ; efi:componentModel ?model .
+   ?terminal efi:componentModel ?model . ?model efi:recordSession ?s . })
+ FILTER NOT EXISTS { ?measurement efi:measuredFastener ?wrong . FILTER NOT EXISTS { ?wrong efi:recordSession ?s ; efi:fastenerTermination ?term } }
+ FILTER NOT EXISTS { ?reference efi:torqueReferenceFastenerMaterial ?requiredMetal .
+   FILTER NOT EXISTS { ?measurement efi:measuredFastener ?fm . ?fm efi:recordSession ?s ; efi:fastenerTermination ?term ;
+     efi:confirmationStatus efi:Confirmed ; efi:fastenerMaterial ?requiredMetal ; efi:fastenerMaterialSupported true .
+     FILTER (?requiredMetal NOT IN ("Unknown", "Other")) } }
+ } }""" ] .
+
+efi:PreFireAppliedTorqueShape a sh:NodeShape ; sh:targetClass efi:TorqueComparison ;
+    dcterms:references "NFPA 921 (2024) §4.3.6; §9.12.5.3; §19.6.4.5" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:preFireAppliedTorqueSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:preFireAppliedTorqueSupported true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:comparedTorqueMeasurement ?measurement ;
+   efi:comparedTorqueReference ?reference ; efi:torqueApplicabilityBasis ?application .
+ ?measurement a efi:TorqueMeasurement ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:measuredTermination ?term ; efi:torqueValue_Nm ?value ; efi:torqueQuantityKind ?quantity ;
+   efi:torqueMeasurementPhase ?phase ; efi:torqueMeasuredAt ?measuredAt ; efi:torqueTimingBasis ?timing ; efi:torqueMeasurementMethod ?measurementMethod .
+ ?term a efi:TerminationRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:terminationContextSupported true ;
+   efi:recordComponent ?terminal ; efi:terminationProduct ?product ; efi:terminationMethod ?method ;
+   efi:terminationConductorMaterial ?metal ; efi:terminationConductorSize ?size .
+ ?reference a efi:TorqueReference ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:torqueReferenceKind "Manufacturer" ; efi:torqueReferenceProduct ?product ; efi:torqueReferenceTerminationMethod ?method ;
+   efi:torqueReferenceConductorMaterial ?metal ; efi:torqueReferenceConductorSize ?size ; efi:torqueQuantityKind ?quantity ; efi:torqueReferenceScope ?scope .
+ OPTIONAL { ?reference efi:torqueMinimum_Nm ?min }
+ OPTIONAL { ?reference efi:torqueMaximum_Nm ?max }
+ FILTER (STRLEN(?application)>0 && STRLEN(?product)>0 && STRLEN(?size)>0 && STRLEN(?scope)>0 && STRLEN(?timing)>0 && STRLEN(?measurementMethod)>0
+   && ?metal NOT IN ("Unknown", "Other") && ?quantity != "Unknown" && ?phase != "Unknown" && ?value>=0
+   && (BOUND(?min) || BOUND(?max)) && (!BOUND(?min) || ?min>=0) && (!BOUND(?max) || ?max>=0)
+   && (!BOUND(?min) || !BOUND(?max) || ?min<=?max))
+ FILTER (?method NOT IN ("ScrewTerminal", "PushInScrewClamp") || EXISTS {
+   ?measurement efi:measuredFastener ?fastener . ?fastener a efi:FastenerRecord ; efi:recordSession ?s ;
+     efi:confirmationStatus efi:Confirmed ; efi:fastenerTermination ?term ; efi:recordComponent ?screw .
+   ?screw a efi:TerminalFastener ; efi:componentContainer ?terminal ; efi:componentModel ?model .
+   ?terminal efi:componentModel ?model . ?model efi:recordSession ?s . })
+ FILTER NOT EXISTS { ?measurement efi:measuredFastener ?wrong . FILTER NOT EXISTS { ?wrong efi:recordSession ?s ; efi:fastenerTermination ?term } }
+ FILTER NOT EXISTS { ?reference efi:torqueReferenceFastenerMaterial ?requiredMetal .
+   FILTER NOT EXISTS { ?measurement efi:measuredFastener ?fm . ?fm efi:recordSession ?s ; efi:fastenerTermination ?term ;
+     efi:confirmationStatus efi:Confirmed ; efi:fastenerMaterial ?requiredMetal ; efi:fastenerMaterialSupported true .
+     FILTER (?requiredMetal NOT IN ("Unknown", "Other")) } }
+
+ ?measurement efi:torqueQuantityKind "AppliedTightening" ; efi:torqueMeasurementPhase "BeforeFire" ; efi:torqueIgnitionRecord ?fire .
+ ?term efi:recordComponent ?terminal . ?terminal efi:componentModel ?model .
+ ?fire a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:electricalEventKind "Ignition" ; efi:recordComponent ?ignited ; efi:eventEarliest ?fireMin ; efi:eventLatest ?fireMax .
+ ?ignited efi:componentModel ?model . ?model efi:recordSession ?s .
+ FILTER (?fireMin<=?fireMax && ?measuredAt<?fireMin)
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "사후 잔류·풀림·재체결 토크를 발화 전 적용 토크로 사용할 수 없다. 발화 전 실제 적용 기록·시각과 같은 계통의 발화 시간 근거가 필요하다."@ko ; sh:select """SELECT $this WHERE { $this efi:claimsPreFireAppliedTorque true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:comparedTorqueMeasurement ?measurement ;
+   efi:comparedTorqueReference ?reference ; efi:torqueApplicabilityBasis ?application .
+ ?measurement a efi:TorqueMeasurement ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:measuredTermination ?term ; efi:torqueValue_Nm ?value ; efi:torqueQuantityKind ?quantity ;
+   efi:torqueMeasurementPhase ?phase ; efi:torqueMeasuredAt ?measuredAt ; efi:torqueTimingBasis ?timing ; efi:torqueMeasurementMethod ?measurementMethod .
+ ?term a efi:TerminationRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:terminationContextSupported true ;
+   efi:recordComponent ?terminal ; efi:terminationProduct ?product ; efi:terminationMethod ?method ;
+   efi:terminationConductorMaterial ?metal ; efi:terminationConductorSize ?size .
+ ?reference a efi:TorqueReference ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:torqueReferenceKind "Manufacturer" ; efi:torqueReferenceProduct ?product ; efi:torqueReferenceTerminationMethod ?method ;
+   efi:torqueReferenceConductorMaterial ?metal ; efi:torqueReferenceConductorSize ?size ; efi:torqueQuantityKind ?quantity ; efi:torqueReferenceScope ?scope .
+ OPTIONAL { ?reference efi:torqueMinimum_Nm ?min }
+ OPTIONAL { ?reference efi:torqueMaximum_Nm ?max }
+ FILTER (STRLEN(?application)>0 && STRLEN(?product)>0 && STRLEN(?size)>0 && STRLEN(?scope)>0 && STRLEN(?timing)>0 && STRLEN(?measurementMethod)>0
+   && ?metal NOT IN ("Unknown", "Other") && ?quantity != "Unknown" && ?phase != "Unknown" && ?value>=0
+   && (BOUND(?min) || BOUND(?max)) && (!BOUND(?min) || ?min>=0) && (!BOUND(?max) || ?max>=0)
+   && (!BOUND(?min) || !BOUND(?max) || ?min<=?max))
+ FILTER (?method NOT IN ("ScrewTerminal", "PushInScrewClamp") || EXISTS {
+   ?measurement efi:measuredFastener ?fastener . ?fastener a efi:FastenerRecord ; efi:recordSession ?s ;
+     efi:confirmationStatus efi:Confirmed ; efi:fastenerTermination ?term ; efi:recordComponent ?screw .
+   ?screw a efi:TerminalFastener ; efi:componentContainer ?terminal ; efi:componentModel ?model .
+   ?terminal efi:componentModel ?model . ?model efi:recordSession ?s . })
+ FILTER NOT EXISTS { ?measurement efi:measuredFastener ?wrong . FILTER NOT EXISTS { ?wrong efi:recordSession ?s ; efi:fastenerTermination ?term } }
+ FILTER NOT EXISTS { ?reference efi:torqueReferenceFastenerMaterial ?requiredMetal .
+   FILTER NOT EXISTS { ?measurement efi:measuredFastener ?fm . ?fm efi:recordSession ?s ; efi:fastenerTermination ?term ;
+     efi:confirmationStatus efi:Confirmed ; efi:fastenerMaterial ?requiredMetal ; efi:fastenerMaterialSupported true .
+     FILTER (?requiredMetal NOT IN ("Unknown", "Other")) } }
+
+ ?measurement efi:torqueQuantityKind "AppliedTightening" ; efi:torqueMeasurementPhase "BeforeFire" ; efi:torqueIgnitionRecord ?fire .
+ ?term efi:recordComponent ?terminal . ?terminal efi:componentModel ?model .
+ ?fire a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:electricalEventKind "Ignition" ; efi:recordComponent ?ignited ; efi:eventEarliest ?fireMin ; efi:eventLatest ?fireMax .
+ ?ignited efi:componentModel ?model . ?model efi:recordSession ?s .
+ FILTER (?fireMin<=?fireMax && ?measuredAt<?fireMin)
+ } }""" ] .
+
+# 56. T14 — 절연 재질·충전재와 가열·표면 수분 이력 (NFPA §9.9.4.5.1)
+efi:InsulationExposureRecord a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "절연재 가열·표면 수분 이력 기록"@ko ; skos:prefLabel "절연재 가열·표면 수분 이력 기록"@ko .
+efi:InsulationHistoryReview a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "절연재 이력의 원문 조건 검토"@ko ; skos:prefLabel "절연재 이력의 원문 조건 검토"@ko .
+efi:InsulationHistoryReview rdfs:comment "NFPA §9.9.4.5.1의 탄산칼슘 함유 PVC·110°C 이상 가열·대기 수분의 표면 부착 설명과 조사 기록을 대조한다. 이력 자료의 완비·발화 전 선후만 검사하며 해당 메커니즘의 성립이나 발화 원인을 도출하지 않는다. 110°C는 범용 판정 문턱이 아니다."@ko .
+efi:historyExamination a owl:ObjectProperty ; rdfs:range efi:ComponentExamination ; skos:prefLabel "이력 검토의 재질·충전재 식별 기록"@ko .
+efi:historyHeating a owl:ObjectProperty ; rdfs:range efi:InsulationExposureRecord ; skos:prefLabel "이력 검토의 가열 기록"@ko .
+efi:historyMoisture a owl:ObjectProperty ; rdfs:range efi:InsulationExposureRecord ; skos:prefLabel "이력 검토의 표면 수분 기록"@ko .
+efi:historyIgnitionRecord a owl:ObjectProperty ; rdfs:range efi:ElectricalEventRecord ; skos:prefLabel "이력과 대조할 발화 기록"@ko .
+efi:insulationMaterialBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "절연 재질 식별 근거"@ko .
+efi:observedInsulationFiller a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "확인한 절연재 충전재"@ko .
+efi:insulationFillerBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "충전재 식별·부재 확인 근거"@ko .
+efi:insulationExposureKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "가열·표면 수분 이력의 구분"@ko .
+efi:insulationExposureBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "대상 노출과 발생 시간 범위의 근거"@ko .
+efi:temperatureBasisKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "온도 측정·재구성의 구분"@ko .
+efi:surfaceMoisturePresence a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "대상 표면 수분 존재·부재·미확인"@ko .
+efi:surfaceMoistureOrigin a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "대상 표면 수분 유래"@ko .
+efi:insulationApplicabilityBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "원문의 재질·충전재·가열·수분 조건과 이력의 대조 근거"@ko .
+efi:exposureEarliest a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; skos:prefLabel "노출의 최초 가능 시각"@ko .
+efi:exposureLatest a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; skos:prefLabel "노출의 최후 가능 시각"@ko .
+efi:exposureTemperatureMin_C a owl:DatatypeProperty ; rdfs:range xsd:decimal ; skos:prefLabel "기록된 가열 온도 하한(°C)"@ko .
+efi:exposureTemperatureMax_C a owl:DatatypeProperty ; rdfs:range xsd:decimal ; skos:prefLabel "기록된 가열 온도 상한(°C)"@ko .
+efi:insulationHistoryComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "절연재 이력 대조 자료의 완비 주장"@ko .
+efi:insulationHistoryDocumented a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "같은 절연재의 재질·충전재·가열·수분 이력이 연결됨"@ko .
+efi:claimsPreIgnitionHeatingMoisture a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "발화 전 가열 후 표면 수분 존재의 시간 선후 주장"@ko .
+efi:preIgnitionHeatingMoistureSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "가열 후 표면 수분 존재가 발화보다 앞선 기록상 선후 확인"@ko .
+
+efi:InsulationCompositionShape a sh:NodeShape ; sh:targetClass efi:ComponentExamination ;
+    dcterms:references "NFPA 921 (2024) §9.9.4.5.1; §4.3.3" ;
+    sh:property [ sh:path efi:insulationMaterialBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:observedInsulationFiller ; sh:maxCount 1 ; sh:in ( "CalciumCarbonate" "Other" "None" "Unknown" ) ] ;
+    sh:property [ sh:path efi:insulationFillerBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] .
+
+efi:InsulationExposureShape a sh:NodeShape ; sh:targetClass efi:InsulationExposureRecord ;
+    dcterms:references "NFPA 921 (2024) §9.9.4.5.1; §4.3.3" ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:Insulation ] ;
+    sh:property [ sh:path efi:insulationExposureKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Heating" "SurfaceMoisture" ) ] ;
+    sh:property [ sh:path efi:exposureEarliest ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] ;
+    sh:property [ sh:path efi:exposureLatest ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] ;
+    sh:property [ sh:path efi:insulationExposureBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:exposureTemperatureMin_C ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path efi:exposureTemperatureMax_C ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path efi:temperatureBasisKind ; sh:maxCount 1 ; sh:in ( "Measured" "Reconstructed" "Unknown" ) ] ;
+    sh:property [ sh:path efi:surfaceMoisturePresence ; sh:maxCount 1 ; sh:in ( "Present" "Absent" "Unknown" ) ] ;
+    sh:property [ sh:path efi:surfaceMoistureOrigin ; sh:maxCount 1 ; sh:in ( "AmbientAir" "DirectWater" "Other" "Unknown" ) ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "노출 발생 시간 범위의 시작은 끝보다 늦을 수 없다."@ko ; sh:select """SELECT $this WHERE { $this efi:exposureEarliest ?a ; efi:exposureLatest ?b . FILTER (?a > ?b) }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "가열 온도 하한은 상한보다 클 수 없다."@ko ; sh:select """SELECT $this WHERE { $this efi:exposureTemperatureMin_C ?a ; efi:exposureTemperatureMax_C ?b . FILTER (?a > ?b) }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "가열과 표면 수분은 별도의 확인 상태·출처를 가진 기록으로 입력한다."@ko ; sh:select """SELECT $this WHERE {
+ $this efi:insulationExposureKind ?kind ; ?p ?v .
+ FILTER ((?kind="Heating" && ?p IN (efi:surfaceMoisturePresence,efi:surfaceMoistureOrigin)) ||
+ (?kind="SurfaceMoisture" && ?p IN (efi:exposureTemperatureMin_C,efi:exposureTemperatureMax_C,efi:temperatureBasisKind))) }""" ] .
+
+efi:InsulationHistoryReviewShape a sh:NodeShape ; sh:targetClass efi:InsulationHistoryReview ;
+    dcterms:references "NFPA 921 (2024) §9.9.4.5.1; §4.3.5" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:historyExamination ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ComponentExamination ] ;
+    sh:property [ sh:path efi:historyHeating ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:InsulationExposureRecord ] ;
+    sh:property [ sh:path efi:historyMoisture ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:InsulationExposureRecord ] ;
+    sh:property [ sh:path efi:historyIgnitionRecord ; sh:maxCount 1 ; sh:class efi:ElectricalEventRecord ] ;
+    sh:property [ sh:path efi:insulationApplicabilityBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:insulationHistoryComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:insulationHistoryDocumented ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:claimsPreIgnitionHeatingMoisture ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:preIgnitionHeatingMoistureSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:insulationHistoryDocumented true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:historyExamination ?exam ;
+   efi:historyHeating ?heat ; efi:historyMoisture ?wet ; efi:insulationApplicabilityBasis ?application .
+ ?exam a efi:ComponentExamination ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:observedInsulationMaterial ?material ; efi:insulationMaterialBasis ?materialBasis ;
+   efi:observedInsulationFiller ?filler ; efi:insulationFillerBasis ?fillerBasis .
+ ?part a efi:Insulation ; efi:componentModel ?model . ?model efi:recordSession ?s .
+ ?heat a efi:InsulationExposureRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:insulationExposureKind "Heating" ; efi:exposureTemperatureMin_C ?low ; efi:exposureTemperatureMax_C ?high ;
+   efi:temperatureBasisKind ?temperatureKind ; efi:exposureEarliest ?heatStart ; efi:exposureLatest ?heatEnd ; efi:insulationExposureBasis ?heatBasis .
+ ?wet a efi:InsulationExposureRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:insulationExposureKind "SurfaceMoisture" ; efi:surfaceMoisturePresence ?presence ;
+   efi:exposureEarliest ?wetStart ; efi:exposureLatest ?wetEnd ; efi:insulationExposureBasis ?wetBasis .
+ OPTIONAL { ?wet efi:surfaceMoistureOrigin ?origin }
+ FILTER (?heat != ?wet && ?material != "Unknown" && ?filler != "Unknown" && ?temperatureKind IN ("Measured","Reconstructed")
+   && ?presence IN ("Present","Absent") && (?presence="Absent" || ?origin IN ("AmbientAir","DirectWater","Other"))
+   && ?low <= ?high && ?heatStart <= ?heatEnd && ?wetStart <= ?wetEnd
+   && STRLEN(?application)>0 && STRLEN(?materialBasis)>0 && STRLEN(?fillerBasis)>0 && STRLEN(?heatBasis)>0 && STRLEN(?wetBasis)>0)
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "같은 절연재의 재질·충전재, 확인된 가열 온도·표면 수분·발생 시각과 원문 대조 근거가 필요하다. 자료 완비는 원문 메커니즘의 적용·발화 판정이 아니다."@ko ; sh:select """SELECT $this WHERE { $this efi:insulationHistoryComplete true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:historyExamination ?exam ;
+   efi:historyHeating ?heat ; efi:historyMoisture ?wet ; efi:insulationApplicabilityBasis ?application .
+ ?exam a efi:ComponentExamination ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:observedInsulationMaterial ?material ; efi:insulationMaterialBasis ?materialBasis ;
+   efi:observedInsulationFiller ?filler ; efi:insulationFillerBasis ?fillerBasis .
+ ?part a efi:Insulation ; efi:componentModel ?model . ?model efi:recordSession ?s .
+ ?heat a efi:InsulationExposureRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:insulationExposureKind "Heating" ; efi:exposureTemperatureMin_C ?low ; efi:exposureTemperatureMax_C ?high ;
+   efi:temperatureBasisKind ?temperatureKind ; efi:exposureEarliest ?heatStart ; efi:exposureLatest ?heatEnd ; efi:insulationExposureBasis ?heatBasis .
+ ?wet a efi:InsulationExposureRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:insulationExposureKind "SurfaceMoisture" ; efi:surfaceMoisturePresence ?presence ;
+   efi:exposureEarliest ?wetStart ; efi:exposureLatest ?wetEnd ; efi:insulationExposureBasis ?wetBasis .
+ OPTIONAL { ?wet efi:surfaceMoistureOrigin ?origin }
+ FILTER (?heat != ?wet && ?material != "Unknown" && ?filler != "Unknown" && ?temperatureKind IN ("Measured","Reconstructed")
+   && ?presence IN ("Present","Absent") && (?presence="Absent" || ?origin IN ("AmbientAir","DirectWater","Other"))
+   && ?low <= ?high && ?heatStart <= ?heatEnd && ?wetStart <= ?wetEnd
+   && STRLEN(?application)>0 && STRLEN(?materialBasis)>0 && STRLEN(?fillerBasis)>0 && STRLEN(?heatBasis)>0 && STRLEN(?wetBasis)>0)
+ } }""" ] .
+
+efi:PreIgnitionInsulationSequenceShape a sh:NodeShape ; sh:targetClass efi:InsulationHistoryReview ;
+    dcterms:references "NFPA 921 (2024) §9.9.4.5; §9.9.4.5.1; §4.3.5" ;
+    sh:order 0 ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:preIgnitionHeatingMoistureSupported true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:historyExamination ?exam ;
+   efi:historyHeating ?heat ; efi:historyMoisture ?wet ; efi:insulationApplicabilityBasis ?application .
+ ?exam a efi:ComponentExamination ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:observedInsulationMaterial ?material ; efi:insulationMaterialBasis ?materialBasis ;
+   efi:observedInsulationFiller ?filler ; efi:insulationFillerBasis ?fillerBasis .
+ ?part a efi:Insulation ; efi:componentModel ?model . ?model efi:recordSession ?s .
+ ?heat a efi:InsulationExposureRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:insulationExposureKind "Heating" ; efi:exposureTemperatureMin_C ?low ; efi:exposureTemperatureMax_C ?high ;
+   efi:temperatureBasisKind ?temperatureKind ; efi:exposureEarliest ?heatStart ; efi:exposureLatest ?heatEnd ; efi:insulationExposureBasis ?heatBasis .
+ ?wet a efi:InsulationExposureRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:insulationExposureKind "SurfaceMoisture" ; efi:surfaceMoisturePresence ?presence ;
+   efi:exposureEarliest ?wetStart ; efi:exposureLatest ?wetEnd ; efi:insulationExposureBasis ?wetBasis .
+ OPTIONAL { ?wet efi:surfaceMoistureOrigin ?origin }
+ FILTER (?heat != ?wet && ?material != "Unknown" && ?filler != "Unknown" && ?temperatureKind IN ("Measured","Reconstructed")
+   && ?presence IN ("Present","Absent") && (?presence="Absent" || ?origin IN ("AmbientAir","DirectWater","Other"))
+   && ?low <= ?high && ?heatStart <= ?heatEnd && ?wetStart <= ?wetEnd
+   && STRLEN(?application)>0 && STRLEN(?materialBasis)>0 && STRLEN(?fillerBasis)>0 && STRLEN(?heatBasis)>0 && STRLEN(?wetBasis)>0)
+
+ $this efi:historyIgnitionRecord ?fire .
+ ?fire a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:electricalEventKind "Ignition" ; efi:recordComponent ?firePart ; efi:eventEarliest ?fireStart ; efi:eventLatest ?fireEnd .
+ ?firePart efi:componentModel ?model .
+ FILTER (?presence="Present" && ?heatEnd < ?wetStart && ?wetEnd < ?fireStart && ?fireStart <= ?fireEnd)
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "가열→표면 수분 존재→발화의 기록상 선후에는 같은 대상·계통의 확인된 발생 범위가 필요하다. 사후 관찰 시각·시간 중첩·수분 미확인은 선행 이력을 증명하지 않는다."@ko ; sh:select """SELECT $this WHERE { $this efi:claimsPreIgnitionHeatingMoisture true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:historyExamination ?exam ;
+   efi:historyHeating ?heat ; efi:historyMoisture ?wet ; efi:insulationApplicabilityBasis ?application .
+ ?exam a efi:ComponentExamination ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:observedInsulationMaterial ?material ; efi:insulationMaterialBasis ?materialBasis ;
+   efi:observedInsulationFiller ?filler ; efi:insulationFillerBasis ?fillerBasis .
+ ?part a efi:Insulation ; efi:componentModel ?model . ?model efi:recordSession ?s .
+ ?heat a efi:InsulationExposureRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:insulationExposureKind "Heating" ; efi:exposureTemperatureMin_C ?low ; efi:exposureTemperatureMax_C ?high ;
+   efi:temperatureBasisKind ?temperatureKind ; efi:exposureEarliest ?heatStart ; efi:exposureLatest ?heatEnd ; efi:insulationExposureBasis ?heatBasis .
+ ?wet a efi:InsulationExposureRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?part ;
+   efi:insulationExposureKind "SurfaceMoisture" ; efi:surfaceMoisturePresence ?presence ;
+   efi:exposureEarliest ?wetStart ; efi:exposureLatest ?wetEnd ; efi:insulationExposureBasis ?wetBasis .
+ OPTIONAL { ?wet efi:surfaceMoistureOrigin ?origin }
+ FILTER (?heat != ?wet && ?material != "Unknown" && ?filler != "Unknown" && ?temperatureKind IN ("Measured","Reconstructed")
+   && ?presence IN ("Present","Absent") && (?presence="Absent" || ?origin IN ("AmbientAir","DirectWater","Other"))
+   && ?low <= ?high && ?heatStart <= ?heatEnd && ?wetStart <= ?wetEnd
+   && STRLEN(?application)>0 && STRLEN(?materialBasis)>0 && STRLEN(?fillerBasis)>0 && STRLEN(?heatBasis)>0 && STRLEN(?wetBasis)>0)
+
+ $this efi:historyIgnitionRecord ?fire .
+ ?fire a efi:ElectricalEventRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:electricalEventKind "Ignition" ; efi:recordComponent ?firePart ; efi:eventEarliest ?fireStart ; efi:eventLatest ?fireEnd .
+ ?firePart efi:componentModel ?model .
+ FILTER (?presence="Present" && ?heatEnd < ?wetStart && ?wetEnd < ?fireStart && ?fireStart <= ?fireEnd)
+ } }""" ] .
+
+# 57. T15 — 도체·접속 금속 조합과 원문 적용 범위
+efi:MatingContactRecord a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "맞닿는 접점 금속·도금 식별 기록"@ko ; skos:prefLabel "맞닿는 접점 금속·도금 식별 기록"@ko .
+efi:MetalInterfaceReference a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "접속 금속 조합의 문헌·제품 기준"@ko ; skos:prefLabel "접속 금속 조합의 문헌·제품 기준"@ko .
+efi:MetalInterfaceComparison a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "실제 접속 금속 조합과 기준의 적용 범위 대조"@ko ; skos:prefLabel "실제 접속 금속 조합과 기준의 적용 범위 대조"@ko .
+efi:MetalInterfaceReference rdfs:comment "구리 산화물의 반도체성, 알루미늄 산화물의 매우 낮은 전도성과 금속간화합물 경로의 문헌 설명을 보관한다. 역사 연구에는 도체 등급·크기·접속 금속·설치 지역과 기간을 함께 둔다. 이 기록만으로 접촉불량·발광 접속이나 가점을 만들지 않는다."@ko .
+efi:MetalInterfaceComparison rdfs:comment "실제 접속과 문헌 조건의 일치 여부를 검토하는 기록이다. 자료 연결 완료는 고장 위험도·법규 적합성·발화 원인을 뜻하지 않는다."@ko .
+efi:matingContactTermination a owl:ObjectProperty ; rdfs:range efi:TerminationRecord ; skos:prefLabel "맞닿는 접점이 속한 접속 기록"@ko .
+efi:comparedMetalTermination a owl:ObjectProperty ; rdfs:range efi:TerminationRecord ; skos:prefLabel "금속 조합에서 대조한 접속 기록"@ko .
+efi:comparedMatingContact a owl:ObjectProperty ; rdfs:range efi:MatingContactRecord ; skos:prefLabel "금속 조합에서 대조한 접점 기록"@ko .
+efi:comparedMetalReference a owl:ObjectProperty ; rdfs:range efi:MetalInterfaceReference ; skos:prefLabel "금속 조합에 적용한 문헌·제품 기준"@ko .
+efi:connectorApprovalStatus a owl:ObjectProperty ; rdfs:range efi:ConfirmationStatus ; skos:prefLabel "대상 접속기기의 도체 적합 승인 확인 상태"@ko .
+efi:terminationConductorMaterialBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "도체 재질 식별 근거"@ko .
+efi:terminationConductorGrade a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "도체 합금·재료 등급"@ko .
+efi:terminationConductorForm a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "단선·연선 등 도체 형태"@ko .
+efi:matingBaseMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "맞닿는 접점의 모재"@ko .
+efi:matingSurfaceCoating a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "맞닿는 접점의 도금·피복"@ko .
+efi:matingMaterialBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "접점 모재 식별 근거"@ko .
+efi:matingCoatingBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "접점 도금·무도금 식별 근거"@ko .
+efi:metalReferenceKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "금속 조합 기준의 자료 종류"@ko .
+efi:metalReferenceConductorMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 도체 재질"@ko .
+efi:metalReferenceConductorGrade a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 도체 합금·재료 등급"@ko .
+efi:metalReferenceConductorSize a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 도체 크기와 단위"@ko .
+efi:metalReferenceConductorForm a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 단선·연선 형태"@ko .
+efi:metalReferenceTerminationMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 접속 방식"@ko .
+efi:metalReferenceMatingMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 맞닿는 금속"@ko .
+efi:metalReferenceMatingCoating a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 맞닿는 도금"@ko .
+efi:metalReferenceInstallationRegion a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준 연구·제품의 적용 지역"@ko .
+efi:metalReferenceInstallationUse a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 분기회로·인입선 등 용도"@ko .
+efi:metalReferenceDeviceMarking a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 기기 적합 표시"@ko .
+efi:referenceConductorOxideBehavior a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준이 설명하는 도체 산화막의 전도 특성"@ko .
+efi:referenceMatingOxideBehavior a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준이 설명하는 접점 산화막의 전도 특성"@ko .
+efi:referenceGlowPathExplanation a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "발광 접속 경로에 관한 문헌 설명"@ko .
+efi:metalReferenceScope a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 적용 범위·제한"@ko .
+efi:installationRegion a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 설비의 설치 지역"@ko .
+efi:installationUse a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 접속의 분기회로·인입선 등 용도"@ko .
+efi:installationUseBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "접속 용도·회로 범위의 확인 근거"@ko .
+efi:deviceCompatibilityMarking a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 기기의 도체 적합 표시"@ko .
+efi:deviceCompatibilityMarkingBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "도체 적합 표시의 확인 근거"@ko .
+efi:connectorApprovalBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "접속기기 승인 상태의 확인 근거"@ko .
+efi:metalInterfaceApplicabilityBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 금속 조합에 기준을 적용하거나 제외한 근거"@ko .
+efi:metalReferenceInstallationYearFrom a owl:DatatypeProperty ; rdfs:range xsd:integer ; skos:prefLabel "기준 적용 기간의 시작 연도"@ko .
+efi:metalReferenceInstallationYearTo a owl:DatatypeProperty ; rdfs:range xsd:integer ; skos:prefLabel "기준 적용 기간의 끝 연도"@ko .
+efi:installationYear a owl:DatatypeProperty ; rdfs:range xsd:integer ; skos:prefLabel "실제 설치 연도"@ko .
+efi:conductorMaterialIdentified a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "도체 재질·크기·형태와 근거 연결됨"@ko .
+efi:matingContactAssessmentComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "맞닿는 접점 재질 식별 완료 주장"@ko .
+efi:matingContactIdentified a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "맞닿는 접점의 모재·도금과 근거 연결됨"@ko .
+efi:metalInterfaceAssessmentComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "금속 조합의 기준 적용 검토 완료 주장"@ko .
+efi:metalInterfaceComparisonSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "실제 금속 조합과 기준의 명시 조건 일치"@ko .
+
+efi:TerminationMaterialDetailShape a sh:NodeShape ; sh:targetClass efi:TerminationRecord ;
+    dcterms:references "NFPA 921 (2024) §9.7.2.1; §9.7.4.1; §4.3.3" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:terminationConductorMaterialBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:terminationConductorGrade ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:terminationConductorForm ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Solid" "Stranded" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:conductorMaterialIdentified ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:conductorMaterialIdentified true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:terminationContextSupported true ;
+   efi:terminationConductorMaterial ?metal ; efi:terminationConductorMaterialBasis ?basis ;
+   efi:terminationConductorSize ?size ; efi:terminationConductorForm ?form .
+ FILTER (?metal NOT IN ("Unknown","Other") && ?form NOT IN ("Unknown","Other")
+   && STRLEN(?basis)>0 && STRLEN(?size)>0)
+ }""" ] .
+
+efi:MatingContactRecordShape a sh:NodeShape ; sh:targetClass efi:MatingContactRecord ;
+    dcterms:references "NFPA 921 (2024) §9.7.2.1; §9.7.3.2; §4.3.3" ;
+    sh:order -1 ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:matingContactTermination ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:TerminationRecord ] ;
+    sh:property [ sh:path efi:matingBaseMaterial ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Copper" "PureAluminum" "AluminumAlloy" "CopperAlloy" "Brass" "Steel" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:matingSurfaceCoating ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Zinc" "Nickel" "Tin" "Silver" "Indium" "Copper" "Other" "None" "Unknown" ) ] ;
+    sh:property [ sh:path efi:matingMaterialBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:matingCoatingBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:matingContactAssessmentComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:matingContactIdentified ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order -1 ; sh:construct """CONSTRUCT { $this efi:matingContactIdentified true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?contact ;
+   efi:matingContactTermination ?term ; efi:matingBaseMaterial ?metal ; efi:matingSurfaceCoating ?coating ;
+   efi:matingMaterialBasis ?materialBasis ; efi:matingCoatingBasis ?coatingBasis .
+ ?term a efi:TerminationRecord ; efi:recordSession ?s ; efi:recordComponent ?terminal .
+ ?contact efi:componentModel ?model . ?terminal efi:componentModel ?model . ?model efi:recordSession ?s .
+ FILTER (?metal NOT IN ("Unknown","Other") && ?coating != "Unknown" && STRLEN(?materialBasis)>0 && STRLEN(?coatingBasis)>0
+   && (?contact=?terminal || EXISTS { ?contact efi:componentContainer ?terminal }))
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "실제 접속의 같은 단자 또는 그 하위 나사·접점에서 모재와 도금·무도금을 각각 근거로 식별해야 한다."@ko ; sh:select """SELECT $this WHERE { $this efi:matingContactAssessmentComplete true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?contact ;
+   efi:matingContactTermination ?term ; efi:matingBaseMaterial ?metal ; efi:matingSurfaceCoating ?coating ;
+   efi:matingMaterialBasis ?materialBasis ; efi:matingCoatingBasis ?coatingBasis .
+ ?term a efi:TerminationRecord ; efi:recordSession ?s ; efi:recordComponent ?terminal .
+ ?contact efi:componentModel ?model . ?terminal efi:componentModel ?model . ?model efi:recordSession ?s .
+ FILTER (?metal NOT IN ("Unknown","Other") && ?coating != "Unknown" && STRLEN(?materialBasis)>0 && STRLEN(?coatingBasis)>0
+   && (?contact=?terminal || EXISTS { ?contact efi:componentContainer ?terminal }))
+ } }""" ] .
+
+efi:MetalInterfaceReferenceShape a sh:NodeShape ; sh:targetClass efi:MetalInterfaceReference ;
+    dcterms:references "NFPA 921 (2024) §9.7.2.1; §9.7.3.2; §4.3.3" ;
+    sh:property [ sh:path efi:metalReferenceKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "ScientificSource" "HistoricalStudy" "Manufacturer" "Standard" "Other" ) ] ;
+    sh:property [ sh:path efi:metalReferenceConductorMaterial ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Copper" "PureAluminum" "AluminumAlloy" "CopperCladAluminum" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:metalReferenceConductorGrade ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:metalReferenceConductorSize ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:metalReferenceConductorForm ; sh:maxCount 1 ; sh:in ( "Solid" "Stranded" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:metalReferenceTerminationMethod ; sh:maxCount 1 ; sh:in ( "ScrewTerminal" "PushInSpring" "PushInScrewClamp" "WireWrapPin" "Soldered" "Crimped" "TwistOnConnector" "Twisted" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:metalReferenceMatingMaterial ; sh:maxCount 1 ; sh:in ( "Copper" "PureAluminum" "AluminumAlloy" "CopperAlloy" "Brass" "Steel" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:metalReferenceMatingCoating ; sh:maxCount 1 ; sh:in ( "Zinc" "Nickel" "Tin" "Silver" "Indium" "Copper" "Other" "None" "Unknown" ) ] ;
+    sh:property [ sh:path efi:metalReferenceInstallationRegion ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:metalReferenceInstallationYearFrom ; sh:maxCount 1 ; sh:datatype xsd:integer ] ;
+    sh:property [ sh:path efi:metalReferenceInstallationYearTo ; sh:maxCount 1 ; sh:datatype xsd:integer ] ;
+    sh:property [ sh:path efi:metalReferenceInstallationUse ; sh:maxCount 1 ; sh:in ( "BranchCircuit" "ServiceEntrance" "ServiceDrop" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:metalReferenceDeviceMarking ; sh:maxCount 1 ; sh:in ( "AL-CU" "CO-ALR" "CopperOnly" "Other" "None" "Unknown" ) ] ;
+    sh:property [ sh:path efi:referenceConductorOxideBehavior ; sh:maxCount 1 ; sh:in ( "Semiconductive" "NegligibleConductivity" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:referenceMatingOxideBehavior ; sh:maxCount 1 ; sh:in ( "Semiconductive" "NegligibleConductivity" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:referenceGlowPathExplanation ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:metalReferenceScope ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "기준 적용 기간의 시작 연도는 끝 연도보다 늦을 수 없다."@ko ; sh:select """SELECT $this WHERE { $this efi:metalReferenceInstallationYearFrom ?a ; efi:metalReferenceInstallationYearTo ?b . FILTER (?a > ?b) }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "역사 연구는 설치 지역·기간·용도와 도체 크기·형태·접속 방식·맞닿는 금속·도금을 명시해야 한다."@ko ; sh:select """SELECT $this WHERE {
+ $this efi:metalReferenceKind "HistoricalStudy" .
+ FILTER NOT EXISTS { $this efi:metalReferenceInstallationRegion ?region ; efi:metalReferenceInstallationYearFrom ?a ;
+   efi:metalReferenceInstallationYearTo ?b ; efi:metalReferenceInstallationUse ?use ; efi:metalReferenceConductorSize ?size ;
+   efi:metalReferenceConductorForm ?form ; efi:metalReferenceTerminationMethod ?method ;
+   efi:metalReferenceMatingMaterial ?mate ; efi:metalReferenceMatingCoating ?coating .
+   FILTER (?a<=?b && ?use NOT IN ("Unknown","Other") && ?form NOT IN ("Unknown","Other")
+     && ?method NOT IN ("Unknown","Other") && ?mate NOT IN ("Unknown","Other") && ?coating!="Unknown"
+     && STRLEN(?region)>0 && STRLEN(?size)>0) } }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "과학 문헌 기준은 산화막 전도 특성 또는 제안된 발광 경로의 설명을 포함해야 한다."@ko ; sh:select """SELECT $this WHERE {
+ $this efi:metalReferenceKind "ScientificSource" .
+ OPTIONAL { $this efi:referenceConductorOxideBehavior ?x . FILTER (?x!="Unknown") }
+ OPTIONAL { $this efi:referenceMatingOxideBehavior ?y . FILTER (?y!="Unknown") }
+ OPTIONAL { $this efi:referenceGlowPathExplanation ?z . FILTER (STRLEN(?z)>0) }
+ FILTER (!BOUND(?x) && !BOUND(?y) && !BOUND(?z)) }""" ] .
+
+efi:MetalInterfaceComparisonShape a sh:NodeShape ; sh:targetClass efi:MetalInterfaceComparison ;
+    dcterms:references "NFPA 921 (2024) §9.7.2.1; §9.7.3.2; §9.7.4.1; §4.3.5" ;
+    sh:order 1 ;
+    sh:property [ sh:path efi:comparedMetalTermination ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:TerminationRecord ] ;
+    sh:property [ sh:path efi:comparedMatingContact ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:MatingContactRecord ] ;
+    sh:property [ sh:path efi:comparedMetalReference ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:MetalInterfaceReference ] ;
+    sh:property [ sh:path efi:installationRegion ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:installationYear ; sh:maxCount 1 ; sh:datatype xsd:integer ] ;
+    sh:property [ sh:path efi:installationUse ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "BranchCircuit" "ServiceEntrance" "ServiceDrop" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:installationUseBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:deviceCompatibilityMarking ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "AL-CU" "CO-ALR" "CopperOnly" "Other" "None" "Unknown" ) ] ;
+    sh:property [ sh:path efi:deviceCompatibilityMarkingBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:connectorApprovalStatus ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ConfirmationStatus ] ;
+    sh:property [ sh:path efi:connectorApprovalBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:metalInterfaceApplicabilityBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:metalInterfaceAssessmentComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:metalInterfaceComparisonSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ; sh:construct """CONSTRUCT { $this efi:metalInterfaceComparisonSupported true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:comparedMetalTermination ?term ;
+   efi:comparedMatingContact ?mate ; efi:comparedMetalReference ?reference ; efi:installationUse ?use ;
+   efi:installationUseBasis ?useBasis ; efi:deviceCompatibilityMarking ?marking ;
+   efi:deviceCompatibilityMarkingBasis ?markingBasis ; efi:connectorApprovalStatus ?approval ;
+   efi:connectorApprovalBasis ?approvalBasis ; efi:metalInterfaceApplicabilityBasis ?application .
+ ?term a efi:TerminationRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:terminationContextSupported true ; efi:conductorMaterialIdentified true ;
+   efi:terminationConductorMaterial ?conductorMetal ; efi:terminationConductorSize ?conductorSize ;
+   efi:terminationConductorForm ?conductorForm ; efi:terminationMethod ?terminationMethod .
+ ?mate a efi:MatingContactRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:matingContactIdentified true ; efi:matingContactTermination ?term ;
+   efi:matingBaseMaterial ?matingMetal ; efi:matingSurfaceCoating ?matingCoating .
+ ?reference a efi:MetalInterfaceReference ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:metalReferenceKind ?kind ; efi:metalReferenceConductorMaterial ?conductorMetal ; efi:metalReferenceScope ?scope .
+ FILTER (?kind!="Other" && ?use NOT IN ("Unknown","Other") && ?marking!="Unknown"
+   && ?approval IN (efi:Confirmed,efi:ConfirmedAbsent) && STRLEN(?useBasis)>0 && STRLEN(?markingBasis)>0
+   && STRLEN(?approvalBasis)>0 && STRLEN(?application)>0 && STRLEN(?scope)>0)
+ FILTER NOT EXISTS { ?reference efi:metalReferenceConductorGrade ?required . FILTER NOT EXISTS { ?term efi:terminationConductorGrade ?required } }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceConductorSize ?required . FILTER (?required!=?conductorSize) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceConductorForm ?required . FILTER (?required!=?conductorForm) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceTerminationMethod ?required . FILTER (?required!=?terminationMethod) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceMatingMaterial ?required . FILTER (?required!=?matingMetal) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceMatingCoating ?required . FILTER (?required!=?matingCoating) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceInstallationUse ?required . FILTER (?required!=?use) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceDeviceMarking ?required . FILTER (?required!=?marking) }
+ FILTER (?kind!="HistoricalStudy" || EXISTS {
+   ?reference efi:metalReferenceInstallationRegion ?region ; efi:metalReferenceInstallationYearFrom ?from ;
+     efi:metalReferenceInstallationYearTo ?to .
+   $this efi:installationRegion ?region ; efi:installationYear ?year . FILTER (?year>=?from && ?year<=?to) })
+ }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "실제 도체·접점의 재질·도금·크기·형태·접속 방식과 용도·적합 표시·승인 상태를 확인하고, 문헌이 제한한 설치 지역·기간·조건을 모두 대조해야 한다."@ko ; sh:select """SELECT $this WHERE { $this efi:metalInterfaceAssessmentComplete true . FILTER NOT EXISTS {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:comparedMetalTermination ?term ;
+   efi:comparedMatingContact ?mate ; efi:comparedMetalReference ?reference ; efi:installationUse ?use ;
+   efi:installationUseBasis ?useBasis ; efi:deviceCompatibilityMarking ?marking ;
+   efi:deviceCompatibilityMarkingBasis ?markingBasis ; efi:connectorApprovalStatus ?approval ;
+   efi:connectorApprovalBasis ?approvalBasis ; efi:metalInterfaceApplicabilityBasis ?application .
+ ?term a efi:TerminationRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:terminationContextSupported true ; efi:conductorMaterialIdentified true ;
+   efi:terminationConductorMaterial ?conductorMetal ; efi:terminationConductorSize ?conductorSize ;
+   efi:terminationConductorForm ?conductorForm ; efi:terminationMethod ?terminationMethod .
+ ?mate a efi:MatingContactRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:matingContactIdentified true ; efi:matingContactTermination ?term ;
+   efi:matingBaseMaterial ?matingMetal ; efi:matingSurfaceCoating ?matingCoating .
+ ?reference a efi:MetalInterfaceReference ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:metalReferenceKind ?kind ; efi:metalReferenceConductorMaterial ?conductorMetal ; efi:metalReferenceScope ?scope .
+ FILTER (?kind!="Other" && ?use NOT IN ("Unknown","Other") && ?marking!="Unknown"
+   && ?approval IN (efi:Confirmed,efi:ConfirmedAbsent) && STRLEN(?useBasis)>0 && STRLEN(?markingBasis)>0
+   && STRLEN(?approvalBasis)>0 && STRLEN(?application)>0 && STRLEN(?scope)>0)
+ FILTER NOT EXISTS { ?reference efi:metalReferenceConductorGrade ?required . FILTER NOT EXISTS { ?term efi:terminationConductorGrade ?required } }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceConductorSize ?required . FILTER (?required!=?conductorSize) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceConductorForm ?required . FILTER (?required!=?conductorForm) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceTerminationMethod ?required . FILTER (?required!=?terminationMethod) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceMatingMaterial ?required . FILTER (?required!=?matingMetal) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceMatingCoating ?required . FILTER (?required!=?matingCoating) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceInstallationUse ?required . FILTER (?required!=?use) }
+ FILTER NOT EXISTS { ?reference efi:metalReferenceDeviceMarking ?required . FILTER (?required!=?marking) }
+ FILTER (?kind!="HistoricalStudy" || EXISTS {
+   ?reference efi:metalReferenceInstallationRegion ?region ; efi:metalReferenceInstallationYearFrom ?from ;
+     efi:metalReferenceInstallationYearTo ?to .
+   $this efi:installationRegion ?region ; efi:installationYear ?year . FILTER (?year>=?from && ?year<=?to) })
+ } }""" ] .
+
+# 58. T16 — 출처 범위를 갖춘 허용전류·보호장치 정격 대조
+# NFPA 921 표 9.7.2는 미국 분기회로를 설명하는 조사 지침의 문맥표다. 국내 법규의
+# 보편 허용전류 표로 바꾸지 않는다. 실제 적합성 대조에는 관할·문서·판본과 그 기준이
+# 요구하는 재질·크기 체계·절연·설치·다발·용도 조건을 모두 명시한 기준만 사용한다.
+efi:ConductorInstallationRecord a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ;
+    rdfs:label "도체 설치·부하·보호 정격 확인 기록"@ko ; skos:prefLabel "도체 설치·부하·보호 정격 확인 기록"@ko .
+efi:AmpacityReference a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ;
+    rdfs:label "적용 범위가 명시된 허용전류 기준"@ko ; skos:prefLabel "적용 범위가 명시된 허용전류 기준"@ko ;
+    rdfs:comment "NFPA 921 표 9.7.2 같은 설명용 문맥표와 사건 관할의 적용 가능한 전기 기준을 구별한다. 값만 떼어 보편 임계값으로 사용하지 않는다."@ko .
+efi:AmpacityAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ;
+    rdfs:label "현장 도체 조건과 허용전류 기준 대조"@ko ; skos:prefLabel "현장 도체 조건과 허용전류 기준 대조"@ko ;
+    rdfs:comment "조건 일치와 부하·보호장치·기기 정격의 수치 관계만 기록한다. 초과 결과만으로 과부하 발화·원인 가점을 생성하지 않는다."@ko .
+
+efi:installedCircuit a owl:ObjectProperty ; rdfs:range efi:Circuit ; skos:prefLabel "도체가 속한 회로"@ko .
+efi:installedProtectiveDevice a owl:ObjectProperty ; rdfs:range efi:ProtectiveDevice ; skos:prefLabel "도체를 보호하는 장치"@ko .
+efi:installedEquipment a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "회로에 연결된 정격 확인 기기"@ko .
+efi:comparedConductorInstallation a owl:ObjectProperty ; rdfs:range efi:ConductorInstallationRecord ; skos:prefLabel "대조한 실제 도체 설치 기록"@ko .
+efi:comparedAmpacityReference a owl:ObjectProperty ; rdfs:range efi:AmpacityReference ; skos:prefLabel "대조한 허용전류 기준"@ko .
+
+efi:installationConductorMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 재질"@ko .
+efi:installationConductorMaterialBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 재질 식별 근거"@ko .
+efi:conductorSizeSystem a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 크기 체계"@ko .
+efi:conductorSizeValue a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 크기 값"@ko .
+efi:conductorSizeBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 도체 크기 식별 근거"@ko .
+efi:installationInsulationDesignation a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 절연 종류·등급 표기"@ko .
+efi:installationInsulationBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "절연 종류·등급 식별 근거"@ko .
+efi:conductorInstallationMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 포설·배선 방식"@ko .
+efi:conductorInstallationMethodBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "포설·배선 방식 확인 근거"@ko .
+efi:conductorBundleCondition a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 다발·케이블 집합 조건"@ko .
+efi:currentCarryingConductorCount a owl:DatatypeProperty ; rdfs:range xsd:positiveInteger ; skos:prefLabel "함께 배치된 전류 운반 도체 수"@ko .
+efi:conductorBundleBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "다발 조건과 도체 수 확인 근거"@ko .
+efi:installationAmbientTemperature_C a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:DEG_C ; skos:prefLabel "실제 주변 온도"@ko .
+efi:installationAmbientBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "주변 온도 근거"@ko .
+efi:ampacityCircuitUse a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "허용전류 대조용 회로 용도"@ko .
+efi:ampacityCircuitUseBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "회로 용도 확인 근거"@ko .
+efi:assessedLoadCurrent_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "출처가 있는 실제·재구성 부하전류"@ko .
+efi:assessedLoadCurrentBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "부하전류의 계측·재구성 근거"@ko .
+efi:observedProtectiveDeviceRating_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "보호장치 표시 정격"@ko .
+efi:protectiveDeviceRatingBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "보호장치 정격 확인 근거"@ko .
+efi:observedEquipmentRating_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "연결 기기의 표시 정격"@ko .
+efi:equipmentRatingBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "연결 기기 정격 확인 근거"@ko .
+efi:conductorInstallationAssessmentComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "도체 설치 조건 확인 완료 주장"@ko .
+efi:conductorInstallationIdentified a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "도체·회로·보호장치와 적용 조건의 근거 연결됨"@ko .
+
+efi:ampacityReferenceRole a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "설명 문맥 또는 적용 정격 역할"@ko .
+efi:ampacityReferenceKind a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "허용전류 기준의 자료 종류"@ko .
+efi:ampacityReferenceJurisdiction a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 관할"@ko .
+efi:ampacityReferenceDocument a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준 문서 식별자"@ko .
+efi:ampacityReferenceEdition a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준 판본·시행판"@ko .
+efi:ampacityReferenceSection a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준 표·조항"@ko .
+efi:ampacityReferenceConductorMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "허용전류 기준의 도체 재질"@ko .
+efi:ampacityReferenceSizeSystem a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 도체 크기 체계"@ko .
+efi:ampacityReferenceSizeValue a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 도체 크기 값"@ko .
+efi:ampacityReferenceInsulationDesignation a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 절연 종류·등급"@ko .
+efi:ampacityReferenceInstallationMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 포설·배선 방식"@ko .
+efi:ampacityReferenceBundleCondition a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 다발·케이블 집합 조건"@ko .
+efi:ampacityReferenceConductorCount a owl:DatatypeProperty ; rdfs:range xsd:positiveInteger ; skos:prefLabel "기준의 전류 운반 도체 수"@ko .
+efi:ampacityReferenceCircuitUse a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "기준의 회로 용도"@ko .
+efi:ampacityReferenceAmbientMin_C a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:DEG_C ; skos:prefLabel "기준 주변 온도 하한"@ko .
+efi:ampacityReferenceAmbientMax_C a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:DEG_C ; skos:prefLabel "기준 주변 온도 상한"@ko .
+efi:referenceAmpacityMin_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "기준 허용전류 범위 하한"@ko .
+efi:referenceAmpacityMax_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "기준 허용전류 상한"@ko .
+efi:referenceMaximumProtection_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "기준이 허용하는 보호장치 정격 상한"@ko .
+efi:referenceMinimumEquipmentRating_A a owl:DatatypeProperty ; rdfs:range xsd:decimal ; qudt:unit unit:A ; skos:prefLabel "기준이 요구하는 연결 기기 정격 하한"@ko .
+efi:ampacityReferenceScope a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "허용전류 기준의 적용 범위·제한"@ko .
+efi:ampacityApplicabilityBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "실제 조건과 기준의 항목별 대조 근거"@ko .
+efi:ampacityAssessmentComplete a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "허용전류 대조 완료 주장"@ko .
+efi:ampacityReferenceApplicable a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "출처 조건이 실제 설치와 일치함"@ko .
+efi:loadAmpacityResult a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "부하전류와 허용전류 비교 결과"@ko .
+efi:protectiveDeviceRatingResult a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "보호장치 정격과 기준 상한 비교 결과"@ko .
+efi:equipmentRatingResult a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "연결 기기 정격과 기준 하한 비교 결과"@ko .
+efi:ampacityAssessmentSupported a owl:DatatypeProperty ; rdfs:range xsd:boolean ; skos:prefLabel "조건 일치 후 정격 대조 결과가 생성됨"@ko .
+
+efi:ConductorInstallationRecordShape a sh:NodeShape ; sh:targetClass efi:ConductorInstallationRecord ;
+    dcterms:references "NFPA 921 (2024) §9.7.2; §9.7.2.2; §9.8.2; §4.3.3" ;
+    sh:order -1 ;
+    sh:property [ sh:path efi:recordComponent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:Conductor ] ;
+    sh:property [ sh:path efi:installedCircuit ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:Circuit ] ;
+    sh:property [ sh:path efi:installedProtectiveDevice ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ProtectiveDevice ] ;
+    sh:property [ sh:path efi:installedEquipment ; sh:maxCount 1 ; sh:class efi:ElectricalArtifact ] ;
+    sh:property [ sh:path efi:installationConductorMaterial ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Copper" "PureAluminum" "AluminumAlloy" "CopperCladAluminum" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:installationConductorMaterialBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorSizeSystem ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "AWG" "mm2" "ManufacturerDesignation" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:conductorSizeValue ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorSizeBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:installationInsulationDesignation ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:installationInsulationBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorInstallationMethod ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorInstallationMethodBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorBundleCondition ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "NotBundled" "Bundled" "CableAssembly" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:currentCarryingConductorCount ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ] ;
+    sh:property [ sh:path efi:conductorBundleBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:installationAmbientTemperature_C ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path efi:installationAmbientBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityCircuitUse ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "GeneralBranch" "SmallApplianceBranch" "LargeApplianceBranch" "ServiceEntrance" "ServiceDrop" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityCircuitUseBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:assessedLoadCurrent_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path efi:assessedLoadCurrentBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:observedProtectiveDeviceRating_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:protectiveDeviceRatingBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:observedEquipmentRating_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:equipmentRatingBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:conductorInstallationAssessmentComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:conductorInstallationIdentified ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order -1 ; sh:construct """CONSTRUCT { $this efi:conductorInstallationIdentified true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ; efi:recordComponent ?conductor ;
+   efi:installedCircuit ?circuit ; efi:installedProtectiveDevice ?protection ;
+   efi:installationConductorMaterial ?material ; efi:installationConductorMaterialBasis ?materialBasis ;
+   efi:conductorSizeSystem ?sizeSystem ; efi:conductorSizeValue ?size ; efi:conductorSizeBasis ?sizeBasis ;
+   efi:installationInsulationDesignation ?insulation ; efi:installationInsulationBasis ?insulationBasis ;
+   efi:conductorInstallationMethod ?method ; efi:conductorInstallationMethodBasis ?methodBasis ;
+   efi:conductorBundleCondition ?bundle ; efi:currentCarryingConductorCount ?count ; efi:conductorBundleBasis ?bundleBasis ;
+   efi:ampacityCircuitUse ?use ; efi:ampacityCircuitUseBasis ?useBasis ;
+   efi:assessedLoadCurrent_A ?load ; efi:assessedLoadCurrentBasis ?loadBasis ;
+   efi:observedProtectiveDeviceRating_A ?protectRating ; efi:protectiveDeviceRatingBasis ?protectBasis .
+ ?conductor a efi:Conductor ; efi:componentModel ?model ; efi:componentCircuit ?circuit .
+ ?circuit rdf:type/rdfs:subClassOf* efi:Circuit ; efi:componentModel ?model .
+ ?protection rdf:type/rdfs:subClassOf* efi:ProtectiveDevice ; efi:componentModel ?model ; efi:componentCircuit ?circuit .
+ ?model efi:recordSession ?s .
+ FILTER (?material NOT IN ("Unknown","Other") && ?sizeSystem NOT IN ("Unknown","Other")
+   && ?bundle NOT IN ("Unknown","Other") && ?use NOT IN ("Unknown","Other") && ?count>=1
+   && STRLEN(?materialBasis)>0 && STRLEN(?size)>0 && STRLEN(?sizeBasis)>0 && STRLEN(?insulation)>0
+   && STRLEN(?insulationBasis)>0 && STRLEN(?method)>0 && STRLEN(?methodBasis)>0 && STRLEN(?bundleBasis)>0
+   && STRLEN(?useBasis)>0 && STRLEN(?loadBasis)>0 && STRLEN(?protectBasis)>0)
+ FILTER NOT EXISTS { $this efi:installationAmbientTemperature_C ?ambient . FILTER NOT EXISTS { $this efi:installationAmbientBasis ?ambientBasis . FILTER (STRLEN(?ambientBasis)>0) } }
+ FILTER NOT EXISTS { $this efi:installedEquipment ?equipment . FILTER NOT EXISTS {
+   ?equipment efi:componentModel ?model ; efi:componentCircuit ?circuit .
+   $this efi:observedEquipmentRating_A ?equipmentRating ; efi:equipmentRatingBasis ?equipmentBasis . FILTER (STRLEN(?equipmentBasis)>0) } }
+}""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "같은 회로의 도체·보호장치와 재질·크기 체계·절연·설치 방식·다발 수·용도·부하전류·정격의 근거를 모두 확인해야 한다."@ko ; sh:select """SELECT $this WHERE { $this efi:conductorInstallationAssessmentComplete true . FILTER NOT EXISTS { $this efi:conductorInstallationIdentified true } }""" ] .
+
+efi:AmpacityReferenceShape a sh:NodeShape ; sh:targetClass efi:AmpacityReference ;
+    dcterms:references "NFPA 921 (2024) §9.7.2; §9.7.2.2; §4.3.3" ;
+    sh:property [ sh:path efi:ampacityReferenceRole ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "ContextOnly" "ApplicableRating" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "GoverningCode" "Manufacturer" "EngineeringCalculation" "ContextTable" "Other" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceJurisdiction ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceDocument ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceEdition ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceSection ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceConductorMaterial ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "Copper" "PureAluminum" "AluminumAlloy" "CopperCladAluminum" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceSizeSystem ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "AWG" "mm2" "ManufacturerDesignation" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceSizeValue ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceInsulationDesignation ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceInstallationMethod ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityReferenceBundleCondition ; sh:maxCount 1 ; sh:in ( "NotBundled" "Bundled" "CableAssembly" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceConductorCount ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ] ;
+    sh:property [ sh:path efi:ampacityReferenceCircuitUse ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "GeneralBranch" "SmallApplianceBranch" "LargeApplianceBranch" "ServiceEntrance" "ServiceDrop" "Other" "Unknown" ) ] ;
+    sh:property [ sh:path efi:ampacityReferenceAmbientMin_C ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path efi:ampacityReferenceAmbientMax_C ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path efi:referenceAmpacityMin_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path efi:referenceAmpacityMax_A ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:referenceMaximumProtection_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:referenceMinimumEquipmentRating_A ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minExclusive 0 ] ;
+    sh:property [ sh:path efi:ampacityReferenceScope ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "허용전류·주변온도 범위의 하한은 상한보다 클 수 없다."@ko ; sh:select """SELECT $this WHERE {
+ { $this efi:referenceAmpacityMin_A ?a ; efi:referenceAmpacityMax_A ?b . FILTER (?a>?b) }
+ UNION { $this efi:ampacityReferenceAmbientMin_C ?a ; efi:ampacityReferenceAmbientMax_C ?b . FILTER (?a>?b) }
+}""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "ContextTable은 설명용으로만 저장할 수 있으며 적용 정격으로 사용할 수 없다."@ko ; sh:select """SELECT $this WHERE { $this efi:ampacityReferenceKind "ContextTable" . FILTER NOT EXISTS { $this efi:ampacityReferenceRole "ContextOnly" } }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "적용 정격은 관할·문서·판본·조항과 도체 재질·크기 체계·절연·설치·다발 수·용도 및 보호장치 상한을 모두 명시해야 한다."@ko ; sh:select """SELECT $this WHERE {
+ $this efi:ampacityReferenceRole "ApplicableRating" . FILTER NOT EXISTS {
+   $this efi:ampacityReferenceKind ?kind ; efi:ampacityReferenceJurisdiction ?jurisdiction ;
+     efi:ampacityReferenceDocument ?document ; efi:ampacityReferenceEdition ?edition ; efi:ampacityReferenceSection ?section ;
+     efi:ampacityReferenceConductorMaterial ?material ; efi:ampacityReferenceSizeSystem ?sizeSystem ;
+     efi:ampacityReferenceSizeValue ?size ; efi:ampacityReferenceInsulationDesignation ?insulation ;
+     efi:ampacityReferenceInstallationMethod ?method ; efi:ampacityReferenceBundleCondition ?bundle ;
+     efi:ampacityReferenceConductorCount ?count ; efi:ampacityReferenceCircuitUse ?use ;
+     efi:referenceAmpacityMax_A ?ampacity ; efi:referenceMaximumProtection_A ?protection ; efi:ampacityReferenceScope ?scope .
+   FILTER (?kind IN ("GoverningCode","Manufacturer","EngineeringCalculation")
+     && ?material NOT IN ("Unknown","Other") && ?sizeSystem NOT IN ("Unknown","Other")
+     && ?bundle NOT IN ("Unknown","Other") && ?use NOT IN ("Unknown","Other") && ?count>=1
+     && STRLEN(?jurisdiction)>0 && STRLEN(?document)>0 && STRLEN(?edition)>0 && STRLEN(?section)>0
+     && STRLEN(?size)>0 && STRLEN(?insulation)>0 && STRLEN(?method)>0 && STRLEN(?scope)>0) }
+}""" ] .
+
+efi:AmpacityAssessmentShape a sh:NodeShape ; sh:targetClass efi:AmpacityAssessment ;
+    dcterms:references "NFPA 921 (2024) §9.7.2; §9.7.2.2; §9.8.2; §4.3.5" ;
+    sh:order 0 ;
+    sh:property [ sh:path efi:comparedConductorInstallation ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:ConductorInstallationRecord ] ;
+    sh:property [ sh:path efi:comparedAmpacityReference ; sh:minCount 1 ; sh:maxCount 1 ; sh:class efi:AmpacityReference ] ;
+    sh:property [ sh:path efi:ampacityApplicabilityBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:ampacityAssessmentComplete ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:ampacityReferenceApplicable ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path efi:loadAmpacityResult ; sh:maxCount 1 ; sh:in ( "Within" "Exceeds" ) ] ;
+    sh:property [ sh:path efi:protectiveDeviceRatingResult ; sh:maxCount 1 ; sh:in ( "Within" "Exceeds" ) ] ;
+    sh:property [ sh:path efi:equipmentRatingResult ; sh:maxCount 1 ; sh:in ( "Meets" "Below" ) ] ;
+    sh:property [ sh:path efi:ampacityAssessmentSupported ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ; sh:construct """CONSTRUCT { $this efi:ampacityReferenceApplicable true . } WHERE {
+ $this efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:comparedConductorInstallation ?actual ; efi:comparedAmpacityReference ?reference ; efi:ampacityApplicabilityBasis ?basis .
+ ?actual a efi:ConductorInstallationRecord ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:conductorInstallationIdentified true ; efi:installationConductorMaterial ?material ;
+   efi:conductorSizeSystem ?sizeSystem ; efi:conductorSizeValue ?size ;
+   efi:installationInsulationDesignation ?insulation ; efi:conductorInstallationMethod ?method ;
+   efi:conductorBundleCondition ?bundle ; efi:currentCarryingConductorCount ?count ; efi:ampacityCircuitUse ?use .
+ ?reference a efi:AmpacityReference ; efi:recordSession ?s ; efi:confirmationStatus efi:Confirmed ;
+   efi:ampacityReferenceRole "ApplicableRating" ; efi:ampacityReferenceKind ?kind ;
+   efi:ampacityReferenceConductorMaterial ?material ; efi:ampacityReferenceSizeSystem ?sizeSystem ;
+   efi:ampacityReferenceSizeValue ?size ; efi:ampacityReferenceInsulationDesignation ?insulation ;
+   efi:ampacityReferenceInstallationMethod ?method ; efi:ampacityReferenceBundleCondition ?bundle ;
+   efi:ampacityReferenceConductorCount ?count ; efi:ampacityReferenceCircuitUse ?use ;
+   efi:referenceAmpacityMax_A ?ampacity ; efi:referenceMaximumProtection_A ?maxProtection .
+ FILTER (?kind IN ("GoverningCode","Manufacturer","EngineeringCalculation") && STRLEN(?basis)>0)
+ FILTER NOT EXISTS { ?reference efi:ampacityReferenceAmbientMin_C ?min . FILTER NOT EXISTS { ?actual efi:installationAmbientTemperature_C ?ambient . FILTER (?ambient>=?min) } }
+ FILTER NOT EXISTS { ?reference efi:ampacityReferenceAmbientMax_C ?max . FILTER NOT EXISTS { ?actual efi:installationAmbientTemperature_C ?ambient . FILTER (?ambient<=?max) } }
+ FILTER NOT EXISTS { ?reference efi:referenceMinimumEquipmentRating_A ?required . FILTER NOT EXISTS {
+   ?actual efi:installedEquipment ?equipment ; efi:observedEquipmentRating_A ?rating ; efi:equipmentRatingBasis ?ratingBasis . FILTER (STRLEN(?ratingBasis)>0) } }
+}""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ; sh:construct """CONSTRUCT {
+ $this efi:loadAmpacityResult ?loadResult ; efi:protectiveDeviceRatingResult ?protectionResult .
+} WHERE {
+ $this efi:ampacityReferenceApplicable true ; efi:comparedConductorInstallation ?actual ; efi:comparedAmpacityReference ?reference .
+ ?actual efi:assessedLoadCurrent_A ?load ; efi:observedProtectiveDeviceRating_A ?protection .
+ ?reference efi:referenceAmpacityMax_A ?ampacity ; efi:referenceMaximumProtection_A ?maxProtection .
+ BIND (IF(?load<=?ampacity,"Within","Exceeds") AS ?loadResult)
+ BIND (IF(?protection<=?maxProtection,"Within","Exceeds") AS ?protectionResult)
+}""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ; sh:construct """CONSTRUCT { $this efi:equipmentRatingResult ?result . } WHERE {
+ $this efi:ampacityReferenceApplicable true ; efi:comparedConductorInstallation ?actual ; efi:comparedAmpacityReference ?reference .
+ ?actual efi:observedEquipmentRating_A ?rating . ?reference efi:referenceMinimumEquipmentRating_A ?required .
+ BIND (IF(?rating>=?required,"Meets","Below") AS ?result)
+}""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 2 ; sh:construct """CONSTRUCT { $this efi:ampacityAssessmentSupported true . } WHERE {
+ $this efi:ampacityReferenceApplicable true ; efi:loadAmpacityResult ?load ;
+   efi:protectiveDeviceRatingResult ?protection ; efi:comparedAmpacityReference ?reference .
+ FILTER NOT EXISTS { ?reference efi:referenceMinimumEquipmentRating_A ?required . FILTER NOT EXISTS { $this efi:equipmentRatingResult ?equipment } }
+}""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ; sh:message "허용전류 대조 완료에는 같은 세션의 현장 조건과 적용 가능한 관할 기준이 정확히 일치하고 부하·보호장치·기기 정격 비교 결과가 있어야 한다."@ko ; sh:select """SELECT $this WHERE { $this efi:ampacityAssessmentComplete true . FILTER NOT EXISTS { $this efi:ampacityAssessmentSupported true } }""" ] .

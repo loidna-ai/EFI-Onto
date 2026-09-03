@@ -15,6 +15,31 @@ from investigation import InvestigationData
 
 EFI = "https://w3id.org/efi-onto#"
 
+# ───────────────────── 온톨로지 적재 (파일이 몇 개든 그래프는 하나) ─────────────────────
+# 추론 어휘(efi_tbox.ttl)와 조사 기록 층(efi_investigation.ttl)이 나뉘어 있다.
+# 목록을 여기서만 만든다 — 파일 이름을 손으로 든 곳이 열아홉이었고 하나를 빠뜨리면
+# 그 층이 통째로 사라진 채 시험이 전부 통과한다.
+import pathlib as _pathlib
+
+ONTOLOGY_DIR = _pathlib.Path(__file__).resolve().parents[1] / "ontology"
+
+
+def ontology_files() -> list[_pathlib.Path]:
+    return sorted(ONTOLOGY_DIR.glob("*.ttl"))
+
+
+def ontology_text() -> str:
+    """전체를 이어 붙인 Turtle 원문. 접두어가 겹쳐도 무방하다."""
+    return chr(10).join(p.read_text(encoding="utf-8") for p in ontology_files())
+
+
+def load_graph(paths=None):
+    from rdflib import Graph
+    g = Graph()
+    for p in (paths or ontology_files()):
+        g.parse(p, format="turtle")
+    return g
+
 
 # ───────────────────── 열거형 = TBox 클래스 로컬명 ─────────────────────
 class Scenario(StrEnum):
@@ -167,10 +192,8 @@ def _fact_names() -> set[str]:
     열거형은 자주 쓰는 값의 별칭으로 남기고, 유효성은 TTL 이 정한다.
     """
     try:
-        import pathlib
-        from rdflib import Graph, Namespace, RDFS, URIRef
-        ttl = pathlib.Path(__file__).resolve().parents[1] / "ontology" / "efi_tbox.ttl"
-        g = Graph().parse(ttl, format="turtle")
+        from rdflib import Namespace, RDFS, URIRef
+        g = load_graph()
         E = Namespace(EFI)
         out = set()
 
@@ -283,10 +306,11 @@ class Ontology(BaseModel):
         return sorted(out, key=lambda x: -len(x[2]))
 
     @classmethod
-    def load(cls, ttl_path: str) -> Ontology:
-        from rdflib import Graph, RDFS, URIRef, Namespace
+    def load(cls, ttl_path: str | None = None) -> Ontology:
+        """온톨로지 전체를 읽는다. 경로를 주면 그 파일만 — 조각을 시험할 때만 쓴다."""
+        from rdflib import RDFS, URIRef, Namespace
         EFI = Namespace("https://w3id.org/efi-onto#")
-        g = Graph().parse(ttl_path, format="turtle")
+        g = load_graph([ttl_path] if ttl_path else None)
         loc = lambda u: str(u).split("#")[-1]
         anc: dict[str, set[str]] = {}
         for c in {x for x in g.subjects(RDFS.subClassOf, None) if isinstance(x, URIRef)}:
@@ -512,7 +536,7 @@ class Session(BaseModel):
         return any(not self.conclusion_check(h, o) for h in self.hypotheses)
 
     # ---- 결론 검증은 SHACL 에 위임한다 ----
-    def validate(self, ttl_path: str) -> list[str]:
+    def validate(self, ttl_path: str | None = None) -> list[str]:
         """결론 제약 위반 메시지. 규칙을 여기 옮겨 적지 않고 pySHACL 을 부른다.
 
         제약을 두 곳에 적으면 반드시 갈라진다. 실제로 갈라졌었다 — SHACL 에만
@@ -521,9 +545,8 @@ class Session(BaseModel):
         """
         from rdflib import Graph
         from pyshacl import validate as shacl_validate
-        g = Graph().parse(
-            data=open(ttl_path, encoding="utf-8").read() + self.to_turtle(include_derived=False),
-            format="turtle")
+        text = open(ttl_path, encoding="utf-8").read() if ttl_path else ontology_text()
+        g = Graph().parse(data=text + self.to_turtle(include_derived=False), format="turtle")
         _, _, text = shacl_validate(g, advanced=True, allow_infos=True, allow_warnings=True)
         return [l.strip()[len("Message: "):] for l in text.splitlines()
                 if l.strip().startswith("Message: ")]
@@ -573,10 +596,10 @@ class Session(BaseModel):
 
 
 # ───────────────────── 규칙 로더 (TTL이 단일 진실 원천) ─────────────────────
-def load_rules(ttl_path: str) -> list[IndicatorRule]:
-    from rdflib import Graph, Namespace
+def load_rules(ttl_path: str | None = None) -> list[IndicatorRule]:
+    from rdflib import Namespace
     E = Namespace(EFI)
-    g = Graph().parse(ttl_path, format="turtle")
+    g = load_graph([ttl_path] if ttl_path else None)
     q = """PREFIX efi: <https://w3id.org/efi-onto#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     SELECT ?r ?sc ?ind ?role ?st ?d ?c WHERE {
       ?r a efi:IndicatorRule ; efi:forScenario ?sc ; efi:indicates ?ind ; efi:hasRole ?role ;
@@ -589,7 +612,7 @@ def load_rules(ttl_path: str) -> list[IndicatorRule]:
 
 # ───────────────────── 사용 예 ─────────────────────
 if __name__ == "__main__":
-    onto = Ontology.load("efi_tbox.ttl")
+    onto = Ontology.load()
     s = Session(case_id="A", query_count=2, facts=[
         Fact(cls="MoistureExposure", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR, note="옥외 단자함, 전날 우천"),
         Fact(cls="CarbonizedConductivePath", status=Status.CONFIRMED, agent=Agent.AI_VLM),

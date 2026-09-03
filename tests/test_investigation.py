@@ -8,7 +8,7 @@ from pyshacl import validate
 from test_ontology import ROOT, TTL, EFI
 
 sys.path.insert(0, str(ROOT / 'src'))
-from efi_schema import Session, Hypothesis, Scenario, Mechanism
+from efi_schema import Hypothesis, Mechanism, Scenario, Session, ontology_text
 from investigation import InvestigationData, supply_questions
 
 PROV = Namespace('http://www.w3.org/ns/prov#')
@@ -33,7 +33,7 @@ def system():
 def run_input(data, case='test', extra='', hypotheses=None, proposed=None):
     session = Session(case_id=case, investigation=InvestigationData.model_validate(data),
                       hypotheses=hypotheses or [], proposed_conclusion=proposed)
-    g = Graph().parse(data=TTL.read_text(encoding='utf-8') + session.to_turtle(False) + extra, format='turtle')
+    g = Graph().parse(data=ontology_text() + session.to_turtle(False) + extra, format='turtle')
     _, report, _ = validate(g, advanced=True, inplace=True, allow_infos=True, allow_warnings=True)
     return g, report
 
@@ -176,7 +176,7 @@ def test_candidate_keeps_missing_fuel_but_final_proposal_requires_evidence():
     assert focuses(report, 'ConclusionHeatTransferEvidenceShape')
     # Python은 같은 제약을 재구현하지 않고 실제 결론 노드를 SHACL에 넘긴다.
     session = Session(case_id='no_fuel', hypotheses=contact(), proposed_conclusion=Scenario.POOR_CONTACT)
-    assert any('최초 착화물의 발화 당시 존재' in m for m in session.validate(str(TTL)))
+    assert any('최초 착화물의 발화 당시 존재' in m for m in session.validate())
 
 
 def test_final_fuel_and_transfer_need_same_hypothesis_confirmed_records():

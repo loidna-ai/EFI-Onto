@@ -180,7 +180,7 @@ sheet('5 용어', ['축', '이름', '상위 개념', '설명'], d5, [15, 24, 22,
 #  거친 뒤에만 사람에게 간다. 묻는 것은 의견이 아니라 반례다.
 import refute_audit
 from rdflib import Graph
-_g = Graph().parse('ontology/efi_tbox.ttl', format='turtle')
+_g = load_graph()
 d6 = []
 for sc, own, ind, n, morph in refute_audit.candidates(_g):
     d6.append([SCEN[sc], SCEN[own], k(ind), n, -21 if morph else -30,
@@ -201,6 +201,8 @@ sheet('6 반증 후보', ['가설', '경쟁 가설', '확인 항목', '공유 �
 #  빠뜨려 화재 자체가 만드는 흔적을 전기적 원인의 전용 단서로 오인한 사례가
 #  원문 대조에서 다섯 건 나왔다. 남은 것을 조사관에게 묻는다.
 import audit
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph
 _own = audit.owners(_g)
 d7 = []
 for pat in audit.unreviewed(_g):

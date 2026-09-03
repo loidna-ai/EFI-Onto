@@ -10,12 +10,12 @@ from pyshacl import validate
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from efi_schema import Session, EFI
+from efi_schema import EFI, Session, load_graph
 from investigation import supply_questions, timeline_questions, detail_questions
 
 
 def inspect(session):
-    graph = Graph().parse(ROOT / 'ontology/efi_tbox.ttl', format='turtle')
+    graph = load_graph()
     graph.parse(data=session.to_turtle(include_derived=False), format='turtle')
     conforms, report, _ = validate(graph, advanced=True, inplace=True, allow_infos=True, allow_warnings=True)
     issues = []

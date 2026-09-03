@@ -11,6 +11,8 @@ status.py 는 규모를, nfpa.py 는 이론 대비 이식률을, audit.py 는 �
 import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import sys, pathlib, collections
 from rdflib import Graph, Namespace, RDF, RDFS, OWL, SH, URIRef, Literal
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph, ontology_text
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
@@ -147,7 +149,7 @@ def checks(g):
 
     # 미사용 어휘
     import re
-    lines = TTL.read_text(encoding="utf-8").split("\n")
+    lines = ontology_text().split("\n")
     used = lambda n: any(re.search(rf"\befi:{n}\b", l) and not re.match(rf"\s*efi:{n}\s+a\s+owl:", l)
                          for l in lines)
     out.append(("선언만 되고 안 쓰이는 객체 속성",
@@ -177,16 +179,48 @@ def checks(g):
     out.append(("두 축에 동시에 속하는 클래스", sorted(multi),
                 "축은 서로소다. 나오면 DL 일관성도 깨진다"))
 
+    out.append(("판정에 닿은 기록 층 자원", sorted(_record_layer_touching_judgment(g)),
+                "efi_investigation.ttl 은 기록의 완비만 본다. 점수·사슬·형성에 닿으면 "
+                "추론이므로 efi_tbox.ttl 로 옮긴다"))
+    print_only.append(("기록 전용 어휘 (efi_investigation.ttl)", sorted(_record_layer(g)),
+                       "조사 기록의 어휘다. 사슬에 붙지 않는 것이 정상이며 구조 결함이 아니다. "
+                       "다만 이 수가 자라면 추론이 아니라 서식이 자라는 것이다"))
+
     return out, print_only
 
 
+# ── 기록 층 ──────────────────────────────────────────────────────────────
+# 조사 기록 어휘는 사슬에 붙지 않는 것이 정상이라 위의 검사에 걸리면 안 된다.
+# 그러나 자라는 것을 숨기지도 않는다 — 따로 세어 보인다.
+JUDGMENT = ("scoreDelta", "canManifest", "enables", "producesDamage", "ignites",
+            "exhibits", "attests", "hasDeclaredMechanism", "supportScore", "formed")
+
+
+def _record_layer(g):
+    """efi_investigation.ttl 이 선언한 이름들."""
+    import re
+    path = ROOT / "ontology" / "efi_investigation.ttl"
+    if not path.exists():
+        return set()
+    return set(re.findall(r"^efi:(\w+)", path.read_text(encoding="utf-8"), re.M))
+
+
+def _record_layer_touching_judgment(g):
+    names = _record_layer(g)
+    hit = set()
+    for p in JUDGMENT:
+        for s, o in g.subject_objects(E[p]):
+            hit |= {ln(x) for x in (s, o) if ln(x) in names}
+    return hit
+
+
 def problems(g=None):
-    g = g or Graph().parse(TTL, format="turtle")
+    g = g or load_graph()
     return [(t, items, why) for t, items, why in checks(g)[0] if items]
 
 
 if __name__ == "__main__":
-    g = Graph().parse(TTL, format="turtle")
+    g = load_graph()
     KO = {}
     for s, o in g.subject_objects(SKOS.prefLabel):
         KO.setdefault(ln(s), str(o))

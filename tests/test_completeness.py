@@ -12,6 +12,8 @@ TARGET 에 도달하면 그 항목은 test_ontology.py 로 옮기고 여기서 �
 import sys, pathlib, warnings, collections
 import pytest
 from rdflib import Graph, Namespace, RDF, OWL
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "src"))
+from efi_schema import load_graph, ontology_text
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TTL = ROOT / "ontology" / "efi_tbox.ttl"
@@ -34,7 +36,7 @@ BASELINE = {}
 
 @pytest.fixture(scope="module")
 def g():
-    return Graph().parse(TTL, format="turtle")
+    return load_graph()
 
 
 def _rules(g):
@@ -74,7 +76,7 @@ def unwired_data_properties(g):
     """선언 줄 바깥에서 한 번도 참조되지 않는 데이터 속성.
     클래스 정의·규칙·SHACL 어디에도 연결되지 않아 판정에 기여할 수 없다."""
     import re
-    lines = TTL.read_text(encoding="utf-8").split("\n")
+    lines = ontology_text().split("\n")
     out = []
     for p in sorted(q(s) for s in g.subjects(RDF.type, OWL.DatatypeProperty)):
         used = any(re.search(rf"\befi:{p}\b", l) and not re.match(rf"\s*efi:{p}\s+a\s+owl:", l)
@@ -105,7 +107,7 @@ def _ratchet(key, now, better_is_lower=True):
 
 
 if __name__ == "__main__":
-    gr = Graph().parse(TTL, format="turtle")
+    gr = load_graph()
     rows = [
         ("시나리오당 최소 반증 규칙", min_refuting_per_scenario(gr), "min_refuting_per_scenario"),
         ("미연결 데이터 속성", len(unwired_data_properties(gr)), "unwired_data_properties"),

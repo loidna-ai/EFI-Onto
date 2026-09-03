@@ -2,68 +2,66 @@
 """TTL 을 주어 블록으로 자른다. 재편의 도구이며 손으로 옮기지 않기 위한 것이다.
 
 블록 = 앞선 주석·빈 줄 + 주어 첫 줄부터 문장을 닫는 '.' 까지.
-파일이 '한 줄에 한 주어' 규칙을 지키므로 가능하다. 삼중 따옴표 안의 마침표는
-문장 끝이 아니다 — SPARQL 규칙이 전부 그 안에 있다.
 
-왕복(cut → join)이 원본과 바이트 단위로 같아야 한다. 아니면 쓰지 않는다.
+**줄 단위로 자르면 안 된다.** SPARQL 규칙이 전부 삼중 따옴표 안에 있고
+문자열을 닫는 따옴표와 문장의 마침표가 한 줄에 같이 온다. 줄 단위 파서는 이 마침표를
+놓쳐 블록 여럿을 하나로 뭉친다 — 실제로 D-15 가 50절의 기록 클래스에 붙어
+있었고 왕복 검사도 섞기 검사도 그것을 잡지 못했다(뭉친 채로 함께 움직이므로).
+그래서 문자 단위로 훑는다. 소수점(0.7)은 뒤에 숫자가 오므로 문장 끝이 아니다.
+
+  python scripts/ttlblocks.py    왕복·블록 수를 확인한다
 """
 import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import pathlib, re
 
+
 def cut(text):
-    """(머리말, [블록…]) 로 자른다. 머리말은 접두어 선언과 owl:Ontology 까지."""
-    lines = text.split("\n")
-    blocks, cur, in_str, depth = [], [], False, 0
-    for line in lines:
-        cur.append(line)
-        # 삼중 따옴표는 한 줄에 여러 번 나올 수 있다. 홀수면 상태가 바뀐다.
-        if line.count('"""') % 2:
-            in_str = not in_str
-        if in_str:
-            continue
-        stripped = _strip_literals(line).rstrip()
-        if stripped.endswith(".") and not stripped.endswith("..") and depth == 0:
-            if not stripped.lstrip().startswith("#"):
-                blocks.append("\n".join(cur))
-                cur = []
-    if cur:
-        blocks.append("\n".join(cur))
+    """[블록…] 으로 자른다. 이어 붙이면 원본과 바이트 단위로 같다."""
+    blocks, start, i, n, depth = [], 0, 0, len(text), 0
+    while i < n:
+        c = text[i]
+        if c == "#":                                    # 주석은 줄 끝까지
+            j = text.find("\n", i)
+            i = n if j < 0 else j
+        elif text.startswith('"""', i):                 # 삼중 따옴표 문자열
+            j = text.find('"""', i + 3)
+            i = n if j < 0 else j + 3
+        elif c == '"':                                  # 한 줄 문자열
+            i += 1
+            while i < n and text[i] != '"':
+                i += 2 if text[i] == "\\" else 1
+            i += 1
+        elif c == "<" and 0 <= text.find(">", i) and "\n" not in text[i:text.find(">", i)]:
+            i = text.find(">", i) + 1                   # IRI
+        elif c in "[(":
+            depth += 1; i += 1
+        elif c in "])":
+            depth -= 1; i += 1
+        elif c == "." and depth == 0 and (i + 1 >= n or text[i + 1] in " \t\r\n"):
+            j = text.find("\n", i)
+            end = n if j < 0 else j + 1
+            blocks.append(text[start:end])
+            start = i = end
+        else:
+            i += 1
+    if start < n:
+        blocks.append(text[start:])
     return blocks
 
 
-def _strip_literals(line):
-    """문자열 리터럴 안의 마침표를 문장 끝으로 오인하지 않도록 지운다."""
-    out, i, n = [], 0, len(line)
-    while i < n:
-        c = line[i]
-        if c == "#" and not out[-1:] == ["\\"]:
-            break
-        if c == '"':
-            i += 1
-            while i < n and line[i] != '"':
-                i += 2 if line[i] == "\\" else 1
-        elif c == "<":
-            while i < n and line[i] != ">":
-                i += 1
-        else:
-            out.append(c)
-        i += 1
-    return "".join(out)
-
-
 def subject(block):
-    """블록의 주어를 낸다. 빈 노드로 시작하면 None."""
+    """블록의 주어를 낸다. 접두어 선언이나 빈 노드로 시작하면 None."""
     for line in block.split("\n"):
         s = line.strip()
-        if not s or s.startswith("#"):
+        if not s or s.startswith("#") or s.startswith("@"):
             continue
-        m = re.match(r"^(<[^>]+>|[A-Za-z][\w.-]*:[^\s]*|\[)", s)
-        return None if not m or m.group(1) == "[" else m.group(1)
+        m = re.match(r"^(<[^>]+>|[A-Za-z][\w.-]*:[^\s;,]*)", s)
+        return m.group(1) if m else None
     return None
 
 
 def join(blocks):
-    return "\n".join(blocks)
+    return "".join(blocks)
 
 
 if __name__ == "__main__":
@@ -71,8 +69,8 @@ if __name__ == "__main__":
     for p in sorted((root / "ontology").glob("*.ttl")):
         text = p.read_text(encoding="utf-8")
         bs = cut(text)
-        ok = join(bs) == text
         named = sum(1 for b in bs if subject(b))
-        print(f"{p.name}: 블록 {len(bs)} (주어 있음 {named}) 왕복 {'같다' if ok else '다르다'}")
-        if not ok:
+        print(f"{p.name}: 블록 {len(bs)} (주어 있음 {named}) "
+              f"왕복 {'같다' if join(bs) == text else '다르다'}")
+        if join(bs) != text:
             raise SystemExit("왕복 실패 — 파서를 고치기 전에는 쓰지 않는다")

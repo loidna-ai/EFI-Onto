@@ -2,8 +2,8 @@
 
 작성 2026-09-04. 대상은 구조 문제 둘이다.
 
-1. TTL 이 주제가 아니라 작업 순서로 쌓여 있다 (57절, 5110줄. 29·35·36·41·47절은 고친 기록이 절 제목).
-2. T01~T15 의 기록 도형(42개, 전체 128개의 1/3)이 추론 어휘와 한 파일에 섞여 있다.
+1. TTL 이 주제가 아니라 작업 순서로 쌓여 있다 (58절, 5339줄. 29·35·36·41·47절은 고친 기록이 절 제목). — 2단계
+2. T01~T16 의 기록 도형이 추론 어휘와 한 파일에 섞여 있다. — **1단계에서 해결**
 
 ## 원칙
 
@@ -28,22 +28,26 @@ T16 커밋(`b0b9ec8`) 뒤에 시작했다. 계획대로 넷을 했고 예정에 
 
 **CRLF 가 SPARQL 규칙의 값을 바꾼다 — `.gitattributes` 를 더했다.** `core.autocrlf=true` 인데 `.gitattributes` 가 없어서, 저장소는 LF 로 두고 체크아웃할 때 CRLF 로 바꿨다. 삼중따옴표 안의 SPARQL 문자열이 통째로 리터럴이므로 **같은 커밋인데 그래프가 달라진다** — 실제로 134개 트리플이 갈렸다. 시험은 통과한다(SPARQL 이 `\r` 을 공백으로 보므로). 그러나 이 상태로는 동형 검사가 성립하지 않고, Windows 에서 클론한 사람은 시험된 것과 다른 그래프를 받는다. `* text=auto eol=lf` 로 고정하고 `git add --renormalize` 를 돌렸다. 재편 스크립트도 반드시 `newline="\n"` 으로 쓴다.
 
-## 1단계 · 기록 도형 분리 (문제 2, 하루)
+## 1단계 · 기록 도형 분리 — 완료 2026-09-04
 
-파일을 둘로 나눈다.
+파일을 둘로 나눴다. **그래프는 하나다** — `make iso` 가 동형(트리플 7854)이고 150건 평가도 한 글자 안 바뀌었다.
 
 ```
-ontology/efi_tbox.ttl            추론 어휘. 4축·가설·사슬·지표·M/F/C/D 도형·원문 이식
-ontology/efi_investigation.ttl   조사 기록. 현재 50~57절 (T01~T15). 기록 클래스·완비 도형·SHACL 만
+ontology/efi_tbox.ttl            추론 어휘. 3871줄, 블록 1101
+ontology/efi_investigation.ttl   조사 기록 층 (T01~T16). 1503줄, 블록 372
 ```
 
-기준: **점수·반증·형성(D-15)·결론(C-)에 닿는 것은 tbox, 기록의 완비만 검사하는 것은 investigation.** 경계에 있는 것(예: T02 의 보호장치 발견 상태에서 통전 사실을 만들지 않는 규칙)은 tbox 에 둔다 — 추론에 닿기 때문이다.
+기준은 **점수·반증·형성(D-15)·결론(C-)에 닿는가**였다. 50절부터 끝까지를 옮기되 결론 제약 둘(`ConclusionFirstFuelEvidenceShape`·`ConclusionHeatTransferEvidenceShape`)은 tbox 에 남겼다. 나머지 372 블록은 전부 기록의 완비만 본다 — 옮기기 전에 판정 관련 속성 열둘로 전수 검사해 확인했다.
 
-1. `src/efi_schema.py` 에 `load_graph(paths=None)` 을 하나 둔다. 기본값은 `ontology/*.ttl` 전부. 19곳의 `Graph().parse(TTL)` 을 이 함수로 바꾼다. 경로 상수 `TTL` 은 그대로 두되 목록으로 바꾼다.
-2. HermiT(owlready2)와 외부 도구는 파일 하나를 받는다. `make reason` 앞에 `scripts/bundle.py` 가 `build/efi_all.ttl` 로 합친다. 헤더의 `owl:imports` 에 `<efi_investigation.ttl>` 을 더하지 않는다 — 상대 경로 import 는 도구마다 해석이 다르다.
-3. 50~57절을 그대로 잘라 새 파일로 옮긴다. 접두어 헤더를 복사한다. 동형 검사.
-4. `scripts/lint.py` 에 파일 구분을 넣는다. investigation 의 어휘는 "사슬에 안 붙은 어휘" 로 세지 않고 **"기록 전용 어휘"** 로 따로 센다. `make status` 에 그 수를 보인다. 이것이 문제 2 의 핵심이다 — 기록 어휘가 자라는 것을 숨기지 않고 추론 어휘와 구분해 보이게 한다.
-5. 시험 하나를 더한다: investigation 파일의 어떤 자원도 `scoreDelta`·`canManifest`·`enables` 의 주어나 목적어가 아니다. 경계가 무너지면 잡는다.
+1. `efi_schema.ontology_files()` · `load_graph()` · `ontology_text()` 가 파일 목록의 단일 진실 원천이다. 손으로 파일 이름을 든 곳 40여 군데를 이 셋으로 바꿨다. `Ontology.load()` · `load_rules()` · `Session.validate()` 의 경로 인수는 선택이 됐고, 주지 않으면 전체를 읽는다.
+2. HermiT 은 `consistency.py` 가 이미 한 그래프로 합쳐 RDF/XML 로 넘기므로 별도 bundle 이 필요 없었다.
+3. `make lint` 가 기록 어휘를 **'기록 전용 어휘' 353개**로 따로 센다. 구조 결함(합계 0건)과 분리해 보이므로 기록 층이 자라는 것이 숨지 않는다.
+4. 시험 둘을 더했다 — `test_investigation_layer_never_touches_scoring`(경계), `test_every_ontology_file_is_loaded`(파일 하나가 통째로 빠지는 것).
+5. `docs/tbox_backlog.json` 의 근거 13개가 새 파일을 가리키도록 고쳤다. 앵커 문자열은 그대로다.
+
+### 1단계에서 드러난 것 — 블록 파서의 결함
+
+**줄 단위 파서가 블록 102개를 뭉쳐 놓고 있었다.** SPARQL 규칙을 닫는 따옴표와 문장의 마침표가 한 줄에 같이 오는데, 줄 단위로는 그 마침표를 놓친다. **왕복 검사도 섞기 검사도 이것을 잡지 못했다** — 뭉친 블록은 뭉친 채로 함께 움직이므로 둘 다 통과한다. 실제로 D-15(가설 형성)가 50절의 기록 클래스에 붙어 있었고, 그대로 옮겼으면 판정 규칙이 기록 층으로 넘어갈 뻔했다. 문자 단위 상태 기계로 바꿔 블록이 1371 → 1473 이 됐다. **2단계는 이 파서에 전적으로 기대므로, 파서를 고치면 섞기 검사를 다시 돌린다.**
 
 ## 2단계 · 절 재편 (문제 1, 이틀에서 사흘)
 
@@ -71,7 +75,7 @@ L. 아직 사슬에 붙지 않은 것 · 보류 (lint 가 세는 것들의 임�
 
 ### 방법
 
-1. `scripts/reorg.py` 를 만든다. TTL 을 **주어 블록**으로 자른다. 블록 = 직전 주석 줄들 + 주어 첫 줄부터 `.` 로 끝나는 줄까지. 파일이 한 줄 한 주어 규칙을 지키므로 가능하다. 절 제목 주석(`# N. …`)은 버린다.
+1. `scripts/reorg.py` 를 만든다. 블록 자르기는 0단계의 `scripts/ttlblocks.py` 가 한다 (문자 단위 상태 기계. 1단계에서 결함 하나를 고쳤다). 절 제목 주석(`# N. …`)은 버린다.
 2. 블록마다 목적지를 정하는 표를 스크립트 안에 둔다. 판정 순서:
    - `a efi:IndicatorRule` → `efi:targetScenario` 의 가설 블록 H.n
    - `a sh:NodeShape` → `sh:name` 접두어. D- 중 특정 가설만 보는 것은 H.n, 나머지는 J
@@ -100,7 +104,7 @@ L. 아직 사슬에 붙지 않은 것 · 보류 (lint 가 세는 것들의 임�
 시험 셋을 더한다.
 
 - `test_indicator_rule_lives_in_its_hypothesis_block`: 지표 규칙이 `targetScenario` 의 앵커 블록 안에 있다. 파일을 앵커로 잘라 확인한다.
-- `test_investigation_file_never_touches_scores`: 1단계 5번.
+- ~~`test_investigation_file_never_touches_scores`~~: 1단계에서 완료 (`test_investigation_layer_never_touches_scoring`).
 - `test_section_l_is_empty`: L 블록에 주어가 없다.
 
 ## 하지 않는 것
@@ -114,7 +118,8 @@ L. 아직 사슬에 붙지 않은 것 · 보류 (lint 가 세는 것들의 임�
 | 위험 | 대응 |
 |---|---|
 | Codex 가 같은 파일을 고치는 중 | 0단계 전에 커밋을 받는다. 재편 중에는 TTL 작업을 멈춘다. 2단계는 하루 안에 끝낸다 |
-| 빈 노드 때문에 동형 검사가 느리거나 실패 | 7천 트리플이면 `to_isomorphic` 으로 초 단위. 실패하면 `graph_diff` 로 어느 트리플인지 본다 |
-| pySHACL 이 파일 순서에 기댄 곳 | 0단계 3번이 먼저 찾는다 |
-| HermiT 가 분리 파일을 못 읽음 | bundle 로 합쳐 넘긴다 |
+| 빈 노드 때문에 동형 검사가 실패 | 해결. `to_isomorphic` 대신 재귀 서명을 쓴다 (0단계) |
+| pySHACL 이 파일 순서에 기댄 곳 | 없음을 확인했다 (0단계 3번) |
+| HermiT 가 분리 파일을 못 읽음 | 해결. `consistency.py` 가 한 그래프로 합쳐 RDF/XML 로 넘긴다 |
+| 블록 파서가 조용히 뭉치거나 자른다 | 왕복·섞기 검사로는 안 잡힌다 (1단계). 파서를 고치면 블록 수의 변화를 보고 경계를 눈으로 확인한다 |
 | 절 번호를 든 문서를 놓침 | 3단계에서 `[0-9]+절` grep. `make backlog` 가 앵커 없는 참조를 오류로 낸다 |

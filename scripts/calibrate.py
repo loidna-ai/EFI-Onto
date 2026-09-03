@@ -28,6 +28,7 @@ from rdflib import Graph
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src")); sys.path.insert(0, str(ROOT / "scripts"))
 import score
+from efi_schema import load_graph
 
 KO = {"PoorContactScenario": "접촉불량", "CrushDamageScenario": "기계손상",
       "PartialDisconnectionScenario": "반단선", "InsulationDegradationScenario": "절연열화",
@@ -62,8 +63,8 @@ def weight(k, morph):
 
 if __name__ == "__main__":
     from efi_schema import Ontology
-    g = Graph().parse(ROOT / "ontology" / "efi_tbox.ttl", format="turtle")
-    onto = Ontology.load(str(ROOT / "ontology" / "efi_tbox.ttl"))
+    g = load_graph()
+    onto = Ontology.load()
     sessions = json.loads((ROOT / "cases" / "sessions.json").read_text(encoding="utf-8"))
     emp = empirical(onto, sessions)
     comp = score.compatibility(g)

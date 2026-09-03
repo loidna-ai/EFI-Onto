@@ -22,7 +22,7 @@ make backlog   # 원문 이식 미완료 목록·근거·누락 검사
 | `build/EFI-Onto.graphml` | Cytoscape / Gephi / yEd 용 |
 | `build/EFI-Onto_인과사슬.svg` | 논문 삽입용 벡터 도식 |
 
-`ontology/efi_tbox.ttl` 은 Protégé, WebVOWL, GraphDB 에서 그대로 열린다.
+`ontology/` 의 TTL 둘은 Protégé, WebVOWL, GraphDB 에서 그대로 열린다. `efi_tbox.ttl` 이 추론 어휘, `efi_investigation.ttl` 이 조사 기록 층이며 함께 읽으면 한 그래프다.
 
 전원·보호장치·시간선·최초 착화물 입력은 [T01~T04 구현 안내](docs/T01_T04_구현.md)를 참조한다.
 합성 입력을 실행하려면 `python scripts/investigate.py examples/investigation_t01_t04.json`.
