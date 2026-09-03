@@ -29,7 +29,7 @@ def run(sessions, onto):
         per[a][1] += 1
         if pred == a:
             ok += 1; per[a][0] += 1
-        if pred == "Undetermined":
+        if pred in E.HELD:
             und += 1
         if any(any(onto.matches(f["cls"], r.indicator) for r in onto.rules
                    if r.scenario == a and r.role.value in ("Core", "Supporting"))
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     print("같은 온톨로지, 다른 판독기\n")
     print(f"{'':14s}{'사전 판독':>10s}{'LLM 판독':>10s}{'차이':>8s}")
-    for k, lab in (("ok", "정확"), ("wrong", "오판"), ("und", "원인미상"), ("ceil", "상한")):
+    for k, lab in (("ok", "정확"), ("wrong", "오판"), ("und", "판단보류"), ("ceil", "상한")):
         a, b = d[k] / d["n"] * 100, l[k] / l["n"] * 100
         print(f"  {lab:12s}{a:9.1f}%{b:9.1f}%{b - a:+8.1f}%p")
 

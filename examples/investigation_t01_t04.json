@@ -1,0 +1,203 @@
+{
+  "case_id": "SYNTHETIC_T01_T04",
+  "hypotheses": [
+    {
+      "scenario": "PoorContactScenario",
+      "mechanism": "PoorContactHeating"
+    }
+  ],
+  "investigation": {
+    "system": {
+      "id": "supply",
+      "status": "Confirmed",
+      "attributed_to": "investigator",
+      "source": "[합성 예제] 현장 사진/기록 supply",
+      "components": [
+        {
+          "id": "grid",
+          "cls": "PowerSource"
+        },
+        {
+          "id": "breaker",
+          "cls": "ProtectiveDevice"
+        },
+        {
+          "id": "outlet",
+          "cls": "PlugReceptacle"
+        },
+        {
+          "id": "load",
+          "cls": "ElectricalLoad"
+        },
+        {
+          "id": "backup",
+          "cls": "PowerSource"
+        },
+        {
+          "id": "meter",
+          "cls": "ElectricMeter"
+        },
+        {
+          "id": "gfci",
+          "cls": "GroundFaultProtectiveDevice",
+          "container": "outlet"
+        },
+        {
+          "id": "conduit",
+          "cls": "Conduit"
+        },
+        {
+          "id": "rubber",
+          "cls": "Insulation",
+          "container": "load"
+        }
+      ],
+      "connections": [
+        {
+          "id": "meter_feed",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 meter_feed",
+          "from_component": "grid",
+          "to_component": "meter"
+        },
+        {
+          "id": "link1",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 link1",
+          "from_component": "meter",
+          "to_component": "breaker"
+        },
+        {
+          "id": "link2",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 link2",
+          "from_component": "breaker",
+          "to_component": "outlet"
+        },
+        {
+          "id": "link3",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 link3",
+          "from_component": "outlet",
+          "to_component": "load"
+        }
+      ],
+      "paths": [
+        {
+          "id": "path",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 path",
+          "source_component": "grid",
+          "load_component": "load"
+        },
+        {
+          "id": "backup_path",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 backup_path",
+          "source_component": "backup",
+          "load_component": "load"
+        }
+      ],
+      "review_complete": false,
+      "source_inventory_complete": true
+    },
+    "device_states": [
+      {
+        "id": "breaker_found",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 breaker_found",
+        "component": "breaker",
+        "found_state": "Off",
+        "observed_at": "2026-09-03T13:00:00+09:00"
+      }
+    ],
+    "events": [
+      {
+        "id": "isolation",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 isolation",
+        "component": "grid",
+        "kind": "PowerDisconnected",
+        "supply_source": "grid",
+        "earliest": "2026-09-03T12:00:00+09:00",
+        "latest": "2026-09-03T12:00:00+09:00"
+      },
+      {
+        "id": "arc_record",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 arc_record",
+        "component": "load",
+        "kind": "ArcOccurrence",
+        "supply_source": "grid",
+        "observed_at": "2026-09-03T14:00:00+09:00"
+      },
+      {
+        "id": "bend",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 bend",
+        "component": "rubber",
+        "kind": "Bending",
+        "earliest": "2026-09-03T13:00:00+09:00",
+        "latest": "2026-09-03T13:00:00+09:00"
+      }
+    ],
+    "power_records": [
+      {
+        "id": "ami_request",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 ami_request",
+        "supply_source": "grid",
+        "availability": "Unavailable",
+        "history_complete": false
+      }
+    ],
+    "examinations": [
+      {
+        "id": "rubber_exam",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 rubber_exam",
+        "component": "rubber",
+        "damage_state": "Damaged",
+        "arc_site_status": "Unverifiable",
+        "insulation_material": "Rubber",
+        "observed_at": "2026-09-03T14:00:00+09:00"
+      }
+    ],
+    "first_fuels": [
+      {
+        "id": "fuel",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 fuel",
+        "scenario": "PoorContactScenario",
+        "fuel_class": "InsulationMaterialFuel",
+        "presence_basis": "발화부 접속 단자의 피복 잔존물 및 발화 전 배치 사진"
+      }
+    ],
+    "heat_transfers": [
+      {
+        "id": "heat",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 heat",
+        "scenario": "PoorContactScenario",
+        "description": "과열 단자에서 접촉 피복으로 전도",
+        "adequacy_basis": "동일 피복·접촉 조건에서 재현 시험으로 열손실을 포함해 검토",
+        "duration_basis": "영상의 가열 지속 구간과 재현 시험 노출 구간 대조",
+        "fuel_condition_basis": "피복 두께·접촉 위치를 잔존물과 도면으로 확인"
+      }
+    ]
+  }
+}

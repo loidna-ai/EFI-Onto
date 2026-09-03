@@ -44,7 +44,7 @@ VERDICTS = {
     "InsufficientContactPressure": (EXCL, "실무Ⅳ p.194 접속 면적·압력이 부족하면 허용전류 이하에서도 접속부가 발열한다. 접속부 현상이다"),
     "ContaminatedContactSurface":  (EXCL, "실무Ⅳ p.194 기름 등 절연물 부착은 경계저항을, 요철은 집중저항을 만든다. 접속부 현상이다"),
     "DeformedPlugOrSwitch":        (EXCL, "실무Ⅳ p.194 개폐부·플러그 변형이 접촉저항을 키운다. 접속부 현상이다"),
-    "CorrodedConnection":     (EXCL, "실무Ⅳ p.206 접점부의 산화·환경오염에 의한 접촉불량. 접속부 현상이다"),
+    "CorrodedConnection":     (EXCL, "실무Ⅳ p.206 접점부의 산화·환경오염에 의한 접촉불량. 발화 전 존재가 확인된 부식만 뜻한다. 사후 관찰은 ContactCorrosion이며 §9.7.5.2에 따라 화재도 만들 수 있다"),
     "ExternalCrushing":       (SHARED, "표 2-1 코드의 바닥 깔림이 단락 아래에 있고, '피복 손상 후 건물·구조물 등의 금속부에 접촉'은 지락·누전 아래에 있다. 눌린 도체가 금속에 닿으면 지락이다"),
     "GroundPath":             (EXCL, "실무Ⅳ p.156 충전부와 대지를 잇는 도전성 물질. 지락의 필요조건이며 다른 요인은 이것을 필요로 하지 않는다"),
     "OverloadState":          (SHARED, "실무Ⅳ p.311 과부하 자체의 발열, p.284~285 과부하 운전이 권선 절연열화 → 층간단락"),

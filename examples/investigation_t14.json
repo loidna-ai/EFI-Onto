@@ -1,0 +1,111 @@
+{
+  "case_id": "T14_SYNTHETIC",
+  "hypotheses": [],
+  "investigation": {
+    "system": {
+      "id": "system",
+      "status": "Confirmed",
+      "attributed_to": "investigator",
+      "source": "[합성] 현장 사진/기록 system",
+      "components": [
+        {
+          "id": "insulation",
+          "cls": "Insulation"
+        }
+      ]
+    },
+    "examinations": [
+      {
+        "id": "exam",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 사진/기록 exam",
+        "component": "insulation",
+        "damage_state": "Damaged",
+        "insulation_material": "PVC",
+        "insulation_material_basis": "[합성] 해당 절연 시료의 재질 분석",
+        "insulation_filler": "CalciumCarbonate",
+        "insulation_filler_basis": "[합성] 해당 시료 충전재 성분 분석",
+        "observed_at": "2026-09-03T14:00:00+09:00"
+      }
+    ],
+    "insulation_exposures": [
+      {
+        "id": "heat",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 사진/기록 heat",
+        "component": "insulation",
+        "kind": "Heating",
+        "earliest": "2026-09-03T06:00:00+09:00",
+        "latest": "2026-09-03T07:00:00+09:00",
+        "temperature_min_C": "115.25",
+        "temperature_max_C": "120.5",
+        "temperature_basis_kind": "Measured",
+        "exposure_basis": "[합성] 해당 시료 위치 온도 로그 및 시간 보정",
+        "observed_at": "2026-09-03T14:00:00+09:00"
+      },
+      {
+        "id": "moisture",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 사진/기록 moisture",
+        "component": "insulation",
+        "kind": "SurfaceMoisture",
+        "earliest": "2026-09-03T08:00:00+09:00",
+        "latest": "2026-09-03T09:00:00+09:00",
+        "moisture_presence": "Present",
+        "moisture_origin": "AmbientAir",
+        "exposure_basis": "[합성] 표면 수분·유래·발생 시각 조사 근거",
+        "observed_at": "2026-09-03T14:00:00+09:00"
+      },
+      {
+        "id": "unverified-moisture",
+        "status": "Unverifiable",
+        "attributed_to": "investigator",
+        "source": "[합성] 추가 자료 대기",
+        "component": "insulation",
+        "kind": "SurfaceMoisture",
+        "moisture_presence": "Unknown",
+        "moisture_origin": "Unknown"
+      }
+    ],
+    "events": [
+      {
+        "id": "fire",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 사진/기록 fire",
+        "component": "insulation",
+        "kind": "Ignition",
+        "earliest": "2026-09-03T10:00:00+09:00",
+        "latest": "2026-09-03T11:00:00+09:00"
+      }
+    ],
+    "insulation_history_reviews": [
+      {
+        "id": "review",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 사진/기록 review",
+        "examination": "exam",
+        "heating": "heat",
+        "moisture": "moisture",
+        "ignition_event": "fire",
+        "applicability_basis": "[합성] §9.9.4.5.1의 재질·충전재·온도·수분 조건을 대조. 메커니즘 성립은 별도 검증.",
+        "assessment_complete": true,
+        "claim_pre_ignition_sequence": true
+      },
+      {
+        "id": "pending-review",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 사진/기록 pending-review",
+        "examination": "exam",
+        "heating": "heat",
+        "moisture": "unverified-moisture",
+        "applicability_basis": "[합성] 추가 표면 수분 기록을 확보하여 원문의 습윤 조건과 대조 예정"
+      }
+    ]
+  }
+}

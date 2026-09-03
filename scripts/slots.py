@@ -117,7 +117,11 @@ RULES = {
     (r"(끊어진|단선|파단)[^.]{0,10}양[측쪽][^.]{0,14}(용융|용흔|뭉친)|양[측쪽][^.]{0,10}(끊어진|단선|파단)[^.]{0,14}(용융|용흔)", "MeltMarkOnBothSidesOfBreak"),
     (r"스패터|비산|튄", "Spatter"),
     (r"광택\s*소실|무광", "LossOfLuster"),
-    (r"아산화동", "CuprousOxideGrowth"),
+    # 성분 검출·적색 피막만으로 접속부 증식을 추정하지 않는다 (§9.7.3.2).
+    (r"아산화동\s*(증식|성장)", "CuprousOxideGrowth"),
+    (r"아산화동(?!\s*(?:증식|성장))", "CuprousOxideDeposit"),
+    # 관찰 시점만으로 발화 전 부식 이력을 세울 수 없다 (§9.7.5.2).
+    (r"접속부[^.,]{0,15}부식|단자[^.,]{0,15}부식|접점[^.,]{0,15}부식", "ContactCorrosion"),
     # 시각 슬롯에 적힌 환경 흔적 — 진술이 명백할 때만
     (r"누수\s*흔적|침수\s*흔적|물에\s*의해|수분\s*유입|결로\s*흔적", "MoistureExposure"),
     # 절연물 '내부' 현상 — 화재가 만들 수 없는 절연열화 전용 형태 (실무Ⅳ p.153·254)
@@ -174,6 +178,11 @@ def map_slot(slot, text):
         if cls in [c for c, _ in out]:
             continue
         clause = next((c for c in clauses if re.search(pat, c)), text)
+        # 조사 안전을 위한 사후 차단은 발화 전 비통전의 증거가 아니다 (§9.12.3·9.12.5.3).
+        if cls == "DeEnergizedState" and re.search(
+            r"진화|소화|조사|현장\s*도착|(?:화재|발화)\s*(?:후|이후)", clause
+        ):
+            continue
         out.append((cls, status_of(clause, False)))
     if none_hit and not out:
         return [], False

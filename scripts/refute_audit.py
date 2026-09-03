@@ -94,7 +94,7 @@ def _accuracy(onto, sessions):
     for s in sessions:
         p, _ = ev.predict(s, onto)
         ok += p == s["actual_scenario"]
-        und += p == "Undetermined"
+        und += p in ev.HELD
     n = len(sessions)
     return ok / n, und / n, (n - ok - und) / n
 

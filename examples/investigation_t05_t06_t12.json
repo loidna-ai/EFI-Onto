@@ -1,0 +1,314 @@
+{
+  "case_id": "synthetic_t05_t06_t12",
+  "artifacts": [],
+  "facts": [],
+  "hypotheses": [],
+  "investigation": {
+    "system": {
+      "id": "supply",
+      "status": "Confirmed",
+      "attributed_to": "investigator",
+      "source": "[합성 예제] 현장 사진/기록 supply",
+      "observed_at": null,
+      "components": [
+        {
+          "id": "grid",
+          "cls": "PowerSource",
+          "container": null,
+          "circuit": null,
+          "role": null
+        },
+        {
+          "id": "breaker",
+          "cls": "ProtectiveDevice",
+          "container": null,
+          "circuit": null,
+          "role": null
+        },
+        {
+          "id": "outlet",
+          "cls": "PlugReceptacle",
+          "container": null,
+          "circuit": null,
+          "role": null
+        },
+        {
+          "id": "load",
+          "cls": "ElectricalLoad",
+          "container": null,
+          "circuit": null,
+          "role": null
+        },
+        {
+          "id": "switch",
+          "cls": "ElectricalSwitch",
+          "container": null,
+          "circuit": null,
+          "role": null
+        },
+        {
+          "id": "surface",
+          "cls": "Insulation",
+          "container": null,
+          "circuit": null,
+          "role": null
+        }
+      ],
+      "connections": [
+        {
+          "id": "link1",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 link1",
+          "observed_at": null,
+          "from_component": "grid",
+          "to_component": "breaker",
+          "kind": "Supply"
+        },
+        {
+          "id": "link2",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 link2",
+          "observed_at": null,
+          "from_component": "breaker",
+          "to_component": "outlet",
+          "kind": "Supply"
+        },
+        {
+          "id": "link3",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 link3",
+          "observed_at": null,
+          "from_component": "outlet",
+          "to_component": "load",
+          "kind": "Supply"
+        }
+      ],
+      "paths": [
+        {
+          "id": "path",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 path",
+          "observed_at": null,
+          "source_component": "grid",
+          "load_component": "load"
+        }
+      ],
+      "review_complete": true,
+      "source_inventory_complete": true
+    },
+    "device_states": [],
+    "events": [
+      {
+        "id": "arc",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 arc",
+        "observed_at": null,
+        "component": "switch",
+        "kind": "ContactArcOccurrence",
+        "supply_source": null,
+        "replacement_component": null,
+        "replacement_compatible": null,
+        "earliest": "2026-09-03T07:00:00+09:00",
+        "latest": "2026-09-03T07:00:00+09:00"
+      },
+      {
+        "id": "breakdown",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 breakdown",
+        "observed_at": null,
+        "component": "surface",
+        "kind": "InsulationBreakdown",
+        "supply_source": null,
+        "replacement_component": null,
+        "replacement_compatible": null,
+        "earliest": "2026-09-03T09:00:00+09:00",
+        "latest": "2026-09-03T09:00:00+09:00"
+      },
+      {
+        "id": "ignition",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 ignition",
+        "observed_at": null,
+        "component": "load",
+        "kind": "Ignition",
+        "supply_source": null,
+        "replacement_component": null,
+        "replacement_compatible": null,
+        "earliest": "2026-09-03T10:00:00+09:00",
+        "latest": "2026-09-03T10:00:00+09:00"
+      }
+    ],
+    "power_records": [],
+    "first_fuels": [],
+    "heat_transfers": [],
+    "examinations": [],
+    "comparisons": [
+      {
+        "id": "compare",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 compare",
+        "observed_at": null,
+        "component": "outlet",
+        "comparator": "breaker",
+        "kind": "MetalExposure",
+        "location": "문제 단자",
+        "comparator_location": "옆 단자",
+        "side": null,
+        "comparator_side": null,
+        "finding": "두꺼운 산화층",
+        "comparator_finding": "얇은 표면 산화",
+        "metal": "Copper",
+        "comparator_metal": "Copper",
+        "exposure_status": "Confirmed",
+        "exposure_basis": "같은 함체 위치·노출 영상 대조",
+        "assessment_complete": true
+      },
+      {
+        "id": "unknown_compare",
+        "status": "Unverifiable",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 비교 대상 확보 대기",
+        "observed_at": null,
+        "component": "outlet",
+        "comparator": null,
+        "kind": "MetalExposure",
+        "location": null,
+        "comparator_location": null,
+        "side": null,
+        "comparator_side": null,
+        "finding": null,
+        "comparator_finding": null,
+        "metal": null,
+        "comparator_metal": null,
+        "exposure_status": "Missing",
+        "exposure_basis": null,
+        "assessment_complete": false
+      }
+    ],
+    "heating_observations": [
+      {
+        "id": "feature",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 feature",
+        "observed_at": null,
+        "component": "outlet",
+        "characteristic": 1,
+        "detail": "같은 재질보다 심한 산화",
+        "comparison": "compare"
+      }
+    ],
+    "problems": [
+      {
+        "id": "problem",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 problem",
+        "observed_at": null,
+        "statement": "접속부 과열이 발화 전에 있었는가?"
+      }
+    ],
+    "plans": [
+      {
+        "id": "plan1",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 plan1",
+        "observed_at": null,
+        "problem": "problem",
+        "scope": "동종 금속의 산화 비교",
+        "method": "같은 노출의 금속 대조",
+        "required_expertise": "금속 산화·화재 손상 감식",
+        "complete": true
+      },
+      {
+        "id": "plan2",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 plan2",
+        "observed_at": null,
+        "problem": "problem",
+        "scope": "영상 시간선",
+        "method": "영상 원본 시간 대조",
+        "required_expertise": "영상 시간 분석",
+        "complete": false
+      }
+    ],
+    "verifications": [
+      {
+        "id": "verification",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 verification",
+        "observed_at": null,
+        "plan": "plan1",
+        "result": "산화 차이 관찰. 원인 확정은 유보",
+        "evidence_records": [
+          "compare"
+        ]
+      }
+    ],
+    "technical_reviews": [
+      {
+        "id": "review",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 review",
+        "observed_at": null,
+        "reviewer": "reviewer",
+        "requested_plans": [
+          "plan1"
+        ],
+        "scope_kind": "Selected",
+        "scopes": [
+          {
+            "id": "scope1",
+            "status": "Confirmed",
+            "attributed_to": "investigator",
+            "source": "[합성 예제] 현장 사진/기록 scope1",
+            "observed_at": null,
+            "plan": "plan1",
+            "competence_basis": "금속 감식 업무·교육 경력과 본 분석 범위 대조",
+            "documentation_access": "Confirmed",
+            "access_basis": "비교 사진·분석 원자료 전체 접근",
+            "critique": "같은 노출 판단의 영상 근거 확인. 산화만으로 원인 결론 불가"
+          }
+        ],
+        "documentation_access": true,
+        "reviewer_relationship": "동일 기관의 다른 조사관",
+        "complete": true
+      }
+    ],
+    "depositions": [
+      {
+        "id": "deposit",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 deposit",
+        "observed_at": "2026-09-03T14:00:00+09:00",
+        "component": "surface",
+        "source_event": "arc",
+        "source_link_basis": "접점과 부착물 성분·위치 대조",
+        "deposit_basis": "해당 절연면 금속분 분석",
+        "earliest": "2026-09-03T08:00:00+09:00",
+        "latest": "2026-09-03T08:00:00+09:00",
+        "breakdown_event": "breakdown",
+        "ignition_event": "ignition",
+        "assessment_complete": true
+      }
+    ]
+  },
+  "proposed_conclusion": null,
+  "query_count": 0,
+  "closure_min_facts": 2,
+  "closure_min_queries": 2,
+  "closure_min_score": 70
+}

@@ -5,8 +5,8 @@
 것을 묻는다. 옮긴 것이 실제로 맞히는가.
 
 판정 방식
-  6개 가설을 전부 세우고 사실을 넣어 점수를 매긴다. 기각되지 않은 것 중
-  최고점이 판정이다. 최고점이 동점이면 원인미상으로 둔다 — §19.6.5.1 이
+  9개 가설 후보에 사실을 넣어 점수를 매긴다. 형성되고 기각되지 않은 것 중
+  50점 초과의 유일한 최고점이 판정이다. 승자가 없으면 판단보류로 둔다 — §19.6.5.1 이
   둘 이상이 기각되지 않으면 원인미상이라고 한다. 억지로 하나를 고르면
   이론을 어기면서 정확도를 부풀리는 것이 된다.
 
@@ -16,7 +16,7 @@
   이 영역은 틀린 답보다 판단보류가 낫다(§19.6.5.1). 둘을 같이 보아야 한다.
 
 한계 (숫자를 읽을 때 함께 읽을 것)
-  외부화염 사례가 0건이다. 6개 중 5개만 나온다.
+  외부화염·과부하·누전지락·층간단락 라벨 사례가 없다. 9개 중 5개만 나온다.
   절연저항 슬롯이 0건이라 트래킹 반증 규칙은 발동하지 않는다.
   조사관 최초 판단이 없어 사람과 비교할 수 없다.
 """
@@ -33,7 +33,7 @@ KO = {"PoorContactScenario": "접촉불량", "CrushDamageScenario": "압착손�
       "Undetermined": "원인미상", "UnidentifiedShortCircuit": "미확인단락"}
 
 
-HELD = {"Undetermined", "UnidentifiedShortCircuit"}     # 판단보류 둘. 둘 다 오답으로 센다
+HELD = {"Undetermined", "UnidentifiedShortCircuit"}     # 전체 정확도의 정답에는 제외하되, 오판과 별도 집계
 
 
 def predict(sess, onto):
@@ -72,7 +72,7 @@ def main():
             unid[act] += 1
         if pred in HELD:
             undet[act] += 1
-            live = [h for h in s.hypotheses if h.verdict.value != "Refuted"]
+            live = [h for h in s.hypotheses if h.formed and h.verdict.value != "Refuted" and h.support_score > 50]
             top = max((h.support_score for h in live), default=0)
             ties.append((sess["case_id"], act,
                          [KO[h.scenario.value] for h in live if h.support_score == top]))
@@ -93,14 +93,14 @@ def main():
     print(f"사례 {n}건\n")
     print(f"  정확  {ok:3d}건  {ok / n * 100:5.1f}%")
     nu = sum(unid.values())
-    print(f"  판단보류 {nd:3d}건  {nd / n * 100:5.1f}%   (동점 또는 전부 기각) — 그중 미확인 단락 {nu}건, 원인미상 {nd - nu}건")
+    print(f"  판단보류 {nd:3d}건  {nd / n * 100:5.1f}%   (동점 또는 판정 요건을 갖춘 가설 없음) — 그중 미확인 단락 {nu}건, 원인미상 {nd - nu}건")
     print(f"  오판  {n - ok - nd:3d}건  {(n - ok - nd) / n * 100:5.1f}%")
     ans = n - nd
     print(f"\n  답한 것 중 정확  {ok:3d}/{ans}  {ok / ans * 100:5.1f}%   (판단보류 제외)")
     cn = sum(ceil.values())
     print(f"  도달 가능한 상한 {cn:3d}/{n}  {cn / n * 100:5.1f}%   (조사서에 자기 요인 단서가 있는 사례)")
 
-    print(f"\n{'실제':8s} {'건수':>4s} {'정확':>4s} {'미상':>4s} {'정확도':>7s} {'상한':>7s} {'남은거리':>8s}")
+    print(f"\n{'실제':8s} {'건수':>4s} {'정확':>4s} {'보류':>4s} {'정확도':>7s} {'상한':>7s} {'남은거리':>8s}")
     for a in sorted(per, key=lambda x: -per[x][1]):
         c, t = per[a]
         cl = ceil.get(a, 0)
@@ -125,7 +125,7 @@ def main():
     (ROOT / "cases" / "baseline.json").write_text(
         json.dumps(base, ensure_ascii=False, indent=1), encoding="utf-8")
 
-    print(f"\n동점으로 갈리지 않은 사례 {len(ties)}건 — 어느 가설끼리 붙었나")
+    print(f"\n판단보류 {len(ties)}건 중 실제로 경합한 가설의 동점만 표시")
     pair = collections.Counter()
     for _, act, tied in ties:
         if len(tied) > 1:

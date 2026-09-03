@@ -97,24 +97,17 @@ def checks(g):
     out.append(("손상 양상을 만들지 않는 발열 메커니즘",
                 sorted(m for m in mech if not _abstract(g, m) and not _linked(g, m, produces, 0)),
                 "이 메커니즘이 일어나도 아무 흔적이 안 남는다는 뜻이 된다"))
-    # 5대 요인 밖의 확장 슬롯. 가설로 세우려면 시나리오 집합을 늘려야 하는데
-    # 그건 배타 공리와 변별력 공식의 N 을 바꾸는 설계 결정이다.
-    #
-    # 결정했다 — 늘리지 않는다. 공식 분류표(실무Ⅳ 표 2-1)는 과부하와 중성선
-    # 단선을 정식 갈래로 두지만, 이 온톨로지가 가르는 5대 요인은 그 표의
-    # '전기적 요인' 아래 국내 실무가 쓰는 세부 분류이고 사례 라벨도 그 다섯이다.
-    # 시나리오를 늘리면 변별력 공식의 N 이 바뀌어 이미 검증한 가감점이 전부
-    # 흔들린다. 어휘는 남긴다 — 표 2-1 을 옮긴 흔적이고, 그 갈래가 의심되면
-    # 이 온톨로지의 범위 밖이라고 말할 수 있어야 한다.
-    SLOTS = {"OverloadHeating", "OpenNeutralOvervoltage", "SustainedFaulting"}
+    # 현행 9가설에서 독립 가설로 확장하지 않은 메커니즘이다.
+    # OverloadHeating은 이미 OverloadScenario가 선언하므로 제외 목록에서 뺀다.
+    # 새 독립 가설은 가설 집합·배타 공리·변별력 공식의 N을 함께 검토해야 한다.
+    SLOTS = {"OpenNeutralOvervoltage", "SustainedFaulting"}
     out.append(("어떤 가설도 쓰지 않는 발열 메커니즘 (확장 슬롯 제외)",
                 sorted(m for m in mech if not _abstract(g, m) and m not in SLOTS
                        and not _linked(g, m, declared, 1)),
                 "가설로 세울 수 없어 판정에 등장하지 못한다"))
-    # 결정이 끝났으므로 미완성 수에서 뺀다. 목록은 계속 보여 준다.
-    print_only.append(("확장 슬롯 — 범위 밖으로 결정됨", sorted(SLOTS),
-                       "표 2-1 의 정식 갈래이나 이 온톨로지가 가르는 다섯 요인 밖이다. "
-                       "시나리오를 늘리면 변별력 공식의 N 이 바뀐다"))
+    # 구조 결함 검사에서만 제외한다. 원문 이식의 완료로 세지 않는다.
+    print_only.append(("독립 가설 확장을 보류한 메커니즘", sorted(SLOTS),
+                       "현재는 별도 가설이 아니다. 원문 이식 미완료 목록에서 보류 근거를 관리한다"))
     exhibits = rel("exhibits")
     out.append(("어디에도 붙지 않은 손상 양상",
                 sorted(d for d in dmg if not _abstract(g, d)
@@ -208,7 +201,7 @@ if __name__ == "__main__":
             print(f"    ... 외 {len(items) - 20}건")
         total += len(items)
     for title, items, why in noted:
-        print(f"\n□ {title}  {len(items)}건  — 결정이 끝나 미완성 수에 넣지 않는다")
+        print(f"\n□ {title}  {len(items)}건  — 구조 결함 집계 제외, 원문 이식 완료와 별개")
         if why:
             print(f"    {why}")
         for i in items:

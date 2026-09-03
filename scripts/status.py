@@ -28,7 +28,7 @@ def main():
     import nfpa
     c = nfpa.counts()
     tot = len(nfpa.SECTIONS) - c[nfpa.OUT]
-    print("\n── NFPA 921 (2024) 이식률 " + "─" * 35)
+    print("\n── NFPA 921 (2024) 대조표상 구현 " + "─" * 30)
     print(f"  절 {len(nfpa.SECTIONS)}개 중 범위 내 {tot}개")
     print(f"  구현 {c[nfpa.DONE]}  일부 {c[nfpa.PART]}  없음 {c[nfpa.NONE]}  범위밖 {c[nfpa.OUT]}")
     print(f"  이식률 {c[nfpa.DONE]}/{tot} = {c[nfpa.DONE] / tot * 100:.0f}%")
@@ -41,7 +41,7 @@ def main():
     un = audit.unreviewed(g)
     import domestic
     dn, dins = domestic.counts()
-    print("\n── 국내 공식 분류 (실무Ⅳ 표 2-1) 이식률 " + "─" * 21)
+    print("\n── 국내 공식 분류 (실무Ⅳ 표 2-1) 대조표상 구현 " + "─" * 16)
     print(f"  갈래 {len(domestic.BRANCHES)}개 중 범위 내 {dins}개")
     print(f"  구현 {dn[domestic.DONE]}  일부 {dn[domestic.PART]}  "
           f"없음 {dn[domestic.NONE]}  범위밖 {dn[domestic.OUT]}")
@@ -50,14 +50,14 @@ def main():
     import silmu
     sn, sins = silmu.counts()
     ss, ssins = silmu.sub_counts()
-    print("\n── 국내 실무서 (실무Ⅳ 제2편 절 대조) 이식률 " + "─" * 19)
+    print("\n── 국내 실무서 (실무Ⅳ 제2편 절 대조) 구현 " + "─" * 19)
     print(f"  절 {len(silmu.SECTIONS)}개 중 범위 내 {sins}개")
     print(f"  구현 {sn[silmu.DONE]}  일부 {sn[silmu.PART]}  없음 {sn[silmu.NONE]}  "
           f"범위밖 {sn[silmu.OUT]}  현장절차 {sn[silmu.PROC]}")
     print(f"  이식률 {sn[silmu.DONE]}/{sins} = {sn[silmu.DONE] / sins * 100:.0f}%")
     print(f"  하위 절까지 내려간 것 {len(silmu.SUBSECTIONS)}개 중 대상 {ssins}개, "
           f"{ss[silmu.DONE]}/{ssins} = {ss[silmu.DONE] / ssins * 100:.0f}%  없음 {ss[silmu.NONE]}")
-    print(f"  없음에서 나온 후보 {len(silmu.CANDIDATES)}개 — make silmu")
+    print(f"  과거 후보 기록 {len(silmu.CANDIDATES)}개(완료·보류 포함) — make silmu")
 
     import babrauskas as bab
     bn, bins = bab.counts()
@@ -67,7 +67,19 @@ def main():
     print(f"  절 {len(bab.SECTIONS)}개 중 범위 내 {bins}개 — 구현 {bn[bab.DONE]}  일부 {bn[bab.PART]}  없음 {bn[bab.NONE]}")
     print(f"  이식률 {bn[bab.DONE]}/{bins} = {bn[bab.DONE] / bins * 100:.0f}%,  하위 절 {bs[bab.DONE]}/{bsins} = {bs[bab.DONE] / bsins * 100:.0f}%")
     print(f"  실무Ⅳ와의 관계 — 일치 {br[bab.AGREE]}  상충 {br[bab.CONFLICT]}  보강 {br[bab.ADDS]}")
-    print(f"  상충에서 나온 후보 {len(bab.CANDIDATES)}개 — make babrauskas")
+    print(f"  과거 후보 기록 {len(bab.CANDIDATES)}개(완료·보류 포함) — make babrauskas")
+
+    import backlog
+    data = backlog.load()
+    errors = backlog.validate(data, backlog.catalog())
+    print("\n── 원문 이식 작업 목록 " + "─" * 38)
+    work = backlog.counts(data)
+    print("  " + " / ".join(f"{state} {work[state]}" for state in backlog.STATES))
+    print("  중복을 합친 작업 수다. 상위·하위 절 수와 합산하지 않는다")
+    print("  범위제외·보류로 나누어도 위 대조표의 구현 수·분모는 바뀌지 않는다")
+    print("  상세 및 문서 검증: python scripts/backlog.py --check")
+    if errors:
+        raise SystemExit("\n".join(errors))
 
     print("\n── 형태 발현 편향 점검 " + "─" * 38)
     print(f"  손상 양상 {len(dp)}개(직속) / 판정 {len(audit.VERDICTS)}건 / 미검토 {len(un)}건")
@@ -75,12 +87,13 @@ def main():
 
     sys.path.insert(0, str(ROOT / "tests"))
     import test_completeness as tc
-    print("\n── 완성도 래칫 " + "─" * 45)
+    print("\n── 과거 구조 결함 회귀 관리 " + "─" * 35)
     if tc.BASELINE:
         for key, (limit, target) in tc.BASELINE.items():
             print(f"  {key:32s} {limit:>3d} → 목표 {target}")
     else:
-        print("  남은 항목 없음. 세던 미완성 8개가 전부 불변식으로 옮겨졌다")
+        print("  기존 구조 결함 8개는 해소되어 회귀 검사로 관리한다")
+    print("  이 검사는 원문 이식 완료 여부를 판정하지 않는다")
 
     base = ROOT / "cases" / "baseline.json"
     if base.exists():

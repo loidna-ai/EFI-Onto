@@ -32,11 +32,21 @@ make clean
 ```
 ontology/efi_tbox.ttl        TBox 본체 (규모는 make status)
 src/efi_schema.py            Pydantic 파이프라인. 점수 산출과 질의 선택
+src/investigation.py         계통·시간·연료·비교·검토의 출처 있는 입력과 RDF 직렬화. 결론 제약은 TTL에 둔다
+scripts/investigate.py        조사 JSON → SHACL 검증·경로/시간/비교/검토 질문
 scripts/score.py             가감점 산출. 가중치의 단일 진실 원천
 scripts/nfpa.py              NFPA 921 절 대조표. 이식률의 분모
 scripts/domestic.py          실무Ⅳ 표 2-1 갈래 대조표. 국내 실무 층의 분모
-scripts/silmu.py             실무Ⅳ 제2편 절 대조표. '없음'을 남기는 분모 — CANDIDATES 가 다음 작업
+scripts/silmu.py             실무Ⅳ 제2편 절 대조표. CANDIDATES는 완료·보류를 포함한 과거 기록
 scripts/babrauskas.py        Ignition Handbook 전기 절 대조표. 국내 교재와의 일치/상충/보강 열이 있다
+scripts/backlog.py           원문 미완료 행·작업·근거 연결 검사와 목록 생성 (make backlog)
+docs/tbox_backlog.json       원문 이식 작업의 상태·근거·완료 조건
+docs/TBox_미완료_목록.md      위 목록에서 생성한 현재 미완료 작업과 원문 행별 추적표
+docs/T01_T04_구현.md          입력 의미·실행 예제·판단 경계·후속 작업
+docs/T05_T06_T12_구현.md      비교·계획·범위별 기술 검토·금속분 사건열과 원문 대응
+docs/T07_구현.md              접속 구조·나사 재질·제품 조건별 토크 비교와 측정 시점
+docs/T14_구현.md              절연재·충전재 식별과 가열·표면 수분 이력의 적용 범위
+docs/T15_구현.md              도체·접점 금속·도금과 과학·역사 문헌의 조건별 적용 범위
 scripts/audit.py             형태 발현 편향 점검. '화재도 이 흔적을 내는가'
 scripts/cause_audit.py       선행 조건 편향 점검. '정말 그 요인에서만 일어나는가'
 scripts/lint.py              구조 점검. 어휘가 사슬에 붙어 있는가
@@ -48,7 +58,7 @@ scripts/status.py            현재 상태 요약
 scripts/consistency.py       OWL 2 DL 일관성 검사 (HermiT 직접 호출)
 scripts/{extract,build,graph,review,export}.py   시각화·검토표
 tests/test_ontology.py       정합성 불변식. 깨지면 안 되는 것
-tests/test_completeness.py   완성도 래칫. 얼마나 남았는가
+tests/test_completeness.py   기존 구조 결함의 회귀 관리. 원문 이식 완료율과 별개
 docs/인계.md                 다음 세션이 읽을 것 — 상태·남은 일·반복한 실수
 docs/자료_목록.md             구해야 할 원문 자료. 우선순위와 온톨로지의 어디를 채우는가
 docs/                        설계계획서 + 변경 이력
@@ -131,6 +141,37 @@ build/                       생성물. git 에 넣지 않음
   붙이면 F-4 가 못 본다 — 실제로 일곱 도출이 그렇게 죽어 있었다. 증거물은 세션의 사실(hasFact)로
   들어와 있어야 하고, 도출 사실은 출처를 증거물에서 물려받는다. SHACL 전용이며 Python 은 계측을 안 받는다.
   `test_measurement_derivations_reach_scores` 가 끝까지 확인한다.
+- **성분 검출과 선행 조건을 혼동하지 않는다.** D-3은 확인된 아산화동 성분과 접속부 증식 형태를
+  함께 요구한다. 단순 피막은 `CuprousOxideDeposit`다(§9.7.3.2). D-17은 부식 관찰을
+  `ContactCorrosion`로 기록하며 발화 전 존재가 확인될 때만 `CorrodedConnection`을 만든다(§9.7.5.2).
+  `tests/test_nfpa_inputs.py`가 미확인·사후 관찰의 가점 방지를 확인한다.
+- **순알루미늄은 합금이 아니다.** C-53은 두 재질의 용융 특성을 구별해 판정법 적용 근거를 받는다.
+  해당 기록만으로 아크를 증명하거나 가점을 주지 않는다. A.9.7.4는 미확보·보류이고 구현의 선행 조건이 아니다.
+- **계통 연결·발견 상태·사건 시각을 분리한다 (T01~T03).** 조사 기록은 `hasInvestigationRecord`에 저장한다.
+  연결 확인·발견 OFF·사후 격리에서 통전/비통전 사실을 자동으로 만들지 않는다. 시간은 발생 범위와 관찰 시각을 구분한다.
+  차단 후 아크의 모순은 동일 공급원과 해당 기간의 완전한 복전 이력을 요구한다. AMI 미확보는 사건 부재가 아니다.
+- **최종 결론의 연료·열전달은 근거 기록을 요구한다 (T04).** `FirstFuelAssessment`·`HeatTransferAssessment`가
+  같은 가설·연료·발열원·세션을 가리켜야 한다. 후보는 미확인을 허용한다. `proposed_conclusion`은 명시적으로만 제출한다.
+- **비교 특징과 원인 사실을 분리한다 (T05).** §9.10.3.1의 13항목은 하나 이상 나타날 수 있는 관찰이다.
+  `HeatingCharacteristicObservation`은 기존 손상 클래스나 점수로 자동 변환하지 않는다. 동종 금속 비교에는 동등 노출을,
+  분전반 내외 비교에는 명시적인 위치·함체·노출 근거를 요구한다. 함체 미기록을 외부 위치로 읽지 않는다.
+- **범위별 기술 검토는 전문성·자료·비평을 함께 기록한다 (T06).** `TechnicalReviewRecord`의 전체/선택 범위를
+  `ReviewScopeAssessment`로 대조한다. 특정 자격 제도·경력 문턱을 보편화하지 않는다. 계획·검토 의견은 스스로의 관측 근거가 아니다.
+- **접점 아크의 금속분 부착과 열적 열화 경로를 구별한다 (T12·T13).** 금속분은 실무Ⅳ 인쇄 p.261의
+  `MetalDepositionRecord` 사건열로 구현했다. p.211의 주변 절연재 열화→트래킹은 T13 기존보류다.
+  발화 전 사건열을 확인해도 `ContaminatedEnvironment`·트래킹 원인·가점을 자동 생성하지 않는다.
+- **접속 방식·재질·토크를 원인으로 자동 승격하지 않는다 (T07).** `TerminationRecord`는 스프링 삽입식과
+  삽입 후 나사 조임식을 구별한다. `FastenerRecord`의 자석 반응은 재질 판정과 별도다. `TorqueComparison`은
+  제품·접속·도체·측정 종류가 맞는 제조사 기준을 사용하며 0.7 N·m 연구값(p.759)을 공통 문턱으로 두지 않는다.
+  사후 잔류·풀림·재체결 토크는 발화 전 적용 기록이 아니다. 적용 기록이 있어도 발화 때까지 체결 상태가 유지됐다고 추론하지 않는다.
+- **NFPA 2024의 §9.10.2 번호는 TIA 24-1 반영 기준이다.** 신설 연구 절은 .1, 인입 고장은 .2,
+  버스바는 .3이다. 아크 미발견에서 사건 부재를 도출하지 않고 시험 전압을 보편 문턱으로 쓰지 않는다.
+- **절연재 가열·수분 기록의 완비는 원인 판정이 아니다 (T14).** §9.9.4.5.1은 탄산칼슘 함유 PVC의
+  자체 습윤을 설명한다. 가열·수분은 독립된 출처·발생 범위로 기록하고 110°C를 범용 문턱으로 쓰지 않는다.
+  `InsulationHistoryReview`의 자료 완비와 발화 전 시간 선후는 별도다. T13 인과 경로·필요조건 보류를 유지한다.
+- **알루미늄 배선 문헌은 금속 조합과 설치 범위를 함께 적용한다 (T15).** 도체 재질·등급·크기·형태와
+  접점 모재·도금·접속 방식·용도·지역·연도·적합 표시를 분리한다. 미국 1964~72년 소구경 분기배선
+  연구를 국내·대형 인입선에 일반화하지 않는다. 산화막 전도 특성과 조건 일치는 원인·가점이 아니다.
 - **가설의 메커니즘이 내는 흔적은 가설의 canManifest 에도 적는다.** M-3 은 반대 방향만 본다.
   빠지면 공유 수가 적게 세어져 점수가 부푼다. `test_declared_manifestations_cover_mechanisms` 가 잡는다.
 - **반증 단서(Refuting)는 기각이 아니라 감점이다.** 기각은 결정적 반증(DecisiveRefuting)만.
@@ -153,7 +194,7 @@ build/                       생성물. git 에 넣지 않음
    척도(지지 15 / 반증 30)는 확정 조건에서 풀려나온 값이고, 형태학적 감쇠 0.7 만 판단이다.
    **사례 150건으로 검증했다** (`make calibrate`). 같은 공식에 '양립 가능한 가설 수' 대신
    '실제로 관측되는 유효 가설 수'(2^H, H는 P(요인|단서)의 엔트로피)를 넣어 나란히 본다.
-   15개 중 14개가 5점 이내로 일치한다.
+   현재 관측 수와 차이는 `make calibrate`에서 다시 산출한다.
    **보정하지는 않는다** — 라벨이 조사관 판정이고, 5요인 균등 표집이며, 150건은 조건부 확률에 적다.
    어긋나는 지점은 사슬을 다시 보라는 신호로 쓴다. 실제로 그렇게 여러 건을 고쳤다.
 2. **NFPA 921 조항 대조 진행 중.** `scripts/nfpa.py` 가 절별 상태를 들고 있다.
@@ -190,8 +231,9 @@ build/                       생성물. git 에 넣지 않음
    outcomeUndetermined 가 그랬다. 선언만 하면 확인해도 판정에 기여하지 못한다.
    `make lint` 가 센다. 새 클래스·속성을 만들면 그 자리에서 사슬에 붙인다.
 4. **사례 150건은 `cases/sessions.json` 에 있다** (git 밖, `python scripts/slots.py` 로 재생성).
-   정확도는 `scripts/eval.py` 가 잰다. **반증 규칙은 이 150건에서 한 번도 발동하지 않는다** —
-   정확도는 전부 지지점수에서 나온다. 반증을 새로 붙일 때는 원문이 양립 불가를 말하는지
+   정확도는 `scripts/eval.py` 가 잰다. 반증 규칙 24개 중 2개가 이 150건에서 발동한다.
+   `Undetermined`와 `UnidentifiedShortCircuit`는 모두 판단보류로 세고 오판과 분리한다.
+   반증을 새로 붙일 때는 원문이 양립 불가를 말하는지
    확인하고 `make refute` 로 반례를 센다. "B 가 X 를 낸다"는 인용은 반증 근거가 아니다.
 5. **DL 일관성(V1)은 통과했다.** `make reason` 으로 HermiT 을 돌린다. Java 와 owlready2 가 필요하다.
    pySHACL 은 DL 일관성을 보지 않으므로 이 검사 없이는 불만족 클래스가 생겨도 다른 시험이 전부 통과한다.

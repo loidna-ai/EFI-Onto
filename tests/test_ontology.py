@@ -648,8 +648,9 @@ def test_a_complete_conclusion_can_pass():
            prov:wasAttributedTo efi:invG ; efi:analyzed true .
     efi:sG efi:hasFact efi:dG , efi:f1 , efi:f2 , efi:f3 , efi:f4 , efi:f5 , efi:f6 .
     efi:fuelG a efi:InsulationMaterialFuel ; efi:distanceToHeatSource_mm 2 .
+    efi:mechanismG a efi:ArcTracking .
     efi:hG a efi:TrackingScenario ; efi:inSession efi:sG ;
-           efi:hasMechanism [ a efi:ArcTracking ] ; efi:hasFirstFuel efi:fuelG ;
+           efi:hasMechanism efi:mechanismG ; efi:hasFirstFuel efi:fuelG ;
            efi:hasAntecedent [ a efi:ContaminatedEnvironment ] ; efi:verdict efi:Supported ;
            efi:supportedBy efi:f1 , efi:f2 , efi:f3 , efi:f4 , efi:f5 ;
            efi:sourceCompetentForFuel true ; efi:timelineConsistent true ;
@@ -664,6 +665,19 @@ def test_a_complete_conclusion_can_pass():
             efi:hasMechanism [ a efi:PoorContactHeating ] .
     efi:cG a efi:Conclusion ; efi:concludes efi:hG ; efi:certaintyLevel efi:Probable ;
            efi:statedLimitation "절연저항 계측 불가 구간 있음" .
+    efi:fuelRecordG a efi:FirstFuelAssessment ; efi:recordSession efi:sG ;
+           efi:assessedScenario efi:hG ; efi:assessedFuel efi:fuelG ;
+           efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invG ;
+           efi:recordSource "합성 사례 G의 현장 사진·잔존물 기록" ;
+           efi:fuelPresenceBasis "발화 당시 접속부 피복의 존재를 사진과 잔존물로 확인" .
+    efi:heatRecordG a efi:HeatTransferAssessment ; efi:recordSession efi:sG ;
+           efi:assessedScenario efi:hG ; efi:assessedFuel efi:fuelG ; efi:assessedMechanism efi:mechanismG ;
+           efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invG ;
+           efi:recordSource "합성 사례 G의 열전달 검토·재현 기록" ;
+           efi:transferDescription "탄화 경로에서 접촉 피복으로 직접 전도" ;
+           efi:heatAdequacyBasis "동일 조건 재현으로 가열·열손실·착화를 확인" ;
+           efi:durationBasis "사건 영상과 재현 시험의 가열 지속 구간 대조" ;
+           efi:fuelConditionBasis "피복 두께·형상·위치 및 탄화 경로 접촉 확인" .
     """
     msgs = _msg(gold)
     assert "Message:" not in msgs and "Conforms: True" in msgs, "완전한 사례가 막혔다:\n" + msgs[:900]
@@ -1047,7 +1061,7 @@ def test_measurement_derivations_reach_scores():
         efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
     efi:ins a efi:Insulation ; efi:insulationResistance_MOhm 0.05 ; efi:requiredInsulationResistance_MOhm 0.2 ;
         efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
-    efi:cp a efi:ConnectionPoint ; efi:cuprousOxidePresent true ;
+    efi:cp a efi:ConnectionPoint ; efi:cuprousOxidePresent true ; efi:oxideMassGrowthConfirmed true ;
         efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
     efi:sM efi:hasFact efi:wire , efi:cord , efi:cb , efi:ins , efi:cp .
     efi:hPD a efi:PartialDisconnectionScenario ; efi:inSession efi:sM .

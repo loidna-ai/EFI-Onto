@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-"""TBox 완성도 래칫. 미완성 부분을 수치로 고정한다.
+"""TBox의 기존 구조 결함을 수치로 고정하는 회귀 관리.
 
-test_ontology.py 가 '정합성이 깨졌는가'를 묻는다면 이 파일은 '얼마나 남았는가'를 묻는다.
+기존 8개 지표의 해소 여부를 관리한다. 원문 전체 이식의 완료 여부를 재지 않는다.
+원문 미완료 행과 작업은 scripts/backlog.py 및 docs/TBox_미완료_목록.md에서 관리한다.
 전부 통과하는 것이 정상 상태다. 실패하면 둘 중 하나다.
   · 나빠졌다  → TTL 수정이 미완성 영역을 늘렸다. 되돌린다.
   · 좋아졌다  → BASELINE 을 측정값으로 조인다. 되돌아가지 못하게 못을 박는다.
@@ -23,7 +24,7 @@ SCENARIOS = ["PoorContactScenario", "CrushDamageScenario", "PartialDisconnection
 
 # 왼쪽이 현재 허용 한계, 오른쪽이 도달 목표.
 BASELINE = {}
-# 비었다 — 세던 미완성이 전부 닫혔다. 새 항목이 생기면 여기 적는다.
+# 비었다 — 아래 8개 구조 지표를 해소했다. 새 구조 지표가 생기면 여기 적는다.
 # 이관 완료: arc_sequence_rules(0→3), role_rank_mismatch(4→0),
 #           morphological_core_rules(1→0), unreviewed_fire_producibility(8→0),
 #           unreviewed_cause_exclusivity(11→0), min_refuting_per_scenario(1→2),

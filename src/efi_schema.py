@@ -11,6 +11,7 @@ from enum import StrEnum
 from typing import ClassVar, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
+from investigation import InvestigationData
 
 EFI = "https://w3id.org/efi-onto#"
 
@@ -340,10 +341,32 @@ class Session(BaseModel):
     artifacts: list[str] = []
     facts: list[Fact] = []
     hypotheses: list[Hypothesis] = []
+    investigation: InvestigationData | None = None
+    proposed_conclusion: Scenario | None = None
     query_count: int = 0
     closure_min_facts: int = 2       # 확정 조건 (논문 3.2절)
     closure_min_queries: int = 2
     closure_min_score: int = 70
+
+    @model_validator(mode="after")
+    def _investigation_references(self):
+        names = {h.scenario.value: h for h in self.hypotheses}
+        if len(names) != len(self.hypotheses):
+            raise ValueError("duplicate hypothesis scenario")
+        if self.proposed_conclusion is not None and self.proposed_conclusion.value not in names:
+            raise ValueError("proposed conclusion must refer to a registered hypothesis")
+        if self.investigation:
+            known_fuels = {name: h.first_fuel.value for name, h in names.items() if h.first_fuel is not None}
+            for record in [*self.investigation.first_fuels, *self.investigation.heat_transfers]:
+                if record.scenario not in names:
+                    raise ValueError("investigation record must refer to a registered hypothesis")
+            for record in self.investigation.first_fuels:
+                if record.scenario in known_fuels and known_fuels[record.scenario] != record.fuel_class:
+                    raise ValueError("conflicting first fuel classes for the same hypothesis")
+                known_fuels[record.scenario] = record.fuel_class
+            if any(r.scenario not in known_fuels for r in self.investigation.heat_transfers):
+                raise ValueError("heat transfer record requires an identified candidate fuel")
+        return self
 
     # ---- 조회 ----
     def status_of(self, cls: str) -> Status:
@@ -513,6 +536,7 @@ class Session(BaseModel):
         둘 다 쓰면 값이 둘이 되어 모순이다. 검증할 때는 입력만 넘기고
         도출은 SHACL 에 맡긴다."""
         from rdflib import BNode, Graph, Literal, Namespace, RDF, URIRef
+        from decimal import Decimal
         E, PROV = Namespace(EFI), Namespace("http://www.w3.org/ns/prov#")
         g, s = Graph(), URIRef(f"{EFI}session_{self.case_id}")
         g.bind("efi", E); g.bind("prov", PROV)
@@ -522,13 +546,29 @@ class Session(BaseModel):
             g.add((s, E.hasFact, n)); g.add((n, RDF.type, E[f.cls]))
             g.add((n, E.confirmationStatus, E[f.status])); g.add((n, PROV.wasAttributedTo, E[f"{self.case_id}_{f.agent}"]))
             g.add((E[f"{self.case_id}_{f.agent}"], RDF.type, E[f.agent]))
+        nodes = {}
         for h in self.hypotheses:
             n, m = URIRef(f"{EFI}{self.case_id}_{h.scenario}"), BNode()
+            fuel = URIRef(f"{n}/first_fuel")
+            nodes[h.scenario.value] = (n, m, fuel)
             g.add((n, RDF.type, E[h.scenario])); g.add((n, E.inSession, s))
             g.add((n, E.hasMechanism, m)); g.add((m, RDF.type, E[h.mechanism]))
+            if h.first_fuel is not None:
+                g.add((n, E.hasFirstFuel, fuel)); g.add((fuel, RDF.type, E[h.first_fuel]))
+            if h.mechanism_max_temp_c is not None:
+                g.add((m, E.maxAttainableTemperature_C, Literal(Decimal(str(h.mechanism_max_temp_c)))))
+            if h.fuel_ignition_temp_c is not None and (h.first_fuel is not None or (
+                    self.investigation is not None and any(r.scenario == h.scenario.value for r in self.investigation.first_fuels))):
+                g.add((fuel, E.ignitionTemperature_C, Literal(Decimal(str(h.fuel_ignition_temp_c)))))
             if include_derived:
                 g.add((n, E.supportScore, Literal(h.support_score)))
                 g.add((n, E.verdict, E[h.verdict]))
+        if self.investigation is not None:
+            self.investigation.add_to_graph(g, s, nodes)
+        if self.proposed_conclusion is not None:
+            conclusion = URIRef(f"{s}/proposed_conclusion")
+            g.add((conclusion, RDF.type, E.Conclusion))
+            g.add((conclusion, E.concludes, nodes[self.proposed_conclusion.value][0]))
         return g.serialize(format="turtle")
 
 

@@ -22,8 +22,9 @@
 읽는 법
   NONE 이 이 파일의 값어치다. nfpa.py 와 domestic.py 는 NONE 이 0 이었다 — 못 담은
   것을 전부 OUT 으로 돌렸기 때문이다. 여기서는 원문이 감식 기준을 주는데 어휘가
-  없으면 NONE 으로 남긴다. 그 목록이 CANDIDATES 이고 다음 작업이다.
-  CANDIDATES 는 후보다. 붙이기 전에 CLAUDE.md 의 질문 둘을 거친다 — 이 흔적을
+  없으면 NONE 으로 남긴다. CANDIDATES 는 완료·보류를 포함한 과거 후보 기록이다.
+  현재 작업 상태는 docs/TBox_미완료_목록.md에서 관리한다.
+  새로 붙이기 전에 CLAUDE.md 의 질문 둘을 거친다 — 이 흔적을
   화재 자체가 낼 수 있는가, 정말 그 요인에서만 일어나는가.
 """
 from collections import Counter
@@ -114,8 +115,8 @@ SECTIONS = [
      "단독 판정 불가는 MetallographyAloneShape"),
     ("3.4.3", 311, "과전류와 화염에 의한 전선피복의 소손흔", DONE,
      "UniformDamageAlongConductor·CarbonizationFromInsideOut(p.312). 200~300% 온도·시간 단계는 실험값이라 담지 않는다"),
-    ("3.4.4", 313, "과전류에 의한 전선 용단흔의 특징", PART,
-     "OverloadMeltingNotProofShape·Sleeving·MeltOffset 은 NFPA 쪽. '망울이 정상 표면을 감싼다'·'미용융 표면 산화 박리'는 어휘 없음"),
+    ("3.4.4", 313, "과전류에 의한 전선 용단흔의 특징", DONE,
+     "OvercurrentFusedBead와 R_OL_sup5가 정상 표면을 감싸는 망울을 표현한다. 주변 산화·박리는 클래스의 관찰 정의에 포함. OverloadMeltingNotProofShape는 용융만으로 발화를 단정하지 못하게 한다"),
     ("3.4.5", 315, "외부화염에 의한 전선피복의 표면형태", DONE,
      "경계 명확·밖→안 탄화 → CarbonizationFromInsideOut 부정, 2차 합선 → SecondaryArcMark. 하위 절 참조"),
     ("3.4.6", 318, "소화 후에 나타나는 손상형태", DONE,
@@ -227,8 +228,7 @@ SUBSECTIONS = [
      "IntactSurroundingsAroundComponent(R_ANY_Intact·R_EF_sup5), LocalizedHeatWithSurroundingDamage(R_ANY_LocalHeat), InterTurnShortCircuit"),
     ("3.1.5", "라", "커넥터 — 같은 기준", DONE, "위와 같다"),
     ("3.1.5", "마", "릴레이 접점 융착 — 아크 → 변형 → 접촉저항 상승 → 융착 → 계속 통전", DONE, "ContactWelding(p.211)"),
-    ("3.1.5", "바", "바이메탈 서모스탯 — 접점 아크가 주변 절연재를 열화시켜 트래킹", PART,
-     "결과(DeviceInteriorSite 트래킹)는 구현. '접점 아크가 오염원'이라는 사슬 — 아크 비산 금속분 → ContaminatedEnvironment — 은 없다"),
+    ('3.1.5', '바', '바이메탈 서모스탯 — 접점 아크가 주변 절연재를 열화시켜 트래킹', PART, '인쇄 p.211은 반복 접점 아크→주변 절연재 열화→트래킹 사례이며 금속분 부착을 명시하지 않는다. 기존 결과 어휘는 있으나 열화 경로는 T13 기존보류로 이동. T12로 완료 처리하지 않는다'),
     # 3.2.1
     ("3.2.1", "나", "점등 중 파손 — 필라멘트 산화 소실·앵커 용착 → 점등 상태 입증", NONE,
      "통전 입증 단서. 2.1 과 같은 자리. CANDIDATES ⑦"),
@@ -236,7 +236,7 @@ SUBSECTIONS = [
     ("3.2.1", "바", "전구 변형으로 연소 진행방향", OUT, "발화지점 특정"),
     # 3.2.2
     ("3.2.2", "가", "안정기 층간단락 진행 — 절연열화 → 층간단락 → 이상발열 → 확대", DONE,
-     "InterTurnShortCircuit(p.219~220 되먹임 고리), WindingSite. ㉯ 이음·이취는 FlickeringOrOdor(규칙 없음, gaps.py)"),
+     "InterTurnShortCircuit(p.219~220 되먹임 고리), WindingSite. 이취는 FlickeringOrOdor·R_IT_sup4로 연결되어 있다"),
     ("3.2.2", "나", "점등관 — 바이메탈 아크 용융 과전류 / 소켓 접촉불량", PART,
      "소켓 접촉불량은 ConnectionCondition. 바이메탈 용융 → 지속 과전류는 어휘 없음(고장 갈래)"),
     ("3.2.2", "다", "전자회로 부품 — 절연파괴·트래킹·납땜부 접촉저항", PART,
@@ -260,7 +260,7 @@ SUBSECTIONS = [
     ("3.3.2", "나4", "기판 기름·먼지·바퀴벌레 배설물 → 이극 단자 트래킹", DONE,
      "ContaminatedEnvironment(배설물은 오염물의 하나). (바) 절연기판 스파크·아크 흔적 → CarbonizedConductivePath"),
     ("3.3.2", "나5", "래치스위치 접점 마모 접촉불량 · 접점간 저항 수Ω~수십Ω", PART,
-     "ReducedContactArea·IntermittentContactSeparation. 접점 저항 측정값은 어휘 없음 — CANDIDATES ③ 과 같은 계측"),
+     "ReducedContactArea·IntermittentContactSeparation. 접점 저항 측정은 미구현. CANDIDATES ③의 탄화부 저항과 측정 대상·판정 조건이 달라 별도 작업으로 관리한다(docs/TBox_미완료_목록.md)"),
     ("3.3.2", "나6", "모터 배선·코일 — 층간단락, 통풍 저해, 진동 단락, 먼지·습기 열화", DONE,
      "InterTurnShortCircuit, HeatDissipationImpairment, Vibration, R_ID_sup7·R_ID_sup8"),
     ("3.3.2", "나7", "전원코드 — 눌림 1차용흔, 스테이플 반단선, 카펫 아래 방열 악화", DONE,
@@ -277,18 +277,16 @@ SUBSECTIONS = [
     ("3.3.3", "다3", "코드·커넥터 접속부 — 헐거움, 다발 배선, 방열부 눌림·카펫, 플러그 불완전 접촉, 삽입구 반단선, 결로 접점 트래킹, 히터선 가늘어짐, 쥐 갉음", DONE,
      "LooseConnection, BundledWiring, CoveredByFloorCovering(p.253), PlugJunctionArea·ApplianceEntryPoint, MoistureExposure, "
      "RodentGnawing·ToothMarkOnInsulation(p.253). (7)히터선 가늘어짐 적열은 통전 단면적 감소라 반단선과 같은 물리인데 어휘 없음"),
-    ("3.3.3", "다4", "안전장치 제거 팬모터 과열 → 층간단락", PART, "층간단락은 구현. 온도퓨즈 제거는 개조불량(domestic.py PART)"),
+    ('3.3.3', '다4', '안전장치 제거 팬모터 과열 → 층간단락', DONE, '층간단락은 기존 구현. 보호장치 Removal·Modification 사건을 대상·시각·출처에 연결하며 제거를 자동 부동작 증명으로 읽지 않는다'),
     ("3.3.3", "다5", "컴프레서 코일 층간단락", DONE, "InterTurnShortCircuit·WindingSite"),
     ("3.3.3", "다6", "콘덴서 — 단자 느슨 / 소자 내부 절연열화 → 케이스 구멍·쪼개짐·내부 탄화", DONE,
      "LooseConnection / InternalDamageExceedingSurface(p.254). 고조파는 범위밖"),
     ("3.3.3", "다7", "진동 — 외함 날카로운 절단면과 내부 배선 마찰", DONE, "Vibration+AbrasionAtPenetration"),
     # 3.3.5
-    ("3.3.5", "가1", "냉온수기 개요 — 서모스탯 접점 아크 용융 변형·비산 금속분이 절연물에 도포되어 절연파괴", PART,
-     "접점 변형 → 접촉저항은 IntermittentContactSeparation. 아크 비산 금속분 → 오염 사슬은 3.1.5바 와 같이 없음"),
+    ('3.3.5', '가1', '냉온수기 개요 — 서모스탯 접점 아크 용융 변형·비산 금속분이 절연물에 도포되어 절연파괴', DONE, '인쇄 p.261. 접점 변형→접촉저항은 기존 어휘. T12 MetalDepositionRecord에 발생원·절연면 부착·후속 절연파괴·발화 사건열과 출처를 연결. 사후 관찰을 선행 오염/점수로 자동 승격하지 않는다'),
     ("3.3.5", "가3", "감식요령 — 층간단락, 피복 손상 단락, 쥐, 전자접촉기 단자 먼지·습기 트래킹, 결로 접점 트래킹, 서모스탯 단자 오염 트래킹·그래파이트", DONE,
      "전부 기존 사슬. 기동장치 스파크 가스 착화는 범위밖"),
-    ("3.3.5", "가4", "입증 요건 — 연소형상·퓨즈/차단기 상태·전기적 특이점", PART,
-     "특이점은 사실(Fact)로 들어온다. 퓨즈·차단기 상태는 BreakerTripRecord 어휘만(gaps.py RULE). 연소형상은 발화지점"),
+    ('3.3.5', '가4', '입증 요건 — 연소형상·퓨즈/차단기 상태·전기적 특이점', DONE, '퓨즈 형태는 기존 FuseMeltPattern. 차단기 발견 위치·동작·수동 조작은 DeviceStateRecord·ElectricalEventRecord로 분리. 발화지점 특정은 기존 범위 밖'),
     ("3.3.5", "나다", "전기밥솥 조사포인트 — 코드 반복 작동 반단선, 커넥터·나사 이완, 기판 밥물 트래킹, 코일 층간단락", DONE,
      "RepeatedFlexing, LooseConnection, MoistureExposure+DeviceInteriorSite, InterTurnShortCircuit. (5)~(9)는 부품·과전압·용도 외 사용(범위밖)"),
     ("3.3.5", "나2가", "기판 그래파이트 도통시험 · 수분 침투 경로 특정", PART,
@@ -308,11 +306,11 @@ SUBSECTIONS = [
     ("3.3.6", "나3", "전원선 프레임 지락 → 누전차단기 강제 재투입 → 발열 → 단락", DONE,
      "GroundFaultScenario(48.2절). 감식 포인트 다섯이 규칙이다 — 누전차단기 작동(R_GF_sup3)·고장검사 정상+미동작(RcdHealthyNoTrip 반증)·"
      "프레임 용흔(MeltMarkOnGroundedMetal)·접지저항(LowGroundResistanceAtFaultPath). 연소방향성은 발화 지점 절차라 범위밖"),
-    ("3.3.6", "나4", "전원선 진동 프레임 접촉 단락 · 가장 부하측 용흔 2차측 무이상 · 금속 개입 단락은 차단기가 순간 작동 안 함", PART,
+    ("3.3.6", "나4", "전원선 진동 프레임 접촉 단락 · 가장 부하측 용흔 2차측 무이상 · 금속 개입 단락은 차단기가 순간 작동 안 함", DONE,
      "AbrasionAtPenetration+Vibration, D-5 는 구현. (3) '접촉저항이 커서 즉시 트립하지 않는다'가 옛 반증 규칙(트립 없음 → 압착 반증)과 "
      "정면으로 어긋나 그 규칙을 지우고 p.150 양측 용흔 반증(R_CD_ref3)으로 바꿨다. CANDIDATES ⑤"),
-    ("3.3.6", "나5", "쥐가 갉아 히터선 반단선", PART,
-     "RodentGnawing 은 압착손상에만 이어져 있다(cause_audit EXCL, p.253). p.286 은 갉음이 반단선도 만든다고 적는다 — 사슬 재검토. CANDIDATES ④"),
+    ("3.3.6", "나5", "쥐가 갉아 히터선 반단선", DONE,
+     "RodentGnawing → PartialDisconnectionHeating 및 R_PD_sup11 구현 확인. 압착에만 이어진다는 이전 메모를 정정했다. CANDIDATES ④는 완료된 변경 기록"),
     ("3.3.6", "나6", "손으로 비틀어 꼬아 접속 → 접촉부 과열 · 차단기 일시 미동작", DONE, "ConnectionJointSite. 미동작 문장은 나4 와 같은 항목"),
     ("3.3.6", "나7", "배선 오접속 히터 과열", OUT, "인적 요인"),
     ("3.3.6", "나나", "기판-단자 진동 접촉불량 — 반복 단속·접촉저항 증가", DONE, "Vibration(R_PC_sup3)·IntermittentContactSeparation"),
@@ -436,7 +434,8 @@ if __name__ == "__main__":
                 for i in range(0, len(note), 70):
                     print(f"              {note[i:i + 70]}")
 
-    print("\n\n── 없음에서 나온 후보 — 붙이기 전에 두 질문을 거친다 " + "─" * 16)
+    print("\n\n── 과거 후보 기록 — 완료·보류 포함 " + "─" * 24)
+    print("  현재 작업 상태: docs/TBox_미완료_목록.md (make backlog)")
     for no, name, says, src, place in CANDIDATES:
         print(f"\n  {no} {name}  ({src})")
         print(f"     원문: {says}")

@@ -1,0 +1,160 @@
+{
+  "case_id": "T15_SYNTHETIC",
+  "hypotheses": [],
+  "investigation": {
+    "system": {
+      "id": "system",
+      "status": "Confirmed",
+      "attributed_to": "investigator",
+      "source": "[합성] 현장 사진/기록 system",
+      "components": [
+        {
+          "id": "branch",
+          "cls": "BranchCircuit"
+        },
+        {
+          "id": "device",
+          "cls": "PlugReceptacle",
+          "circuit": "branch"
+        },
+        {
+          "id": "terminal",
+          "cls": "ConnectionPoint",
+          "container": "device",
+          "circuit": "branch",
+          "role": "Ungrounded"
+        },
+        {
+          "id": "wire",
+          "cls": "Conductor",
+          "circuit": "branch",
+          "role": "Ungrounded"
+        },
+        {
+          "id": "screw",
+          "cls": "TerminalFastener",
+          "container": "terminal"
+        }
+      ],
+      "connections": [
+        {
+          "id": "link",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "현장 사진/기록 link",
+          "from_component": "wire",
+          "to_component": "terminal"
+        }
+      ]
+    },
+    "terminations": [
+      {
+        "id": "term",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 사진/기록 term",
+        "component": "terminal",
+        "device": "device",
+        "conductor": "wire",
+        "connection": "link",
+        "method": "ScrewTerminal",
+        "conductor_material": "AluminumAlloy",
+        "conductor_material_basis": "[합성] 성분 분석과 제조 기록",
+        "conductor_alloy_grade": "EC-H19",
+        "conductor_form": "Solid",
+        "conductor_size": "12 AWG",
+        "product_id": "SYNTH-OLD-OUTLET",
+        "identification_basis": "[합성] 실제 단자 구조 확인",
+        "assessment_complete": true
+      }
+    ],
+    "mating_contacts": [
+      {
+        "id": "mate",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 사진/기록 mate",
+        "component": "screw",
+        "termination": "term",
+        "base_material": "Steel",
+        "surface_coating": "Zinc",
+        "material_basis": "[합성] 나사 모재 분석",
+        "coating_basis": "[합성] 표면 도금 분석",
+        "assessment_complete": true
+      }
+    ],
+    "metal_interface_references": [
+      {
+        "id": "reference",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "Babrauskas, Ignition Handbook (2003), pp.762–764",
+        "basis_kind": "HistoricalStudy",
+        "conductor_material": "AluminumAlloy",
+        "conductor_alloy_grade": "EC-H19",
+        "conductor_size": "12 AWG",
+        "conductor_form": "Solid",
+        "termination_method": "ScrewTerminal",
+        "mating_material": "Steel",
+        "mating_coating": "Zinc",
+        "installation_region": "United States",
+        "installation_year_from": 1964,
+        "installation_year_to": 1972,
+        "installation_use": "BranchCircuit",
+        "device_marking": "AL-CU",
+        "applicability_scope": "[합성 구조] Ignition Handbook pp.762–764의 미국 소구경 분기배선·구형 접속 조건"
+      },
+      {
+        "id": "oxide-reference",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "Babrauskas, Ignition Handbook (2003), p.550",
+        "basis_kind": "ScientificSource",
+        "conductor_material": "PureAluminum",
+        "conductor_oxide_behavior": "NegligibleConductivity",
+        "glow_path_explanation": "알루미늄 산화막의 통전보다 중간 전도도의 금속간화합물 경로가 제안됨",
+        "applicability_scope": "알루미늄 산화막의 전도 특성과 제안된 경로 설명"
+      }
+    ],
+    "metal_interface_comparisons": [
+      {
+        "id": "comparison",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 현장 사진/기록 comparison",
+        "termination": "term",
+        "mating_contact": "mate",
+        "reference": "reference",
+        "installation_region": "United States",
+        "installation_year": 1970,
+        "installation_use": "BranchCircuit",
+        "installation_use_basis": "[합성] 분기회로 도면",
+        "device_marking": "AL-CU",
+        "device_marking_basis": "[합성] 기기 표시 사진",
+        "connector_approval_status": "Confirmed",
+        "approval_basis": "[합성] 당시 제품 자료의 적용 범위 확인",
+        "applicability_basis": "[합성] 도체 등급·크기·나사 모재·도금·지역·연도·용도를 항목별 대조",
+        "assessment_complete": true
+      },
+      {
+        "id": "oxide-scope-review",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성] 적용 범위 검토 메모",
+        "termination": "term",
+        "mating_contact": "mate",
+        "reference": "oxide-reference",
+        "installation_region": "United States",
+        "installation_year": 1970,
+        "installation_use": "BranchCircuit",
+        "installation_use_basis": "[합성] 분기회로 도면",
+        "device_marking": "AL-CU",
+        "device_marking_basis": "[합성] 기기 표시 사진",
+        "connector_approval_status": "Confirmed",
+        "approval_basis": "[합성] 당시 제품 자료의 적용 범위 확인",
+        "applicability_basis": "실제 합금 도체에 순알루미늄 문헌 설명을 적용할 수 있는지 추가 검토",
+        "assessment_complete": false
+      }
+    ]
+  }
+}

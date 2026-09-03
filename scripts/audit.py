@@ -68,7 +68,10 @@ VERDICTS = {
     "EnlargedScrewHeadOxidation":  (ELEC, "§9.10.3.3 외부 화재 노출과 외관상 구별된다"),
     "OxideBanding":                (ELEC, "§9.10.3.1(12) 필라멘트 이동 흔적"),
     "BurnCenterOnSurface":         (FIRE, "실무Ⅳ p.153 표면 집중은 트래킹을 접속부 내부 발열과 가른다. 그러나 §9.10.1 외부 화염도 절연물을 표면부터 태우므로 전용 단서가 될 수 없다"),
-    "CuprousOxideGrowth":          (ELEC, "§9.10.3 발광 접속부의 산화물 생성"),
+    "CuprousOxideGrowth":          (ELEC, "§9.10.3.1(4) 접속부 증식 형태까지 확인한 경우. §9.7.3.2의 단순 아산화동 검출·피막은 제외"),
+    "CuprousOxideDeposit":         (FIRE, "§9.7.3.2 환원성 화재 환경에서도 적색 아산화동 피막이 생긴다"),
+    "ContactCorrosion":            (FIRE, "§9.7.5.2 PVC 분해 산물과 수분으로 금속이 부식될 수 있다. 발화 전 조건이 아니라 관찰 양상"),
+    "OxideRetainedAluminumMelt":    (FIRE, "§9.7.4.1 순알루미늄은 산화막 안에서 녹아도 형태를 유지하거나 방울 등을 남길 수 있다"),
 
     # 국내 실무 교재(화재조사실무Ⅳ 2025)에서 온 양상. NFPA 조항이 아니므로
     # 근거에 쪽수를 남긴다. 질문은 같다 — 화재도 이 흔적을 내는가?
@@ -78,7 +81,7 @@ VERDICTS = {
     "FuseMeltedAtCenter":          (ELEC, "실무Ⅳ p.203 100~300% 과부하 구간이 중앙을 녹인다. §9.9.3 화재는 그 구간이 아니라 완전 단락을 만든다"),
     "FuseEndsDarkened":            (ELEC, "실무Ⅳ p.203 양단 흑변은 홀더 접촉부의 장기 발열 산물. 화재열은 퓨즈를 고르게 가열한다"),
     "MeltMarkOnBothSidesOfBreak":  (ELEC, "실무Ⅳ p.150 파단부 양쪽이라는 대응은 그 지점의 접촉·단속 반복이 만든다. §9.10.1 화재 유발 아크는 위치를 고르지 않는다"),
-    "MeltMarkOnSupplySideOnly":    (ELEC, "실무Ⅳ p.150 전원측 편중은 방향성이다. §9.10.2.2 방향성은 전기적 현상의 표식이고 화재는 전원측을 가리지 않는다"),
+    "MeltMarkOnSupplySideOnly":    (ELEC, "실무Ⅳ p.150 파단부 양쪽 중 전원측에만 있는 용흔을 다룬다. 버스바 아크 이동(§9.10.2.3, TIA 24-1)은 별도 현상이며 이 판정의 직접 근거로 쓰지 않는다"),
     "StrandFractureOverTenPercent": (FIRE, "상위 StrandFracture 가 §9.10.2 로 화재도냄이다. 10% 라는 정도는 발화 전 상태를 뜻하지만 소손 후 형태만으로는 선후를 가릴 수 없다"),
     "LocalizedHeatWithSurroundingDamage": (ELEC, "실무Ⅳ p.210·211 주위까지 심하게 태운 국부 고열은 그 부품이 발화점이라는 표지다. 밖에서 온 화염은 이 대비를 만들지 않는다"),
     "IntactSurroundingsAroundComponent":  (FIRE, "실무Ⅳ p.210·211 부품과 주위가 모두 경미하면 외부 화염을 맞은 것으로 판정한다. 정의상 화재가 만드는 양상"),
@@ -92,7 +95,7 @@ VERDICTS = {
     "HemisphericalMeltShape":      (FIRE, "실무Ⅳ p.308 1차 용융흔에 반구형이 '많다'는 경향일 뿐 2차에도 나온다. 전용 단서가 아니다"),
     "SmoothLustrousMeltSurface":   (FIRE, "실무Ⅳ p.308 같은 경향 진술이다. 2차가 거친 것이 '많다'이지 항상은 아니다"),
     "ForeignMatterInclusion":      (FIRE, "실무Ⅳ p.309 2차 용융흔의 특징이다. 2차는 화재가 만든 것이므로 화재가 낸다"),
-    "AlloyDiscoloration":          (FIRE, "실무Ⅳ p.318 알루미늄은 은색, 아연합금은 황동색으로 변한다. 아크가 아니라 합금 용융온도가 낮아진 결과일 수 있다"),
+    "AlloyDiscoloration":          (FIRE, "실무Ⅳ p.318 합금 도체의 변색은 아크 없이도 가능하다. 순알루미늄 산화막 보존과 구분한다"),
     "PostFireMechanicalDamage":    (FIRE, "실무Ⅳ p.318 진화·도괴·수습·조사관 절단으로 생긴다. 정의상 화재 이후의 것이다"),
     "CarbonizationFromInsideOut":  (ELEC, "실무Ⅳ p.312 도체가 발열하면 피복을 안쪽부터 태운다. §9.10.1 밖에서 온 화염은 반대 방향으로 태우므로 이 방향을 만들지 못한다"),
     "UniformDamageAlongConductor": (FIRE, "실무Ⅳ p.312 과전류는 도체 전 길이를 고르게 가열한다. 그러나 전선 전체가 화염에 잠겨도 같은 균일 손상이 나온다"),

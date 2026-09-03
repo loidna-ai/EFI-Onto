@@ -1,0 +1,207 @@
+{
+  "case_id": "synthetic_t07",
+  "artifacts": [],
+  "facts": [],
+  "hypotheses": [],
+  "investigation": {
+    "system": {
+      "id": "system",
+      "status": "Confirmed",
+      "attributed_to": "investigator",
+      "source": "[합성 예제] 현장 사진/기록 system",
+      "observed_at": null,
+      "components": [
+        {
+          "id": "device",
+          "cls": "PlugReceptacle",
+          "container": null,
+          "circuit": null,
+          "role": null
+        },
+        {
+          "id": "terminal",
+          "cls": "ConnectionPoint",
+          "container": "device",
+          "circuit": null,
+          "role": "Ungrounded"
+        },
+        {
+          "id": "wire",
+          "cls": "Conductor",
+          "container": null,
+          "circuit": null,
+          "role": "Ungrounded"
+        },
+        {
+          "id": "screw",
+          "cls": "TerminalFastener",
+          "container": "terminal",
+          "circuit": null,
+          "role": null
+        }
+      ],
+      "connections": [
+        {
+          "id": "link",
+          "status": "Confirmed",
+          "attributed_to": "investigator",
+          "source": "[합성 예제] 현장 사진/기록 link",
+          "observed_at": null,
+          "from_component": "wire",
+          "to_component": "terminal",
+          "kind": "Supply"
+        }
+      ],
+      "paths": [],
+      "review_complete": false,
+      "source_inventory_complete": false
+    },
+    "device_states": [],
+    "events": [
+      {
+        "id": "fire",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 fire",
+        "observed_at": null,
+        "component": "device",
+        "kind": "Ignition",
+        "supply_source": null,
+        "replacement_component": null,
+        "replacement_compatible": null,
+        "earliest": "2026-09-03T10:00:00+09:00",
+        "latest": "2026-09-03T10:00:00+09:00"
+      }
+    ],
+    "power_records": [],
+    "first_fuels": [],
+    "heat_transfers": [],
+    "examinations": [],
+    "comparisons": [],
+    "heating_observations": [],
+    "problems": [],
+    "plans": [],
+    "verifications": [],
+    "technical_reviews": [],
+    "depositions": [],
+    "terminations": [
+      {
+        "id": "term",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 term",
+        "observed_at": null,
+        "component": "terminal",
+        "device": "device",
+        "conductor": "wire",
+        "connection": "link",
+        "method": "ScrewTerminal",
+        "conductor_material": "Copper",
+        "conductor_size": "14 AWG",
+        "product_id": "SYNTH-R1 rev.A",
+        "terminal_marking": "L, 황동색 나사 단자",
+        "identification_basis": "[합성] 단자 사진과 실제 구조 대조",
+        "assessment_complete": true
+      }
+    ],
+    "fasteners": [
+      {
+        "id": "fastener",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 fastener",
+        "observed_at": null,
+        "component": "screw",
+        "termination": "term",
+        "material": "Steel",
+        "magnetic_response": "Attracted",
+        "identification_method": "MaterialAnalysis",
+        "identification_basis": "[합성] 해당 나사 성분 분석"
+      }
+    ],
+    "torque_measurements": [
+      {
+        "id": "measurement",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 measurement",
+        "observed_at": "2026-09-03T14:00:00+09:00",
+        "termination": "term",
+        "fastener": "fastener",
+        "value_Nm": "0.5",
+        "quantity_kind": "AppliedTightening",
+        "phase": "BeforeFire",
+        "measured_at": "2026-09-03T08:00:00+09:00",
+        "measurement_method": "[합성] 교정된 계측기 작업 기록",
+        "timing_basis": "[합성] 발화 전 설치 작업 로그",
+        "ignition_event": "fire"
+      },
+      {
+        "id": "post_fire_measurement",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 사후 수거 계측표",
+        "observed_at": null,
+        "termination": "term",
+        "fastener": "fastener",
+        "value_Nm": "0.2",
+        "quantity_kind": "BreakawayLoosening",
+        "phase": "AsFoundAfterFire",
+        "measured_at": "2026-09-03T14:00:00+09:00",
+        "measurement_method": "풀림 개시 토크 측정",
+        "timing_basis": "발화 후 수거 작업",
+        "ignition_event": "fire"
+      }
+    ],
+    "torque_references": [
+      {
+        "id": "reference",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 reference",
+        "observed_at": null,
+        "basis_kind": "Manufacturer",
+        "product_id": "SYNTH-R1 rev.A",
+        "termination_method": "ScrewTerminal",
+        "conductor_material": "Copper",
+        "conductor_size": "14 AWG",
+        "fastener_material": "Steel",
+        "quantity_kind": "AppliedTightening",
+        "minimum_Nm": "1.0",
+        "maximum_Nm": "1.2",
+        "applicability_scope": "[합성] 해당 모델·개정·도체·단자 조건의 예시 범위"
+      }
+    ],
+    "torque_comparisons": [
+      {
+        "id": "comparison",
+        "status": "Confirmed",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 현장 사진/기록 comparison",
+        "observed_at": null,
+        "measurement": "measurement",
+        "reference": "reference",
+        "applicability_basis": "[합성] 같은 제품 개정·단자·도체 조건 확인",
+        "assessment_complete": true,
+        "claim_pre_fire_applied_torque": true
+      },
+      {
+        "id": "post_fire_comparison",
+        "status": "Unverifiable",
+        "attributed_to": "investigator",
+        "source": "[합성 예제] 측정 종류 대조 검토",
+        "observed_at": null,
+        "measurement": "post_fire_measurement",
+        "reference": "reference",
+        "applicability_basis": "실제 제품 조임 토크와 사후 풀림 토크는 직접 대조할 수 없음",
+        "assessment_complete": false,
+        "claim_pre_fire_applied_torque": false
+      }
+    ]
+  },
+  "proposed_conclusion": null,
+  "query_count": 0,
+  "closure_min_facts": 2,
+  "closure_min_queries": 2,
+  "closure_min_score": 70
+}

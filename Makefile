@@ -1,4 +1,4 @@
-.PHONY: install test build status reason lint review graph export clean calibrate cause-audit readers refute domestic silmu babrauskas
+.PHONY: install test build status backlog reason lint review graph export clean calibrate cause-audit readers refute domestic silmu babrauskas
 
 PY := python
 export PYTHONIOENCODING := utf-8
@@ -20,6 +20,9 @@ build: | build-dir
 
 status:
 	@$(PY) scripts/status.py
+
+backlog:
+	@$(PY) scripts/backlog.py --check
 
 reason:
 	@$(PY) scripts/consistency.py
