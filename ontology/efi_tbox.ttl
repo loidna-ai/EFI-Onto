@@ -524,15 +524,17 @@ efi:FalsificationRuleShape a sh:NodeShape ; sh:order 1 ; sh:targetClass efi:Igni
         }""" ] .
 
 # [F-2] 1차·2차 단락흔 판정: 아크 사건이 화염 노출 사건보다 앞서면 1차, 뒤이면 2차 (형태학 지표는 보조)
-efi:ArcMarkSequenceRuleShape a sh:NodeShape ; sh:order 2 ; sh:targetClass efi:ArcMeltMark ;
-    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 2 ;
+#  sh:order 0 — 2차 단락흔은 반증 단서(R_ANY_SecondaryArc)라 F-1(order 1)이 읽어야 한다.
+#  전에는 2 였고, F-1 이 돌 때 2차 유형이 아직 없어 refutedBy 가 안 적혀 약화 판정이 빠졌다.
+efi:ArcMarkSequenceRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ArcMeltMark ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this rdf:type ?cls . }
         WHERE {
           $this efi:formedBy ?arc . ?arc time:before ?fire . ?fire a efi:FireExposureEvent .
           BIND ( efi:PrimaryArcMark AS ?cls )
         }""" ] ;
-    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 2 ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
         CONSTRUCT { $this rdf:type efi:SecondaryArcMark . }
         WHERE { $this efi:formedBy ?arc . ?fire a efi:FireExposureEvent ; time:before ?arc . }""" ] .
@@ -620,6 +622,10 @@ efi:ConclusionShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
             sh:property [ sh:path efi:supportScore ; sh:minInclusive 70 ; sh:datatype xsd:integer ; sh:minCount 1 ;
                 sh:message "지지점수 70 미만"@ko ] ;
             sh:property [ sh:path efi:verdict ; sh:not [ sh:hasValue efi:Refuted ] ; sh:message "기각된 가설은 결론이 될 수 없다"@ko ] ;
+            # [C-58] 세워지지 않은 가설(D-15 formed 없음)은 결론이 될 수 없다 (§19.4.1). D-15 는 판정만
+            #  막았고 결론 단계는 몰랐다 — 필요조건 공리를 끝까지 집행하는 곳이 여기다.
+            sh:property [ sh:path efi:formed ; sh:hasValue true ;
+                sh:message "세워지지 않은 가설로 결론을 냈다 — 필요조건도 특이 흔적도 자료에 없다 (§19.4.1, D-15)"@ko ] ;
             sh:property [ sh:path ( efi:inSession efi:queryCount ) ; sh:minInclusive 2 ; sh:message "변별 질의 2회 미만"@ko ] ] ] .
 
 # [C-3] 시나리오 구조 제약: 메커니즘 정확히 1개, 선행조건 ≥1, 착화물은 0..1 (미확인 허용 → 판단보류 경로)
@@ -981,12 +987,29 @@ efi:loadExceedsRating a owl:DatatypeProperty ;
     rdfs:label "부하전류가 정격을 초과함"@ko ; skos:prefLabel "부하전류가 정격을 초과함"@ko ;
     rdfs:comment "loadCurrent_A > ratedCurrent_A 에서 도출. 과부하 '상태'(선행 조건)로 곧장 등치하지 않는다 — 축이 다르다."@ko .
 
-# [D-1] 과부하 = 부하전류 > 정격전류
+# ── 계측 도출의 약속 (2026-09-03) ──
+#  D-1·D-2·D-3·D-9·D-11·보호장치 부동작은 계측값에서 정의로 도출한다. 전에는 결과를 증거물에
+#  붙였다(loadExceedsRating, exhibits, 증거물의 rdf:type). 그런데 F-1·F-4·D-15 는 세션의 사실
+#  (hasFact)만 읽으므로 도출이 점수에 닿지 않았고, 증거물에 조건·흔적 유형을 붙이는 것은
+#  범주 배타 공리(PhysicalEvidence ⊥ AntecedentCondition ⊥ DamagePattern)에도 어긋났다.
+#  이제 도출은 새 사실 노드를 만들어 세션에 건다 — 확인 상태 Confirmed, 출처는 계측을 기록한
+#  행위자(prov:wasAttributedTo 를 증거물에서 물려받음), prov:wasDerivedFrom 으로 증거물을 가리킨다.
+#  C-4 의 '추론으로 생성 금지'는 정황을 지어내는 것을 막는 것이지 계측의 정의적 귀결을 막는
+#  것이 아니다 — 부하전류가 정격을 넘었다는 사실은 두 값이 적힌 순간 이미 확인된 것이다.
+#  증거물은 gold 사례처럼 세션의 사실로 들어와 있어야 한다(?s hasFact 증거물). 그것이 세션을 찾는 길이다.
+#  Python 쪽(efi_schema)은 이 도출을 하지 않는다 — 계측값을 받는 자리가 없다. SHACL 전용이며
+#  test_measurement_derivations_reach_scores 가 여섯 도출이 점수에 닿는지 끝까지 확인한다.
+# [D-1] 과부하 = 부하전류 > 정격전류 → 과부하 상태 사실
 efi:OverloadDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ElectricalArtifact ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
-        CONSTRUCT { $this efi:loadExceedsRating true . }
+        CONSTRUCT {
+          $this efi:loadExceedsRating true .
+          ?s efi:hasFact [ a efi:OverloadState ; efi:confirmationStatus efi:Confirmed ;
+                           prov:wasAttributedTo ?ag ; prov:wasDerivedFrom $this ] .
+        }
         WHERE {
+          ?s efi:hasFact $this . $this prov:wasAttributedTo ?ag .
           $this efi:loadCurrent_A ?l ; efi:ratedCurrent_A ?r .
           FILTER ( ?l > ?r )
         }""" ] .
@@ -997,8 +1020,13 @@ efi:OverloadDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi
 efi:StrandFractureDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:StrandedConductor ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
-        CONSTRUCT { $this efi:exhibits efi:StrandFracture . }
+        CONSTRUCT {
+          $this efi:exhibits efi:StrandFracture .
+          ?s efi:hasFact [ a efi:StrandFracture ; efi:confirmationStatus efi:Confirmed ;
+                           prov:wasAttributedTo ?ag ; prov:wasDerivedFrom $this ] .
+        }
         WHERE {
+          ?s efi:hasFact $this . $this prov:wasAttributedTo ?ag .
           $this efi:strandCount ?n ; efi:fracturedStrandCount ?f .
           FILTER ( ?f > 0 && ?f < ?n )
         }""" ] .
@@ -1007,8 +1035,12 @@ efi:StrandFractureDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetCla
 efi:CuprousOxideDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ConnectionPoint ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
-        CONSTRUCT { $this efi:exhibits efi:CuprousOxideGrowth . }
-        WHERE { $this efi:cuprousOxidePresent true }""" ] .
+        CONSTRUCT {
+          $this efi:exhibits efi:CuprousOxideGrowth .
+          ?s efi:hasFact [ a efi:CuprousOxideGrowth ; efi:confirmationStatus efi:Confirmed ;
+                           prov:wasAttributedTo ?ag ; prov:wasDerivedFrom $this ] .
+        }
+        WHERE { ?s efi:hasFact $this . $this prov:wasAttributedTo ?ag ; efi:cuprousOxidePresent true }""" ] .
 
 
 # ============================================================================
@@ -2881,15 +2913,23 @@ efi:requiredInsulationResistance_MOhm a owl:DatatypeProperty ;
 efi:InsulationResistanceDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:Insulation ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
-        CONSTRUCT { $this a efi:ReducedInsulationResistance . }
+        CONSTRUCT {
+          ?s efi:hasFact [ a efi:ReducedInsulationResistance ; efi:confirmationStatus efi:Confirmed ;
+                           prov:wasAttributedTo ?ag ; prov:wasDerivedFrom $this ] .
+        }
         WHERE {
+          ?s efi:hasFact $this . $this prov:wasAttributedTo ?ag .
           $this efi:insulationResistance_MOhm ?m ; efi:requiredInsulationResistance_MOhm ?req .
           FILTER ( ?m < ?req )
         }""" ] ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
-        CONSTRUCT { $this a efi:NormalInsulationResistance . }
+        CONSTRUCT {
+          ?s efi:hasFact [ a efi:NormalInsulationResistance ; efi:confirmationStatus efi:Confirmed ;
+                           prov:wasAttributedTo ?ag ; prov:wasDerivedFrom $this ] .
+        }
         WHERE {
+          ?s efi:hasFact $this . $this prov:wasAttributedTo ?ag .
           $this efi:insulationResistance_MOhm ?m ; efi:requiredInsulationResistance_MOhm ?req .
           FILTER ( ?m >= ?req )
         }""" ] .
@@ -3031,8 +3071,12 @@ efi:partialDisconnectionRatio a owl:DatatypeProperty ;
 efi:PartialDisconnectionDerivationRuleShape a sh:NodeShape ; sh:order 1 ; sh:targetClass efi:StrandedConductor ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
         sh:construct """
-        CONSTRUCT { $this efi:exhibits [ a efi:StrandFractureOverTenPercent ] . }
+        CONSTRUCT {
+          ?s efi:hasFact [ a efi:StrandFractureOverTenPercent ; efi:confirmationStatus efi:Confirmed ;
+                           prov:wasAttributedTo ?ag ; prov:wasDerivedFrom $this ] .
+        }
         WHERE {
+          ?s efi:hasFact $this . $this prov:wasAttributedTo ?ag .
           $this efi:strandCount ?n ; efi:fracturedStrandCount ?f ;
                 efi:partialDisconnectionRatio ?ratio .
           FILTER ( ?n > 0 && ?f < ?n && ( xsd:decimal(?f) / xsd:decimal(?n) ) >= ?ratio )
@@ -3063,8 +3107,12 @@ efi:ProtectiveDeviceFailedToOperate a owl:Class ; rdfs:subClassOf efi:SceneEvide
 efi:ProtectiveDeviceOperationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ProtectiveDevice ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
-        CONSTRUCT { $this a efi:ProtectiveDeviceFailedToOperate . }
+        CONSTRUCT {
+          ?s efi:hasFact [ a efi:ProtectiveDeviceFailedToOperate ; efi:confirmationStatus efi:Confirmed ;
+                           prov:wasAttributedTo ?ag ; prov:wasDerivedFrom $this ] .
+        }
         WHERE {
+          ?s efi:hasFact $this . $this prov:wasAttributedTo ?ag .
           $this efi:overcurrentMultiple ?m ; efi:overcurrentDuration_min ?d ; efi:ratedTripTime_min ?t .
           FILTER NOT EXISTS { $this efi:exhibits ?x . ?x a efi:BreakerTripRecord }
           FILTER ( ?m > 1 && ?d > ?t )
@@ -3090,8 +3138,12 @@ efi:protectedBy a owl:ObjectProperty ; rdfs:domain efi:Circuit ; rdfs:range efi:
 efi:GroundFaultProtectionRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:Circuit ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
-        CONSTRUCT { ?g a efi:ProtectiveDeviceFailedToOperate . }
+        CONSTRUCT {
+          ?s efi:hasFact [ a efi:ProtectiveDeviceFailedToOperate ; efi:confirmationStatus efi:Confirmed ;
+                           prov:wasAttributedTo ?ag ; prov:wasDerivedFrom ?g ] .
+        }
         WHERE {
+          ?s efi:hasFact $this . $this prov:wasAttributedTo ?ag .
           $this efi:leakageCurrent_mA ?i ; efi:protectedBy ?g .
           ?g a efi:GroundFaultProtectiveDevice ; efi:ratedSensitivityCurrent_mA ?s .
           FILTER NOT EXISTS { ?g efi:exhibits ?x . ?x a efi:BreakerTripRecord }
@@ -3313,6 +3365,9 @@ efi:InsufficientContactPressure efi:enables efi:ReducedContactArea .
 efi:Vibration efi:enables efi:IntermittentContactSeparation .
 efi:ReducedContactArea efi:producesDamage efi:LocalizedDiscoloration , efi:LongTermTerminalHeating , efi:CarbonizationFromInsideOut , efi:LocalizedHeatWithSurroundingDamage .
 efi:IntermittentContactSeparation efi:producesDamage efi:ArcBead , efi:ArcMeltMark , efi:LocalizedHeatWithSurroundingDamage .
+# 메커니즘이 낸다고 적고 가설에는 선언하지 않아 단락흔의 공유 수가 5로 세어졌다(실제 6).
+# M-3 은 '선언한 것이 유도되는가'만 보므로 이 방향은 test_declared_manifestations_cover_mechanisms 가 본다.
+efi:PoorContactScenario efi:canManifest efi:ArcBead , efi:ArcMeltMark .
 efi:ReducedContactArea efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel .
 efi:IntermittentContactSeparation efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel .
 efi:IntermittentContactSeparation efi:enablesProgressionTo efi:GlowingConnection .

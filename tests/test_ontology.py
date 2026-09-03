@@ -2,7 +2,7 @@
 """EFI-Onto 회귀 시험. TTL 을 고쳤으면 반드시 통과해야 한다."""
 import sys, pathlib
 import pytest
-from rdflib import Graph, Namespace, RDFS
+from rdflib import Graph, Namespace, RDF, RDFS
 from pyshacl import validate
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -1024,3 +1024,94 @@ def test_unidentified_short_circuit_matches_in_both_engines(onto):
     s = sess(["ArcMeltMark", "DeEnergizedState"])        # 비통전 → 전기 요인 아님 → 원인미상
     assert s.outcome(onto) == "Undetermined"
     assert (EFI.session_U, EFI.outcomeUnidentifiedShortCircuit, None) not in run(s.to_turtle(include_derived=False))
+
+
+def test_measurement_derivations_reach_scores():
+    """계측에서 도출한 사실(D-1·D-2·D-3·D-9·D-11·보호장치 부동작)이 점수까지 닿아야 한다.
+
+    전에는 도출 결과를 증거물에 붙여서 F-4 가 못 보았다 — 조사서에 계측값이 0건이라 아무도
+    몰랐다. 이제 도출은 세션의 사실이 되고, 형성(D-15)과 점수(F-4)가 그것을 읽는다.
+    """
+    gr = run("""
+    efi:sM a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:invM a efi:InvestigatorAgent .
+    efi:wire a efi:StrandedConductor ; efi:strandCount 30 ; efi:fracturedStrandCount 6 ; efi:partialDisconnectionRatio 0.1 ;
+        efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
+    efi:cord a efi:ElectricalArtifact ; efi:loadCurrent_A 20 ; efi:ratedCurrent_A 15 ;
+        efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
+    efi:cb a efi:ProtectiveDevice ; efi:overcurrentMultiple 2 ; efi:overcurrentDuration_min 10 ; efi:ratedTripTime_min 4 ;
+        efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
+    efi:ins a efi:Insulation ; efi:insulationResistance_MOhm 0.05 ; efi:requiredInsulationResistance_MOhm 0.2 ;
+        efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
+    efi:cp a efi:ConnectionPoint ; efi:cuprousOxidePresent true ;
+        efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invM .
+    efi:sM efi:hasFact efi:wire , efi:cord , efi:cb , efi:ins , efi:cp .
+    efi:hPD a efi:PartialDisconnectionScenario ; efi:inSession efi:sM .
+    efi:hOL a efi:OverloadScenario ; efi:inSession efi:sM .
+    efi:hID a efi:InsulationDegradationScenario ; efi:inSession efi:sM .
+    efi:hPC a efi:PoorContactScenario ; efi:inSession efi:sM .
+    """)
+    facts = {q(t) for f in gr.objects(EFI.sM, EFI.hasFact) for t in gr.objects(f, RDF.type)}
+    for want in ("StrandFracture", "StrandFractureOverTenPercent", "OverloadState",
+                 "ProtectiveDeviceFailedToOperate", "ReducedInsulationResistance", "CuprousOxideGrowth"):
+        assert want in facts, f"{want} 가 세션의 사실로 도출되지 않았다"
+    score = lambda n: int(next(gr.objects(EFI[n], EFI.supportScore)))
+    for h in ("hPD", "hOL", "hID", "hPC"):
+        assert (EFI[h], EFI.formed, None) in gr, f"{h} 가 도출 사실로 세워지지 않았다"
+        assert score(h) > 50, f"{h} 점수가 도출 사실로 오르지 않았다"
+    # 도출 사실은 C-4 를 지킨다 — 출처가 있다
+    from rdflib.namespace import Namespace
+    PROV = Namespace("http://www.w3.org/ns/prov#")
+    for f in gr.objects(EFI.sM, EFI.hasFact):
+        assert (f, PROV.wasAttributedTo, None) in gr
+
+
+def test_conclusion_requires_a_formed_hypothesis():
+    """C-58 — 세워지지 않은 가설로는 결론을 낼 수 없다 (§19.4.1). D-15 의 뒷문을 닫는다."""
+    base = """
+    efi:sF a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:invF a efi:InvestigatorAgent .
+    efi:g1 a efi:ArcMeltMark ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invF .
+    efi:g2 a efi:EnergizedState ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invF .
+    efi:hF a efi:GroundFaultScenario ; efi:inSession efi:sF ; efi:supportedBy efi:g1 , efi:g2 .
+    efi:cF a efi:Conclusion ; efi:concludes efi:hF .
+    """
+    fired = lambda extra: "Message: 세워지지 않은 가설" in _msg(extra)   # 보고서는 도형 정의도 찍으므로 Message 줄만 본다
+    assert fired(base + "efi:sF efi:hasFact efi:g1 , efi:g2 .")
+    # 지락 경로가 확인되면 세워진다
+    ok = base + """
+    efi:g3 a efi:GroundPath ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invF .
+    efi:sF efi:hasFact efi:g1 , efi:g2 , efi:g3 .
+    """
+    assert not fired(ok)
+
+
+def test_declared_manifestations_cover_mechanisms(g):
+    """가설의 정의 메커니즘이 내는 흔적은 가설의 canManifest 에도 있어야 한다.
+
+    M-3 은 반대 방향(선언한 것이 유도되는가)만 본다. 이 방향이 비면 그 흔적의 공유 가설 수가
+    적게 세어져 가감점이 부푼다 — 접촉불량의 아크 용융흔이 그랬다.
+    """
+    import collections
+    mech = collections.defaultdict(set); prod = collections.defaultdict(set); man = collections.defaultdict(set)
+    for s, o in g.subject_objects(EFI.hasDeclaredMechanism): mech[q(s)].add(q(o))
+    for s, o in g.subject_objects(EFI.producesDamage): prod[q(s)].add(q(o))
+    for s, o in g.subject_objects(EFI.canManifest): man[q(s)].add(q(o))
+    bad = {sc: sorted(set().union(*(prod[m] for m in ms)) - man[sc]) for sc, ms in mech.items()}
+    bad = {k: v for k, v in bad.items() if v}
+    assert not bad, f"메커니즘은 내는데 가설이 선언하지 않은 흔적: {bad}"
+
+
+def test_secondary_arc_refutation_is_recorded():
+    """F-2 가 F-1 앞에 돌아야 2차 단락흔 반증이 refutedBy 에 적힌다 (순서 구멍)."""
+    gr = run("""
+    efi:sS a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:invS a efi:InvestigatorAgent .
+    efi:arcS a efi:ArcEvent .  efi:fireS a efi:FireExposureEvent .
+    efi:fireS time:before efi:arcS .
+    efi:mS a efi:ArcMeltMark ; efi:formedBy efi:arcS ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invS .
+    efi:sS efi:hasFact efi:mS .
+    efi:hS a efi:CrushDamageScenario ; efi:inSession efi:sS .
+    """)
+    assert (EFI.mS, RDF.type, EFI.SecondaryArcMark) in gr
+    assert (EFI.hS, EFI.refutedBy, EFI.mS) in gr, "2차 단락흔 반증이 기록되지 않았다"

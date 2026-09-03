@@ -126,6 +126,12 @@ build/                       생성물. git 에 넣지 않음
   기각이 아니다(P4). `Session.apply()` 의 formed 와 SHACL D-15 가 같아야 한다.
 - **자료가 지지하지 않는 가설은 판정이 못 된다 (D-16).** 외부화염은 필요조건이 없어 언제나 서는데,
   빈 조사서에서 50점으로 홀로 남아 판정이 되던 것을 막는다. 승자는 형성·비기각·50점 초과.
+- **계측 도출(D-1·2·3·9·11, 보호장치 부동작)은 새 사실 노드를 만들어 세션에 건다.** 결과를 증거물에
+  붙이면 F-4 가 못 본다 — 실제로 일곱 도출이 그렇게 죽어 있었다. 증거물은 세션의 사실(hasFact)로
+  들어와 있어야 하고, 도출 사실은 출처를 증거물에서 물려받는다. SHACL 전용이며 Python 은 계측을 안 받는다.
+  `test_measurement_derivations_reach_scores` 가 끝까지 확인한다.
+- **가설의 메커니즘이 내는 흔적은 가설의 canManifest 에도 적는다.** M-3 은 반대 방향만 본다.
+  빠지면 공유 수가 적게 세어져 점수가 부푼다. `test_declared_manifestations_cover_mechanisms` 가 잡는다.
 - **반증 단서(Refuting)는 기각이 아니라 감점이다.** 기각은 결정적 반증(DecisiveRefuting)만.
   누적돼 40 미만이면 약화. `efi_schema.apply()` 와 SHACL F-1·F-4 가 같아야 한다.
 - SPARQL 에서 `owl:unionOf` 는 순회되지 않는다. 하위 클래스는 `rdfs:subClassOf` 로 명시할 것.
