@@ -846,7 +846,7 @@ efi:CorrodedConnection efi:enables efi:PoorContactHeating , efi:GlowingConnectio
 
 efi:MechanicalStressHistory a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "기계적 응력 이력"@ko ;
     rdfs:label "기계적 응력 이력"@ko .
-efi:RepeatedFlexing        a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "반복 굴곡"@ko ;
+efi:RepeatedFlexing        a owl:Class ; rdfs:subClassOf efi:LongTermRepeatedStress ; skos:prefLabel "반복 굴곡"@ko ;
     rdfs:label "반복 굴곡"@ko .
 efi:RepeatedFlexing efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
 
@@ -856,7 +856,7 @@ efi:RepeatedFlexing efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc 
 # 같은 굽힘이 소선을 끊으면 반단선, 피복을 상해 양극이 닿으면 단락이다.
 # 결과가 갈리지 원인이 갈리는 것이 아니다.
 efi:RepeatedFlexing efi:enables efi:CrushInducedArc .
-efi:Vibration              a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "진동"@ko ;
+efi:Vibration              a owl:Class ; rdfs:subClassOf efi:LongTermRepeatedStress ; skos:prefLabel "진동"@ko ;
     rdfs:label "진동"@ko .
 efi:Vibration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc , efi:PoorContactHeating , efi:CrushInducedArc .
 efi:Vibration efi:enables efi:IntermittentContactSeparation .
@@ -864,21 +864,19 @@ efi:Vibration efi:enables efi:IntermittentContactSeparation .
 efi:Vibration efi:enables efi:GroundFaultHeating .
 # p.247 (자) 진동 등에 의한 절연피복 손상
 efi:Vibration efi:enables efi:InterTurnShortCircuit .
-efi:Tension                a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "인장"@ko ;
+efi:Tension                a owl:Class ; rdfs:subClassOf efi:LongTermRepeatedStress ; skos:prefLabel "인장"@ko ;
     rdfs:label "인장"@ko .
 efi:Tension efi:enables efi:PartialDisconnectionHeating .
-efi:ExternalCrushing       a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "외력 압착·찍힘"@ko ;
+efi:ExternalCrushing       a owl:Class ; rdfs:subClassOf efi:MechanicalDamageAntecedent ; skos:prefLabel "외력 압착·찍힘"@ko ;
     rdfs:label "외력 압착·찍힘"@ko ; skos:altLabel "외력에 의한 압착"@ko .
 efi:ExternalCrushing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
-efi:ExternalCrushing rdfs:subClassOf efi:MechanicalDamageAntecedent .
 # 표 2-1 피복 손상 후 건물·구조물 금속부에 접촉
 efi:ExternalCrushing efi:enables efi:GroundFaultHeating .
-efi:AbrasionAtPenetration  a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
+efi:AbrasionAtPenetration  a owl:Class ; rdfs:subClassOf efi:MechanicalDamageAntecedent ;
     skos:prefLabel "관통부·고정구 마찰"@ko ;
     rdfs:comment "전선이 관통부 모서리·고정 철물과 쓸려 피복이 마모·박리되는 경로. 압착이 눌림이라면 이것은 쓸림이다. §9.10.6.1 이 설치 시 기계적 손상이 시간이 지나 발현함을 인정하고 §9.10.5 가 기계적 손상을 아크흔과 구별하라 한다."@ko ;
     rdfs:label "관통부·고정구 마찰"@ko .
 efi:AbrasionAtPenetration efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
-efi:AbrasionAtPenetration rdfs:subClassOf efi:MechanicalDamageAntecedent .
 efi:LongTermRepeatedStress a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
     skos:prefLabel "장기 반복 응력 정황"@ko ;
     rdfs:comment "굴곡·진동·인장의 상위. 분류에만 쓰고 지표로는 쓰지 않는다 — 셋의 변별력이 서로 달라(굴곡·인장은 반단선 전용, 진동은 접촉불량도 만든다) 하나로 묶으면 굴곡의 변별력까지 깎인다."@ko ;
@@ -888,7 +886,7 @@ efi:LongTermRepeatedStress efi:enables efi:PartialDisconnectionHeating .
 
 efi:InsulationCondition    a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "절연 상태"@ko ;
     rdfs:label "절연 상태"@ko .
-efi:AgedInsulation         a owl:Class ; rdfs:subClassOf efi:InsulationCondition , efi:InsulationDeterioration ; skos:prefLabel "노후화·장기 사용"@ko ;
+efi:AgedInsulation         a owl:Class ; rdfs:subClassOf efi:InsulationDeterioration ; skos:prefLabel "노후화·장기 사용"@ko ;
     rdfs:label "노후화·장기 사용"@ko ; skos:altLabel "절연물 노후"@ko .
 efi:AgedInsulation efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating .
 
@@ -906,7 +904,7 @@ efi:AgedInsulation efi:enables efi:GroundFaultHeating .
 efi:ReducedInsulationResistance a owl:Class ; rdfs:subClassOf efi:InsulationCondition ; skos:prefLabel "절연저항 저하"@ko ;
     rdfs:label "절연저항 저하"@ko .
 efi:ReducedInsulationResistance efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating , efi:ArcTracking .
-efi:ThermalDegradation     a owl:Class ; rdfs:subClassOf efi:InsulationCondition , efi:InsulationDeterioration ; skos:prefLabel "열적 절연 열화"@ko ;
+efi:ThermalDegradation     a owl:Class ; rdfs:subClassOf efi:InsulationDeterioration ; skos:prefLabel "열적 절연 열화"@ko ;
     rdfs:label "열적 절연 열화"@ko ; skos:altLabel "열적 열화"@ko .
 efi:ThermalDegradation efi:enables efi:InsulationBreakdownArc .
 efi:InsulationDeterioration a owl:Class ; rdfs:subClassOf efi:InsulationCondition ;
@@ -920,7 +918,7 @@ efi:InsulationDeterioration efi:enables efi:GroundFaultHeating .
 
 efi:EnvironmentalCondition a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "환경 조건(오염 환경)"@ko ;
     rdfs:label "환경 조건(오염 환경)"@ko ; skos:altLabel "환경 조건"@ko .
-efi:MoistureExposure       a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "누수·결로·우천 노출"@ko ;
+efi:MoistureExposure       a owl:Class ; rdfs:subClassOf efi:ContaminatedEnvironment ; skos:prefLabel "누수·결로·우천 노출"@ko ;
     rdfs:label "누수·결로·우천 노출"@ko ; skos:altLabel "누수·결로 노출"@ko .
 efi:MoistureExposure efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
 
@@ -936,7 +934,7 @@ efi:MoistureExposure efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
 efi:MoistureExposure efi:enables efi:InsulationBreakdownArc .
 # p.202 ④ 결로에 의한 지락
 efi:MoistureExposure efi:enables efi:GroundFaultHeating .
-efi:DustAccumulation       a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "분진 퇴적"@ko ;
+efi:DustAccumulation       a owl:Class ; rdfs:subClassOf efi:ContaminatedEnvironment ; skos:prefLabel "분진 퇴적"@ko ;
     rdfs:label "분진 퇴적"@ko .
 efi:DustAccumulation efi:enables efi:ArcTracking .
 efi:DustAccumulation efi:enables efi:InsulationBreakdownArc .
@@ -944,7 +942,7 @@ efi:DustAccumulation efi:enables efi:InsulationBreakdownArc .
 # p.148 은 1단계 오염원을 "습기, 염분, 무기질, 섬유질 및 도전성물질"로 든다.
 # 실밥·섬유 분진은 분진 퇴적으로 읽는다.
 efi:DustAccumulation skos:altLabel "섬유질·실밥 분진"@ko , "무기질 퇴적"@ko .
-efi:SalineOrChemicalExposure a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "염분·화학물질 노출"@ko ;
+efi:SalineOrChemicalExposure a owl:Class ; rdfs:subClassOf efi:ContaminatedEnvironment ; skos:prefLabel "염분·화학물질 노출"@ko ;
     rdfs:label "염분·화학물질 노출"@ko ; skos:altLabel "염해·화학 노출"@ko .
 efi:SalineOrChemicalExposure efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
 
@@ -1030,7 +1028,7 @@ efi:CoveredHeatingDevice a owl:Class ; rdfs:subClassOf efi:HeatDissipationImpair
 
 # §9.10.6.1 설치 시 망치 오타격. 눈에 잘 띄지 않는 피복 손상을 남기고
 #  한참 뒤 서지에서 절연 파괴로 이어질 수 있다.
-efi:HammerMisHitDamage a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
+efi:HammerMisHitDamage a owl:Class ; rdfs:subClassOf efi:MechanicalDamageAntecedent ;
     rdfs:label "설치 시 망치 오타격 손상"@ko ; skos:prefLabel "설치 시 망치 오타격 손상"@ko ;
     rdfs:comment "피복의 절연 내력을 낮춰 예상 서지 전압에서 아크가 생길 수 있다. 설치 후 오랜 시간이 지나 발생하기도 한다 (§9.10.6.1)"@ko .
 efi:HammerMisHitDamage efi:enables efi:InsulationBreakdownArc .
@@ -1042,7 +1040,6 @@ efi:HammerMisHitDamage efi:enables efi:InsulationBreakdownArc .
 # 망치 오타격은 기계적 관통 손상이다. 표 2-1 은 스테이플 찔림을 단락 아래 두고,
 # §9.10.5 는 기계적 홈·눌림을 아크흔과 구별하라 한다. 절연열화 쪽에만 이어 두었다.
 efi:HammerMisHitDamage efi:enables efi:CrushInducedArc .
-efi:HammerMisHitDamage rdfs:subClassOf efi:MechanicalDamageAntecedent .
 efi:ConductiveSolutionInCrack a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition ;
     rdfs:label "균열 내 도전성 용액"@ko ; skos:prefLabel "균열 내 도전성 용액"@ko ;
     rdfs:comment "균열이 누설 경로가 되려면 이것이 있어야 한다 (§9.11.3)"@ko .
@@ -1107,7 +1104,7 @@ efi:ApplianceEntryPoint efi:enables efi:PartialDisconnectionHeating , efi:Series
 #   "전선이나 코드를 쥐가 갈아 피복이 손상되고 단락이 일어나 출화한 경우.
 #    동물의 존재유무나 잔존 코드피복 등에 이빨흔적 등 관찰."
 # 기계적 피복 손상의 한 갈래인데 통째로 빠져 있었다. 이빨흔적이라는 전용 표지가 있다.
-efi:RodentGnawing a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; rdfs:label "쥐 갉음"@ko ; skos:prefLabel "쥐 갉음"@ko ; rdfs:comment "설치류가 피복을 갉아 도체가 드러나 단락에 이른다. 잔존 피복의 이빨흔적과 동물의 존재로 확인한다 (실무Ⅳ p.253)"@ko .
+efi:RodentGnawing a owl:Class ; rdfs:subClassOf efi:MechanicalDamageAntecedent ; rdfs:label "쥐 갉음"@ko ; skos:prefLabel "쥐 갉음"@ko ; rdfs:comment "설치류가 피복을 갉아 도체가 드러나 단락에 이른다. 잔존 피복의 이빨흔적과 동물의 존재로 확인한다 (실무Ⅳ p.253)"@ko .
 # 갉음은 단락(기계적 손상)만 만들지 않는다. 소선을 일부만 끊으면 반단선이다.
 #   p.286 "히터선(40W)을 쥐가 갉아서 반단선이 되어 있는데 이를 알지 못하고 냉방운전을
 #          하여 줄열에 의해 발열하여 배선피복에 착화하여 출화한 경우.
@@ -1117,7 +1114,6 @@ efi:RodentGnawing a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; rd
 #   Babrauskas p.787 (Hosaka 흐름도): 노출 도체 + 배설물 → 누설(지락) 또는 아크 트래킹;
 #   배설물 없음 → 볼트 단락 또는 소선 파단 과열. 실무Ⅳ p.252 쥐 오줌이 PTC 단자 사이 스파크.
 efi:RodentGnawing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc , efi:PartialDisconnectionHeating , efi:ArcTracking .
-efi:RodentGnawing rdfs:subClassOf efi:MechanicalDamageAntecedent .
 
 # ── 34.5 바닥 깔림에 의한 방열 저해 (p.245·253)
 #   "코드가 카펫의 아래를 통과하여 사용되고 있으면 코드자체의 방열효과가

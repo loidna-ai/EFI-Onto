@@ -32,8 +32,8 @@
 # ============================================================================
 efi:InvestigationRecord a owl:Class ; rdfs:subClassOf efi:Observation ; rdfs:label "출처가 있는 조사 기록"@ko ; skos:prefLabel "출처가 있는 조사 기록"@ko .
 efi:ElectricalSystemModel a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "관심 영역의 전기 계통 모델"@ko ; skos:prefLabel "관심 영역의 전기 계통 모델"@ko .
-efi:ConnectionRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "계통 연결 관찰 기록"@ko ; skos:prefLabel "계통 연결 관찰 기록"@ko .
-efi:SupplyPathAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "전원별 공급 경로 검토"@ko ; skos:prefLabel "전원별 공급 경로 검토"@ko .
+efi:ConnectionRecord a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "계통 연결 관찰 기록"@ko ; skos:prefLabel "계통 연결 관찰 기록"@ko .
+efi:SupplyPathAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "전원별 공급 경로 검토"@ko ; skos:prefLabel "전원별 공급 경로 검토"@ko .
 efi:PowerSource a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전력 공급원"@ko ; skos:prefLabel "전력 공급원"@ko .
 efi:ElectricalLoad a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전기 부하"@ko ; skos:prefLabel "전기 부하"@ko .
 efi:ElectricalSwitch a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전기 개폐기"@ko ; skos:prefLabel "전기 개폐기"@ko .
@@ -140,8 +140,8 @@ efi:SystemReviewCoverageShape a sh:NodeShape ; sh:targetClass efi:ElectricalSyst
         }""" ] .
 
 # 51. 보호장치 발견 상태와 동작·취급 사건을 분리한다 (T02).
-efi:DeviceStateRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "보호장치 발견 상태 기록"@ko ; skos:prefLabel "보호장치 발견 상태 기록"@ko .
-efi:ElectricalEventRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "전기 계통 사건 기록"@ko ; skos:prefLabel "전기 계통 사건 기록"@ko .
+efi:DeviceStateRecord a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "보호장치 발견 상태 기록"@ko ; skos:prefLabel "보호장치 발견 상태 기록"@ko .
+efi:ElectricalEventRecord a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "전기 계통 사건 기록"@ko ; skos:prefLabel "전기 계통 사건 기록"@ko .
 efi:recordComponent a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "기록 대상 구성요소"@ko .
 efi:eventSupplySource a owl:ObjectProperty ; rdfs:range efi:PowerSource ; skos:prefLabel "사건의 공급원"@ko .
 efi:replacementComponent a owl:ObjectProperty ; rdfs:range efi:ElectricalArtifact ; skos:prefLabel "교체된 새 구성요소"@ko .
@@ -173,7 +173,7 @@ efi:ElectricalEventRecordShape a sh:NodeShape ; sh:targetClass efi:ElectricalEve
 
 # 52. 사건 시간 범위·공급원별 이력·AMI 수집 범위 (T03).
 # 시간 구간이 겹치거나 복전 이력이 불완전하면 단정하지 않는다.
-efi:PowerRecordCoverage a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "전력 기록의 수집·시간 범위"@ko ; skos:prefLabel "전력 기록의 수집·시간 범위"@ko .
+efi:PowerRecordCoverage a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "전력 기록의 수집·시간 범위"@ko ; skos:prefLabel "전력 기록의 수집·시간 범위"@ko .
 efi:describesElectricalEvent a owl:ObjectProperty ; rdfs:range time:TemporalEntity ; skos:prefLabel "기록이 기술하는 실제 사건"@ko .
 efi:recordPrecedes a owl:ObjectProperty ; rdfs:range efi:ElectricalEventRecord ; skos:prefLabel "확인 시간 범위가 앞서는 기록"@ko .
 efi:eventEarliest a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; skos:prefLabel "사건의 가장 이른 가능 시각"@ko .
@@ -266,8 +266,8 @@ efi:SupplyTimelineConflictShape a sh:NodeShape ; sh:targetClass efi:ElectricalEv
       }""" ] .
 
 # 53. 최초 착화물·열전달 검토의 근거 (T04). 후보에는 결측을 허용한다.
-efi:FirstFuelAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "발화 당시 최초 착화물 존재 검토"@ko ; skos:prefLabel "발화 당시 최초 착화물 존재 검토"@ko .
-efi:HeatTransferAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "발열원에서 연료까지의 열전달 검토"@ko ; skos:prefLabel "발열원에서 연료까지의 열전달 검토"@ko .
+efi:FirstFuelAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "발화 당시 최초 착화물 존재 검토"@ko ; skos:prefLabel "발화 당시 최초 착화물 존재 검토"@ko .
+efi:HeatTransferAssessment a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "발열원에서 연료까지의 열전달 검토"@ko ; skos:prefLabel "발열원에서 연료까지의 열전달 검토"@ko .
 efi:assessedScenario a owl:ObjectProperty ; rdfs:range efi:IgnitionScenario ; skos:prefLabel "검토 대상 발화 가설"@ko .
 efi:assessedFuel a owl:ObjectProperty ; rdfs:range efi:FirstFuelIgnited ; skos:prefLabel "검토 대상 최초 착화물"@ko .
 efi:assessedMechanism a owl:ObjectProperty ; rdfs:range efi:HeatingMechanism ; skos:prefLabel "검토 대상 발열 메커니즘"@ko .
@@ -294,7 +294,7 @@ efi:HeatTransferAssessmentShape a sh:NodeShape ; sh:targetClass efi:HeatTransfer
     sh:property [ sh:path efi:fuelConditionBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] .
 
 # T01: 계통 구성요소별 검사·손상 범위. 아크 미발견은 아크 사건 부재가 아니다.
-efi:ComponentExamination a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "계통 구성요소 검사 기록"@ko ; skos:prefLabel "계통 구성요소 검사 기록"@ko .
+efi:ComponentExamination a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "계통 구성요소 검사 기록"@ko ; skos:prefLabel "계통 구성요소 검사 기록"@ko .
 efi:ElectricMeter a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전력 계량기"@ko ; skos:prefLabel "전력 계량기"@ko .
 efi:componentDamageState a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "구성요소에서 관찰한 손상 상태"@ko .
 efi:observedInsulationMaterial a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "관찰한 절연 재질"@ko .
@@ -312,8 +312,8 @@ efi:ComponentExaminationShape a sh:NodeShape ; sh:targetClass efi:ComponentExami
     """ ] .
 
 # 54. 비교 관찰·조사 설계·금속분 부착 기록 (T05·T06·T12)
-efi:DamageComparison a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "동일 노출·분전반 내외 손상 비교"@ko ; skos:prefLabel "동일 노출·분전반 내외 손상 비교"@ko .
-efi:HeatingCharacteristicObservation a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "접속부 과열 특징 관찰"@ko ; skos:prefLabel "접속부 과열 특징 관찰"@ko .
+efi:DamageComparison a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "동일 노출·분전반 내외 손상 비교"@ko ; skos:prefLabel "동일 노출·분전반 내외 손상 비교"@ko .
+efi:HeatingCharacteristicObservation a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "접속부 과열 특징 관찰"@ko ; skos:prefLabel "접속부 과열 특징 관찰"@ko .
 efi:InvestigationProblemRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "조사 문제 진술 기록"@ko ; skos:prefLabel "조사 문제 진술 기록"@ko .
 efi:InvestigationPlanRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "조사 검증 계획 기록"@ko ; skos:prefLabel "조사 검증 계획 기록"@ko .
 efi:VerificationRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "검증 수행 결과 기록"@ko ; skos:prefLabel "검증 수행 결과 기록"@ko .
@@ -589,16 +589,6 @@ efi:InvestigationDetailReferenceShape a sh:NodeShape ; sh:targetClass efi:Invest
 
 # 계획·문제·검토 의견 자체는 그 계획을 검증한 관측 근거가 아니다.
 efi:InvestigationEvidenceRecord a owl:Class ; rdfs:subClassOf efi:InvestigationRecord ; rdfs:label "검증에 인용할 조사 관측 기록"@ko ; skos:prefLabel "검증에 인용할 조사 관측 기록"@ko .
-efi:DeviceStateRecord rdfs:subClassOf efi:InvestigationEvidenceRecord .
-efi:ElectricalEventRecord rdfs:subClassOf efi:InvestigationEvidenceRecord .
-efi:PowerRecordCoverage rdfs:subClassOf efi:InvestigationEvidenceRecord .
-efi:FirstFuelAssessment rdfs:subClassOf efi:InvestigationEvidenceRecord .
-efi:HeatTransferAssessment rdfs:subClassOf efi:InvestigationEvidenceRecord .
-efi:ComponentExamination rdfs:subClassOf efi:InvestigationEvidenceRecord .
-efi:DamageComparison rdfs:subClassOf efi:InvestigationEvidenceRecord .
-efi:HeatingCharacteristicObservation rdfs:subClassOf efi:InvestigationEvidenceRecord .
-efi:ConnectionRecord rdfs:subClassOf efi:InvestigationEvidenceRecord .
-efi:SupplyPathAssessment rdfs:subClassOf efi:InvestigationEvidenceRecord .
 
 # 55. 접속 구조·나사 재질·적용 범위를 갖춘 토크 비교 (T07)
 efi:TerminalFastener a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; rdfs:label "전기 단자 나사·볼트"@ko ; skos:prefLabel "전기 단자 나사·볼트"@ko .
