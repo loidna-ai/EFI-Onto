@@ -726,10 +726,11 @@
         "babrauskas:S:14.2",
         "babrauskas:S:14.4",
         "babrauskas:S:14.20",
-        "domestic:B:23"
+        "domestic:B:23",
+        "babrauskas:S:14.8"
       ],
       "current": "덮임·방열 저해와 공통 접촉불량은 표현한다.",
-      "gap": "바이메탈 용융·온도 제한 스위치 고장·제품별 사용 조건이 일부에 섞여 있다. 기존 5요인 범위 설명은 현행 9가설과 시점이 다르다.",
+      "gap": "바이메탈 용융·온도 제한 스위치 고장·제품별 사용 조건이 일부에 섞여 있다. 기존 5요인 범위 설명은 현행 9가설과 시점이 다르다. Babrauskas §14.8 의 저전압 실속·3상 단상 운전은 이 경계 안의 사용 조건이다(밀폐형 컴프레서의 용기 밖 경로는 T30 에서 닫았다).",
       "next": "물리적 발열 조건과 개별 제품 고장 DB·책임 판단을 구분하여 현행 범위를 확인한다.",
       "done_when": "남기는 관찰·관계와 제외하는 고장/사용 시나리오를 각각 명시한다.",
       "basis": "옛 범위 설명을 자동으로 삭제하거나 확대하지 않고 설계 검토로 남긴다.",
@@ -964,28 +965,40 @@
     },
     {
       "id": "T30",
-      "state": "설계검토",
+      "state": "구현완료",
       "priority": 2,
       "title": "밀폐형 컴프레서 내부 고장과 외부 착화",
       "refs": [
         "babrauskas:S:14.8"
       ],
-      "current": "권선·층간단락 경로는 있다.",
-      "gap": "국내 컴프레서 사례와 Babrauskas의 밀폐형 장치 설명에서 적용 대상·외부 착화 경로가 명확히 대조되지 않았다.",
-      "next": "장치 구조·밀폐 범위·착화물·열전달 경로가 같은 조건인지 원문을 대조한다.",
-      "done_when": "상충인지 다른 조건의 설명인지 기록하고 필요한 한계 주석·검증 조건을 확정한다.",
-      "basis": "어느 한 자료의 표현만으로 기존 권선 가설을 없애거나 모든 컴프레서 화재를 배제하지 않는다.",
+      "current": "T30: 밀폐형 컴프레서 권선(HermeticCompressorWindingSite ⊑ WindingSite)을 자리로 두고, 그것이 확인된 층간단락 결론에는 열전달 검토의 밀폐 용기 밖 경로 근거(enclosureExitBasis)를 요구한다 (C-60).",
+      "gap": "정의한 조건 표현의 구현 완료. 어떤 경로가 실제로 있었는지는 조사관의 관찰·출처가 채운다. 전용 지표·감점은 만들지 않았다.",
+      "next": "실제 컴프레서 사례에서 단자 관통부·냉동유·외함 관찰 항목이 기록되는지 서식(항목 Q)으로 확인한다.",
+      "done_when": "밀폐형 권선 자리가 확인된 층간단락 결론이 용기 밖 경로 근거 없이 서지 않고, 근거가 있으면 선다. 일반 권선에는 요구하지 않는다.",
+      "basis": "2026-09-04 Babrauskas p.755 와 실무Ⅳ p.284 를 '경로를 적으면 양립'하는 조건으로 읽었다. 낮은 확률은 반증 근거가 아니므로 기각이 아니라 미확정으로 둔다.",
       "depends_on": [
         "T04"
       ],
       "evidence": [
         {
           "file": "ontology/efi_tbox.ttl",
-          "anchor": "efi:WindingSite"
+          "anchor": "efi:SealedDeviceExitPathShape"
         },
         {
           "file": "ontology/efi_tbox.ttl",
-          "anchor": "efi:InterTurnShortCircuit"
+          "anchor": "efi:HermeticCompressorWindingSite"
+        },
+        {
+          "file": "ontology/efi_investigation.ttl",
+          "anchor": "efi:enclosureExitBasis"
+        },
+        {
+          "file": "tests/test_ontology.py",
+          "anchor": "def test_hermetic_compressor_conclusion_needs_exit_path"
+        },
+        {
+          "file": "docs/T30_구현.md",
+          "anchor": "## 원문 대조"
         }
       ]
     },

@@ -1333,3 +1333,39 @@ def test_supported_by_mark_is_not_an_origin_claim():
         "efi:hO a efi:PoorContactScenario ; efi:inSession efi:sesO ; efi:supportScore 75 .",
         "efi:hO a efi:PoorContactScenario ; efi:inSession efi:sesO ; efi:supportScore 75 ; efi:supportedBy efi:mkO .")
     assert NO_INDICATION not in _msg(quiet)
+
+
+
+# ── 밀폐형 컴프레서 — 용기 밖 경로 (C-60, T30) ─────────────────────────────
+SEALED = """
+efi:invS a efi:InvestigatorAgent .
+efi:sesS a efi:InvestigationSession ; efi:queryCount 2 .
+efi:siteS a efi:HermeticCompressorWindingSite ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invS .
+efi:sesS efi:hasFact efi:siteS .
+efi:hS a efi:InterTurnShortScenario ; efi:inSession efi:sesS ; efi:supportScore 75 ; efi:supportedBy efi:siteS .
+efi:cS a efi:Conclusion ; efi:concludes efi:hS .
+"""
+EXIT_PATH = """
+efi:htS a efi:HeatTransferAssessment ; efi:assessedScenario efi:hS ; efi:confirmationStatus efi:Confirmed ;
+        prov:wasAttributedTo efi:invS ; efi:enclosureExitBasis "단자 관통부 유리 절연 파손과 냉동유 유출 흔적 (현장 사진 12·14)" .
+"""
+NO_EXIT = "밀폐 용기 밖으로 열·가연물이 나온 경로"
+
+
+def test_hermetic_compressor_conclusion_needs_exit_path():
+    """C-60 — 밀폐형 권선의 층간단락 결론은 용기 밖 경로 근거가 있어야 선다. 없으면 기각이 아니라 미확정."""
+    assert NO_EXIT in _msg(SEALED)
+    assert NO_EXIT not in _msg(SEALED + EXIT_PATH)
+    assert (EFI.hS, EFI.formed, None) in run(SEALED), "밀폐형 권선 자리도 WindingSite 하위라 가설은 선다(D-15)"
+
+
+def test_plain_winding_site_is_not_asked_for_exit_path():
+    """일반 권선(개방형 모터·변압기)에는 요구하지 않는다."""
+    plain = SEALED.replace("efi:HermeticCompressorWindingSite", "efi:WindingSite")
+    assert NO_EXIT not in _msg(plain)
+
+
+def test_unverifiable_exit_path_is_not_a_path():
+    """확인 불가는 확인이 아니다 (P4)."""
+    unv = EXIT_PATH.replace("efi:Confirmed", "efi:Unverifiable")
+    assert NO_EXIT in _msg(SEALED + unv)

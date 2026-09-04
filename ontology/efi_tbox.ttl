@@ -1167,6 +1167,13 @@ efi:WiringDeviceSite efi:enables efi:PoorContactHeating , efi:ArcTracking , efi:
 efi:WindingSite a owl:Class ; rdfs:subClassOf efi:OriginSite ; rdfs:label "권선·코일"@ko ; skos:prefLabel "권선·코일"@ko ;
     rdfs:comment "모터·안정기·변압기 권선. 층간단락과 절연열화의 자리 (p.219·245)"@ko .
 efi:WindingSite efi:enables efi:InterTurnShortCircuit , efi:InsulationBreakdownArc .
+# 밀폐형 컴프레서의 권선은 권선 자리의 하위다 — 필요조건(WindingSite)은 그대로 만족한다.
+# 다만 내부 고장이 밖을 착화시키려면 밀폐 용기를 나오는 경로가 있어야 한다. Babrauskas p.755 는
+# 그 가능성이 극히 낮다고 하고, 실무Ⅳ p.284 는 컴프레서 층간단락 출화 사례를 든다. 둘은 '경로를
+# 적으면' 양립한다 — C-60 가 그 경로의 근거를 결론에서 요구한다. 자리 자체는 가점이 아니다.
+efi:HermeticCompressorWindingSite a owl:Class ; rdfs:subClassOf efi:WindingSite ;
+    rdfs:label "밀폐형 컴프레서 권선"@ko ; skos:prefLabel "밀폐형 컴프레서 권선"@ko ;
+    rdfs:comment "냉매·오일과 함께 강판 용기에 밀봉된 모터 권선. 냉장고·에어컨 컴프레서 (실무Ⅳ p.255·284; Babrauskas p.755)"@ko .
 efi:CapacitorSite a owl:Class ; rdfs:subClassOf efi:OriginSite ; rdfs:label "콘덴서"@ko ; skos:prefLabel "콘덴서"@ko ;
     rdfs:comment "습기를 띠면 절연열화가 일어나 극간 누설로 발열한다 (p.289)"@ko .
 efi:CapacitorSite efi:enables efi:InsulationBreakdownArc .
@@ -3631,6 +3638,30 @@ efi:LusterAbsenceShape dcterms:references
 #   "엔진 상단에 배선된 일부 전선에서 단락흔이 식별되나, 이는 연소 중심과
 #    이격된 상태로서 발화원으로 작용되었을 가능성보다는 연소 확대되는 과정에서
 #    절연피복이 소실되면서 단락흔이 발생되었을 가능성이 있다."
+# [C-60] 밀폐형 컴프레서 권선의 층간단락으로 결론하려면 밀폐 용기 밖으로 나온 경로가 있어야 한다.
+#  Babrauskas p.755: "밀폐형 컴프레서 모터의 내부 고장이 외부를 착화시킬 가능성은 극히 낮다."
+#  실무Ⅳ p.284: 컴프레서 층간단락 출화 사례. 상충이 아니라 조건이다 — 단자 관통부 파손, 냉동유
+#  유출, 외함 용융처럼 열·가연물이 용기를 나온 경로가 있으면 둘은 양립한다. 그 경로의 근거를
+#  열전달 검토(T04)의 enclosureExitBasis 로 받는다. 없으면 기각이 아니라 미확정이다 — 확률이
+#  낮다는 것은 반증 근거가 아니다. 전용 지표나 감점은 만들지 않는다.
+efi:SealedDeviceExitPathShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.9.1.1~§9.9.1.4 발열원에서 최초 착화물까지의 열전달, §19.5.3" ;
+    rdfs:comment "Babrauskas, Ignition Handbook p.755 (Electric motors — hermetic compressors); 소방청 화재조사실무Ⅳ (2025) p.255·284"@ko ;
+    sh:severity sh:Violation ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "밀폐형 컴프레서 권선의 층간단락으로 결론하려면 밀폐 용기 밖으로 열·가연물이 나온 경로(단자 관통부 파손·냉동유 유출·외함 용융 등)의 확인 근거가 열전달 검토에 있어야 한다. 내부 고장만으로 외부가 착화되는 일은 극히 드물다 (Babrauskas p.755; §9.9.1.1~9.9.1.4). 실무Ⅳ p.284 의 출화 사례도 그 경로가 있어야 설명된다"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:concludes ?h .
+          ?h rdf:type/rdfs:subClassOf* efi:InterTurnShortScenario ; efi:inSession ?s .
+          ?s efi:hasFact ?site . ?site a efi:HermeticCompressorWindingSite ; efi:confirmationStatus efi:Confirmed .
+          FILTER NOT EXISTS {
+            ?r a efi:HeatTransferAssessment ; efi:assessedScenario ?h ; efi:confirmationStatus efi:Confirmed ;
+               efi:enclosureExitBasis ?b .
+            FILTER ( STRLEN(REPLACE(STR(?b), " ", "")) > 0 )
+          }
+        }""" ] .
+
 # [C-59] 발화지점 근거로 든 단락흔은 지시력이 서야 한다 (§9.13.2.1·§9.13.2.2).
 #  D-10 이 세운 originIndicativeArcMark 를 읽는다. 결론이 originEvidence 로 명시한 것만 본다 —
 #  지지 근거(supportedBy)로 쓴 단락흔은 발화지점 주장이 아니므로 검사하지 않는다.

@@ -118,6 +118,7 @@ class HeatTransferEvidence(Record):
     adequacy_basis: str | None = None
     duration_basis: str | None = None
     fuel_condition_basis: str | None = None
+    enclosure_exit_basis: str | None = None      # 밀폐 기기: 열·가연물이 용기를 나온 경로의 근거 (C-60)
 
 
 class DamageComparison(Record):
@@ -873,7 +874,8 @@ class InvestigationData(BaseModel):
             graph.add((n, E.assessedMechanism, m))
             graph.add((n, E.assessedFuel, f))
             for prop, value in ((E.transferDescription, heat.description), (E.heatAdequacyBasis, heat.adequacy_basis),
-                                (E.durationBasis, heat.duration_basis), (E.fuelConditionBasis, heat.fuel_condition_basis)):
+                                (E.durationBasis, heat.duration_basis), (E.fuelConditionBasis, heat.fuel_condition_basis),
+                                (E.enclosureExitBasis, heat.enclosure_exit_basis)):
                 if value is not None:
                     graph.add((n, prop, RdfLiteral(value)))
             if heat.description is not None:

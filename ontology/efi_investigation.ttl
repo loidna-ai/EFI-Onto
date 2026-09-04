@@ -276,6 +276,8 @@ efi:transferDescription a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:pr
 efi:heatAdequacyBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "착화에 필요한 열 충분성 근거"@ko .
 efi:durationBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "가열 지속 시간의 근거·한계"@ko .
 efi:fuelConditionBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "연료 배치·형상·상태의 근거"@ko .
+efi:enclosureExitBasis a owl:DatatypeProperty ; rdfs:range xsd:string ; skos:prefLabel "밀폐 용기 밖으로 열·가연물이 나온 경로의 근거"@ko ;
+    rdfs:comment "밀폐형 기기(컴프레서 등) 내부 고장이 외부를 착화시켰다고 보려면 필요하다. 단자 관통부 파손·냉동유 유출·외함 용융 같은 관찰과 그 출처. C-60 가 결론에서 읽는다"@ko .
 
 efi:FirstFuelAssessmentShape a sh:NodeShape ; sh:targetClass efi:FirstFuelAssessment ;
     dcterms:references "NFPA 921 (2024) §9.9.1; §19.5.3" ;
@@ -291,7 +293,8 @@ efi:HeatTransferAssessmentShape a sh:NodeShape ; sh:targetClass efi:HeatTransfer
     sh:property [ sh:path efi:transferDescription ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
     sh:property [ sh:path efi:heatAdequacyBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
     sh:property [ sh:path efi:durationBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
-    sh:property [ sh:path efi:fuelConditionBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] .
+    sh:property [ sh:path efi:fuelConditionBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] ;
+    sh:property [ sh:path efi:enclosureExitBasis ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "\\S" ] .
 
 # T01: 계통 구성요소별 검사·손상 범위. 아크 미발견은 아크 사건 부재가 아니다.
 efi:ComponentExamination a owl:Class ; rdfs:subClassOf efi:InvestigationEvidenceRecord ; rdfs:label "계통 구성요소 검사 기록"@ko ; skos:prefLabel "계통 구성요소 검사 기록"@ko .

@@ -79,7 +79,7 @@ SECTIONS = [
      "안정기 층간단락 → InterTurnShortCircuit. 하위 절 참조"),
     ("14.8", 755, "Electric motors", PART, CONFLICT,
      "저전압 실속·단상 운전(3상)은 범위 밖. '밀폐형 컴프레서 모터의 내부 고장이 외부를 착화시킬 가능성은 극히 낮다'(p.755) — "
-     "실무Ⅳ p.255·284 컴프레서 층간단락 출화 사례와 긴장. WindingSite 는 유지하되 주석에 적을 것"),
+     "실무Ⅳ p.255·284 컴프레서 층간단락 출화 사례와 긴장. 구현: HermeticCompressorWindingSite 가 확인된 층간단락 결론은 열전달 검토의 enclosureExitBasis(용기 밖 경로 근거)가 있어야 선다 (C-60). 상충이 아니라 조건이다"),
     ("14.9", 755, "Electric outlets, plugs and connections", DONE, AGREE,
      "가장 직접 닿는 절. 플러그 고장 4자리(p.756 Hagimoto) = 몸체 아크(트래킹)·소선 용단(반단선)·병렬 아크·볼트 단락. "
      "실무Ⅳ p.149·185·253 과 같은 자리. 하위 절 참조 — CONFLICT 둘(p.758 열적 트래킹, p.762 화재 융착)"),
