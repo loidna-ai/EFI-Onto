@@ -1830,7 +1830,6 @@ efi:InsulationDegradationScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIg
 efi:InsulationDegradationScenario efi:canManifest efi:InsulationEmbrittlement , efi:InsulationCarbonization , efi:ArcMeltMark , efi:ArcBead , efi:LocalizedDiscoloration .
 efi:InsulationDegradationScenario efi:hasDeclaredMechanism efi:InsulationBreakdownArc .
 efi:InsulationDegradationScenario efi:canManifest efi:LocalizedHeatWithSurroundingDamage .
-efi:InsulationDegradationScenario efi:canManifest efi:InsulationCarbonization .
 efi:InsulationDegradationScenario efi:canManifest efi:DendriticTreePath , efi:InternalDamageExceedingSurface .
 efi:InsulationDegradationScenario efi:canManifest efi:CarbonizationFromInsideOut .
 
