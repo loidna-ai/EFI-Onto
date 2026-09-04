@@ -41,6 +41,7 @@
                [ sh:prefix "rdfs" ; sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ] ,
                [ sh:prefix "time" ; sh:namespace "http://www.w3.org/2006/time#"^^xsd:anyURI ] .
 
+# '착화 역량'은 F-3·C-31 이 발열원에 쓰는 말(competence)이다. 연료의 성향과 섞지 않는다
 # ==========================================================================
 # [1] 바탕 — 상위 정렬과 보조 축
 #   BFO 2.0 정렬, 관측(SOSA)·출처(PROV-O)·시간(OWL-Time), 조사 세션과 상태 열거. 네 축이 기대는 바
@@ -48,15 +49,14 @@
 # ==========================================================================
 
 efi:Ignitability a owl:Class ; rdfs:subClassOf obo:BFO_0000016 ;
-    skos:prefLabel "착화 성향"@ko , "Ignitability"@en .
-# '착화 역량'은 F-3·C-31 이 발열원에 쓰는 말(competence)이다. 연료의 성향과 섞지 않는다
-efi:Ignitability rdfs:label "착화 성향"@ko .
+    skos:prefLabel "착화 성향"@ko , "Ignitability"@en ;
+    rdfs:label "착화 성향"@ko .
 
-efi:Observation a owl:Class ; rdfs:subClassOf sosa:Observation , prov:Entity ; skos:prefLabel "관측(계측·판독)"@ko .
-efi:Observation rdfs:label "관측(계측·판독)"@ko ; skos:altLabel "관측"@ko .
+efi:Observation a owl:Class ; rdfs:subClassOf sosa:Observation , prov:Entity ; skos:prefLabel "관측(계측·판독)"@ko ;
+    rdfs:label "관측(계측·판독)"@ko ; skos:altLabel "관측"@ko .
 efi:InsulationResistanceObservation a owl:Class ; rdfs:subClassOf efi:Observation ,
-    [ a owl:Restriction ; owl:onProperty sosa:observedProperty ; owl:hasValue efi:InsulationResistance ] .
-efi:InsulationResistanceObservation rdfs:label "절연저항 측정"@ko ; skos:prefLabel "절연저항 측정"@ko .
+    [ a owl:Restriction ; owl:onProperty sosa:observedProperty ; owl:hasValue efi:InsulationResistance ] ;
+    rdfs:label "절연저항 측정"@ko ; skos:prefLabel "절연저항 측정"@ko .
 efi:InsulationResistance a sosa:ObservableProperty , owl:NamedIndividual ; skos:prefLabel "절연저항"@ko ; qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Resistance> .
 efi:ConductorTemperature a sosa:ObservableProperty , owl:NamedIndividual ; skos:prefLabel "도체 온도"@ko .
 
@@ -69,42 +69,42 @@ efi:NormalInsulationResistance a owl:Class ; skos:prefLabel "절연저항 정상
         [ a owl:Restriction ; owl:onProperty efi:measuredPreFire ; owl:hasValue true ]
         [ a owl:Restriction ; owl:onProperty efi:resultValue ;
           owl:someValuesFrom [ a rdfs:Datatype ; owl:onDatatype xsd:decimal ;
-                               owl:withRestrictions ( [ xsd:minInclusive "1.0"^^xsd:decimal ] ) ] ] ) ] .
-efi:NormalInsulationResistance rdfs:label "절연저항 정상"@ko ; skos:prefLabel "절연저항 정상"@ko .
+                               owl:withRestrictions ( [ xsd:minInclusive "1.0"^^xsd:decimal ] ) ] ] ) ] ;
+    rdfs:label "절연저항 정상"@ko .
 
-efi:InvestigatorAgent a owl:Class ; rdfs:subClassOf prov:Agent , sosa:Sensor ; skos:prefLabel "화재조사관"@ko .
-efi:InvestigatorAgent rdfs:label "화재조사관"@ko ; skos:prefLabel "화재조사관"@ko .
-efi:AIAgent           a owl:Class ; rdfs:subClassOf prov:SoftwareAgent , sosa:Sensor ; skos:prefLabel "AI 에이전트(VLM/LLM)"@ko .
-efi:AIAgent rdfs:label "AI 에이전트(VLM/LLM)"@ko ; skos:altLabel "AI 판독"@ko .
-efi:Instrument        a owl:Class ; rdfs:subClassOf prov:Agent , sosa:Sensor ; skos:prefLabel "계측기"@ko .
-efi:Instrument rdfs:label "계측기"@ko ; skos:altLabel "계측 장비"@ko .
-efi:InvestigationSession a owl:Class ; rdfs:subClassOf prov:Activity ; skos:prefLabel "감식 세션(세션 레지스트리)"@ko .
-efi:InvestigationSession rdfs:label "감식 세션(세션 레지스트리)"@ko ; skos:altLabel "감식 세션"@ko .
-efi:VerificationQuery a owl:Class ; rdfs:subClassOf prov:Activity ; skos:prefLabel "변별 질의"@ko .
-efi:VerificationQuery rdfs:label "변별 질의"@ko ; skos:prefLabel "변별 질의"@ko .
-efi:ArcEvent          a owl:Class ; rdfs:subClassOf obo:BFO_0000015 , time:TemporalEntity ; skos:prefLabel "아크 발생 사건"@ko .
-efi:ArcEvent rdfs:label "아크 발생 사건"@ko ; skos:altLabel "아크 사건"@ko .
-efi:FireExposureEvent a owl:Class ; rdfs:subClassOf obo:BFO_0000015 , time:TemporalEntity ; skos:prefLabel "화염 노출(연소 도달) 사건"@ko .
-efi:FireExposureEvent rdfs:label "화염 노출(연소 도달) 사건"@ko ; skos:altLabel "화염 노출 사건"@ko .
+efi:InvestigatorAgent a owl:Class ; rdfs:subClassOf prov:Agent , sosa:Sensor ; skos:prefLabel "화재조사관"@ko ;
+    rdfs:label "화재조사관"@ko .
+efi:AIAgent           a owl:Class ; rdfs:subClassOf prov:SoftwareAgent , sosa:Sensor ; skos:prefLabel "AI 에이전트(VLM/LLM)"@ko ;
+    rdfs:label "AI 에이전트(VLM/LLM)"@ko ; skos:altLabel "AI 판독"@ko .
+efi:Instrument        a owl:Class ; rdfs:subClassOf prov:Agent , sosa:Sensor ; skos:prefLabel "계측기"@ko ;
+    rdfs:label "계측기"@ko ; skos:altLabel "계측 장비"@ko .
+efi:InvestigationSession a owl:Class ; rdfs:subClassOf prov:Activity ; skos:prefLabel "감식 세션(세션 레지스트리)"@ko ;
+    rdfs:label "감식 세션(세션 레지스트리)"@ko ; skos:altLabel "감식 세션"@ko .
+efi:VerificationQuery a owl:Class ; rdfs:subClassOf prov:Activity ; skos:prefLabel "변별 질의"@ko ;
+    rdfs:label "변별 질의"@ko .
+efi:ArcEvent          a owl:Class ; rdfs:subClassOf obo:BFO_0000015 , time:TemporalEntity ; skos:prefLabel "아크 발생 사건"@ko ;
+    rdfs:label "아크 발생 사건"@ko ; skos:altLabel "아크 사건"@ko .
+efi:FireExposureEvent a owl:Class ; rdfs:subClassOf obo:BFO_0000015 , time:TemporalEntity ; skos:prefLabel "화염 노출(연소 도달) 사건"@ko ;
+    rdfs:label "화염 노출(연소 도달) 사건"@ko ; skos:altLabel "화염 노출 사건"@ko .
 
 efi:ConfirmationStatus a owl:Class ; skos:prefLabel "확인 상태"@ko ;
-    owl:equivalentClass [ a owl:Class ; owl:oneOf ( efi:Confirmed efi:ConfirmedAbsent efi:Unverifiable efi:Missing ) ] .
-efi:ConfirmationStatus rdfs:label "확인 상태"@ko ; skos:prefLabel "확인 상태"@ko .
+    owl:equivalentClass [ a owl:Class ; owl:oneOf ( efi:Confirmed efi:ConfirmedAbsent efi:Unverifiable efi:Missing ) ] ;
+    rdfs:label "확인 상태"@ko .
 efi:Confirmed       a owl:NamedIndividual , efi:ConfirmationStatus ; skos:prefLabel "확인(존재)"@ko .
 efi:ConfirmedAbsent a owl:NamedIndividual , efi:ConfirmationStatus ; skos:prefLabel "부정 확인(부재)"@ko .
 efi:Unverifiable    a owl:NamedIndividual , efi:ConfirmationStatus ; skos:prefLabel "확인 불가"@ko ; rdfs:comment "결측과 구분해 보존. 반증 근거로 사용 금지 (논문 3.2절)"@ko .
 efi:Missing         a owl:NamedIndividual , efi:ConfirmationStatus ; skos:prefLabel "미확인(결측)"@ko .
 
-efi:Verdict a owl:Class ; owl:equivalentClass [ a owl:Class ; owl:oneOf ( efi:Active efi:Weakened efi:Refuted efi:Supported efi:Withheld ) ] .
-efi:Verdict rdfs:label "판정 결과"@ko ; skos:prefLabel "판정 결과"@ko .
+efi:Verdict a owl:Class ; owl:equivalentClass [ a owl:Class ; owl:oneOf ( efi:Active efi:Weakened efi:Refuted efi:Supported efi:Withheld ) ] ;
+    rdfs:label "판정 결과"@ko ; skos:prefLabel "판정 결과"@ko .
 efi:Active a owl:NamedIndividual , efi:Verdict ; skos:prefLabel "활성"@ko .
 efi:Weakened a owl:NamedIndividual , efi:Verdict ; skos:prefLabel "약화"@ko .
 efi:Refuted a owl:NamedIndividual , efi:Verdict ; skos:prefLabel "기각"@ko .
 efi:Supported a owl:NamedIndividual , efi:Verdict ; skos:prefLabel "지지(확정 후보)"@ko .
 efi:Withheld a owl:NamedIndividual , efi:Verdict ; skos:prefLabel "판단보류"@ko .
 
-efi:IndicatorRole a owl:Class ; owl:equivalentClass [ a owl:Class ; owl:oneOf ( efi:Core efi:Supporting efi:Refuting efi:DecisiveRefuting ) ] .
-efi:IndicatorRole rdfs:label "단서 역할"@ko ; skos:prefLabel "단서 역할"@ko .
+efi:IndicatorRole a owl:Class ; owl:equivalentClass [ a owl:Class ; owl:oneOf ( efi:Core efi:Supporting efi:Refuting efi:DecisiveRefuting ) ] ;
+    rdfs:label "단서 역할"@ko ; skos:prefLabel "단서 역할"@ko .
 efi:Core a owl:NamedIndividual , efi:IndicatorRole ; skos:prefLabel "핵심 확인 단서"@ko .
 efi:Supporting a owl:NamedIndividual , efi:IndicatorRole ; skos:prefLabel "보강 단서"@ko .
 efi:Refuting a owl:NamedIndividual , efi:IndicatorRole ; skos:prefLabel "반증 단서"@ko .
@@ -144,26 +144,25 @@ efi:HardlyIgnitable a owl:Class ; rdfs:subClassOf efi:Ignitability ; rdfs:label 
 
 efi:HeatingMechanism a owl:Class ; rdfs:subClassOf obo:BFO_0000015 ;
     skos:prefLabel "발열 메커니즘"@ko , "Heating mechanism"@en ;
-    skos:definition "증거물 또는 그 주변에 착화 가능한 열에너지를 생성하는 물리 과정. NFPA 921의 '경합 가능 발화원(competent ignition source)' 후보."@ko .
+    skos:definition "증거물 또는 그 주변에 착화 가능한 열에너지를 생성하는 물리 과정. NFPA 921의 '경합 가능 발화원(competent ignition source)' 후보."@ko ;
+    rdfs:label "발열 메커니즘"@ko .
 
-efi:HeatingMechanism rdfs:label "발열 메커니즘"@ko ; skos:prefLabel "발열 메커니즘"@ko .
-
-efi:ElectricalHeatingMechanism    a owl:Class ; rdfs:subClassOf efi:HeatingMechanism ; skos:prefLabel "전기적 발열"@ko .
+efi:ElectricalHeatingMechanism    a owl:Class ; rdfs:subClassOf efi:HeatingMechanism ; skos:prefLabel "전기적 발열"@ko ;
+    rdfs:label "전기적 발열"@ko .
 efi:ElectricalHeatingMechanism owl:disjointWith efi:NonElectricalHeatingMechanism .
-efi:ElectricalHeatingMechanism rdfs:label "전기적 발열"@ko ; skos:prefLabel "전기적 발열"@ko .
 efi:ElectricalHeatingMechanism efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
 efi:ElectricalHeatingMechanism efi:producesDamage efi:HemisphericalMeltShape , efi:SmoothLustrousMeltSurface .
 efi:ElectricalHeatingMechanism efi:producesDamage efi:CarbonizationFromInsideOut .
-efi:NonElectricalHeatingMechanism a owl:Class ; rdfs:subClassOf efi:HeatingMechanism ; skos:prefLabel "비전기적 발열"@ko .
-efi:NonElectricalHeatingMechanism rdfs:label "비전기적 발열"@ko ; skos:prefLabel "비전기적 발열"@ko .
+efi:NonElectricalHeatingMechanism a owl:Class ; rdfs:subClassOf efi:HeatingMechanism ; skos:prefLabel "비전기적 발열"@ko ;
+    rdfs:label "비전기적 발열"@ko .
 
-efi:ResistiveHeating          a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; skos:prefLabel "저항(줄열) 발열"@ko .
-efi:ResistiveHeating rdfs:label "저항(줄열) 발열"@ko ; skos:altLabel "저항 발열"@ko .
+efi:ResistiveHeating          a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; skos:prefLabel "저항(줄열) 발열"@ko ;
+    rdfs:label "저항(줄열) 발열"@ko ; skos:altLabel "저항 발열"@ko .
 efi:ResistiveHeating efi:producesDamage efi:LocalizedDiscoloration , efi:InsulationCarbonization .
 efi:ResistiveHeating efi:ignites efi:InsulationMaterialFuel .
 efi:ResistiveHeating efi:producesDamage efi:UniformDamageAlongConductor .
-efi:PoorContactHeating        a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "접촉불량 고저항 발열"@ko ; skos:altLabel "High-resistance connection heating"@en .
-efi:PoorContactHeating rdfs:label "접촉불량 고저항 발열"@ko ; skos:altLabel "접촉부 고저항 발열"@ko .
+efi:PoorContactHeating        a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "접촉불량 고저항 발열"@ko ; skos:altLabel "High-resistance connection heating"@en ;
+    rdfs:label "접촉불량 고저항 발열"@ko ; skos:altLabel "접촉부 고저항 발열"@ko .
 
 # 발열 메커니즘 → 손상 양상
 efi:PoorContactHeating efi:producesDamage efi:LocalizedDiscoloration , efi:CuprousOxideGrowth , efi:LossOfLuster , efi:LongTermTerminalHeating , efi:InsulationCarbonization .
@@ -180,8 +179,8 @@ efi:PoorContactHeating efi:producesDamage efi:LocalizedHeatWithSurroundingDamage
 # 앞 단계가 뒤 단계를 부르고 뒤가 앞을 키운다. 층간단락과 같은 구조다.
 efi:PoorContactHeating efi:enablesProgressionTo efi:GlowingConnection .
 efi:PoorContactHeating efi:producesDamage efi:CarbonizationFromInsideOut .
-efi:GlowingConnection         a owl:Class ; rdfs:subClassOf efi:PoorContactHeating ; skos:prefLabel "아산화동 증식 발열(글로잉)"@ko ; skos:altLabel "Glowing connection (Cu2O growth)"@en .
-efi:GlowingConnection rdfs:label "아산화동 증식 발열(글로잉)"@ko ; skos:altLabel "적열 접속부"@ko .
+efi:GlowingConnection         a owl:Class ; rdfs:subClassOf efi:PoorContactHeating ; skos:prefLabel "아산화동 증식 발열(글로잉)"@ko ; skos:altLabel "Glowing connection (Cu2O growth)"@en ;
+    rdfs:label "아산화동 증식 발열(글로잉)"@ko ; skos:altLabel "적열 접속부"@ko .
 efi:GlowingConnection efi:producesDamage efi:CuprousOxideGrowth , efi:LocalizedDiscoloration , efi:InsulationCarbonization .
 efi:GlowingConnection efi:producesDamage efi:CuprousOxideDeposit .
 efi:GlowingConnection efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel , efi:CelluloseFuel .
@@ -189,8 +188,8 @@ efi:GlowingConnection efi:producesDamage efi:MoltenOxideMass , efi:EnlargedScrew
 efi:GlowingConnection efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
 efi:GlowingConnection efi:enablesProgressionTo efi:PoorContactHeating .
 efi:GlowingConnection efi:producesDamage efi:CarbonizationFromInsideOut .
-efi:PartialDisconnectionHeating a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "반단선 단면적 감소 과열"@ko .
-efi:PartialDisconnectionHeating rdfs:label "반단선 단면적 감소 과열"@ko ; skos:altLabel "반단선 발열"@ko .
+efi:PartialDisconnectionHeating a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "반단선 단면적 감소 과열"@ko ;
+    rdfs:label "반단선 단면적 감소 과열"@ko ; skos:altLabel "반단선 발열"@ko .
 efi:PartialDisconnectionHeating efi:producesDamage efi:StrandFracture , efi:StrandFractureAtStressPoint , efi:SmallMeltBallOnStrandEnd , efi:InsulationCarbonization .
 efi:PartialDisconnectionHeating efi:ignites efi:InsulationMaterialFuel .
 efi:PartialDisconnectionHeating efi:enablesProgressionTo efi:PartialDisconnectionInducedArc .
@@ -198,8 +197,8 @@ efi:PartialDisconnectionHeating efi:producesDamage efi:StrandFractureOverTenPerc
 efi:PartialDisconnectionHeating efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
 efi:PartialDisconnectionHeating efi:producesDamage efi:ToothMarkOnInsulation .
 efi:PartialDisconnectionHeating efi:producesDamage efi:CarbonizationFromInsideOut .
-efi:OverloadHeating           a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "과부하 발열"@ko ; rdfs:comment "과부하·과전류 가설(OverloadScenario, 48.1)의 정의 메커니즘"@ko .
-efi:OverloadHeating rdfs:label "과부하 발열"@ko ; skos:prefLabel "과부하 발열"@ko .
+efi:OverloadHeating           a owl:Class ; rdfs:subClassOf efi:ResistiveHeating ; skos:prefLabel "과부하 발열"@ko ; rdfs:comment "과부하·과전류 가설(OverloadScenario, 48.1)의 정의 메커니즘"@ko ;
+    rdfs:label "과부하 발열"@ko .
 efi:OverloadHeating efi:producesDamage efi:InsulationCarbonization , efi:LocalizedDiscoloration .
 efi:OverloadHeating efi:ignites efi:InsulationMaterialFuel , efi:ThermalInsulationFuel .
 efi:OverloadHeating efi:producesDamage efi:Sleeving , efi:MeltOffset .
@@ -207,23 +206,23 @@ efi:OverloadHeating efi:producesDamage efi:FuseMeltedAtCenter .
 efi:OverloadHeating efi:producesDamage efi:UniformDamageAlongConductor , efi:CarbonizationFromInsideOut .
 efi:OverloadHeating efi:producesDamage efi:OvercurrentFusedBead .
 
-efi:ArcHeating                a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; skos:prefLabel "아크 발열"@ko .
-efi:ArcHeating rdfs:label "아크 발열"@ko ; skos:prefLabel "아크 발열"@ko .
-efi:ShortCircuitArc           a owl:Class ; rdfs:subClassOf efi:ArcHeating ; skos:prefLabel "단락 아크(병렬 아크)"@ko .
-efi:ShortCircuitArc rdfs:label "단락 아크(병렬 아크)"@ko ; skos:altLabel "단락 아크"@ko .
+efi:ArcHeating                a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; skos:prefLabel "아크 발열"@ko ;
+    rdfs:label "아크 발열"@ko .
+efi:ShortCircuitArc           a owl:Class ; rdfs:subClassOf efi:ArcHeating ; skos:prefLabel "단락 아크(병렬 아크)"@ko ;
+    rdfs:label "단락 아크(병렬 아크)"@ko ; skos:altLabel "단락 아크"@ko .
 efi:ShortCircuitArc efi:producesDamage efi:ArcBead , efi:ArcMeltMark , efi:LargeMeltMark , efi:Spatter .
 efi:ShortCircuitArc efi:ignites efi:InsulationMaterialFuel , efi:FlammableVaporFuel , efi:PaperTextileFuel , efi:AccumulatedDustFuel .
 efi:ShortCircuitArc efi:producesDamage efi:FuseGloballyMeltedScattered .
-efi:CrushInducedArc           a owl:Class ; rdfs:subClassOf efi:ShortCircuitArc ; skos:prefLabel "압착손상 유발 단락 아크"@ko .
-efi:CrushInducedArc rdfs:label "압착손상 유발 단락 아크"@ko ; skos:altLabel "압착에 의한 아크"@ko .
+efi:CrushInducedArc           a owl:Class ; rdfs:subClassOf efi:ShortCircuitArc ; skos:prefLabel "압착손상 유발 단락 아크"@ko ;
+    rdfs:label "압착손상 유발 단락 아크"@ko ; skos:altLabel "압착에 의한 아크"@ko .
 efi:CrushInducedArc efi:producesDamage efi:ArcBead , efi:ArcMeltMark , efi:MechanicalDeformation , efi:WholeConductorCrushedOrCut , efi:LargeMeltMark , efi:Spatter , efi:InsulationCarbonization .
 efi:CrushInducedArc efi:ignites efi:InsulationMaterialFuel , efi:PaperTextileFuel .
 efi:CrushInducedArc efi:producesDamage efi:MeltMarkOnSupplySideOnly .
 efi:CrushInducedArc efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
 efi:CrushInducedArc efi:producesDamage efi:ToothMarkOnInsulation .
 efi:CrushInducedArc efi:producesDamage efi:CarbonizationFromInsideOut .
-efi:InsulationBreakdownArc    a owl:Class ; rdfs:subClassOf efi:ShortCircuitArc ; skos:prefLabel "절연파괴 단락 아크"@ko .
-efi:InsulationBreakdownArc rdfs:label "절연파괴 단락 아크"@ko ; skos:altLabel "절연 파괴 아크"@ko .
+efi:InsulationBreakdownArc    a owl:Class ; rdfs:subClassOf efi:ShortCircuitArc ; skos:prefLabel "절연파괴 단락 아크"@ko ;
+    rdfs:label "절연파괴 단락 아크"@ko ; skos:altLabel "절연 파괴 아크"@ko .
 efi:InsulationBreakdownArc efi:producesDamage efi:ArcMeltMark , efi:ArcBead , efi:InsulationEmbrittlement , efi:InsulationCarbonization , efi:LocalizedDiscoloration .
 efi:InsulationBreakdownArc efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel .
 efi:InsulationBreakdownArc efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
@@ -240,28 +239,28 @@ efi:InsulationBreakdownArc efi:enablesProgressionTo efi:InterTurnShortCircuit .
 efi:InsulationBreakdownArc efi:enablesProgressionTo efi:ArcTracking .
 efi:InsulationBreakdownArc efi:producesDamage efi:DendriticTreePath , efi:InternalDamageExceedingSurface .
 efi:InsulationBreakdownArc efi:producesDamage efi:CarbonizationFromInsideOut .
-efi:SeriesArc                 a owl:Class ; rdfs:subClassOf efi:ArcHeating ; skos:prefLabel "직렬 아크(파단부 아크)"@ko .
-efi:SeriesArc rdfs:label "직렬 아크(파단부 아크)"@ko ; skos:altLabel "직렬 아크"@ko .
+efi:SeriesArc                 a owl:Class ; rdfs:subClassOf efi:ArcHeating ; skos:prefLabel "직렬 아크(파단부 아크)"@ko ;
+    rdfs:label "직렬 아크(파단부 아크)"@ko ; skos:altLabel "직렬 아크"@ko .
 efi:SeriesArc efi:producesDamage efi:ArcBead , efi:MultipleArcBeads , efi:SmallMeltBallOnStrandEnd .
 efi:SeriesArc efi:ignites efi:InsulationMaterialFuel , efi:AccumulatedDustFuel .
 efi:SeriesArc efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
 efi:SeriesArc efi:producesDamage efi:CarbonizationFromInsideOut .
-efi:ArcTracking               a owl:Class ; rdfs:subClassOf efi:ArcHeating ; skos:prefLabel "트래킹(표면 도전로 아크)"@ko ; skos:altLabel "Arc tracking"@en .
-efi:ArcTracking rdfs:label "트래킹(표면 도전로 아크)"@ko ; skos:altLabel "트래킹 아크"@ko .
+efi:ArcTracking               a owl:Class ; rdfs:subClassOf efi:ArcHeating ; skos:prefLabel "트래킹(표면 도전로 아크)"@ko ; skos:altLabel "Arc tracking"@en ;
+    rdfs:label "트래킹(표면 도전로 아크)"@ko ; skos:altLabel "트래킹 아크"@ko .
 efi:ArcTracking efi:producesDamage efi:CarbonizedConductivePath , efi:BurnCenterOnSurface , efi:InsulationCarbonization , efi:ArcBead .
 efi:ArcTracking efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel , efi:AccumulatedDustFuel .
 efi:ArcTracking efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
 efi:ArcTracking efi:producesDamage efi:ToothMarkOnInsulation .
 efi:ArcTracking efi:producesDamage efi:CarbonizationFromInsideOut .
-efi:LeakageCurrentHeating     a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; skos:prefLabel "누설전류 발열"@ko .
-efi:LeakageCurrentHeating rdfs:label "누설전류 발열"@ko ; skos:prefLabel "누설전류 발열"@ko .
+efi:LeakageCurrentHeating     a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechanism ; skos:prefLabel "누설전류 발열"@ko ;
+    rdfs:label "누설전류 발열"@ko .
 efi:LeakageCurrentHeating efi:producesDamage efi:InsulationCarbonization , efi:LocalizedDiscoloration .
 efi:LeakageCurrentHeating efi:ignites efi:InsulationMaterialFuel , efi:AccumulatedDustFuel .
 efi:LeakageCurrentHeating efi:producesDamage efi:LocalizedHeatWithSurroundingDamage .
 efi:LeakageCurrentHeating efi:producesDamage efi:CarbonizationFromInsideOut .
 
-efi:ExternalFlameExposure     a owl:Class ; rdfs:subClassOf efi:NonElectricalHeatingMechanism ; skos:prefLabel "외부화염 수열"@ko ; rdfs:comment "반증 판정 범주: 전기적 요인으로의 강제 수렴을 막는 경로"@ko .
-efi:ExternalFlameExposure rdfs:label "외부화염 수열"@ko ; skos:altLabel "외부 화염 노출"@ko .
+efi:ExternalFlameExposure     a owl:Class ; rdfs:subClassOf efi:NonElectricalHeatingMechanism ; skos:prefLabel "외부화염 수열"@ko ; rdfs:comment "반증 판정 범주: 전기적 요인으로의 강제 수렴을 막는 경로"@ko ;
+    rdfs:label "외부화염 수열"@ko ; skos:altLabel "외부 화염 노출"@ko .
 efi:ExternalFlameExposure efi:producesDamage efi:CuprousOxideDeposit , efi:ContactCorrosion .
 efi:ExternalFlameExposure efi:producesDamage efi:GeneralMelting , efi:Sagging , efi:ThermalGradientFlow , efi:FireMeltMark , efi:SecondaryArcMark , efi:LargeMeltMark , efi:InsulationCarbonization .
 efi:ExternalFlameExposure efi:ignites efi:AdjacentCombustible , efi:CelluloseFuel , efi:ThermalInsulationFuel .
@@ -408,19 +407,19 @@ efi:GroundFaultHeating efi:ignites efi:CelluloseFuel , efi:InsulationMaterialFue
 # ==========================================================================
 
 efi:PhysicalEvidence a owl:Class ; rdfs:subClassOf obo:BFO_0000040 , sosa:FeatureOfInterest ;
-    skos:prefLabel "물리 증거물"@ko , "Physical evidence"@en .
-efi:PhysicalEvidence rdfs:label "물리 증거물"@ko ; skos:prefLabel "물리 증거물"@ko .
+    skos:prefLabel "물리 증거물"@ko , "Physical evidence"@en ;
+    rdfs:label "물리 증거물"@ko .
 
 efi:DamagePattern a owl:Class ; rdfs:subClassOf obo:BFO_0000019 ;
     skos:prefLabel "손상 양상"@ko , "Damage pattern"@en ;
-    skos:definition "증거물에 내재(inheres in)하는 형태학적 특징. 그 자체로 원인이 아니라 검증 대상 가설의 단서."@ko .
-efi:DamagePattern rdfs:label "손상 양상"@ko ; skos:prefLabel "손상 양상"@ko .
+    skos:definition "증거물에 내재(inheres in)하는 형태학적 특징. 그 자체로 원인이 아니라 검증 대상 가설의 단서."@ko ;
+    rdfs:label "손상 양상"@ko .
 
-efi:ElectricalArtifact a owl:Class ; rdfs:subClassOf efi:PhysicalEvidence ; skos:prefLabel "전기 증거물"@ko .
-efi:ElectricalArtifact rdfs:label "전기 증거물"@ko ; skos:altLabel "전기 설비물"@ko .
+efi:ElectricalArtifact a owl:Class ; rdfs:subClassOf efi:PhysicalEvidence ; skos:prefLabel "전기 증거물"@ko ;
+    rdfs:label "전기 증거물"@ko ; skos:altLabel "전기 설비물"@ko .
 efi:ElectricalArtifact efi:exhibits efi:LocalizedHeatWithSurroundingDamage , efi:IntactSurroundingsAroundComponent .
-efi:Conductor          a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "도체"@ko .
-efi:Conductor rdfs:label "도체"@ko ; skos:prefLabel "도체"@ko .
+efi:Conductor          a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "도체"@ko ;
+    rdfs:label "도체"@ko .
 
 # 물리 증거물 → 손상 양상
 efi:Conductor efi:exhibits efi:ArcBead , efi:ArcMeltMark , efi:LargeMeltMark , efi:GeneralMelting , efi:Sagging , efi:MechanicalDeformation , efi:WholeConductorCrushedOrCut , efi:LocalizedDiscoloration .
@@ -429,56 +428,56 @@ efi:Conductor efi:exhibits efi:WideMeltWithRoughSurface , efi:DrippingMeltFormat
 efi:Conductor efi:exhibits efi:HemisphericalMeltShape , efi:SmoothLustrousMeltSurface , efi:ForeignMatterInclusion .
 efi:Conductor efi:exhibits efi:PostFireMechanicalDamage .
 efi:Conductor efi:exhibits efi:OvercurrentFusedBead .
-efi:SolidConductor     a owl:Class ; rdfs:subClassOf efi:Conductor ; skos:prefLabel "단선 도체"@ko .
-efi:SolidConductor rdfs:label "단선 도체"@ko ; skos:prefLabel "단선 도체"@ko .
+efi:SolidConductor     a owl:Class ; rdfs:subClassOf efi:Conductor ; skos:prefLabel "단선 도체"@ko ;
+    rdfs:label "단선 도체"@ko .
 efi:SolidConductor efi:exhibits efi:ArcBead , efi:MechanicalDeformation .
-efi:StrandedConductor  a owl:Class ; rdfs:subClassOf efi:Conductor ; skos:prefLabel "연선 도체(소선 집합)"@ko .
-efi:StrandedConductor rdfs:label "연선 도체(소선 집합)"@ko ; skos:altLabel "연선 도체"@ko .
+efi:StrandedConductor  a owl:Class ; rdfs:subClassOf efi:Conductor ; skos:prefLabel "연선 도체(소선 집합)"@ko ;
+    rdfs:label "연선 도체(소선 집합)"@ko ; skos:altLabel "연선 도체"@ko .
 efi:StrandedConductor efi:exhibits efi:StrandFracture , efi:StrandFractureAtStressPoint , efi:SmallMeltBallOnStrandEnd , efi:MultipleArcBeads .
 efi:StrandedConductor efi:exhibits efi:MeltMarkOnBothSidesOfBreak , efi:MeltMarkOnSupplySideOnly .
-efi:Insulation         a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "피복·절연물"@ko .
-efi:Insulation rdfs:label "피복·절연물"@ko ; skos:altLabel "절연물"@ko .
+efi:Insulation         a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "피복·절연물"@ko ;
+    rdfs:label "피복·절연물"@ko ; skos:altLabel "절연물"@ko .
 efi:Insulation efi:exhibits efi:InsulationCarbonization , efi:InsulationEmbrittlement , efi:CarbonizedConductivePath , efi:BurnCenterOnSurface , efi:ThermalGradientFlow .
 efi:Insulation efi:exhibits efi:ToothMarkOnInsulation .
 efi:Insulation efi:exhibits efi:DendriticTreePath , efi:InternalDamageExceedingSurface .
 efi:Insulation efi:exhibits efi:CarbonizationFromInsideOut , efi:UniformDamageAlongConductor .
-efi:ConnectionPoint    a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "접속부"@ko .
-efi:ConnectionPoint rdfs:label "접속부"@ko ; skos:prefLabel "접속부"@ko .
+efi:ConnectionPoint    a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "접속부"@ko ;
+    rdfs:label "접속부"@ko .
 efi:ConnectionPoint efi:exhibits efi:CuprousOxideDeposit , efi:ContactCorrosion .
 efi:ConnectionPoint efi:exhibits efi:LocalizedDiscoloration , efi:CuprousOxideGrowth , efi:LossOfLuster , efi:LongTermTerminalHeating , efi:ArcBead .
 efi:ConnectionPoint efi:exhibits efi:MoltenOxideMass , efi:EnlargedScrewHeadOxidation , efi:OxideBanding .
 efi:ConnectionPoint efi:exhibits efi:RubyRedCrystal .
 efi:ConnectionPoint efi:exhibits efi:ContactWelding .
-efi:TerminalBlock      a owl:Class ; rdfs:subClassOf efi:ConnectionPoint ; skos:prefLabel "단자대"@ko .
-efi:TerminalBlock rdfs:label "단자대"@ko ; skos:prefLabel "단자대"@ko .
+efi:TerminalBlock      a owl:Class ; rdfs:subClassOf efi:ConnectionPoint ; skos:prefLabel "단자대"@ko ;
+    rdfs:label "단자대"@ko .
 efi:TerminalBlock efi:exhibits efi:LongTermTerminalHeating , efi:CarbonizedConductivePath , efi:CuprousOxideGrowth .
-efi:PlugReceptacle     a owl:Class ; rdfs:subClassOf efi:ConnectionPoint ; skos:prefLabel "플러그·콘센트"@ko .
-efi:PlugReceptacle rdfs:label "플러그·콘센트"@ko ; skos:prefLabel "플러그·콘센트"@ko .
+efi:PlugReceptacle     a owl:Class ; rdfs:subClassOf efi:ConnectionPoint ; skos:prefLabel "플러그·콘센트"@ko ;
+    rdfs:label "플러그·콘센트"@ko .
 efi:PlugReceptacle efi:exhibits efi:CarbonizedConductivePath , efi:LocalizedDiscoloration , efi:LossOfLuster .
-efi:ProtectiveDevice   a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "보호장치(차단기·누전차단기)"@ko .
-efi:ProtectiveDevice rdfs:label "보호장치(차단기·누전차단기)"@ko ; skos:altLabel "보호 장치"@ko .
+efi:ProtectiveDevice   a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "보호장치(차단기·누전차단기)"@ko ;
+    rdfs:label "보호장치(차단기·누전차단기)"@ko ; skos:altLabel "보호 장치"@ko .
 efi:ProtectiveDevice efi:exhibits efi:ArcMeltMark , efi:LocalizedDiscoloration .
 efi:ProtectiveDevice efi:exhibits efi:ContactWelding .
-efi:Enclosure          a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "함체(단자함·분전반)"@ko .
-efi:Enclosure rdfs:label "함체(단자함·분전반)"@ko ; skos:altLabel "외함"@ko .
+efi:Enclosure          a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact ; skos:prefLabel "함체(단자함·분전반)"@ko ;
+    rdfs:label "함체(단자함·분전반)"@ko ; skos:altLabel "외함"@ko .
 efi:Enclosure efi:exhibits efi:GeneralMelting , efi:Sagging , efi:FireMeltMark .
 
 # --- 손상 양상 (형태학적 특징, VLM 판독 대상) ---
-efi:MeltMark                 a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "용융흔"@ko .
-efi:MeltMark rdfs:label "용융흔"@ko ; skos:prefLabel "용융흔"@ko .
-efi:ArcMeltMark              a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "아크 용융흔(단락흔)"@ko .
-efi:ArcMeltMark rdfs:label "아크 용융흔(단락흔)"@ko ; skos:altLabel "아크 용융흔"@ko .
+efi:MeltMark                 a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "용융흔"@ko ;
+    rdfs:label "용융흔"@ko .
+efi:ArcMeltMark              a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "아크 용융흔(단락흔)"@ko ;
+    rdfs:label "아크 용융흔(단락흔)"@ko ; skos:altLabel "아크 용융흔"@ko .
 efi:PrimaryArcMark           a owl:Class ; rdfs:subClassOf efi:ArcMeltMark ; skos:prefLabel "1차 단락흔(원인)"@ko ; skos:altLabel "Cause arc bead"@en ;
-    skos:definition "화재 발생 이전 아크로 형성된 용융흔. 판정 근거는 형태학 단독이 아니라 발화 구역 내 위치·아크 매핑·시간 선후(OWL-Time)."@ko .
+    skos:definition "화재 발생 이전 아크로 형성된 용융흔. 판정 근거는 형태학 단독이 아니라 발화 구역 내 위치·아크 매핑·시간 선후(OWL-Time)."@ko ;
+    rdfs:label "1차 단락흔(원인)"@ko ; skos:altLabel "1차 아크흔"@ko .
 efi:PrimaryArcMark owl:disjointWith efi:SecondaryArcMark .
-efi:PrimaryArcMark rdfs:label "1차 단락흔(원인)"@ko ; skos:altLabel "1차 아크흔"@ko .
-efi:SecondaryArcMark         a owl:Class ; rdfs:subClassOf efi:ArcMeltMark ; skos:prefLabel "2차 단락흔(피해)"@ko ; skos:altLabel "Victim arc bead"@en .
 # '2차 수열흔'은 열흔(통전 없음)의 이름이다. 단락흔 하위에 붙지 않는다 (실무Ⅰ 표 4-9)
-efi:SecondaryArcMark rdfs:label "2차 단락흔(피해)"@ko .
-efi:FireMeltMark             a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "수열 용융흔(열흔)"@ko .
-efi:FireMeltMark rdfs:label "수열 용융흔(열흔)"@ko ; skos:altLabel "화재열 용융흔"@ko .
-efi:ArcBead                  a owl:Class ; rdfs:subClassOf efi:ArcMeltMark ; skos:prefLabel "아크 비드"@ko .
-efi:ArcBead rdfs:label "아크 비드"@ko ; skos:prefLabel "아크 비드"@ko .
+efi:SecondaryArcMark         a owl:Class ; rdfs:subClassOf efi:ArcMeltMark ; skos:prefLabel "2차 단락흔(피해)"@ko ; skos:altLabel "Victim arc bead"@en ;
+    rdfs:label "2차 단락흔(피해)"@ko .
+efi:FireMeltMark             a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "수열 용융흔(열흔)"@ko ;
+    rdfs:label "수열 용융흔(열흔)"@ko ; skos:altLabel "화재열 용융흔"@ko .
+efi:ArcBead                  a owl:Class ; rdfs:subClassOf efi:ArcMeltMark ; skos:prefLabel "아크 비드"@ko ;
+    rdfs:label "아크 비드"@ko .
 
 # 트래킹 저항성이 낮은 절연물 = IEC 60112 재료군 III (IIIa 175≤CTI<400, IIIb 100≤CTI<175)
 # 군 경계 400 V 는 IEC 60112 표준값이다. 이 사실이 트래킹 가설에 갖는 가중치는 루브릭 사항이며 여기서 정하지 않는다.
@@ -498,52 +497,52 @@ efi:AgedElectricalArtifact a owl:Class ; rdfs:subClassOf efi:ElectricalArtifact 
           owl:someValuesFrom [ a rdfs:Datatype ; owl:onDatatype xsd:decimal ;
                                owl:withRestrictions ( [ xsd:minInclusive "30"^^xsd:decimal ] ) ] ] ) ] ;
     rdfs:comment "물리 증거물의 속성이다. 선행 조건 AgedInsulation 과 축이 다르므로 직접 등가로 두지 않는다."@ko .
-efi:LargeMeltMark            a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "대형 용융흔"@ko .
-efi:LargeMeltMark rdfs:label "대형 용융흔"@ko ; skos:prefLabel "대형 용융흔"@ko .
+efi:LargeMeltMark            a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "대형 용융흔"@ko ;
+    rdfs:label "대형 용융흔"@ko .
 efi:SmallMeltBallOnStrandEnd a owl:Class ; rdfs:subClassOf efi:MeltMark ; skos:prefLabel "소선 끝단 소형 용융구"@ko ;
-    rdfs:comment "연선을 이루는 개별 소선(素線)의 끝에 생긴 작은 용융구다. 전선(電線) 말단의 일반 비드와 다르다 — 후자는 §9.11.6 이 '도체 끝의 비드 자체는 화재 원인을 지시하지 않는다'고 못박은 것이며 ArcBead 로 읽어야 한다. 판독기가 둘을 뭉개면 C-8 제약을 우회하게 된다. 실측으로도 갈린다 — 소선이 명시된 것은 반단선 75%, 명시되지 않은 것은 16%."@ko .
-efi:SmallMeltBallOnStrandEnd rdfs:label "소선 끝단 소형 용융구"@ko ; skos:prefLabel "소선 끝단 소형 용융구"@ko .
-efi:GeneralMelting           a owl:Class ; rdfs:subClassOf efi:FireMeltMark ; skos:prefLabel "전반 용융"@ko .
-efi:GeneralMelting rdfs:label "전반 용융"@ko ; skos:altLabel "전반적 용융"@ko .
-efi:Spatter                  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "스패터"@ko .
-efi:Spatter rdfs:label "스패터"@ko ; skos:prefLabel "스패터"@ko .
-efi:MultipleArcBeads         a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "다발성 아크 비드"@ko .
-efi:MultipleArcBeads rdfs:label "다발성 아크 비드"@ko ; skos:prefLabel "다발성 아크 비드"@ko .
-efi:LocalizedDiscoloration   a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "국부 변색·산화"@ko .
-efi:LocalizedDiscoloration rdfs:label "국부 변색·산화"@ko ; skos:altLabel "국부 변색"@ko .
+    rdfs:comment "연선을 이루는 개별 소선(素線)의 끝에 생긴 작은 용융구다. 전선(電線) 말단의 일반 비드와 다르다 — 후자는 §9.11.6 이 '도체 끝의 비드 자체는 화재 원인을 지시하지 않는다'고 못박은 것이며 ArcBead 로 읽어야 한다. 판독기가 둘을 뭉개면 C-8 제약을 우회하게 된다. 실측으로도 갈린다 — 소선이 명시된 것은 반단선 75%, 명시되지 않은 것은 16%."@ko ;
+    rdfs:label "소선 끝단 소형 용융구"@ko .
+efi:GeneralMelting           a owl:Class ; rdfs:subClassOf efi:FireMeltMark ; skos:prefLabel "전반 용융"@ko ;
+    rdfs:label "전반 용융"@ko ; skos:altLabel "전반적 용융"@ko .
+efi:Spatter                  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "스패터"@ko ;
+    rdfs:label "스패터"@ko .
+efi:MultipleArcBeads         a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "다발성 아크 비드"@ko ;
+    rdfs:label "다발성 아크 비드"@ko .
+efi:LocalizedDiscoloration   a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "국부 변색·산화"@ko ;
+    rdfs:label "국부 변색·산화"@ko ; skos:altLabel "국부 변색"@ko .
 efi:CuprousOxideGrowth       a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "아산화동 증식"@ko ;
-    skos:definition "접속부에서 금속을 대체하거나 도체를 팽창시키는 산화물 덩어리의 증식이 확인된 양상. 아산화동 성분 검출이나 적색 피막만으로는 해당하지 않는다 (§9.7.3.2, §9.10.3.1(4))"@ko .
-efi:CuprousOxideGrowth rdfs:label "아산화동 증식"@ko ; skos:prefLabel "아산화동 증식"@ko .
+    skos:definition "접속부에서 금속을 대체하거나 도체를 팽창시키는 산화물 덩어리의 증식이 확인된 양상. 아산화동 성분 검출이나 적색 피막만으로는 해당하지 않는다 (§9.7.3.2, §9.10.3.1(4))"@ko ;
+    rdfs:label "아산화동 증식"@ko .
 efi:CuprousOxideDeposit a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
     rdfs:label "아산화동 검출·피막"@ko ; skos:prefLabel "아산화동 검출·피막"@ko ;
     rdfs:comment "성분이나 피막의 관찰. 환원성 화재 환경에서도 생기므로 접속부 증식·발열 이력을 뜻하지 않는다 (§9.7.3.2)"@ko .
 efi:ContactCorrosion a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
     rdfs:label "접속부 부식 관찰"@ko ; skos:prefLabel "접속부 부식 관찰"@ko ;
     rdfs:comment "발견된 부식의 물리적 양상. PVC의 화재 분해 산물과 수분으로도 생길 수 있다. 발화 전 부식 이력과 구분한다 (§9.7.5.2)"@ko .
-efi:LossOfLuster             a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "광택 소실"@ko .
-efi:LossOfLuster rdfs:label "광택 소실"@ko ; skos:prefLabel "광택 소실"@ko .
-efi:LongTermTerminalHeating  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "단자 장기 발열 흔적"@ko .
-efi:LongTermTerminalHeating rdfs:label "단자 장기 발열 흔적"@ko ; skos:prefLabel "단자 장기 발열 흔적"@ko .
-efi:StrandFracture           a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "소선 파단"@ko .
-efi:StrandFracture rdfs:label "소선 파단"@ko ; skos:prefLabel "소선 파단"@ko .
-efi:StrandFractureAtStressPoint a owl:Class ; rdfs:subClassOf efi:StrandFracture ; skos:prefLabel "굴곡·진동·인장 부위 소선 부분단선"@ko ; rdfs:comment "복합 사실: 파단 위치가 기계적 응력 부위와 일치할 때 정규화기가 인스턴스화"@ko .
-efi:StrandFractureAtStressPoint rdfs:label "굴곡·진동·인장 부위 소선 부분단선"@ko ; skos:altLabel "응력부 소선 부분단선"@ko .
-efi:InsulationCarbonization  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "피복 탄화"@ko .
-efi:InsulationCarbonization rdfs:label "피복 탄화"@ko ; skos:prefLabel "피복 탄화"@ko .
-efi:InsulationEmbrittlement  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "피복 경화·균열·취성·변색"@ko .
-efi:InsulationEmbrittlement rdfs:label "피복 경화·균열·취성·변색"@ko ; skos:altLabel "피복 경화·균열·취성"@ko .
-efi:CarbonizedConductivePath a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "수지상 탄화 도전로"@ko ; skos:altLabel "Carbonized tracking path"@en .
-efi:CarbonizedConductivePath rdfs:label "수지상 탄화 도전로"@ko ; skos:prefLabel "수지상 탄화 도전로"@ko .
-efi:MechanicalDeformation    a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "압착·찍힘·절단 변형"@ko .
-efi:MechanicalDeformation rdfs:label "압착·찍힘·절단 변형"@ko ; skos:altLabel "기계적 변형"@ko .
-efi:WholeConductorCrushedOrCut a owl:Class ; rdfs:subClassOf efi:MechanicalDeformation ; skos:prefLabel "도체 전체 압착·절단"@ko .
-efi:WholeConductorCrushedOrCut rdfs:label "도체 전체 압착·절단"@ko ; skos:prefLabel "도체 전체 압착·절단"@ko .
-efi:Sagging                  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "자중 연화·처짐"@ko .
-efi:Sagging rdfs:label "자중 연화·처짐"@ko ; skos:altLabel "자중에 의한 처짐"@ko .
-efi:ThermalGradientFlow      a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "열 구배 유동"@ko .
-efi:ThermalGradientFlow rdfs:label "열 구배 유동"@ko ; skos:altLabel "열 구배에 따른 유동"@ko .
-efi:BurnCenterOnSurface      a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "소손 중심 표면 집중"@ko ; rdfs:comment "접촉불량 반증단서 (논문 Table 2)"@ko .
-efi:BurnCenterOnSurface rdfs:label "소손 중심 표면 집중"@ko ; skos:altLabel "소손 중심이 표면에 집중"@ko .
+efi:LossOfLuster             a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "광택 소실"@ko ;
+    rdfs:label "광택 소실"@ko .
+efi:LongTermTerminalHeating  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "단자 장기 발열 흔적"@ko ;
+    rdfs:label "단자 장기 발열 흔적"@ko .
+efi:StrandFracture           a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "소선 파단"@ko ;
+    rdfs:label "소선 파단"@ko .
+efi:StrandFractureAtStressPoint a owl:Class ; rdfs:subClassOf efi:StrandFracture ; skos:prefLabel "굴곡·진동·인장 부위 소선 부분단선"@ko ; rdfs:comment "복합 사실: 파단 위치가 기계적 응력 부위와 일치할 때 정규화기가 인스턴스화"@ko ;
+    rdfs:label "굴곡·진동·인장 부위 소선 부분단선"@ko ; skos:altLabel "응력부 소선 부분단선"@ko .
+efi:InsulationCarbonization  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "피복 탄화"@ko ;
+    rdfs:label "피복 탄화"@ko .
+efi:InsulationEmbrittlement  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "피복 경화·균열·취성·변색"@ko ;
+    rdfs:label "피복 경화·균열·취성·변색"@ko ; skos:altLabel "피복 경화·균열·취성"@ko .
+efi:CarbonizedConductivePath a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "수지상 탄화 도전로"@ko ; skos:altLabel "Carbonized tracking path"@en ;
+    rdfs:label "수지상 탄화 도전로"@ko .
+efi:MechanicalDeformation    a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "압착·찍힘·절단 변형"@ko ;
+    rdfs:label "압착·찍힘·절단 변형"@ko ; skos:altLabel "기계적 변형"@ko .
+efi:WholeConductorCrushedOrCut a owl:Class ; rdfs:subClassOf efi:MechanicalDeformation ; skos:prefLabel "도체 전체 압착·절단"@ko ;
+    rdfs:label "도체 전체 압착·절단"@ko .
+efi:Sagging                  a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "자중 연화·처짐"@ko ;
+    rdfs:label "자중 연화·처짐"@ko ; skos:altLabel "자중에 의한 처짐"@ko .
+efi:ThermalGradientFlow      a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "열 구배 유동"@ko ;
+    rdfs:label "열 구배 유동"@ko ; skos:altLabel "열 구배에 따른 유동"@ko .
+efi:BurnCenterOnSurface      a owl:Class ; rdfs:subClassOf efi:DamagePattern ; skos:prefLabel "소손 중심 표면 집중"@ko ; rdfs:comment "접촉불량 반증단서 (논문 Table 2)"@ko ;
+    rdfs:label "소손 중심 표면 집중"@ko ; skos:altLabel "소손 중심이 표면에 집중"@ko .
 
 efi:GroundFaultProtectiveDevice a owl:Class ; rdfs:subClassOf efi:ProtectiveDevice ;
     rdfs:label "누전차단기(GFCI)"@ko ; skos:prefLabel "누전차단기(GFCI)"@ko .
@@ -808,47 +807,47 @@ efi:PottingCompoundLeak a owl:Class ; rdfs:subClassOf efi:DamagePattern ;
 efi:AntecedentCondition a owl:Class ;
     rdfs:subClassOf [ a owl:Class ; owl:unionOf ( obo:BFO_0000019 obo:BFO_0000015 ) ] ;
     skos:prefLabel "선행 조건"@ko , "Antecedent condition"@en ;
-    skos:definition "발열 메커니즘이 성립하기 위해 발화 이전에 존재해야 하는 전기적·기계적·환경적 상태 또는 이력."@ko .
-efi:AntecedentCondition rdfs:label "선행 조건"@ko ; skos:prefLabel "선행 조건"@ko .
+    skos:definition "발열 메커니즘이 성립하기 위해 발화 이전에 존재해야 하는 전기적·기계적·환경적 상태 또는 이력."@ko ;
+    rdfs:label "선행 조건"@ko .
 
-efi:ElectricalState        a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "전기적 상태"@ko .
 # '통전 상태'는 좁다 — 비통전(DeEnergizedState)도 이 클래스의 하위다
-efi:ElectricalState rdfs:label "전기적 상태"@ko .
+efi:ElectricalState        a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "전기적 상태"@ko ;
+    rdfs:label "전기적 상태"@ko .
 efi:EnergizedState         a owl:Class ; rdfs:subClassOf efi:ElectricalState ; skos:prefLabel "통전"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:ElectricalState
-        [ a owl:Restriction ; owl:onProperty efi:isEnergized ; owl:hasValue true ] ) ] .
+        [ a owl:Restriction ; owl:onProperty efi:isEnergized ; owl:hasValue true ] ) ] ;
+    rdfs:label "통전"@ko .
 efi:EnergizedState owl:disjointWith efi:DeEnergizedState .
-efi:EnergizedState rdfs:label "통전"@ko ; skos:prefLabel "통전"@ko .
 efi:EnergizedState efi:enables efi:ResistiveHeating , efi:ArcHeating .
 efi:DeEnergizedState       a owl:Class ; rdfs:subClassOf efi:ElectricalState ; skos:prefLabel "비통전"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:ElectricalState
         [ a owl:Restriction ; owl:onProperty efi:isEnergized ; owl:hasValue false ] ) ] ;
-    rdfs:comment "확인 시 모든 전기적 시나리오를 기각 수준으로 조정 (논문 3.2절)"@ko .
-efi:DeEnergizedState rdfs:label "비통전"@ko ; skos:prefLabel "비통전"@ko .
-efi:OverloadState          a owl:Class ; rdfs:subClassOf efi:ElectricalState ; skos:prefLabel "과부하 상태"@ko .
-efi:OverloadState rdfs:label "과부하 상태"@ko ; skos:prefLabel "과부하 상태"@ko .
+    rdfs:comment "확인 시 모든 전기적 시나리오를 기각 수준으로 조정 (논문 3.2절)"@ko ;
+    rdfs:label "비통전"@ko .
+efi:OverloadState          a owl:Class ; rdfs:subClassOf efi:ElectricalState ; skos:prefLabel "과부하 상태"@ko ;
+    rdfs:label "과부하 상태"@ko .
 efi:OverloadState efi:enables efi:OverloadHeating , efi:ResistiveHeating .
 
 # 과부하 운전은 권선을 절연열화로 몰아 층간단락을 부른다 (p.284 컴프레서, p.285 배수모터)
 efi:OverloadState efi:enables efi:InterTurnShortCircuit .
 
-efi:ConnectionCondition    a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "접속 상태"@ko .
-efi:ConnectionCondition rdfs:label "접속 상태"@ko ; skos:prefLabel "접속 상태"@ko .
-efi:LooseConnection        a owl:Class ; rdfs:subClassOf efi:ConnectionCondition ; skos:prefLabel "접속부 체결 불량·헐거움"@ko .
-efi:LooseConnection rdfs:label "접속부 체결 불량·헐거움"@ko ; skos:altLabel "접속부 헐거움"@ko .
+efi:ConnectionCondition    a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "접속 상태"@ko ;
+    rdfs:label "접속 상태"@ko .
+efi:LooseConnection        a owl:Class ; rdfs:subClassOf efi:ConnectionCondition ; skos:prefLabel "접속부 체결 불량·헐거움"@ko ;
+    rdfs:label "접속부 체결 불량·헐거움"@ko ; skos:altLabel "접속부 헐거움"@ko .
 
 # 선행 조건 → 발열 메커니즘
 efi:LooseConnection efi:enables efi:PoorContactHeating , efi:GlowingConnection .
 efi:LooseConnection efi:enables efi:ReducedContactArea , efi:IntermittentContactSeparation .
 efi:CorrodedConnection     a owl:Class ; rdfs:subClassOf efi:ConnectionCondition ; skos:prefLabel "발화 전 접속부 부식"@ko ;
-    skos:definition "발화 전에 존재했음이 확인된 접속부 부식 상태. 사후 부식 관찰만으로 세우지 않는다 (§9.7.5.2)"@ko .
-efi:CorrodedConnection rdfs:label "발화 전 접속부 부식"@ko ; skos:prefLabel "발화 전 접속부 부식"@ko .
+    skos:definition "발화 전에 존재했음이 확인된 접속부 부식 상태. 사후 부식 관찰만으로 세우지 않는다 (§9.7.5.2)"@ko ;
+    rdfs:label "발화 전 접속부 부식"@ko .
 efi:CorrodedConnection efi:enables efi:PoorContactHeating , efi:GlowingConnection .
 
-efi:MechanicalStressHistory a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "기계적 응력 이력"@ko .
-efi:MechanicalStressHistory rdfs:label "기계적 응력 이력"@ko ; skos:prefLabel "기계적 응력 이력"@ko .
-efi:RepeatedFlexing        a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "반복 굴곡"@ko .
-efi:RepeatedFlexing rdfs:label "반복 굴곡"@ko ; skos:prefLabel "반복 굴곡"@ko .
+efi:MechanicalStressHistory a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "기계적 응력 이력"@ko ;
+    rdfs:label "기계적 응력 이력"@ko .
+efi:RepeatedFlexing        a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "반복 굴곡"@ko ;
+    rdfs:label "반복 굴곡"@ko .
 efi:RepeatedFlexing efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc .
 
 # 반복 굴곡은 반단선만 만들지 않는다. 공식 분류표가 굽힘을 두 자리에 적는다.
@@ -857,40 +856,40 @@ efi:RepeatedFlexing efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc 
 # 같은 굽힘이 소선을 끊으면 반단선, 피복을 상해 양극이 닿으면 단락이다.
 # 결과가 갈리지 원인이 갈리는 것이 아니다.
 efi:RepeatedFlexing efi:enables efi:CrushInducedArc .
-efi:Vibration              a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "진동"@ko .
-efi:Vibration rdfs:label "진동"@ko ; skos:prefLabel "진동"@ko .
+efi:Vibration              a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "진동"@ko ;
+    rdfs:label "진동"@ko .
 efi:Vibration efi:enables efi:PartialDisconnectionHeating , efi:SeriesArc , efi:PoorContactHeating , efi:CrushInducedArc .
 efi:Vibration efi:enables efi:IntermittentContactSeparation .
 # p.285 3) 진동으로 피복 손상 → 프레임 지락
 efi:Vibration efi:enables efi:GroundFaultHeating .
 # p.247 (자) 진동 등에 의한 절연피복 손상
 efi:Vibration efi:enables efi:InterTurnShortCircuit .
-efi:Tension                a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "인장"@ko .
-efi:Tension rdfs:label "인장"@ko ; skos:prefLabel "인장"@ko .
+efi:Tension                a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory , efi:LongTermRepeatedStress ; skos:prefLabel "인장"@ko ;
+    rdfs:label "인장"@ko .
 efi:Tension efi:enables efi:PartialDisconnectionHeating .
-efi:ExternalCrushing       a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "외력 압착·찍힘"@ko .
-efi:ExternalCrushing rdfs:label "외력 압착·찍힘"@ko ; skos:altLabel "외력에 의한 압착"@ko .
+efi:ExternalCrushing       a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ; skos:prefLabel "외력 압착·찍힘"@ko ;
+    rdfs:label "외력 압착·찍힘"@ko ; skos:altLabel "외력에 의한 압착"@ko .
 efi:ExternalCrushing efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
 efi:ExternalCrushing rdfs:subClassOf efi:MechanicalDamageAntecedent .
 # 표 2-1 피복 손상 후 건물·구조물 금속부에 접촉
 efi:ExternalCrushing efi:enables efi:GroundFaultHeating .
 efi:AbrasionAtPenetration  a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
     skos:prefLabel "관통부·고정구 마찰"@ko ;
-    rdfs:comment "전선이 관통부 모서리·고정 철물과 쓸려 피복이 마모·박리되는 경로. 압착이 눌림이라면 이것은 쓸림이다. §9.10.6.1 이 설치 시 기계적 손상이 시간이 지나 발현함을 인정하고 §9.10.5 가 기계적 손상을 아크흔과 구별하라 한다."@ko .
-efi:AbrasionAtPenetration rdfs:label "관통부·고정구 마찰"@ko ; skos:prefLabel "관통부·고정구 마찰"@ko .
+    rdfs:comment "전선이 관통부 모서리·고정 철물과 쓸려 피복이 마모·박리되는 경로. 압착이 눌림이라면 이것은 쓸림이다. §9.10.6.1 이 설치 시 기계적 손상이 시간이 지나 발현함을 인정하고 §9.10.5 가 기계적 손상을 아크흔과 구별하라 한다."@ko ;
+    rdfs:label "관통부·고정구 마찰"@ko .
 efi:AbrasionAtPenetration efi:enables efi:CrushInducedArc , efi:ShortCircuitArc .
 efi:AbrasionAtPenetration rdfs:subClassOf efi:MechanicalDamageAntecedent .
 efi:LongTermRepeatedStress a owl:Class ; rdfs:subClassOf efi:MechanicalStressHistory ;
     skos:prefLabel "장기 반복 응력 정황"@ko ;
     rdfs:comment "굴곡·진동·인장의 상위. 분류에만 쓰고 지표로는 쓰지 않는다 — 셋의 변별력이 서로 달라(굴곡·인장은 반단선 전용, 진동은 접촉불량도 만든다) 하나로 묶으면 굴곡의 변별력까지 깎인다."@ko ;
-    owl:equivalentClass [ a owl:Class ; owl:unionOf ( efi:RepeatedFlexing efi:Vibration efi:Tension ) ] .
-efi:LongTermRepeatedStress rdfs:label "장기 반복 응력 정황"@ko ; skos:altLabel "장기 반복 응력"@ko .
+    owl:equivalentClass [ a owl:Class ; owl:unionOf ( efi:RepeatedFlexing efi:Vibration efi:Tension ) ] ;
+    rdfs:label "장기 반복 응력 정황"@ko ; skos:altLabel "장기 반복 응력"@ko .
 efi:LongTermRepeatedStress efi:enables efi:PartialDisconnectionHeating .
 
-efi:InsulationCondition    a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "절연 상태"@ko .
-efi:InsulationCondition rdfs:label "절연 상태"@ko ; skos:prefLabel "절연 상태"@ko .
-efi:AgedInsulation         a owl:Class ; rdfs:subClassOf efi:InsulationCondition , efi:InsulationDeterioration ; skos:prefLabel "노후화·장기 사용"@ko .
-efi:AgedInsulation rdfs:label "노후화·장기 사용"@ko ; skos:altLabel "절연물 노후"@ko .
+efi:InsulationCondition    a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "절연 상태"@ko ;
+    rdfs:label "절연 상태"@ko .
+efi:AgedInsulation         a owl:Class ; rdfs:subClassOf efi:InsulationCondition , efi:InsulationDeterioration ; skos:prefLabel "노후화·장기 사용"@ko ;
+    rdfs:label "노후화·장기 사용"@ko ; skos:altLabel "절연물 노후"@ko .
 efi:AgedInsulation efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating .
 
 # 노후·경년열화는 절연열화와 트래킹만 부르지 않는다. 접속부도 헐겁게 만든다.
@@ -904,25 +903,25 @@ efi:AgedInsulation efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHe
 efi:AgedInsulation efi:enables efi:PoorContactHeating , efi:GlowingConnection .
 # p.156 변질(열화·노화·탄화)
 efi:AgedInsulation efi:enables efi:GroundFaultHeating .
-efi:ReducedInsulationResistance a owl:Class ; rdfs:subClassOf efi:InsulationCondition ; skos:prefLabel "절연저항 저하"@ko .
-efi:ReducedInsulationResistance rdfs:label "절연저항 저하"@ko ; skos:prefLabel "절연저항 저하"@ko .
+efi:ReducedInsulationResistance a owl:Class ; rdfs:subClassOf efi:InsulationCondition ; skos:prefLabel "절연저항 저하"@ko ;
+    rdfs:label "절연저항 저하"@ko .
 efi:ReducedInsulationResistance efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating , efi:ArcTracking .
-efi:ThermalDegradation     a owl:Class ; rdfs:subClassOf efi:InsulationCondition , efi:InsulationDeterioration ; skos:prefLabel "열적 절연 열화"@ko .
-efi:ThermalDegradation rdfs:label "열적 절연 열화"@ko ; skos:altLabel "열적 열화"@ko .
+efi:ThermalDegradation     a owl:Class ; rdfs:subClassOf efi:InsulationCondition , efi:InsulationDeterioration ; skos:prefLabel "열적 절연 열화"@ko ;
+    rdfs:label "열적 절연 열화"@ko ; skos:altLabel "열적 열화"@ko .
 efi:ThermalDegradation efi:enables efi:InsulationBreakdownArc .
 efi:InsulationDeterioration a owl:Class ; rdfs:subClassOf efi:InsulationCondition ;
     skos:prefLabel "절연 열화(절연열화 핵심 단서)"@ko ;
     rdfs:comment "경년·열에 의해 절연 성능이 떨어진 상태. 공식 분류의 '절연열화에 의한 단락'에서 원인에 해당하는 부분이다. 절연저항 저하는 이 상태의 계측 증거이지 이 상태의 한 종류가 아니므로 합집합에 넣지 않는다."@ko ;
-    owl:equivalentClass [ a owl:Class ; owl:unionOf ( efi:AgedInsulation efi:ThermalDegradation ) ] .
-efi:InsulationDeterioration rdfs:label "절연 열화(절연열화 핵심 단서)"@ko ; skos:altLabel "절연 열화"@ko .
+    owl:equivalentClass [ a owl:Class ; owl:unionOf ( efi:AgedInsulation efi:ThermalDegradation ) ] ;
+    rdfs:label "절연 열화(절연열화 핵심 단서)"@ko ; skos:altLabel "절연 열화"@ko .
 efi:InsulationDeterioration efi:enables efi:InsulationBreakdownArc , efi:LeakageCurrentHeating .
 efi:InsulationDeterioration efi:enables efi:InterTurnShortCircuit .
 efi:InsulationDeterioration efi:enables efi:GroundFaultHeating .
 
-efi:EnvironmentalCondition a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "환경 조건(오염 환경)"@ko .
-efi:EnvironmentalCondition rdfs:label "환경 조건(오염 환경)"@ko ; skos:altLabel "환경 조건"@ko .
-efi:MoistureExposure       a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "누수·결로·우천 노출"@ko .
-efi:MoistureExposure rdfs:label "누수·결로·우천 노출"@ko ; skos:altLabel "누수·결로 노출"@ko .
+efi:EnvironmentalCondition a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "환경 조건(오염 환경)"@ko ;
+    rdfs:label "환경 조건(오염 환경)"@ko ; skos:altLabel "환경 조건"@ko .
+efi:MoistureExposure       a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "누수·결로·우천 노출"@ko ;
+    rdfs:label "누수·결로·우천 노출"@ko ; skos:altLabel "누수·결로 노출"@ko .
 efi:MoistureExposure efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
 
 #
@@ -937,16 +936,16 @@ efi:MoistureExposure efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
 efi:MoistureExposure efi:enables efi:InsulationBreakdownArc .
 # p.202 ④ 결로에 의한 지락
 efi:MoistureExposure efi:enables efi:GroundFaultHeating .
-efi:DustAccumulation       a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "분진 퇴적"@ko .
-efi:DustAccumulation rdfs:label "분진 퇴적"@ko ; skos:prefLabel "분진 퇴적"@ko .
+efi:DustAccumulation       a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "분진 퇴적"@ko ;
+    rdfs:label "분진 퇴적"@ko .
 efi:DustAccumulation efi:enables efi:ArcTracking .
 efi:DustAccumulation efi:enables efi:InsulationBreakdownArc .
 
 # p.148 은 1단계 오염원을 "습기, 염분, 무기질, 섬유질 및 도전성물질"로 든다.
 # 실밥·섬유 분진은 분진 퇴적으로 읽는다.
 efi:DustAccumulation skos:altLabel "섬유질·실밥 분진"@ko , "무기질 퇴적"@ko .
-efi:SalineOrChemicalExposure a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "염분·화학물질 노출"@ko .
-efi:SalineOrChemicalExposure rdfs:label "염분·화학물질 노출"@ko ; skos:altLabel "염해·화학 노출"@ko .
+efi:SalineOrChemicalExposure a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition , efi:ContaminatedEnvironment ; skos:prefLabel "염분·화학물질 노출"@ko ;
+    rdfs:label "염분·화학물질 노출"@ko ; skos:altLabel "염해·화학 노출"@ko .
 efi:SalineOrChemicalExposure efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
 
 # 염해·화학 노출은 접속부도 상하게 한다.
@@ -954,17 +953,17 @@ efi:SalineOrChemicalExposure efi:enables efi:ArcTracking , efi:LeakageCurrentHea
 #    일어나는 경우도 있다" (실무Ⅳ p.206)
 efi:SalineOrChemicalExposure efi:enables efi:PoorContactHeating .
 efi:ContaminatedEnvironment a owl:Class ; rdfs:subClassOf efi:EnvironmentalCondition ; skos:prefLabel "오염 환경(트래킹 핵심 단서)"@ko ;
-    owl:equivalentClass [ a owl:Class ; owl:unionOf ( efi:MoistureExposure efi:DustAccumulation efi:SalineOrChemicalExposure ) ] .
-efi:ContaminatedEnvironment rdfs:label "오염 환경(트래킹 핵심 단서)"@ko ; skos:altLabel "오염 환경"@ko .
+    owl:equivalentClass [ a owl:Class ; owl:unionOf ( efi:MoistureExposure efi:DustAccumulation efi:SalineOrChemicalExposure ) ] ;
+    rdfs:label "오염 환경(트래킹 핵심 단서)"@ko ; skos:altLabel "오염 환경"@ko .
 # 오염 환경도 같다. 상위에 적지 않는다 — 분진이 접촉불량을 부른다는 근거는 없다.
 # 다만 '오염 환경이 확인됐다'는 관측 자체는 하위 어느 것일 수도 있으므로
 # 트래킹만 가리키지 않는다. cause_audit 이 하위 합집합으로 그렇게 읽는다.
 efi:ContaminatedEnvironment efi:enables efi:ArcTracking , efi:LeakageCurrentHeating .
 
-efi:PreFireAnomaly         a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "발화 전 이상 징후"@ko .
-efi:PreFireAnomaly rdfs:label "발화 전 이상 징후"@ko ; skos:prefLabel "발화 전 이상 징후"@ko .
-efi:IntermittentRcdTripping a owl:Class ; rdfs:subClassOf efi:PreFireAnomaly ; skos:prefLabel "누전차단기 간헐 동작"@ko .
-efi:IntermittentRcdTripping rdfs:label "누전차단기 간헐 동작"@ko ; skos:prefLabel "누전차단기 간헐 동작"@ko .
+efi:PreFireAnomaly         a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ; skos:prefLabel "발화 전 이상 징후"@ko ;
+    rdfs:label "발화 전 이상 징후"@ko .
+efi:IntermittentRcdTripping a owl:Class ; rdfs:subClassOf efi:PreFireAnomaly ; skos:prefLabel "누전차단기 간헐 동작"@ko ;
+    rdfs:label "누전차단기 간헐 동작"@ko .
 efi:IntermittentRcdTripping efi:enables efi:LeakageCurrentHeating .
 
 # 누전차단기 간헐 동작은 누설전류가 있으면 일어난다. 트래킹만의 것이 아니다.
@@ -976,8 +975,8 @@ efi:IntermittentRcdTripping efi:enables efi:LeakageCurrentHeating .
 efi:IntermittentRcdTripping efi:enables efi:InsulationBreakdownArc .
 # p.285 1) 지락하면 누전차단기가 작동
 efi:IntermittentRcdTripping efi:enables efi:GroundFaultHeating .
-efi:AbnormalTemperatureOrVoltageDrop a owl:Class ; rdfs:subClassOf efi:PreFireAnomaly ; skos:prefLabel "비정상 온도·전압강하"@ko .
-efi:AbnormalTemperatureOrVoltageDrop rdfs:label "비정상 온도·전압강하"@ko ; skos:prefLabel "비정상 온도·전압강하"@ko .
+efi:AbnormalTemperatureOrVoltageDrop a owl:Class ; rdfs:subClassOf efi:PreFireAnomaly ; skos:prefLabel "비정상 온도·전압강하"@ko ;
+    rdfs:label "비정상 온도·전압강하"@ko .
 
 # 발화 전 이상 징후 → 발열. 근거는 원문에 있다.
 #  §9.10.3  접속이 헐거워지면 저항이 늘고 접점에서 발열이 커진다 → 온도·전압강하 이상
@@ -996,8 +995,8 @@ efi:AbnormalTemperatureOrVoltageDrop efi:enables efi:PoorContactHeating , efi:Re
 
 efi:AbnormalTemperatureOrVoltageDrop efi:enables
     efi:ArcTracking , efi:LeakageCurrentHeating , efi:InsulationBreakdownArc , efi:CrushInducedArc .
-efi:FlickeringOrOdor       a owl:Class ; rdfs:subClassOf efi:PreFireAnomaly ; skos:prefLabel "조명 깜박임·이취"@ko .
-efi:FlickeringOrOdor rdfs:label "조명 깜박임·이취"@ko ; skos:altLabel "명멸·이취"@ko .
+efi:FlickeringOrOdor       a owl:Class ; rdfs:subClassOf efi:PreFireAnomaly ; skos:prefLabel "조명 깜박임·이취"@ko ;
+    rdfs:label "조명 깜박임·이취"@ko ; skos:altLabel "명멸·이취"@ko .
 efi:FlickeringOrOdor efi:enables efi:PoorContactHeating , efi:OpenNeutralOvervoltage .
 
 # 조명 깜박임·이취는 접촉불량 전용이 아니다.
@@ -1233,25 +1232,25 @@ efi:GroundPath efi:enables efi:GroundFaultHeating .
 
 efi:FirstFuelIgnited a owl:Class ; rdfs:subClassOf obo:BFO_0000040 ;
     skos:prefLabel "최초 착화물"@ko , "First fuel ignited"@en ;
-    skos:definition "발열 메커니즘의 열에너지로 최초 착화된 가연물 (NFPA 921 발화 순서 요소)."@ko .
-efi:FirstFuelIgnited rdfs:label "최초 착화물"@ko ; skos:prefLabel "최초 착화물"@ko .
+    skos:definition "발열 메커니즘의 열에너지로 최초 착화된 가연물 (NFPA 921 발화 순서 요소)."@ko ;
+    rdfs:label "최초 착화물"@ko .
 
-efi:SelfFuel               a owl:Class ; rdfs:subClassOf efi:FirstFuelIgnited ; skos:prefLabel "증거물 자체 가연부"@ko .
-efi:SelfFuel rdfs:label "증거물 자체 가연부"@ko ; skos:altLabel "자체 착화물"@ko .
-efi:InsulationMaterialFuel a owl:Class ; rdfs:subClassOf efi:SelfFuel ; skos:prefLabel "피복재(PVC·XLPE·고무)"@ko .
-efi:InsulationMaterialFuel rdfs:label "피복재(PVC·XLPE·고무)"@ko ; skos:altLabel "피복 절연물"@ko .
+efi:SelfFuel               a owl:Class ; rdfs:subClassOf efi:FirstFuelIgnited ; skos:prefLabel "증거물 자체 가연부"@ko ;
+    rdfs:label "증거물 자체 가연부"@ko ; skos:altLabel "자체 착화물"@ko .
+efi:InsulationMaterialFuel a owl:Class ; rdfs:subClassOf efi:SelfFuel ; skos:prefLabel "피복재(PVC·XLPE·고무)"@ko ;
+    rdfs:label "피복재(PVC·XLPE·고무)"@ko ; skos:altLabel "피복 절연물"@ko .
 efi:InsulationMaterialFuel efi:hasIgnitability efi:EasilyIgnitable .
-efi:EnclosureMaterialFuel  a owl:Class ; rdfs:subClassOf efi:SelfFuel ; skos:prefLabel "함체·몰드 수지"@ko .
-efi:EnclosureMaterialFuel rdfs:label "함체·몰드 수지"@ko ; skos:altLabel "외함 수지"@ko .
+efi:EnclosureMaterialFuel  a owl:Class ; rdfs:subClassOf efi:SelfFuel ; skos:prefLabel "함체·몰드 수지"@ko ;
+    rdfs:label "함체·몰드 수지"@ko ; skos:altLabel "외함 수지"@ko .
 efi:EnclosureMaterialFuel efi:hasIgnitability efi:HardlyIgnitable .
-efi:AdjacentCombustible    a owl:Class ; rdfs:subClassOf efi:FirstFuelIgnited ; skos:prefLabel "주변 가연물"@ko .
-efi:AdjacentCombustible rdfs:label "주변 가연물"@ko ; skos:prefLabel "주변 가연물"@ko .
-efi:AccumulatedDustFuel    a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "퇴적 분진"@ko .
-efi:AccumulatedDustFuel rdfs:label "퇴적 분진"@ko ; skos:prefLabel "퇴적 분진"@ko .
+efi:AdjacentCombustible    a owl:Class ; rdfs:subClassOf efi:FirstFuelIgnited ; skos:prefLabel "주변 가연물"@ko ;
+    rdfs:label "주변 가연물"@ko .
+efi:AccumulatedDustFuel    a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "퇴적 분진"@ko ;
+    rdfs:label "퇴적 분진"@ko .
 efi:AccumulatedDustFuel efi:ignitableByBriefArc true .
 efi:AccumulatedDustFuel efi:hasIgnitability efi:EasilyIgnitable .
-efi:CelluloseFuel          a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "종이·목재·섬유"@ko .
-efi:CelluloseFuel rdfs:label "종이·목재·섬유"@ko ; skos:altLabel "종이·목재류"@ko .
+efi:CelluloseFuel          a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "종이·목재·섬유"@ko ;
+    rdfs:label "종이·목재·섬유"@ko ; skos:altLabel "종이·목재류"@ko .
 efi:PaperTextileFuel       a owl:Class ; rdfs:subClassOf efi:CelluloseFuel ;
     rdfs:label "종이·섬유(표면적 큰 연료)"@ko ; skos:prefLabel "종이·섬유(표면적 큰 연료)"@ko ;
     rdfs:comment "솜·티슈처럼 표면적/질량비가 커서 짧은 아크에도 착화될 수 있다 (§9.9.4.1)"@ko .
@@ -1262,11 +1261,11 @@ efi:WoodStructuralFuel     a owl:Class ; rdfs:subClassOf efi:CelluloseFuel ;
     rdfs:comment "짧고 국부적인 아크로는 통상 착화되지 않는다 (§9.9.4.1)"@ko .
 efi:WoodStructuralFuel efi:ignitableByBriefArc false .
 efi:WoodStructuralFuel efi:hasIgnitability efi:HardlyIgnitable .
-efi:ThermalInsulationFuel  a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "단열재"@ko .
-efi:ThermalInsulationFuel rdfs:label "단열재"@ko ; skos:prefLabel "단열재"@ko .
+efi:ThermalInsulationFuel  a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "단열재"@ko ;
+    rdfs:label "단열재"@ko .
 efi:ThermalInsulationFuel efi:hasIgnitability efi:EasilyIgnitable .
-efi:FlammableVaporFuel     a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "인화성 증기"@ko .
-efi:FlammableVaporFuel rdfs:label "인화성 증기"@ko ; skos:altLabel "가연성 증기"@ko .
+efi:FlammableVaporFuel     a owl:Class ; rdfs:subClassOf efi:AdjacentCombustible ; skos:prefLabel "인화성 증기"@ko ;
+    rdfs:label "인화성 증기"@ko ; skos:altLabel "가연성 증기"@ko .
 
 efi:FlammableVaporFuel efi:ignitableByBriefArc true .
 
@@ -1658,8 +1657,8 @@ efi:formed a owl:DatatypeProperty ; rdfs:domain efi:IgnitionScenario ; rdfs:rang
 efi:PoorContactScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ; skos:prefLabel "접촉불량"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
         [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:PoorContactHeating ] ) ] ;
-    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:ConnectionCondition ] .
-efi:PoorContactScenario rdfs:label "접촉불량"@ko ; skos:prefLabel "접촉불량"@ko .
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:ConnectionCondition ] ;
+    rdfs:label "접촉불량"@ko .
 
 efi:PoorContactScenario efi:canManifest efi:LocalizedDiscoloration , efi:CuprousOxideGrowth , efi:LossOfLuster , efi:LongTermTerminalHeating , efi:InsulationCarbonization .
 efi:PoorContactScenario efi:canManifest efi:CuprousOxideDeposit .
@@ -1708,8 +1707,8 @@ efi:CrushDamageScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScen
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
         [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:CrushInducedArc ] ) ] ;
     rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ;
-        owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:ExternalCrushing efi:AbrasionAtPenetration efi:RodentGnawing efi:HammerMisHitDamage ) ] ] .
-efi:CrushDamageScenario rdfs:label "압착손상"@ko ; skos:prefLabel "압착손상"@ko .
+        owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:ExternalCrushing efi:AbrasionAtPenetration efi:RodentGnawing efi:HammerMisHitDamage ) ] ] ;
+    rdfs:label "압착손상"@ko .
 efi:CrushDamageScenario efi:canManifest efi:MechanicalDeformation , efi:WholeConductorCrushedOrCut , efi:LargeMeltMark , efi:ArcMeltMark , efi:ArcBead , efi:InsulationCarbonization , efi:Spatter .
 efi:CrushDamageScenario efi:hasDeclaredMechanism efi:CrushInducedArc .
 efi:CrushDamageScenario efi:canManifest efi:MeltMarkOnSupplySideOnly .
@@ -1763,8 +1762,8 @@ efi:PartialDisconnectionScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgn
         [ a owl:Restriction ; owl:onProperty efi:hasMechanism ;
           owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:PartialDisconnectionHeating efi:SeriesArc ) ] ] ) ] ;
     rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ;
-        owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:RepeatedFlexing efi:Vibration efi:Tension ) ] ] .
-efi:PartialDisconnectionScenario rdfs:label "반단선"@ko ; skos:prefLabel "반단선"@ko .
+        owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:RepeatedFlexing efi:Vibration efi:Tension ) ] ] ;
+    rdfs:label "반단선"@ko .
 efi:PartialDisconnectionScenario efi:canManifest efi:StrandFracture , efi:StrandFractureAtStressPoint , efi:SmallMeltBallOnStrandEnd , efi:MultipleArcBeads , efi:ArcBead , efi:InsulationCarbonization .
 efi:PartialDisconnectionScenario efi:hasDeclaredMechanism efi:PartialDisconnectionHeating , efi:SeriesArc .
 
@@ -1826,8 +1825,8 @@ efi:InsulationDegradationScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIg
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
         [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:InsulationBreakdownArc ] ) ] ;
     rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ;
-        owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:AgedInsulation efi:ReducedInsulationResistance efi:ThermalDegradation ) ] ] .
-efi:InsulationDegradationScenario rdfs:label "절연열화"@ko ; skos:prefLabel "절연열화"@ko .
+        owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:AgedInsulation efi:ReducedInsulationResistance efi:ThermalDegradation ) ] ] ;
+    rdfs:label "절연열화"@ko .
 efi:InsulationDegradationScenario efi:canManifest efi:InsulationEmbrittlement , efi:InsulationCarbonization , efi:ArcMeltMark , efi:ArcBead , efi:LocalizedDiscoloration .
 efi:InsulationDegradationScenario efi:hasDeclaredMechanism efi:InsulationBreakdownArc .
 efi:InsulationDegradationScenario efi:canManifest efi:LocalizedHeatWithSurroundingDamage .
@@ -1867,8 +1866,8 @@ efi:R_ID_sup6  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationSc
 efi:TrackingScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ; skos:prefLabel "트래킹"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
         [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:ArcTracking ] ) ] ;
-    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:ContaminatedEnvironment ] .
-efi:TrackingScenario rdfs:label "트래킹"@ko ; skos:prefLabel "트래킹"@ko .
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:ContaminatedEnvironment ] ;
+    rdfs:label "트래킹"@ko .
 efi:TrackingScenario efi:canManifest efi:CarbonizedConductivePath , efi:InsulationCarbonization , efi:LocalizedDiscoloration , efi:BurnCenterOnSurface , efi:ArcBead .
 efi:TrackingScenario efi:hasDeclaredMechanism efi:ArcTracking , efi:LeakageCurrentHeating .
 efi:TrackingScenario rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:OrganicInsulationPresent ] .
@@ -1914,8 +1913,8 @@ efi:R_TR_sup6  a efi:IndicatorRule ; efi:forScenario efi:TrackingScenario ; efi:
 
 efi:ExternalFlameScenario a owl:Class ; rdfs:subClassOf efi:IgnitionScenario ; skos:prefLabel "외부화염"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
-        [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:ExternalFlameExposure ] ) ] .
-efi:ExternalFlameScenario rdfs:label "외부화염"@ko ; skos:prefLabel "외부화염"@ko .
+        [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:ExternalFlameExposure ] ) ] ;
+    rdfs:label "외부화염"@ko .
 efi:ExternalFlameScenario efi:canManifest efi:GeneralMelting , efi:Sagging , efi:ThermalGradientFlow , efi:FireMeltMark , efi:SecondaryArcMark , efi:LargeMeltMark , efi:InsulationCarbonization .
 efi:ExternalFlameScenario efi:canManifest efi:CuprousOxideDeposit , efi:ContactCorrosion .
 efi:ExternalFlameScenario efi:hasDeclaredMechanism efi:ExternalFlameExposure .
@@ -2107,66 +2106,66 @@ efi:R_IT_ref2  a efi:IndicatorRule ; efi:forScenario efi:InterTurnShortScenario 
 
 efi:IgnitionScenario a owl:Class ; rdfs:subClassOf obo:IAO_0000030 , prov:Entity ;
     skos:prefLabel "발화 시나리오(가설)"@ko , "Ignition scenario (hypothesis)"@en ;
-    skos:definition "선행조건 → 발열 메커니즘 → 착화물 착화의 인과 사슬을 주장하는 정보 개체. 판독 결과는 결론이 아니라 이 클래스의 인스턴스(가설)로 등록된다."@ko .
-efi:IgnitionScenario rdfs:label "발화 시나리오(가설)"@ko ; skos:altLabel "발화 가설"@ko .
+    skos:definition "선행조건 → 발열 메커니즘 → 착화물 착화의 인과 사슬을 주장하는 정보 개체. 판독 결과는 결론이 아니라 이 클래스의 인스턴스(가설)로 등록된다."@ko ;
+    rdfs:label "발화 시나리오(가설)"@ko ; skos:altLabel "발화 가설"@ko .
 
 efi:Conclusion a owl:Class ; rdfs:subClassOf obo:IAO_0000030 , prov:Entity ;
-    skos:prefLabel "최종 감별 의견"@ko .
-efi:Conclusion rdfs:label "최종 감별 의견"@ko ; skos:prefLabel "최종 감별 의견"@ko .
+    skos:prefLabel "최종 감별 의견"@ko ;
+    rdfs:label "최종 감별 의견"@ko .
 
 # --- 현장 증거 (비증거물 사실; 조사관 확인 대상) ---
-efi:SceneEvidence            a owl:Class ; rdfs:subClassOf obo:IAO_0000030 , prov:Entity ; skos:prefLabel "현장 사실"@ko .
-efi:SceneEvidence rdfs:label "현장 사실"@ko ; skos:prefLabel "현장 사실"@ko .
-efi:BreakerTripRecord        a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "차단기 트립 이력"@ko .
-efi:BreakerTripRecord rdfs:label "차단기 트립 이력"@ko ; skos:prefLabel "차단기 트립 이력"@ko .
+efi:SceneEvidence            a owl:Class ; rdfs:subClassOf obo:IAO_0000030 , prov:Entity ; skos:prefLabel "현장 사실"@ko ;
+    rdfs:label "현장 사실"@ko .
+efi:BreakerTripRecord        a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "차단기 트립 이력"@ko ;
+    rdfs:label "차단기 트립 이력"@ko .
 efi:BreakerTripRecord efi:attests efi:EnergizedState .
 efi:ImmediateTripAfterExternalForce a owl:Class ; rdfs:subClassOf efi:BreakerTripRecord ,
     [ a owl:Restriction ; owl:onProperty efi:breakerTripped ; owl:hasValue true ] ;
-    skos:prefLabel "외력 직후 즉시 트립·아크"@ko .
-efi:ImmediateTripAfterExternalForce rdfs:label "외력 직후 즉시 트립·아크"@ko ; skos:altLabel "외력 직후 즉시 트립"@ko .
+    skos:prefLabel "외력 직후 즉시 트립·아크"@ko ;
+    rdfs:label "외력 직후 즉시 트립·아크"@ko ; skos:altLabel "외력 직후 즉시 트립"@ko .
 efi:ImmediateTripAfterExternalForce efi:attests efi:ExternalCrushing .
-efi:ExternalForceTrace       a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "외력 흔적"@ko .
-efi:ExternalForceTrace rdfs:label "외력 흔적"@ko ; skos:prefLabel "외력 흔적"@ko .
+efi:ExternalForceTrace       a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "외력 흔적"@ko ;
+    rdfs:label "외력 흔적"@ko .
 efi:ExternalForceTrace efi:attests efi:ExternalCrushing .
-efi:MoistureTrace            a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "누수·결로 흔적"@ko .
-efi:MoistureTrace rdfs:label "누수·결로 흔적"@ko ; skos:altLabel "물기·결로 흔적"@ko .
+efi:MoistureTrace            a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "누수·결로 흔적"@ko ;
+    rdfs:label "누수·결로 흔적"@ko ; skos:altLabel "물기·결로 흔적"@ko .
 
 # 현장 사실 → 선행 조건
 efi:MoistureTrace efi:attests efi:MoistureExposure .
-efi:ContaminationDeposit     a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "분진·오염 퇴적"@ko .
-efi:ContaminationDeposit rdfs:label "분진·오염 퇴적"@ko ; skos:altLabel "오염물 퇴적"@ko .
+efi:ContaminationDeposit     a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "분진·오염 퇴적"@ko ;
+    rdfs:label "분진·오염 퇴적"@ko ; skos:altLabel "오염물 퇴적"@ko .
 efi:ContaminationDeposit efi:attests efi:DustAccumulation , efi:ContaminatedEnvironment .
-efi:BurnPattern              a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "연소 패턴"@ko .
-efi:BurnPattern rdfs:label "연소 패턴"@ko ; skos:prefLabel "연소 패턴"@ko .
+efi:BurnPattern              a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "연소 패턴"@ko ;
+    rdfs:label "연소 패턴"@ko .
 
 # 연소 패턴은 발화 지점 특정에 쓰는 어휘다. 그 절차는 이 프로젝트 범위 밖이므로
 # (설계계획서 1.1) 사슬에 붙이지 않는다. 범위가 넓어지면 그때 잇는다.
 efi:BurnPattern rdfs:comment "발화 지점 특정용 어휘. 그 절차는 범위 밖이라 사슬에 붙이지 않는다"@ko .
-efi:ArcMapPoint              a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "아크 매핑 지점"@ko .
-efi:ArcMapPoint rdfs:label "아크 매핑 지점"@ko ; skos:prefLabel "아크 매핑 지점"@ko .
+efi:ArcMapPoint              a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "아크 매핑 지점"@ko ;
+    rdfs:label "아크 매핑 지점"@ko .
 
 # §9.13.4.7 아크 용융흔은 그 시점에 통전 중이었음을 증언한다.
 efi:ArcMapPoint efi:attests efi:EnergizedState .
 # 아크·스패터 부재는 비통전을 입증하지 않는다 — 통전 회로도 화재가 닿기 전에 끊기면 아크 없이 탄다.
 # 부재는 외부화염의 핵심 단서(R_EF_core)로만 쓰고 통전 상태는 직접 확인(서식 E)으로만 받는다.
 # 비통전은 결정적 반증(R_ANY_DeEnergized, -100)이라 부재에서 도출하면 위험하다 (P4).
-efi:NoArcOrSpatter           a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "아크·스패터 부재"@ko ; rdfs:comment "복합 사실 = ArcMeltMark(부정 확인) ∧ Spatter(부정 확인)"@ko .
-efi:NoArcOrSpatter rdfs:label "아크·스패터 부재"@ko ; skos:prefLabel "아크·스패터 부재"@ko .
-efi:MultipleArcBeadsAtOrigin a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "전기적 발화점 다발성 아크 비드"@ko .
-efi:MultipleArcBeadsAtOrigin rdfs:label "전기적 발화점 다발성 아크 비드"@ko ; skos:altLabel "발화부 다발성 아크 비드"@ko .
+efi:NoArcOrSpatter           a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "아크·스패터 부재"@ko ; rdfs:comment "복합 사실 = ArcMeltMark(부정 확인) ∧ Spatter(부정 확인)"@ko ;
+    rdfs:label "아크·스패터 부재"@ko .
+efi:MultipleArcBeadsAtOrigin a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "전기적 발화점 다발성 아크 비드"@ko ;
+    rdfs:label "전기적 발화점 다발성 아크 비드"@ko ; skos:altLabel "발화부 다발성 아크 비드"@ko .
 efi:MultipleArcBeadsAtOrigin efi:attests efi:EnergizedState .
-efi:FlexingHistoryWithStrandFracture a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "반복 굴곡 이력 + 소선 부분단선"@ko ; rdfs:comment "절연열화 반증단서"@ko .
-efi:FlexingHistoryWithStrandFracture rdfs:label "반복 굴곡 이력 + 소선 부분단선"@ko ; skos:altLabel "반복 굴곡 이력과 소선 부분단선"@ko .
+efi:FlexingHistoryWithStrandFracture a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; skos:prefLabel "반복 굴곡 이력 + 소선 부분단선"@ko ; rdfs:comment "절연열화 반증단서"@ko ;
+    rdfs:label "반복 굴곡 이력 + 소선 부분단선"@ko ; skos:altLabel "반복 굴곡 이력과 소선 부분단선"@ko .
 efi:FlexingHistoryWithStrandFracture efi:attests efi:RepeatedFlexing , efi:LongTermRepeatedStress .
 
 efi:ElectricalIgnitionScenario a owl:Class ; rdfs:subClassOf efi:IgnitionScenario ,
     [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:ElectricalHeatingMechanism ] ,
-    [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:EnergizedState ] .
-efi:ElectricalIgnitionScenario rdfs:label "전기적 발화 가설"@ko ; skos:prefLabel "전기적 발화 가설"@ko .
+    [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:EnergizedState ] ;
+    rdfs:label "전기적 발화 가설"@ko ; skos:prefLabel "전기적 발화 가설"@ko .
 
 # --- 지표 규칙 (논문 Table 2를 기계 가독 형태로 물화; 시나리오 클래스는 OWL 2 punning으로 개체 참조) ---
-efi:IndicatorRule a owl:Class ; rdfs:subClassOf obo:IAO_0000030 ; skos:prefLabel "지표 규칙(핵심·보강·반증 단서)"@ko .
-efi:IndicatorRule rdfs:label "지표 규칙(핵심·보강·반증 단서)"@ko ; skos:altLabel "단서 규칙"@ko .
+efi:IndicatorRule a owl:Class ; rdfs:subClassOf obo:IAO_0000030 ; skos:prefLabel "지표 규칙(핵심·보강·반증 단서)"@ko ;
+    rdfs:label "지표 규칙(핵심·보강·반증 단서)"@ko ; skos:altLabel "단서 규칙"@ko .
 
 efi:R_ANY_DeEnergized a efi:IndicatorRule ; efi:forScenario efi:ElectricalIgnitionScenario ; efi:indicates efi:DeEnergizedState ;
     efi:hasRole efi:DecisiveRefuting ; efi:requiresStatus efi:Confirmed ; efi:scoreDelta -100 ; rdfs:comment "비통전 확인 → 전기적 가설 전부 기각"@ko .
