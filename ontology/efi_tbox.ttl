@@ -1773,7 +1773,11 @@ efi:R_CD_ref2  a efi:IndicatorRule ; efi:forScenario efi:CrushDamageScenario ; e
 efi:PartialDisconnectionScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ; skos:prefLabel "반단선"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
         [ a owl:Restriction ; owl:onProperty efi:hasMechanism ;
-          owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:PartialDisconnectionHeating efi:SeriesArc ) ] ] ) ] ;
+          owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:PartialDisconnectionHeating efi:SeriesArc efi:PartialDisconnectionInducedArc ) ] ] ) ] ;
+    # 정의는 선언(hasDeclaredMechanism)과 같아야 한다. 반단선 유발 단락 아크는 선언되고 배타 공리
+    # 열둘에도 들어 있으면서 정의에서 빠져 있었다 — 그 메커니즘을 가진 시나리오가 정의상 반단선이
+    # 아니면서 점수·발현 사슬은 반단선으로 다루는 모순이었다. 실무Ⅳ 의 반단선 진행(단면적 감소
+    # 발열 → 소선 파단부 아크 → 단락)이 한 가설이다. test_declared_mechanisms_are_defined.
     rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ;
         owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:RepeatedFlexing efi:Vibration efi:Tension ) ] ] ;
     rdfs:label "반단선"@ko .
@@ -1877,7 +1881,10 @@ efi:R_ID_sup6  a efi:IndicatorRule ; efi:forScenario efi:InsulationDegradationSc
 
 efi:TrackingScenario a owl:Class ; rdfs:subClassOf efi:ElectricalIgnitionScenario ; skos:prefLabel "트래킹"@ko ;
     owl:equivalentClass [ a owl:Class ; owl:intersectionOf ( efi:IgnitionScenario
-        [ a owl:Restriction ; owl:onProperty efi:hasMechanism ; owl:someValuesFrom efi:ArcTracking ] ) ] ;
+        [ a owl:Restriction ; owl:onProperty efi:hasMechanism ;
+          owl:someValuesFrom [ a owl:Class ; owl:unionOf ( efi:ArcTracking efi:LeakageCurrentHeating ) ] ] ) ] ;
+    # 누설전류 발열은 트래킹의 앞 단계(표면 미세 전류 → 탄화 → 아크)다. 선언되고 배타 공리에 있으면서
+    # 정의에서 빠져 있었다. 설계계획서 부록 A 도 트래킹의 현장 지표로 든다. test_declared_mechanisms_are_defined.
     rdfs:subClassOf [ a owl:Restriction ; owl:onProperty efi:hasAntecedent ; owl:someValuesFrom efi:ContaminatedEnvironment ] ;
     rdfs:label "트래킹"@ko .
 efi:TrackingScenario efi:canManifest efi:CarbonizedConductivePath , efi:InsulationCarbonization , efi:LocalizedDiscoloration , efi:BurnCenterOnSurface , efi:ArcBead .

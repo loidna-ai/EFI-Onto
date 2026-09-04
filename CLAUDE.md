@@ -211,6 +211,10 @@ TTL 의 절은 주제로 묶여 있고 앵커는 `# [7.3]` 꼴이다. 번호는 
   형성 후보는 동점과 무관하게 기각되지 않은 미형성 가설 전부다 — 대안을 세우지 않고 멈추면 중대한 오류다(C-24).
   형성된 가설끼리 경합 중이면 형성 질의와 변별 질의를 번갈아 묻는다(`run_case.POLICY`) — 형성만 먼저 하면 선두 확인이 굶는다.
   `scripts/run_case.py --all` 이 150건 대화 루프로 잰다 — 8회 안에 122/150, 오판 10. `make missing-audit` 이 결측을 원문으로 되짚는다.
+- **정의와 선언은 같아야 한다.** `hasDeclaredMechanism` 은 가설 정의(equivalentClass)의 메커니즘 합집합 안에
+  있어야 한다. 반단선 유발 단락 아크와 누설전류 발열이 선언되고 배타 공리에 있으면서 정의에서 빠져 있었다.
+  `test_declared_mechanisms_are_defined`. 이름을 가리키는 곳(SPARQL·sh:path·domain·사슬)은 전부 선언돼 있어야
+  한다 — `test_no_dangling_references`. 오타 하나면 규칙이 조용히 영원히 발동하지 않는다.
 - **가설의 메커니즘이 내는 흔적은 가설의 canManifest 에도 적는다.** M-3 은 반대 방향만 본다.
   빠지면 공유 수가 적게 세어져 점수가 부푼다. `test_declared_manifestations_cover_mechanisms` 가 잡는다.
 - **반증 단서(Refuting)는 기각이 아니라 감점이다.** 기각은 결정적 반증(DecisiveRefuting)만.

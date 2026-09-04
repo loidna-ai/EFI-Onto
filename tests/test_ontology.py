@@ -1459,3 +1459,118 @@ def test_dialogue_policy_interleaves_forming_and_confirming():
     assert "변별" in kinds[:3], f"형성 질의만 앞에 몰렸다: {kinds}"
     assert "형성" in kinds[:3], f"변별 질의만 앞에 몰렸다: {kinds}"
     assert rc.conclude(s, onto)[0] == "TrackingScenario", asked
+
+
+
+# ── 이론적 연결의 정합 — TBox 안에서 끊긴 곳이 없는가 ──────────────────────────
+def _definition_mechanisms(g, sc):
+    from rdflib import OWL, URIRef
+    from rdflib.collection import Collection
+    out = set()
+    for eq in g.objects(sc, OWL.equivalentClass):
+        for lst in g.objects(eq, OWL.intersectionOf):
+            for m in Collection(g, lst):
+                if (m, OWL.onProperty, EFI.hasMechanism) in g:
+                    v = g.value(m, OWL.someValuesFrom)
+                    if isinstance(v, URIRef):
+                        out.add(q(v))
+                    else:
+                        for u in g.objects(v, OWL.unionOf):
+                            out |= {q(x) for x in Collection(g, u)}
+    return out
+
+
+def _below(g, c):
+    out, st = {c}, [EFI[c]]
+    while st:
+        for s in g.subjects(RDFS.subClassOf, st.pop()):
+            if q(s) not in out:
+                out.add(q(s)); st.append(s)
+    return out
+
+
+def test_declared_mechanisms_are_defined(g, onto):
+    """hasDeclaredMechanism 은 정의(equivalentClass)의 메커니즘 합집합 안에 있어야 한다.
+
+    반단선 유발 단락 아크와 누설전류 발열이 선언되고 배타 공리에 있으면서 정의에서 빠져 있었다 —
+    그 메커니즘을 가진 시나리오가 정의상 그 가설이 아니면서 점수·발현은 그 가설로 다루는 모순.
+    """
+    bad = []
+    for sc in g.subjects(RDFS.subClassOf, EFI.ElectricalIgnitionScenario):
+        defn = _definition_mechanisms(g, sc)
+        for m in g.objects(sc, EFI.hasDeclaredMechanism):
+            if q(m) not in defn and not (onto.ancestors.get(q(m), set()) & defn):
+                bad.append((q(sc), q(m), sorted(defn)))
+    assert not bad, f"선언이 정의 밖: {bad}"
+
+
+def test_every_need_enables_a_definition_mechanism(g, onto):
+    """가설의 필요조건은 그 가설의 정의 메커니즘(또는 그 하위)을 enables 해야 한다. 아니면 사슬이 끊긴 것."""
+    enables = {}
+    for a, m in g.subject_objects(EFI.enables):
+        enables.setdefault(q(a), set()).add(q(m))
+    bad = []
+    for sc, need in onto.needs.items():
+        mechs = set().union(*[_below(g, m) for m in _definition_mechanisms(g, EFI[sc])] or [set()])
+        for n in need:
+            fam = onto.ancestors.get(n, set()) | _below(g, n)
+            if not any(x in mechs for c in fam for x in enables.get(c, ())):
+                bad.append((sc, n))
+    assert not bad, f"필요조건이 정의 메커니즘으로 이어지지 않는다: {bad}"
+
+
+# 부재를 확인하는 복합 단서. 사슬(발현·원인·증언)에 붙지 않는 것이 정의다 — 외부화염의 핵심 단서로만 쓴다.
+CHAIN_EXCEPTIONS = {"NoArcOrSpatter"}
+
+
+def test_supporting_indicators_are_in_their_scenario_chain(g, onto):
+    """핵심·지지 단서는 그 가설의 사슬 안에 있어야 한다 — 가설이 낼 수 있는 흔적(canManifest)이거나,
+    정의 메커니즘을 가능케 하는 선행 조건(enables)이거나, 그런 조건을 증언하는 현장 사실(attests).
+    반증 단서는 다른 가설의 흔적으로 반박하므로 사슬 밖이 정상이다."""
+    enables, manifest, attests = {}, {}, {}
+    for a, m in g.subject_objects(EFI.enables): enables.setdefault(q(a), set()).add(q(m))
+    for s, d in g.subject_objects(EFI.canManifest): manifest.setdefault(q(s), set()).add(q(d))
+    for s, d in g.subject_objects(EFI.attests): attests.setdefault(q(s), set()).add(q(d))
+    fam = lambda c: onto.ancestors.get(c, set()) | _below(g, c)
+    loose = []
+    for r in onto.rules:
+        sc = r.scenario if isinstance(r.scenario, str) else r.scenario.value
+        if sc == "ElectricalIgnitionScenario" or r.role.value not in ("Core", "Supporting") or r.indicator in CHAIN_EXCEPTIONS:
+            continue
+        mechs = set().union(*[_below(g, m) for m in _definition_mechanisms(g, EFI[sc])] or [set()])
+        shown = set().union(*[_below(g, d) for d in manifest.get(sc, ())] or [set()])
+        causes = lambda c: any(x in mechs for c2 in fam(c) for x in enables.get(c2, ()))
+        ok = bool(fam(r.indicator) & shown) or causes(r.indicator) \
+            or any(causes(t) or (fam(t) & shown) for c in fam(r.indicator) for t in attests.get(c, ()))
+        if not ok:
+            loose.append((r.id, sc, r.indicator))
+    assert not loose, f"사슬 밖 지지 단서: {loose}"
+
+
+def test_no_dangling_references(g):
+    """SPARQL 문자열·sh:path·sh:class·domain·range·사슬이 가리키는 efi: 이름은 전부 선언돼 있어야 한다.
+    오타 하나면 그 규칙은 조용히 영원히 발동하지 않는다. 파서도 다른 시험도 잡지 않는다."""
+    from rdflib import URIRef
+    SH = Namespace("http://www.w3.org/ns/shacl#")
+    declared = {q(s) for s in g.subjects(RDF.type, None) if isinstance(s, URIRef) and str(s).startswith(str(EFI))}
+    declared |= {q(s) for s in g.subjects(RDFS.subClassOf, None) if isinstance(s, URIRef) and str(s).startswith(str(EFI))}
+    bad = set()
+    for pred in (SH.select, SH.construct):
+        for _, text in g.subject_objects(pred):
+            bad |= {n for n in re.findall(r"\befi:([A-Za-z_]\w*)", str(text)) if n not in declared}
+    for p in (SH.path, SH["class"], SH.targetClass, RDFS.domain, RDFS.range, SH.targetObjectsOf, SH.targetSubjectsOf,
+              EFI.indicates, EFI.forScenario, EFI.canManifest, EFI.enables, EFI.producesDamage, EFI.ignites,
+              EFI.attests, EFI.exhibits, EFI.hasDeclaredMechanism):
+        for _, o in g.subject_objects(p):
+            if isinstance(o, URIRef) and str(o).startswith(str(EFI)) and q(o) not in declared:
+                bad.add(q(o))
+    assert not bad, f"선언되지 않은 이름을 가리킨다: {sorted(bad)}"
+
+
+def test_python_enums_exist_in_ttl(g):
+    """파이썬 열거형의 값은 전부 TTL 에 있어야 한다. 갈리면 사례 평가가 새 어휘를 통째로 거부한다."""
+    from rdflib import URIRef
+    from efi_schema import Scenario, Mechanism, Antecedent, Damage, SceneEvidence, Fuel
+    names = {q(s) for s in g.subjects(None, None) if isinstance(s, URIRef)}
+    missing = [(e.__name__, v.value) for e in (Scenario, Mechanism, Antecedent, Damage, SceneEvidence, Fuel) for v in e if v.value not in names]
+    assert not missing, missing

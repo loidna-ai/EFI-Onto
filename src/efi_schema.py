@@ -67,6 +67,8 @@ class Mechanism(StrEnum):
     CRUSH_INDUCED_ARC = "CrushInducedArc"
     INSULATION_BREAKDOWN_ARC = "InsulationBreakdownArc"
     ARC_TRACKING = "ArcTracking"
+    LEAKAGE_CURRENT_HEATING = "LeakageCurrentHeating"            # 트래킹의 앞 단계. 정의 합집합에 있다
+    PARTIAL_DISCONNECTION_INDUCED_ARC = "PartialDisconnectionInducedArc"   # 반단선 진행의 끝. 정의 합집합에 있다
     EXTERNAL_FLAME_EXPOSURE = "ExternalFlameExposure"
     OVERLOAD_HEATING = "OverloadHeating"
     GROUND_FAULT_HEATING = "GroundFaultHeating"
