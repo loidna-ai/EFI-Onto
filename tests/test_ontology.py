@@ -1725,3 +1725,31 @@ def test_classification_layer_is_reference_only():
 def DCTERMS_source():
     from rdflib.namespace import DCTERMS
     return DCTERMS.source
+
+
+def test_every_electrical_mechanism_has_a_heat_source_match(g):
+    """K2 — 잎 메커니즘마다 발화열원 짝이 있다. 아크 계열은 작동기기-01 과 정확히 같고, 저항 발열 계열은
+    01·03 에 '관련 있다'로 걸린다(매뉴얼에 저항 발열 소분류가 없다). 외부화염 수열은 짝이 없다. 정확·관련을 둘 다 갖지 않는다."""
+    from rdflib import Namespace
+    from rdflib.namespace import SKOS, OWL
+    KFC = Namespace("https://w3id.org/efi-onto/kfc#")
+    leaves = [m for m in g.subjects(RDF.type, OWL.Class)
+              if (m, RDFS.subClassOf * "+", EFI.ElectricalHeatingMechanism) in g and not list(g.subjects(RDFS.subClassOf, m))]
+    assert leaves, "잎 메커니즘이 없다"
+    def inherited(m, p):
+        fam = [m] + [a for a in g.transitive_objects(m, RDFS.subClassOf) if a != m]
+        for c in fam:
+            v = list(g.objects(c, p))
+            if v:
+                return v
+        return []
+    for m in leaves:
+        exact = inherited(m, EFI.mappedHeatSourceExact); rel = inherited(m, EFI.mappedHeatSourceRelated)
+        assert bool(exact) != bool(rel), f"{q(m)}: 정확 {len(exact)} 관련 {len(rel)}"
+        for c in exact + rel:
+            assert (c, SKOS.inScheme, KFC.HeatSource) in g, f"{q(m)} → {c}: 발화열원 축 밖"
+        if exact:
+            assert exact == [KFC["HeatSource-OperatingEquipment-01"]], q(m)
+    assert not list(g.objects(EFI.ExternalFlameExposure, EFI.mappedHeatSourceExact | EFI.mappedHeatSourceRelated))
+    leaves26 = [s for s in g.subjects(SKOS.inScheme, KFC.HeatSource) if (s, SKOS.broader, None) in g]
+    assert len(leaves26) == 26 and len(list(g.subjects(SKOS.topConceptOf, KFC.HeatSource))) == 9

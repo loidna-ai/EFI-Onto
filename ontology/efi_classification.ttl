@@ -319,3 +319,194 @@ kfc:Factor-Unknown a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf
     skos:definition "별지 4 의 발화요인 대분류. 매뉴얼 제2장 2.2 는 미상을 제외하고 설명한다(p.33)"@ko ;
     dcterms:source "「화재조사 및 보고규정」(소방청훈령 제449호) 별지 4 화재현황조사서" .
 kfc:Factor skos:hasTopConcept kfc:Factor-Unknown .
+
+
+# ── [K2] 발화열원 (heat source) — 대분류 9 · 소분류 26
+#  매뉴얼 제1편 제2장 2.1 (p.21~32) 의 일곱 대분류 + 별지 4 의 기타·미상.
+#  전기와 닿는 소분류는 작동기기 01·02·03 뿐이고 '전기적 저항 발열'은 없다 — 짝은 efi_tbox.ttl 48.6.
+kfc:HeatSource a skos:ConceptScheme ;
+    dcterms:isPartOf efi:KoreaFireReportClassification ;
+    skos:prefLabel "발화열원 (국가화재분류체계)"@ko ;
+    skos:definition "발화의 최초원인이 된 불꽃 또는 열. 최초 착화물에 화재를 발생시킨 불꽃 또는 열"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) 제1편 제2장 2.1 발화열원, p.21 분류체계도" .
+
+
+kfc:HeatSource-OperatingEquipment a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topConceptOf kfc:HeatSource ;
+    skos:prefLabel "작동기기"@ko ;
+    skos:definition "전기·전자기계 및 제품, 전기·석유난로, 차량엔진, 컨베이어 설비 등 작동하고 있는 기계나 기구 등으로부터 발생한 전기적 아크, 불꽃, 스파크 등이 화재발생의 발화열원인 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.22" .
+kfc:HeatSource skos:hasTopConcept kfc:HeatSource-OperatingEquipment .
+kfc:HeatSource-OperatingEquipment-01 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-OperatingEquipment ; skos:notation "1" ;
+    skos:prefLabel "전기적 아크(단락)"@ko ;
+    skos:definition "전선 및 전기기기의 절연체가 절연열화 또는 절연파괴 되면서 발생된 전기아크, 전기스파크로 인해 발화하는 경우. 사례에는 단락으로 발생된 주울열에 의한 발화도 든다"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.22" .
+kfc:HeatSource-OperatingEquipment skos:narrower kfc:HeatSource-OperatingEquipment-01 .
+kfc:HeatSource-OperatingEquipment-02 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-OperatingEquipment ; skos:notation "2" ;
+    skos:prefLabel "불꽃, 스파크, 정전기"@ko ;
+    skos:definition "작동하고 있는 기계나 기구 등으로부터 발생한 불꽃, 스파크, 정전기가 가연물에 착화되어 발생되는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.22" .
+kfc:HeatSource-OperatingEquipment skos:narrower kfc:HeatSource-OperatingEquipment-02 .
+kfc:HeatSource-OperatingEquipment-03 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-OperatingEquipment ; skos:notation "3" ;
+    skos:prefLabel "기기 전도·복사열, 기기발열"@ko ;
+    skos:definition "작동하고 있는 기계나 기구 등으로부터 발생한 발열과 열의 전도·복사에 의해 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.22" .
+kfc:HeatSource-OperatingEquipment skos:narrower kfc:HeatSource-OperatingEquipment-03 .
+kfc:HeatSource-OperatingEquipment-04 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-OperatingEquipment ; skos:notation "4" ;
+    skos:prefLabel "역화"@ko ;
+    skos:definition "연소중인 불꽃이 거꾸로 흘러 가연성 유류 및 가스를 착화시켜 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.23" .
+kfc:HeatSource-OperatingEquipment skos:narrower kfc:HeatSource-OperatingEquipment-04 .
+kfc:HeatSource-OperatingEquipment-05 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-OperatingEquipment ; skos:notation "5" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.23" .
+kfc:HeatSource-OperatingEquipment skos:narrower kfc:HeatSource-OperatingEquipment-05 .
+
+kfc:HeatSource-SmokingMaterial a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topConceptOf kfc:HeatSource ;
+    skos:prefLabel "담뱃불, 라이터불 등"@ko ;
+    skos:definition "화재를 발생시킨 열에너지가 담뱃불, 라이터불, 성냥불, 촛불, 향불인 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.23" .
+kfc:HeatSource skos:hasTopConcept kfc:HeatSource-SmokingMaterial .
+kfc:HeatSource-SmokingMaterial-01 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SmokingMaterial ; skos:notation "1" ;
+    skos:prefLabel "담뱃불"@ko ;
+    skos:definition "담뱃불이 떨어지거나 부적당한 장소에 담배꽁초를 버리는 행위로 인해 불씨가 가연물을 착화되어 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.24" .
+kfc:HeatSource-SmokingMaterial skos:narrower kfc:HeatSource-SmokingMaterial-01 .
+kfc:HeatSource-SmokingMaterial-02 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SmokingMaterial ; skos:notation "2" ;
+    skos:prefLabel "라이터불, 성냥불"@ko ;
+    skos:definition "라이터, 성냥의 불씨가 주변의 가연물을 착화시켜 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.24" .
+kfc:HeatSource-SmokingMaterial skos:narrower kfc:HeatSource-SmokingMaterial-02 .
+kfc:HeatSource-SmokingMaterial-03 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SmokingMaterial ; skos:notation "3" ;
+    skos:prefLabel "촛불"@ko ;
+    skos:definition "촛불의 불씨가 전도, 접염, 낙하로 인하여 가연물에 착화되어 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.24" .
+kfc:HeatSource-SmokingMaterial skos:narrower kfc:HeatSource-SmokingMaterial-03 .
+kfc:HeatSource-SmokingMaterial-04 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SmokingMaterial ; skos:notation "4" ;
+    skos:prefLabel "향불"@ko ;
+    skos:definition "향의 불씨가 전도, 접염, 낙하로 인하여 가연물에 착화되어 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.24" .
+kfc:HeatSource-SmokingMaterial skos:narrower kfc:HeatSource-SmokingMaterial-04 .
+kfc:HeatSource-SmokingMaterial-05 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SmokingMaterial ; skos:notation "5" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.26" .
+kfc:HeatSource-SmokingMaterial skos:narrower kfc:HeatSource-SmokingMaterial-05 .
+
+kfc:HeatSource-FrictionConductionRadiation a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topConceptOf kfc:HeatSource ;
+    skos:prefLabel "마찰열, 전도열, 복사열"@ko ;
+    skos:definition "화재를 발생시킨 열에너지가 기기 또는 화염 등으로 발생한 마찰열, 전도열, 복사열이 화재의 발화열원인 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.26" .
+kfc:HeatSource skos:hasTopConcept kfc:HeatSource-FrictionConductionRadiation .
+kfc:HeatSource-FrictionConductionRadiation-01 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-FrictionConductionRadiation ; skos:notation "1" ;
+    skos:prefLabel "마찰열, 마찰스파크"@ko ;
+    skos:definition "전기·전자기계 및 제품, 차량 등에서 발생하는 마찰열이 가연물을 착화시켜 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.26" .
+kfc:HeatSource-FrictionConductionRadiation skos:narrower kfc:HeatSource-FrictionConductionRadiation-01 .
+kfc:HeatSource-FrictionConductionRadiation-02 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-FrictionConductionRadiation ; skos:notation "2" ;
+    skos:prefLabel "화염의 전도, 복사열"@ko ;
+    skos:definition "화염으로부터 지속적으로 방사된 열에너지가 가연물에 전도, 복사되어 발화하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.26" .
+kfc:HeatSource-FrictionConductionRadiation skos:narrower kfc:HeatSource-FrictionConductionRadiation-02 .
+kfc:HeatSource-FrictionConductionRadiation-03 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-FrictionConductionRadiation ; skos:notation "3" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.27" .
+kfc:HeatSource-FrictionConductionRadiation skos:narrower kfc:HeatSource-FrictionConductionRadiation-03 .
+
+kfc:HeatSource-SparkEmber a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topConceptOf kfc:HeatSource ;
+    skos:prefLabel "불꽃, 불티"@ko ;
+    skos:definition "용접, 굴뚝, 아궁이 등에서 나오는 불티 등이 화재의 발화열원인 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.27" .
+kfc:HeatSource skos:hasTopConcept kfc:HeatSource-SparkEmber .
+kfc:HeatSource-SparkEmber-01 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SparkEmber ; skos:notation "1" ;
+    skos:prefLabel "용접, 절단, 연마"@ko ;
+    skos:definition "용접, 절단, 연마시 발생하는 불꽃 또는 불티가 가연물을 착화시켜 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.27" .
+kfc:HeatSource-SparkEmber skos:narrower kfc:HeatSource-SparkEmber-01 .
+kfc:HeatSource-SparkEmber-02 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SparkEmber ; skos:notation "2" ;
+    skos:prefLabel "굴뚝(연통), 아궁이"@ko ;
+    skos:definition "굴뚝(연통) 및 아궁이에서 나온 불꽃 또는 불티가 비산해서 인근 가연물에 착화되어 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.27" .
+kfc:HeatSource-SparkEmber skos:narrower kfc:HeatSource-SparkEmber-02 .
+kfc:HeatSource-SparkEmber-03 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SparkEmber ; skos:notation "3" ;
+    skos:prefLabel "모닥불, 연탄, 숯"@ko ;
+    skos:definition "모닥불, 연탄, 숯 등의 불꽃 및 불티가 가연물에 접촉되어 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.28" .
+kfc:HeatSource-SparkEmber skos:narrower kfc:HeatSource-SparkEmber-03 .
+kfc:HeatSource-SparkEmber-04 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SparkEmber ; skos:notation "4" ;
+    skos:prefLabel "쓰레기, 논밭두렁"@ko ;
+    skos:definition "쓰레기, 논밭두렁 소각 중 발생한 불꽃 및 불티가 가연물에 접촉, 접염되어 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.28" .
+kfc:HeatSource-SparkEmber skos:narrower kfc:HeatSource-SparkEmber-04 .
+kfc:HeatSource-SparkEmber-05 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SparkEmber ; skos:notation "5" ;
+    skos:prefLabel "비화"@ko ;
+    skos:definition "작은 불똥이나 불티가 바람에 날리거나 튀면서 멀리 떨어진 곳에 있는 물체에 불이 붙어 연소하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.28" .
+kfc:HeatSource-SparkEmber skos:narrower kfc:HeatSource-SparkEmber-05 .
+kfc:HeatSource-SparkEmber-06 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-SparkEmber ; skos:notation "6" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.30" .
+kfc:HeatSource-SparkEmber skos:narrower kfc:HeatSource-SparkEmber-06 .
+
+kfc:HeatSource-Explosive a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topConceptOf kfc:HeatSource ;
+    skos:prefLabel "폭발물, 폭죽"@ko ;
+    skos:definition "폭탄, 탄약, 불꽃놀이 폭죽 및 놀이용 폭죽 등의 불씨가 발화열원인 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.30" .
+kfc:HeatSource skos:hasTopConcept kfc:HeatSource-Explosive .
+kfc:HeatSource-Explosive-01 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-Explosive ; skos:notation "1" ;
+    skos:prefLabel "폭탄, 탄약"@ko ;
+    skos:definition "폭탄, 탄약의 폭발현상 후 발생되는 화염에 의해 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.30" .
+kfc:HeatSource-Explosive skos:narrower kfc:HeatSource-Explosive-01 .
+kfc:HeatSource-Explosive-02 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-Explosive ; skos:notation "2" ;
+    skos:prefLabel "폭죽"@ko ;
+    skos:definition "불꽃놀이 폭죽 및 놀이용 폭죽의 불씨가 가연물에 착화되어 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.30" .
+kfc:HeatSource-Explosive skos:narrower kfc:HeatSource-Explosive-02 .
+
+kfc:HeatSource-ChemicalHeat a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topConceptOf kfc:HeatSource ;
+    skos:prefLabel "화학적 발화열"@ko ;
+    skos:definition "화학물질의 산화, 흡착, 분해, 중합, 혼촉 등의 화학적 반응이 진행되어 화재의 발화열원이 되는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.31" .
+kfc:HeatSource skos:hasTopConcept kfc:HeatSource-ChemicalHeat .
+kfc:HeatSource-ChemicalHeat-01 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-ChemicalHeat ; skos:notation "1" ;
+    skos:prefLabel "화학반응열"@ko ;
+    skos:definition "화학변화에 의해 발생된 열에 의하여 그 물질 자신이나 가연물을 연소시켜 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.31" .
+kfc:HeatSource-ChemicalHeat skos:narrower kfc:HeatSource-ChemicalHeat-01 .
+kfc:HeatSource-ChemicalHeat-02 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-ChemicalHeat ; skos:notation "2" ;
+    skos:prefLabel "발효열"@ko ;
+    skos:definition "말린 풀이나 볏짚에서 박테리아 미생물이나 산소에 의하여 발효를 일으켜 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.31" .
+kfc:HeatSource-ChemicalHeat skos:narrower kfc:HeatSource-ChemicalHeat-02 .
+
+kfc:HeatSource-NaturalHeat a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topConceptOf kfc:HeatSource ;
+    skos:prefLabel "자연적 발화열"@ko ;
+    skos:definition "햇볕, 낙뢰 등 자연현상에 의해 화재의 발화열원이 되는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.32" .
+kfc:HeatSource skos:hasTopConcept kfc:HeatSource-NaturalHeat .
+kfc:HeatSource-NaturalHeat-01 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-NaturalHeat ; skos:notation "1" ;
+    skos:prefLabel "햇볕"@ko ;
+    skos:definition "볼록한 거울, 둥근 어항, 스테인레스 볼, 비닐하우스 상부에 고인 물 등에 의해 태양광선의 초점이 맺어 가연물을 착화시키는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.32" .
+kfc:HeatSource-NaturalHeat skos:narrower kfc:HeatSource-NaturalHeat-01 .
+kfc:HeatSource-NaturalHeat-02 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-NaturalHeat ; skos:notation "2" ;
+    skos:prefLabel "낙뢰"@ko ;
+    skos:definition "구름과 대지간의 방전현상인 낙뢰에 의하여 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.32" .
+kfc:HeatSource-NaturalHeat skos:narrower kfc:HeatSource-NaturalHeat-02 .
+kfc:HeatSource-NaturalHeat-03 a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:broader kfc:HeatSource-NaturalHeat ; skos:notation "3" ;
+    skos:prefLabel "돋보기 효과"@ko ;
+    skos:definition "렌즈상이 될 수 있는 볼록면, 오목면상 물질을 매개로 하여 태양광선이 굴절 또는 반사가 지속되어 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.32" .
+kfc:HeatSource-NaturalHeat skos:narrower kfc:HeatSource-NaturalHeat-03 .
+
+kfc:HeatSource-Other a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topConceptOf kfc:HeatSource ;
+    skos:prefLabel "기타"@ko ;
+    skos:definition "별지 4 의 발화열원 대분류 (매뉴얼 p.21 분류체계도에는 없다)"@ko ;
+    dcterms:source "「화재조사 및 보고규정」(소방청훈령 제449호) 별지 4 화재현황조사서" .
+kfc:HeatSource skos:hasTopConcept kfc:HeatSource-Other .
+
+kfc:HeatSource-Unknown a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topConceptOf kfc:HeatSource ;
+    skos:prefLabel "미상"@ko ;
+    skos:definition "별지 4 의 발화열원 대분류 (매뉴얼 p.21 분류체계도에는 없다)"@ko ;
+    dcterms:source "「화재조사 및 보고규정」(소방청훈령 제449호) 별지 4 화재현황조사서" .
+kfc:HeatSource skos:hasTopConcept kfc:HeatSource-Unknown .

@@ -3849,6 +3849,14 @@ efi:reportedAs a owl:ObjectProperty ;
     rdfs:range skos:Concept ;
     rdfs:label "보고 시 분류 항목"@ko ; skos:prefLabel "보고 시 분류 항목"@ko ;
     rdfs:comment "가설 클래스가 결론이 됐을 때 붙는 보고용 소분류 — '정확히 같다'일 때만 적는다. 판정에 닿지 않는다 (§19.8.2)"@ko .
+efi:mappedHeatSourceExact a owl:ObjectProperty ; rdfs:subPropertyOf skos:exactMatch ;
+    rdfs:range skos:Concept ;
+    rdfs:label "발화열원 짝 — 정확히 같다"@ko ; skos:prefLabel "발화열원 짝 — 정확히 같다"@ko ;
+    rdfs:comment "메커니즘 클래스 → 국가화재분류체계 발화열원 소분류. 원문 정의가 그 메커니즘을 그대로 가리킬 때만"@ko .
+efi:mappedHeatSourceRelated a owl:ObjectProperty ; rdfs:subPropertyOf skos:relatedMatch ;
+    rdfs:range skos:Concept ;
+    rdfs:label "발화열원 짝 — 관련 있다"@ko ; skos:prefLabel "발화열원 짝 — 관련 있다"@ko ;
+    rdfs:comment "매뉴얼에 그 메커니즘의 소분류가 없어 둘 이상이 걸릴 때. 규칙이 읽지 않는다 — 쓰는 쪽이 고른다"@ko .
 efi:hasReportCategory a owl:ObjectProperty ;
     rdfs:domain efi:FireCauseClassification ; rdfs:range skos:Concept ;
     rdfs:label "분류 항목"@ko ; skos:prefLabel "분류 항목"@ko .
@@ -3863,6 +3871,28 @@ efi:TrackingScenario efi:reportedAs kfc:Factor-Electrical-07 .
 efi:PartialDisconnectionScenario efi:reportedAs kfc:Factor-Electrical-08 .
 efi:outcomeUnidentifiedShortCircuit rdfs:seeAlso kfc:Factor-Electrical-09 .
 # ExternalFlameScenario — 짝 없음 (위 머리말).
+
+#  발화열원 짝 — 메커니즘 → kfc:HeatSource 소분류. D-20 은 읽지 않는다 — 열원 칸은 쓰는 쪽이 짝을 보고 채운다.
+#  아크 계열은 작동기기-01 '전기적 아크(단락)'과 정확히 같다(매뉴얼 p.22 정의가 아크·스파크).
+#  저항 발열 계열은 매뉴얼에 소분류가 없다 — 01(사례에 '단락으로 발생된 주울열')과 03(기기발열) 둘 다 '관련 있다'.
+#  실무는 01 쪽이다(실무Ⅱ 예시 p.101: 절연열화 → 전기적 아크(단락); 요인 이름이 '…에 의한 단락'). 그래도 규칙으로 정하지 않는다.
+#  외부화염 수열은 화염을 낸 것에 따라 다르므로 짝이 없다. 확장 슬롯(중성선 단선 과전압·지속 고장·도전물 브리지)도 같은 강도로 적는다.
+efi:ShortCircuitArc efi:mappedHeatSourceExact kfc:HeatSource-OperatingEquipment-01 .
+efi:CrushInducedArc efi:mappedHeatSourceExact kfc:HeatSource-OperatingEquipment-01 .
+efi:InsulationBreakdownArc efi:mappedHeatSourceExact kfc:HeatSource-OperatingEquipment-01 .
+efi:PartialDisconnectionInducedArc efi:mappedHeatSourceExact kfc:HeatSource-OperatingEquipment-01 .
+efi:ForeignConductorBridgingArc efi:mappedHeatSourceExact kfc:HeatSource-OperatingEquipment-01 .
+efi:SeriesArc efi:mappedHeatSourceExact kfc:HeatSource-OperatingEquipment-01 .
+efi:ArcTracking efi:mappedHeatSourceExact kfc:HeatSource-OperatingEquipment-01 .
+efi:PoorContactHeating efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
+efi:PartialDisconnectionHeating efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
+efi:OverloadHeating efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
+efi:GroundFaultHeating efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
+efi:LeakageCurrentHeating efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
+efi:InterTurnShortCircuit efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
+efi:OpenNeutralOvervoltage efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
+efi:SustainedFaulting efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
+# ExternalFlameExposure — 짝 없음.
 
 # [D-20] 확정된 결론의 가설이 대응 항목을 가지면 보고용 원인 분류 개체를 만든다 (§19.8.2).
 #  판정 뒤에 돈다(sh:order 7). 만든 개체는 C-9(결론을 가리킴)·C-10(체계 명시)·C-62(항목의 개념 체계가 그 체계에 속함)가 읽는다.
