@@ -1433,3 +1433,29 @@ def test_query_selection_forms_hypotheses_before_scoring_them():
     targets = {t for _, t, _ in slots}
     assert len(targets) > 2, f"동점 전부가 아니라 둘만 가르려 든다: {targets}"
     assert s.prerequisite_slots(onto) == ["EnergizedState"]
+
+
+def test_dialogue_policy_interleaves_forming_and_confirming():
+    """형성된 가설끼리 경합 중이면 형성 질의와 변별 질의를 번갈아 낸다.
+
+    형성만 먼저 하면 선두 확인이 굶고(8회를 미형성 가설 일곱의 필요조건에 다 쓴다),
+    변별만 먼저 하면 대안을 세우지 않아 이긴 것이 섞인다. 150건에서 번갈아 묻기가
+    일치 122·오판 10 으로 둘보다 낫다 — 세부는 docs/연동_흐름_실행.md.
+    """
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import run_case as rc
+    from efi_schema import Ontology
+    onto, ko = Ontology.load(), rc.labels()
+    case = {"case_id": "P", "actual_scenario": "TrackingScenario", "facts": [
+        {"cls": "CarbonizedConductivePath", "status": "Confirmed", "agent": "AIAgent"},
+        {"cls": "InterPoleInsulatingSurface", "status": "Confirmed", "agent": "InvestigatorAgent"},
+        {"cls": "AgedInsulation", "status": "Confirmed", "agent": "InvestigatorAgent"},
+        {"cls": "EnergizedState", "status": "Confirmed", "agent": "InvestigatorAgent"}]}
+    rc.POLICY, rc.MAX_QUERIES = "interleave", 8
+    s, log = rc.run(case, onto, ko)
+    asked = [what.split("?")[0] for step, what, _ in log[1:] if step.startswith("질의")]
+    kinds = ["형성" if "변별력 100" in what or "변별력 200" in what else "변별"
+             for step, what, _ in log[1:] if step.startswith("질의")]
+    assert "변별" in kinds[:3], f"형성 질의만 앞에 몰렸다: {kinds}"
+    assert "형성" in kinds[:3], f"변별 질의만 앞에 몰렸다: {kinds}"
+    assert rc.conclude(s, onto)[0] == "TrackingScenario", asked

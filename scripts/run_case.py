@@ -11,6 +11,7 @@
 
   python scripts/run_case.py UIJEONGBU_2025_055        보고서 → build/run_<case>.md · .ttl
   python scripts/run_case.py --all                      150건 요약 (SHACL 은 생략)
+  python scripts/run_case.py --policies                 질의 정책 셋을 예산 6·8·12 에서 비교
 """
 import os, sys; sys.path.insert(0, os.path.dirname(__file__)); import _utf8  # noqa: F401
 import json, pathlib, collections
@@ -25,7 +26,27 @@ E = Namespace("https://w3id.org/efi-onto#")
 SKOS = Namespace("http://www.w3.org/2004/02/skos/core#")
 PROV = Namespace("http://www.w3.org/ns/prov#")
 MAX_QUERIES = 8
+POLICY = "interleave"      # form_first | interleave | discriminate_first — 비교는 --policies
 ln = lambda u: str(u).split("#")[-1]
+
+
+def choose(slots, s, step):
+    """질의 정책. 형성 질의(변별력 ≥100)와 변별 질의를 어떻게 섞는가.
+
+    form_first        세워지지 않은 가설의 필요조건부터 전부. 대안은 다 세우지만 선두 확인이 굶는다.
+    discriminate_first 점수 차부터. 4회 만에 확정하지만 대안을 안 세워 이긴 것이 섞인다.
+    interleave        형성된 가설끼리 경합 중이면 한 번씩 번갈아 묻는다. 둘 다 굶기지 않는다.
+    """
+    form = [x for x in slots if x[2] >= 100]
+    disc = [x for x in slots if x[2] < 100]
+    if POLICY == "discriminate_first":
+        return (disc or form)[0]
+    if POLICY == "interleave":
+        top = max(h.support_score for h in s.hypotheses)
+        contest = sum(1 for h in s.hypotheses if h.formed and h.support_score == top and h.verdict.value != "Refuted") >= 2                   or any(h.formed and h.support_score > 50 for h in s.hypotheses)
+        if form and disc and contest:
+            return (disc if step % 2 else form)[0]
+    return (form or disc)[0]
 
 
 def labels():
@@ -65,7 +86,7 @@ def run(case, onto, ko, trace=True):
             if not pre:
                 log.append(("질의 없음", "가르는 미확인 지표가 없다", scores(s))); break
             slots = [(pre[0], max(s.hypotheses, key=lambda h: h.support_score).scenario, 0)]
-        ind, target, w = slots[0]
+        ind, target, w = choose(slots, s, s.query_count)
         answered.add(ind)
         hits = [f for f in scene if onto.matches(f["cls"], ind)]
         if hits:
@@ -150,6 +171,19 @@ def main():
     onto, ko = Ontology.load(), labels()
     cases = json.loads(SESSIONS.read_text(encoding="utf-8"))
     (ROOT / "build").mkdir(exist_ok=True)
+    if "--policies" in sys.argv:
+        global POLICY, MAX_QUERIES
+        for pol in ("discriminate_first", "form_first", "interleave"):
+            POLICY = pol
+            for cap in (6, 8, 12):
+                MAX_QUERIES = cap; hit = held = wrong = closed = 0
+                for c in cases:
+                    s, _ = run(c, onto, ko); out, top, pr = conclude(s, onto)
+                    if out == c["actual_scenario"]: hit += 1; closed += not pr
+                    elif out in ("Undetermined", "UnidentifiedShortCircuit"): held += 1
+                    else: wrong += 1
+                print(f"{pol:19s} cap {cap:2d}: 일치 {hit:3d} (확정 조건 충족 {closed:3d}) · 보류 {held:2d} · 오판 {wrong:2d}")
+        return
     if "--all" in sys.argv:
         hit = held = wrong = 0; q = collections.Counter(); per = collections.defaultdict(lambda: [0, 0])
         for c in cases:
