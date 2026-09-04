@@ -520,9 +520,12 @@ class Session(BaseModel):
         # 굴곡|진동|인장의 합집합인데 잎마다 따로 물으면 세 번이고, 조사서가 '반복 굴곡'을
         # 적어도 "인장?" 에는 결측으로 답한다. 공통 상위(장기 반복 응력)를 물으면 어떤 하위로
         # 답해도 포섭으로 잡힌다. 150건에서 24건이 '물었는데도 미형성'이던 이유다.
+        # 형성 후보는 동점 여부와 무관하게 기각되지 않은 미형성 가설 전부다. 세워지지 않은
+        # 가설의 점수는 뜻이 없으므로(D-15) 점수 차로 후보에서 빼면 안 된다 — 사진 단서로
+        # 절연열화가 57점이 되자 트래킹은 후보에서 빠져 필요조건을 영영 안 물었다(26건).
         formation: dict[str, tuple[Scenario, int]] = {}
-        for h in cands:
-            if h.scenario not in unformed:
+        for h in live:
+            if h.formed:
                 continue
             need = o.needs.get(h.scenario.value, set())
             if not need:

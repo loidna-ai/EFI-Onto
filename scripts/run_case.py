@@ -54,11 +54,16 @@ def run(case, onto, ko, trace=True):
     answered = set()
     while s.query_count < MAX_QUERIES:
         slots = [x for x in s.discriminating_slots(onto) if x[0] not in answered]
-        if s.closure_met(onto) or not slots:
+        # 확정 조건이 차도 세워 보지 않은 가설이 남았으면 계속 묻는다 — 대안 가설을 고려하지
+        # 않는 것은 중대한 오류다(C-24, §4.3.7). 절연열화가 먼저 70점을 넘자 트래킹의 필요조건을
+        # 묻지도 않고 멈춰 1,805자짜리 조사서를 오판한 사례가 있었다. 형성 질의(변별력 100 이상)만
+        # 계속하고, 점수 차 질의는 확정 뒤에는 하지 않는다.
+        if s.closure_met(onto):
+            slots = [x for x in slots if x[2] >= 100]
+        if not slots:
             pre = [c for c in s.prerequisite_slots(onto) if c not in answered]   # 확정 전제 (C-57 통전)
             if not pre:
-                if not slots: log.append(("질의 없음", "가르는 미확인 지표가 없다", scores(s)))
-                break
+                log.append(("질의 없음", "가르는 미확인 지표가 없다", scores(s))); break
             slots = [(pre[0], max(s.hypotheses, key=lambda h: h.support_score).scenario, 0)]
         ind, target, w = slots[0]
         answered.add(ind)

@@ -1,4 +1,4 @@
-.PHONY: install test build status backlog reason lint review graph export clean calibrate cause-audit readers refute domestic silmu babrauskas iso iso-freeze run-case run-all
+.PHONY: install test build status backlog reason lint review graph export clean calibrate cause-audit readers refute domestic silmu babrauskas iso iso-freeze run-case run-all missing-audit
 
 PY := python
 export PYTHONIOENCODING := utf-8
@@ -71,6 +71,9 @@ run-case:
 
 run-all:
 	@$(PY) scripts/run_case.py --all
+
+missing-audit:
+	@$(PY) scripts/missing_audit.py
 
 iso:
 	@$(PY) scripts/isomorphic.py
