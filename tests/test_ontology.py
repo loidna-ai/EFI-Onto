@@ -1263,3 +1263,73 @@ def test_no_redundant_named_superclass(g):
                 if p != r and p in set(g.transitive_objects(r, RDFS.subClassOf)):
                     bad.append((q(c), q(p), q(r)))
     assert not bad, f"군더더기 부모: {sorted(set(bad))[:10]}"
+
+
+
+# ── 아크 매핑 — 최하류·절연전선 지시력의 조건 (D-5·D-10·D-18·C-58) ──────────
+ARC_MAP = """
+efi:invO a efi:InvestigatorAgent .
+efi:sesO a efi:InvestigationSession ; efi:queryCount 2 .
+efi:circO a efi:BranchCircuit ; efi:overcurrentProtected true .
+efi:wireO a efi:InsulatedWire ; efi:exhibits efi:mkO .
+efi:pO1 a efi:ArcMapPoint ; efi:onCircuit efi:circO ; efi:downstreamIndex 1 .
+efi:pO2 a efi:ArcMapPoint ; efi:onCircuit efi:circO ; efi:downstreamIndex 2 .
+efi:mkO a efi:ArcMeltMark ; efi:locatedInOriginArea efi:pO2 ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invO .
+efi:sesO efi:hasFact efi:mkO .
+efi:hO a efi:PoorContactScenario ; efi:inSession efi:sesO ; efi:supportScore 75 .
+efi:cO a efi:Conclusion ; efi:concludes efi:hO ; efi:originEvidence efi:mkO .
+"""
+LOCALIZED = """
+efi:xO a efi:FireExposureExtentObservation ; efi:observedCircuit efi:circO ; efi:exposureExtent efi:LocalizedExposure ;
+       efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invO .
+efi:sesO efi:hasFact efi:xO .
+"""
+NO_INDICATION = "지시력을 갖지 못한다"
+BERNSTEIN = "전반 화재 노출이 확인됐다"
+
+
+def test_downstream_mark_indicates_origin_when_exposure_localized_and_protected():
+    """D-5 → D-10 → C-58. 최하류 지점의 단락흔은 노출 국부·과전류 보호가 확인될 때 지시력을 갖는다."""
+    gr = run(ARC_MAP + LOCALIZED)
+    assert (EFI.pO2, EFI.furthestDownstream, None) in gr, "D-5 가 최하류를 표시하지 않았다"
+    assert (EFI.mkO, EFI.originIndicativeArcMark, None) in gr, "D-10 이 지시력을 세우지 않았다"
+    assert NO_INDICATION not in _msg(ARC_MAP + LOCALIZED)
+
+
+def test_origin_indication_needs_exposure_record():
+    """노출 기록이 없으면 지시력이 서지 않는다 — 미확인은 국부가 아니다 (P4). D-10 이 전에는 무조건이었다."""
+    gr = run(ARC_MAP)
+    assert (EFI.mkO, EFI.originIndicativeArcMark, None) not in gr
+    assert NO_INDICATION in _msg(ARC_MAP)
+
+
+def test_general_exposure_defeats_downstream_inference():
+    """Babrauskas p.778 (Bernstein) — 전반 노출이면 전 구간 동시 아크. D-18 이 표시하고 C-58 이 그 이유로 막는다."""
+    general = LOCALIZED.replace("efi:LocalizedExposure", "efi:GeneralExposure")
+    gr = run(ARC_MAP + general)
+    assert (EFI.pO2, EFI.arcSequenceIndeterminate, None) in gr
+    assert (EFI.mkO, EFI.originIndicativeArcMark, None) not in gr
+    msgs = _msg(ARC_MAP + general)
+    assert BERNSTEIN in msgs and NO_INDICATION in msgs
+
+
+def test_origin_indication_needs_overcurrent_protection():
+    """'첫 단락에서 보호장치가 동작한다'는 전제가 없으면 최하류 추론이 서지 않는다 (§9.13.2.2, D-6)."""
+    unprotected = ARC_MAP.replace("efi:overcurrentProtected true", "efi:overcurrentProtected false")
+    gr = run(unprotected + LOCALIZED)
+    assert (EFI.mkO, EFI.originIndicativeArcMark, None) not in gr
+    assert NO_INDICATION in _msg(unprotected + LOCALIZED)
+
+
+def test_unverifiable_exposure_is_not_localized():
+    """확인 불가는 확인이 아니다 (P4)."""
+    unv = LOCALIZED.replace("efi:Confirmed", "efi:Unverifiable")
+    assert (EFI.mkO, EFI.originIndicativeArcMark, None) not in run(ARC_MAP + unv)
+
+
+def test_supported_by_mark_is_not_an_origin_claim():
+    """지지 근거로 쓴 단락흔은 발화지점 주장이 아니다 — originEvidence 를 들지 않으면 C-58 은 침묵한다."""
+    quiet = ARC_MAP.replace("; efi:originEvidence efi:mkO", "").replace(
+        "efi:hO a efi:PoorContactScenario ; efi:inSession efi:sesO ; efi:supportScore 75 .",
+        "efi:hO a efi:PoorContactScenario ; efi:inSession efi:sesO ; efi:supportScore 75 ; efi:supportedBy efi:mkO .")
+    assert NO_INDICATION not in _msg(quiet)

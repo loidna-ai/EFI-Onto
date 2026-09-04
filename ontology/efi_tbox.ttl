@@ -705,7 +705,7 @@ efi:ForeignMatterInclusion efi:tendencyOnly true .
 # 선언만 하고 쓰지 않는 어휘는 확인해도 판정에 기여하지 못한다. lint 가 세 개를
 # 세고 있었다 — 발화 구역 위치, 착화 성향, 변별 질의.
 
-# ── 41.1 [D-10] 단락흔의 발화지점 지시력은 도체 종류에 따라 다르다
+# ── 41.1 (D-10) 단락흔의 발화지점 지시력은 도체 종류에 따라 다르다
 #   "절연전선은 단락하면 분전반의 차단기가 작동하여 OFF 로 되거나 퓨즈가 끊어져
 #    그 후 다른 부위에서 단락하여도 단락흔은 발생하지 않는다. 따라서 절연전선에
 #    단락흔이 발생한 부위는 발화점 또는 그 부근이라고 할 수가 있고 ... 발화지점
@@ -1395,6 +1395,16 @@ efi:downstreamIndex a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:
 efi:trueArcSiteLikely a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range xsd:boolean ;
     rdfs:label "진성 아크 지점 가능성"@ko ; skos:prefLabel "진성 아크 지점 가능성"@ko .
 
+efi:originEvidence a owl:ObjectProperty ; rdfs:domain efi:Conclusion ; rdfs:range efi:PhysicalEvidence ;
+    rdfs:label "발화지점 근거 증거물"@ko ; skos:prefLabel "발화지점 근거 증거물"@ko ;
+    rdfs:comment "결론이 발화지점의 근거로 든 증거물. 단락흔이면 C-59 이 지시력(originIndicativeArcMark)을 요구한다. 들지 않으면 검사하지 않는다 (P4)"@ko .
+efi:observedCircuit a owl:ObjectProperty ; rdfs:domain efi:FireExposureExtentObservation ; rdfs:range efi:Circuit ;
+    rdfs:label "관측 대상 회로"@ko ; skos:prefLabel "관측 대상 회로"@ko .
+efi:exposureExtent a owl:ObjectProperty ; rdfs:domain efi:FireExposureExtentObservation ; rdfs:range efi:FireExposureExtent ;
+    rdfs:label "관측된 노출 범위"@ko ; skos:prefLabel "관측된 노출 범위"@ko .
+efi:arcSequenceIndeterminate a owl:DatatypeProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range xsd:boolean ;
+    rdfs:label "아크 순서 판정 불가"@ko ; skos:prefLabel "아크 순서 판정 불가"@ko ;
+    rdfs:comment "회로 전반이 강한 화재에 노출되면 전 구간에서 거의 동시에 아크가 생겨 최하류·최초 추론이 서지 않는다 (Babrauskas p.778, Bernstein). D-18 이 도출하고 C-59 이 읽는다"@ko .
 efi:fromArcSurvey a owl:ObjectProperty ; rdfs:domain efi:Conclusion ; rdfs:range efi:ArcSurvey ;
     rdfs:label "아크 조사에 근거함"@ko ; skos:prefLabel "아크 조사에 근거함"@ko .
 efi:hasCorrespondingDamage a owl:ObjectProperty ; rdfs:domain efi:ArcMapPoint ; rdfs:range efi:CorrespondingDamageArea ;
@@ -2141,6 +2151,19 @@ efi:ArcMapPoint              a owl:Class ; rdfs:subClassOf efi:SceneEvidence ; s
 
 # §9.13.4.7 아크 용융흔은 그 시점에 통전 중이었음을 증언한다.
 efi:ArcMapPoint efi:attests efi:EnergizedState .
+
+# 회로가 화재에 얼마나 넓게 노출됐는가. 아크 매핑의 '최하류 = 최초' 추론(D-5·D-10)은
+# 노출이 국부일 때만 선다 — 전반 노출이면 전 구간에서 거의 동시에 아크가 생긴다
+# (Babrauskas p.778, Bernstein). 온도 문턱은 두지 않는다. 미기록은 국부가 아니다 (P4).
+efi:FireExposureExtent a owl:Class ; rdfs:label "화재 노출 범위"@ko ; skos:prefLabel "화재 노출 범위"@ko ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf ( efi:LocalizedExposure efi:GeneralExposure ) ] .
+efi:LocalizedExposure a owl:NamedIndividual , efi:FireExposureExtent ; skos:prefLabel "국부 노출"@ko ;
+    rdfs:comment "회로의 일부 구간만 화염·고온에 닿았다"@ko .
+efi:GeneralExposure a owl:NamedIndividual , efi:FireExposureExtent ; skos:prefLabel "전반 노출"@ko ;
+    rdfs:comment "회로 전 구간이 강한 화재에 노출됐다. 아크 순서로 발화지점을 가를 수 없다"@ko .
+efi:FireExposureExtentObservation a owl:Class ; rdfs:subClassOf efi:Observation ;
+    rdfs:label "회로 화재 노출 범위 관측"@ko ; skos:prefLabel "회로 화재 노출 범위 관측"@ko ;
+    rdfs:comment "세션의 사실(hasFact)로 들어온다. 확인 상태와 출처가 있어야 한다 (C-4). 관측 대상 회로와 노출 범위를 가리킨다"@ko .
 # 아크·스패터 부재는 비통전을 입증하지 않는다 — 통전 회로도 화재가 닿기 전에 끊기면 아크 없이 탄다.
 # 부재는 외부화염의 핵심 단서(R_EF_core)로만 쓰고 통전 상태는 직접 확인(서식 E)으로만 받는다.
 # 비통전은 결정적 반증(R_ANY_DeEnergized, -100)이라 부재에서 도출하면 위험하다 (P4).
@@ -2600,6 +2623,8 @@ efi:CorrespondingDamageRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass ef
 #  곳이 최초'라는 추론이 성립하지 않는다 (Babrauskas p.778, Bernstein). 실무Ⅳ p.185 ⑦㉯·
 #  p.305 '부하측이 1차용흔일 가능성이 가장 높다'도 같은 조건 아래서만 읽는다. 이 규칙은
 #  하류 지점을 표시할 뿐 1차 판정은 F-2(시간 선후)가 한다.
+#  그 조건은 D-10 이 건다 — 노출 국부 확인 + 과전류 보호 확인일 때만 지시력이 선다.
+#  전에는 이 표시를 아무 규칙도 읽지 않았다. 세 도출(D-4·D-5·D-10)이 그렇게 죽어 있었다.
 efi:FurthestDownstreamRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ArcMapPoint ;
     dcterms:references "NFPA 921 (2024) §9.13.2.1 Arc Map" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
@@ -3419,13 +3444,47 @@ efi:MetallographyAloneShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
 efi:MetallographyAloneShape dcterms:references
     "NFPA 921 (2024) §9.11.6 — 도체 끝의 비드 자체는 화재 원인을 지시하지 않는다. 국내 실무 교재도 같다(실무Ⅳ p.307 '본 결과물 단독으로 화재원인을 단정지어 판단할 수 없다')"@ko .
 
+# [D-10] 단락흔의 발화지점 지시력 — 두 갈래 모두 '보호장치가 첫 단락에서 동작해 그 뒤로는
+#  단락흔이 안 생긴다'는 전제 위에 선다. 절연전선(실무Ⅱ p.90)도, 회로 최하류 지점(§9.13.2.1,
+#  실무Ⅰ p.343)도 같다. 그래서 두 조건을 같이 요구한다 —
+#  (1) 그 회로의 과전류 보호가 확인됐다 (§9.13.2.2 회로별 보호장치 기록. 무보호면 D-6 지속 고장)
+#  (2) 그 회로의 화재 노출이 '국부'로 확인됐다 (Babrauskas p.778 — 전반 노출이면 동시 아크)
+#  둘 중 하나라도 기록에 없으면 지시력은 서지 않는다. 미확인은 국부가 아니다 (P4).
+#  결과는 C-59 이 읽는다 — 결론이 발화지점 근거로 든 단락흔에만.
 efi:ArcOriginIndicationRuleShape a sh:NodeShape ; sh:order 1 ; sh:targetClass efi:ArcMeltMark ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
         sh:construct """
         CONSTRUCT { $this efi:originIndicativeArcMark true . }
         WHERE {
           ?c rdf:type/rdfs:subClassOf* efi:InsulatedWire ; efi:exhibits $this .
-          $this efi:locatedInOriginArea ?p .
+          $this efi:locatedInOriginArea ?p . ?p efi:onCircuit ?circ .
+          ?circ efi:overcurrentProtected true .
+          ?s efi:hasFact ?x . ?x a efi:FireExposureExtentObservation ; efi:observedCircuit ?circ ;
+             efi:exposureExtent efi:LocalizedExposure ; efi:confirmationStatus efi:Confirmed .
+        }""" ] ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
+        sh:construct """
+        CONSTRUCT { $this efi:originIndicativeArcMark true . }
+        WHERE {
+          $this efi:locatedInOriginArea ?p . ?p efi:furthestDownstream true ; efi:onCircuit ?circ .
+          ?circ efi:overcurrentProtected true .
+          ?s efi:hasFact ?x . ?x a efi:FireExposureExtentObservation ; efi:observedCircuit ?circ ;
+             efi:exposureExtent efi:LocalizedExposure ; efi:confirmationStatus efi:Confirmed .
+        }""" ] .
+
+# [D-18] 전반 노출이 확인된 회로의 아크 지점은 순서 판정 불가로 표시한다 (Babrauskas p.778).
+#  D-5 는 최하류를 표시하고 D-10 은 조건이 안 맞아 지시력을 안 준다. 여기서는 '왜 안 되는가'를
+#  남겨 C-59 이 그 이유로 말하게 한다. 부재의 도출이 아니라 확인된 사실의 결과다.
+efi:ArcSequenceIndeterminateRuleShape a sh:NodeShape ; sh:order 1 ; sh:targetClass efi:ArcMapPoint ;
+    dcterms:references "NFPA 921 (2024) §9.13.2.1 Arc Map — 아크 매핑의 한계는 §9.10.2 화재 탄화 아크가 여러 지점에 남는다는 것과 같은 뿌리다" ;
+    rdfs:comment "Babrauskas, Ignition Handbook p.778 (Bernstein): 강한 화재에 노출된 회로는 전 구간에서 거의 동시에 아크가 생긴다"@ko ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 1 ;
+        sh:construct """
+        CONSTRUCT { $this efi:arcSequenceIndeterminate true . }
+        WHERE {
+          $this efi:onCircuit ?circ .
+          ?s efi:hasFact ?x . ?x a efi:FireExposureExtentObservation ; efi:observedCircuit ?circ ;
+             efi:exposureExtent efi:GeneralExposure ; efi:confirmationStatus efi:Confirmed .
         }""" ] .
 efi:ArcOriginIndicationRuleShape dcterms:references
     "NFPA 921 (2024) §9.12.4 — 관심 영역에 전원을 공급하는 계통의 모든 관련 구성요소를 식별·검사한다는 조사 범위의 근거다. 도체 종류별 지시력 차이는 국내 실무 교재(화재조사실무Ⅱ p.90)에서 왔다"@ko .
@@ -3572,6 +3631,27 @@ efi:LusterAbsenceShape dcterms:references
 #   "엔진 상단에 배선된 일부 전선에서 단락흔이 식별되나, 이는 연소 중심과
 #    이격된 상태로서 발화원으로 작용되었을 가능성보다는 연소 확대되는 과정에서
 #    절연피복이 소실되면서 단락흔이 발생되었을 가능성이 있다."
+# [C-59] 발화지점 근거로 든 단락흔은 지시력이 서야 한다 (§9.13.2.1·§9.13.2.2).
+#  D-10 이 세운 originIndicativeArcMark 를 읽는다. 결론이 originEvidence 로 명시한 것만 본다 —
+#  지지 근거(supportedBy)로 쓴 단락흔은 발화지점 주장이 아니므로 검사하지 않는다.
+efi:OriginEvidenceIndicativeShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    dcterms:references "NFPA 921 (2024) §9.13.2.1 Arc Map, §9.13.2.2 회로별 보호장치 기록" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "발화지점 근거로 든 단락흔이 지시력을 갖지 못한다 — 최하류 지점이거나 절연전선이어야 하고, 그 회로의 화재 노출이 '국부'로 확인되고 과전류 보호가 확인돼야 한다. 미확인은 국부가 아니다 (§9.13.2.1·§9.13.2.2; Babrauskas p.778)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:originEvidence ?m .
+          ?m rdf:type/rdfs:subClassOf* efi:ArcMeltMark .
+          FILTER NOT EXISTS { ?m efi:originIndicativeArcMark true }
+        }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "그 회로는 전반 화재 노출이 확인됐다 — 전 구간에서 거의 동시에 아크가 생겨 '최하류가 최초'라는 추론이 서지 않는다 (Babrauskas p.778, Bernstein)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:originEvidence ?m . ?m efi:locatedInOriginArea ?p . ?p efi:arcSequenceIndeterminate true .
+        }""" ] .
+
 efi:ArcMarkAwayFromOriginShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
     sh:severity sh:Violation ;
     sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;

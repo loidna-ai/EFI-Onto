@@ -157,7 +157,7 @@ SUBSECTIONS = [
     ("9.11.2",   "니크·연신의 추가 발열은 무시할 수준이다",      DONE, "C-37 MisconceptionShape"),
     ("9.13.1.2", "조사 미완이면 결론은 조사 범위로 제한",   DONE, "C-7 ArcSurveyScopeShape"),
     ("9.13.1.3", "아크인지 다른 손상인지 금속조직 판정",     PART, "MaterialsAnalyst 행위자는 생겼다. 판정 규칙은 없음"),
-    ("9.13.2.1", "회로 최하류 아크 지점 기록",             DONE, "D-5 FurthestDownstreamRuleShape"),
+    ("9.13.2.1", "회로 최하류 아크 지점 기록",             DONE, "D-5 FurthestDownstreamRuleShape. D-10 이 노출 국부·과전류 보호 확인 아래서만 지시력을 세우고 C-59 이 결론에서 읽는다"),
     ('9.13.2.2', '회로별 보호장치 종류와 상태 기록', DONE, '회로·보호 연결과 DeviceStateRecord의 On/Off/Tripped/FuseOpen/Unknown. 발견 상태와 자동 동작·수동 조작 사건은 별도'),
     ('9.13.3.1', '아크 지점이 나타날 수 있는 위치', DONE, 'Conduit·GroundedSurface 및 구성요소 검사 기록. 아크 지점 미발견은 사건 부재나 비통전으로 도출하지 않는다'),
     ("9.13.3.2", "전선관 내 도체 인출과 방향 유지",         PROC, "현장 작업 절차"),

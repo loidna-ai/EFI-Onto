@@ -66,6 +66,14 @@ def _linked(g, name, pairs, side):
 # 붙일 근거가 원문에 없다고 확인된 계측 속성. 임계값을 지어내 넣지 않는다.
 # 확장 슬롯과 같이 결정이 끝났으므로 미완성 수에서 빼고 목록만 보여 준다.
 # 근거가 생기면 여기서 빼고 사슬에 붙인다.
+# CONSTRUCT 산출 중 SHACL 이 아니라 시험·보고가 읽거나, 같은 규칙이 만든 사실 노드 옆의 부수 표지인 것.
+DERIVED_OUTPUT = {"derivedManifestation", "discriminates", "evidentiallyAmbiguousWith",
+                  "morphologicallyAmbiguousWith", "sharedByScenarioCount", "sharedMorphologyCount",
+                  "outcomeUnidentifiedShortCircuit", "loadExceedsRating"}
+
+# 도출은 됐으나 소비자를 정할 원문 근거가 확률 서술뿐인 것. 지어내지 않고 보류로 둔다.
+DERIVED_PENDING = {"trueArcSiteLikely"}   # §9.13.4.2 '진성 아크 지점일 확률이 오른다' — 문턱이 아니다
+
 NO_CRITERION = {
     "beadDiameter_mm":        "비드 지름과 온도의 대응이 원문에 없다 (실무Ⅳ p.307 은 '추정할 수 있다'까지만)",
     "carbonizationDepth_mm":  "탄화 심도는 연소강약·발화개소 판정에 쓰이며 그 절차는 범위 밖이다",
@@ -160,6 +168,23 @@ def checks(g):
     print_only.append(("계측 속성 — 붙일 근거가 없는 것으로 결정됨",
                        [p for p in unwired_dp if p in NO_CRITERION],
                        "임계값이나 견줄 짝이 원문에 없다. 지어내지 않는다"))
+
+    # CONSTRUCT 로 만들기만 하고 어떤 규칙·제약·파이썬도 읽지 않는 속성.
+    # '선언만 되고 안 쓰이는' 검사는 CONSTRUCT 안의 등장도 사용으로 세어 이것을 놓쳤다 —
+    # 아크 매핑의 D-4·D-5·D-10 이 그렇게 세 개나 죽어 있었다.
+    stripped = re.sub(r"CONSTRUCT\s*\{.*?\}", "CONSTRUCT{}", "\n".join(lines), flags=re.S).split("\n")
+    used_outside = lambda n: any(re.search(rf"\befi:{n}\b", l) and not re.match(rf"\s*efi:{n}\s+(a|rdfs:|skos:|owl:)", l)
+                                 for l in stripped)
+    py = "".join((ROOT / "src" / f).read_text(encoding="utf-8") for f in ("efi_schema.py", "investigation.py"))
+    derived_only = sorted(p for p in _named(g, OWL.DatatypeProperty) | _named(g, OWL.ObjectProperty)
+                          if used(p) and not used_outside(p) and not re.search(rf"\b{p}\b", py))
+    out.append(("도출만 되고 읽히지 않는 속성",
+                [p for p in derived_only if p not in DERIVED_OUTPUT and p not in DERIVED_PENDING],
+                "규칙이 만들지만 아무 규칙·제약도 읽지 않는다. 확인해도 판정에 닿지 못한다"))
+    print_only.append(("도출 — 소비자 미정 (원문이 확률 서술)", [p for p in derived_only if p in DERIVED_PENDING],
+                       "D-4 §9.13.4.2. 지시력의 문턱으로 쓰면 원문보다 세게 말하는 것이라 걸지 않았다. 다음 작업"))
+    print_only.append(("도출 산출 — 시험·보고·부수 표지가 읽는 것", [p for p in derived_only if p in DERIVED_OUTPUT],
+                       "M-1~M-4 분석 산출, D-14 결과 표지, D-1 의 부수 표지. 판정은 같은 규칙이 만든 사실 노드가 낸다"))
 
     # 이름이 겹치는 클래스 (라벨 중복)
     lab = collections.defaultdict(list)
