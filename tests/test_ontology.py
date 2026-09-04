@@ -1781,3 +1781,24 @@ def test_every_first_fuel_class_has_a_first_item_match(g):
     assert exact_owners == {"InsulationMaterialFuel", "AccumulatedDustFuel"}, exact_owners
     leaves89 = [s for s in g.subjects(SKOS.inScheme, KFC.FirstItem) if (s, SKOS.broader, None) in g]
     assert len(leaves89) == 89 and len(list(g.subjects(SKOS.topConceptOf, KFC.FirstItem))) == 11
+
+
+def test_equipment_and_power_source_schemes_are_complete():
+    """K4·K5 — 발화관련 기기 대분류 14·소분류 194, 동력원 대분류 5·소분류 25. 참조 어휘만 있고 짝은 없다.
+    다섯 개념 체계가 전부 국가화재분류체계에 속한다."""
+    from rdflib import Namespace
+    from rdflib.namespace import SKOS, DCTERMS
+    g = Graph().parse(ROOT / "ontology" / "efi_classification.ttl", format="turtle")
+    KFC = Namespace("https://w3id.org/efi-onto/kfc#")
+    def count(scheme):
+        tops = list(g.subjects(SKOS.topConceptOf, scheme))
+        leaves = [s for s in g.subjects(SKOS.inScheme, scheme) if (s, SKOS.broader, None) in g]
+        return len(tops), len(leaves)
+    assert count(KFC.Equipment) == (14, 194)
+    assert count(KFC.PowerSource) == (5, 25)
+    schemes = set(g.subjects(RDF.type, SKOS.ConceptScheme))
+    assert schemes == {KFC.Factor, KFC.HeatSource, KFC.FirstItem, KFC.Equipment, KFC.PowerSource}, schemes
+    for s in schemes:
+        assert (s, DCTERMS.isPartOf, EFI.KoreaFireReportClassification) in g
+    for c in g.subjects(SKOS.inScheme, None):
+        assert (c, SKOS.prefLabel, None) in g and (c, DCTERMS.source, None) in g, c

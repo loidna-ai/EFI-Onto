@@ -933,3 +933,997 @@ kfc:FirstItem-Waste-06 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broad
     skos:prefLabel "기타"@ko ;
     dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
 kfc:FirstItem-Waste skos:narrower kfc:FirstItem-Waste-06 .
+
+
+# ── [K4] 발화관련 기기 (equipment involved in ignition) — 대분류 14 · 소분류 194
+#  매뉴얼 제1편 제2장 2.4 (p.57~62). "발화와 관련된 불꽃 또는 열을 발생시킨 기기 또는 장치나 제품". 정의는 대분류 수준까지만.
+#  원문의 절 번호가 10) 을 건너뛰고 11) 농업장비로 이어진다 — 오식으로 보고 대분류 이름만 쓴다.
+#  의료장비는 p.58 분류체계도에 '전동휠체어'가 있으나 p.62 코드표에는 없다 — 코드표를 따른다.
+#  짝은 적지 않는다 — 조사 기록 층(T01~T16)의 기기 기록과 이을 자리다.
+kfc:Equipment a skos:ConceptScheme ;
+    dcterms:isPartOf efi:KoreaFireReportClassification ;
+    skos:prefLabel "발화관련 기기 (국가화재분류체계)"@ko ;
+    skos:definition "발화와 관련된 불꽃 또는 열을 발생시킨 기기 또는 장치나 제품"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) 제1편 제2장 2.4 발화관련 기기, p.57~58 분류체계도" .
+
+
+kfc:Equipment-Seasonal a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "계절용 기기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Seasonal .
+kfc:Equipment-Seasonal-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "1" ;
+    skos:prefLabel "에어컨"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-01 .
+kfc:Equipment-Seasonal-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "2" ;
+    skos:prefLabel "선풍기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-02 .
+kfc:Equipment-Seasonal-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "3" ;
+    skos:prefLabel "냉·난방기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-03 .
+kfc:Equipment-Seasonal-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "4" ;
+    skos:prefLabel "전기히터/스토브"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-04 .
+kfc:Equipment-Seasonal-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "5" ;
+    skos:prefLabel "가스난로/스토브"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-05 .
+kfc:Equipment-Seasonal-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "6" ;
+    skos:prefLabel "석유난로/곤로"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-06 .
+kfc:Equipment-Seasonal-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "7" ;
+    skos:prefLabel "연탄/석탄난로"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-07 .
+kfc:Equipment-Seasonal-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "8" ;
+    skos:prefLabel "나무/목탄난로"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-08 .
+kfc:Equipment-Seasonal-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "9" ;
+    skos:prefLabel "가정용 보일러"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-09 .
+kfc:Equipment-Seasonal-10 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "10" ;
+    skos:prefLabel "가습기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-10 .
+kfc:Equipment-Seasonal-11 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "11" ;
+    skos:prefLabel "공기청정기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-11 .
+kfc:Equipment-Seasonal-12 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "12" ;
+    skos:prefLabel "항온항습기/제습기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-12 .
+kfc:Equipment-Seasonal-13 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "13" ;
+    skos:prefLabel "환풍기/송풍기/공조기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-13 .
+kfc:Equipment-Seasonal-14 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "14" ;
+    skos:prefLabel "전기장판/담요/방석류"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-14 .
+kfc:Equipment-Seasonal-15 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "15" ;
+    skos:prefLabel "전기패널"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-15 .
+kfc:Equipment-Seasonal-16 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "16" ;
+    skos:prefLabel "열선"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-16 .
+kfc:Equipment-Seasonal-17 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "17" ;
+    skos:prefLabel "냉각탑"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-17 .
+kfc:Equipment-Seasonal-18 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "18" ;
+    skos:prefLabel "화목보일러"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-18 .
+kfc:Equipment-Seasonal-19 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Seasonal ; skos:notation "19" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Seasonal skos:narrower kfc:Equipment-Seasonal-19 .
+
+kfc:Equipment-Household a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "생활기기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Household .
+kfc:Equipment-Household-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "1" ;
+    skos:prefLabel "헤어드라이어/헤어브러쉬"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-01 .
+kfc:Equipment-Household-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "2" ;
+    skos:prefLabel "전자모기향/훈증기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-02 .
+kfc:Equipment-Household-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "3" ;
+    skos:prefLabel "소독기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-03 .
+kfc:Equipment-Household-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "4" ;
+    skos:prefLabel "전기안마기/전기마사지기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-04 .
+kfc:Equipment-Household-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "5" ;
+    skos:prefLabel "다리미"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-05 .
+kfc:Equipment-Household-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "6" ;
+    skos:prefLabel "세탁기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-06 .
+kfc:Equipment-Household-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "7" ;
+    skos:prefLabel "건조기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-07 .
+kfc:Equipment-Household-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "8" ;
+    skos:prefLabel "어항용 펌프모터/보온장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-08 .
+kfc:Equipment-Household-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "9" ;
+    skos:prefLabel "비데"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-09 .
+kfc:Equipment-Household-10 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "10" ;
+    skos:prefLabel "전기자전거"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-10 .
+kfc:Equipment-Household-11 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "11" ;
+    skos:prefLabel "전동퀵보드"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-11 .
+kfc:Equipment-Household-12 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "12" ;
+    skos:prefLabel "전자담배"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-12 .
+kfc:Equipment-Household-13 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "13" ;
+    skos:prefLabel "휴대폰"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-13 .
+kfc:Equipment-Household-14 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Household ; skos:notation "14" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Household skos:narrower kfc:Equipment-Household-14 .
+
+kfc:Equipment-Kitchen a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "주방기기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Kitchen .
+kfc:Equipment-Kitchen-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "1" ;
+    skos:prefLabel "냉장고"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-01 .
+kfc:Equipment-Kitchen-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "2" ;
+    skos:prefLabel "김치냉장고"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-02 .
+kfc:Equipment-Kitchen-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "3" ;
+    skos:prefLabel "식기건조기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-03 .
+kfc:Equipment-Kitchen-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "4" ;
+    skos:prefLabel "전자레인지"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-04 .
+kfc:Equipment-Kitchen-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "5" ;
+    skos:prefLabel "커피포트"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-05 .
+kfc:Equipment-Kitchen-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "6" ;
+    skos:prefLabel "약탕기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-06 .
+kfc:Equipment-Kitchen-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "7" ;
+    skos:prefLabel "전기밥솥/보온밥통"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-07 .
+kfc:Equipment-Kitchen-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "8" ;
+    skos:prefLabel "전기전자 그릴/오븐"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-08 .
+kfc:Equipment-Kitchen-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "9" ;
+    skos:prefLabel "전기 프라이팬/쿠커"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-09 .
+kfc:Equipment-Kitchen-10 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "10" ;
+    skos:prefLabel "핫플래이트"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-10 .
+kfc:Equipment-Kitchen-11 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "11" ;
+    skos:prefLabel "토스터기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-11 .
+kfc:Equipment-Kitchen-12 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "12" ;
+    skos:prefLabel "냉온수기/정수기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-12 .
+kfc:Equipment-Kitchen-13 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "13" ;
+    skos:prefLabel "청소기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-13 .
+kfc:Equipment-Kitchen-14 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "14" ;
+    skos:prefLabel "튀김기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-14 .
+kfc:Equipment-Kitchen-15 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "15" ;
+    skos:prefLabel "가스렌지"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-15 .
+kfc:Equipment-Kitchen-16 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "16" ;
+    skos:prefLabel "이동용 가스렌지"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-16 .
+kfc:Equipment-Kitchen-17 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "17" ;
+    skos:prefLabel "가스오븐"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-17 .
+kfc:Equipment-Kitchen-18 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "18" ;
+    skos:prefLabel "가스오븐렌지"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-18 .
+kfc:Equipment-Kitchen-19 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "19" ;
+    skos:prefLabel "가스밥솥"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-19 .
+kfc:Equipment-Kitchen-20 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "20" ;
+    skos:prefLabel "인덕션"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-20 .
+kfc:Equipment-Kitchen-21 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Kitchen ; skos:notation "21" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.59" .
+kfc:Equipment-Kitchen skos:narrower kfc:Equipment-Kitchen-21 .
+
+kfc:Equipment-AudioVisual a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "영상·음향기기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-AudioVisual .
+kfc:Equipment-AudioVisual-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-AudioVisual ; skos:notation "1" ;
+    skos:prefLabel "텔레비젼"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-AudioVisual skos:narrower kfc:Equipment-AudioVisual-01 .
+kfc:Equipment-AudioVisual-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-AudioVisual ; skos:notation "2" ;
+    skos:prefLabel "비디오, DVD 플레이어"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-AudioVisual skos:narrower kfc:Equipment-AudioVisual-02 .
+kfc:Equipment-AudioVisual-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-AudioVisual ; skos:notation "3" ;
+    skos:prefLabel "음향기기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-AudioVisual skos:narrower kfc:Equipment-AudioVisual-03 .
+kfc:Equipment-AudioVisual-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-AudioVisual ; skos:notation "4" ;
+    skos:prefLabel "오디오/카세트"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-AudioVisual skos:narrower kfc:Equipment-AudioVisual-04 .
+kfc:Equipment-AudioVisual-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-AudioVisual ; skos:notation "5" ;
+    skos:prefLabel "셋톱박스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-AudioVisual skos:narrower kfc:Equipment-AudioVisual-05 .
+kfc:Equipment-AudioVisual-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-AudioVisual ; skos:notation "6" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-AudioVisual skos:narrower kfc:Equipment-AudioVisual-06 .
+
+kfc:Equipment-Office a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "사무기기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Office .
+kfc:Equipment-Office-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Office ; skos:notation "1" ;
+    skos:prefLabel "컴퓨터"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Office skos:narrower kfc:Equipment-Office-01 .
+kfc:Equipment-Office-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Office ; skos:notation "2" ;
+    skos:prefLabel "프린터"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Office skos:narrower kfc:Equipment-Office-02 .
+kfc:Equipment-Office-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Office ; skos:notation "3" ;
+    skos:prefLabel "복사기/팩스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Office skos:narrower kfc:Equipment-Office-03 .
+kfc:Equipment-Office-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Office ; skos:notation "4" ;
+    skos:prefLabel "태블릿"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Office skos:narrower kfc:Equipment-Office-04 .
+kfc:Equipment-Office-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Office ; skos:notation "5" ;
+    skos:prefLabel "노트북"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Office skos:narrower kfc:Equipment-Office-05 .
+kfc:Equipment-Office-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Office ; skos:notation "6" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Office skos:narrower kfc:Equipment-Office-06 .
+
+kfc:Equipment-Lighting a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "조명, 간판"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Lighting .
+kfc:Equipment-Lighting-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "1" ;
+    skos:prefLabel "백열등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-01 .
+kfc:Equipment-Lighting-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "2" ;
+    skos:prefLabel "형광등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-02 .
+kfc:Equipment-Lighting-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "3" ;
+    skos:prefLabel "할로겐등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-03 .
+kfc:Equipment-Lighting-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "4" ;
+    skos:prefLabel "수은등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-04 .
+kfc:Equipment-Lighting-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "5" ;
+    skos:prefLabel "나트륨등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-05 .
+kfc:Equipment-Lighting-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "6" ;
+    skos:prefLabel "신호등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-06 .
+kfc:Equipment-Lighting-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "7" ;
+    skos:prefLabel "전등펜스/라이트라인"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-07 .
+kfc:Equipment-Lighting-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "8" ;
+    skos:prefLabel "네온사인/간판등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-08 .
+kfc:Equipment-Lighting-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "9" ;
+    skos:prefLabel "전광판"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-09 .
+kfc:Equipment-Lighting-10 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "10" ;
+    skos:prefLabel "LED조명"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-10 .
+kfc:Equipment-Lighting-11 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Lighting ; skos:notation "11" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Lighting skos:narrower kfc:Equipment-Lighting-11 .
+
+kfc:Equipment-Wiring a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "배선/배선기구"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Wiring .
+kfc:Equipment-Wiring-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Wiring ; skos:notation "1" ;
+    skos:prefLabel "전력공급용 전선"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Wiring skos:narrower kfc:Equipment-Wiring-01 .
+kfc:Equipment-Wiring-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Wiring ; skos:notation "2" ;
+    skos:prefLabel "옥내 인입배선"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Wiring skos:narrower kfc:Equipment-Wiring-02 .
+kfc:Equipment-Wiring-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Wiring ; skos:notation "3" ;
+    skos:prefLabel "옥내배선"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Wiring skos:narrower kfc:Equipment-Wiring-03 .
+kfc:Equipment-Wiring-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Wiring ; skos:notation "4" ;
+    skos:prefLabel "전기기기용 전선/코드"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Wiring skos:narrower kfc:Equipment-Wiring-04 .
+kfc:Equipment-Wiring-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Wiring ; skos:notation "5" ;
+    skos:prefLabel "스위치/멀티탭"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Wiring skos:narrower kfc:Equipment-Wiring-05 .
+kfc:Equipment-Wiring-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Wiring ; skos:notation "6" ;
+    skos:prefLabel "플러그"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Wiring skos:narrower kfc:Equipment-Wiring-06 .
+kfc:Equipment-Wiring-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Wiring ; skos:notation "7" ;
+    skos:prefLabel "소켓"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Wiring skos:narrower kfc:Equipment-Wiring-07 .
+kfc:Equipment-Wiring-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Wiring ; skos:notation "8" ;
+    skos:prefLabel "콘센트"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Wiring skos:narrower kfc:Equipment-Wiring-08 .
+kfc:Equipment-Wiring-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Wiring ; skos:notation "9" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-Wiring skos:narrower kfc:Equipment-Wiring-09 .
+
+kfc:Equipment-PowerFacility a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "전기설비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-PowerFacility .
+kfc:Equipment-PowerFacility-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "1" ;
+    skos:prefLabel "고압·특고압 개폐기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-01 .
+kfc:Equipment-PowerFacility-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "2" ;
+    skos:prefLabel "고압·특고압 차단기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-02 .
+kfc:Equipment-PowerFacility-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "3" ;
+    skos:prefLabel "저압개폐기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-03 .
+kfc:Equipment-PowerFacility-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "4" ;
+    skos:prefLabel "저압차단기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-04 .
+kfc:Equipment-PowerFacility-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "5" ;
+    skos:prefLabel "발전기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-05 .
+kfc:Equipment-PowerFacility-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "6" ;
+    skos:prefLabel "이동용발전기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-06 .
+kfc:Equipment-PowerFacility-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "7" ;
+    skos:prefLabel "변압기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-07 .
+kfc:Equipment-PowerFacility-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "8" ;
+    skos:prefLabel "적산전력계"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-08 .
+kfc:Equipment-PowerFacility-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "9" ;
+    skos:prefLabel "배전반/분전반"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-09 .
+kfc:Equipment-PowerFacility-10 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "10" ;
+    skos:prefLabel "정류기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-10 .
+kfc:Equipment-PowerFacility-11 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "11" ;
+    skos:prefLabel "보조전원장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-11 .
+kfc:Equipment-PowerFacility-12 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "12" ;
+    skos:prefLabel "콘덴서"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-12 .
+kfc:Equipment-PowerFacility-13 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "13" ;
+    skos:prefLabel "제어반"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-13 .
+kfc:Equipment-PowerFacility-14 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "14" ;
+    skos:prefLabel "인버터/컨버터"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-14 .
+kfc:Equipment-PowerFacility-15 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "15" ;
+    skos:prefLabel "배터리충전기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-15 .
+kfc:Equipment-PowerFacility-16 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "16" ;
+    skos:prefLabel "배터리/축전기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-16 .
+kfc:Equipment-PowerFacility-17 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "17" ;
+    skos:prefLabel "자동조정전압기(AVR)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-17 .
+kfc:Equipment-PowerFacility-18 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "18" ;
+    skos:prefLabel "무정전전원장치(UPS)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-18 .
+kfc:Equipment-PowerFacility-19 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "19" ;
+    skos:prefLabel "컨트롤박스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-19 .
+kfc:Equipment-PowerFacility-20 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "20" ;
+    skos:prefLabel "태양광발전설비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-20 .
+kfc:Equipment-PowerFacility-21 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-PowerFacility ; skos:notation "21" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.60" .
+kfc:Equipment-PowerFacility skos:narrower kfc:Equipment-PowerFacility-21 .
+
+kfc:Equipment-Industrial a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "산업장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Industrial .
+kfc:Equipment-Industrial-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "1" ;
+    skos:prefLabel "전동톱/절단기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-01 .
+kfc:Equipment-Industrial-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "2" ;
+    skos:prefLabel "동력선반"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-02 .
+kfc:Equipment-Industrial-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "3" ;
+    skos:prefLabel "착암기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-03 .
+kfc:Equipment-Industrial-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "4" ;
+    skos:prefLabel "용접절단기(토치)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-04 .
+kfc:Equipment-Industrial-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "5" ;
+    skos:prefLabel "그라인더"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-05 .
+kfc:Equipment-Industrial-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "6" ;
+    skos:prefLabel "콤프레셔"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-06 .
+kfc:Equipment-Industrial-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "7" ;
+    skos:prefLabel "펌프"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-07 .
+kfc:Equipment-Industrial-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "8" ;
+    skos:prefLabel "기중기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-08 .
+kfc:Equipment-Industrial-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "9" ;
+    skos:prefLabel "승강기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-09 .
+kfc:Equipment-Industrial-10 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "10" ;
+    skos:prefLabel "소각로"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-10 .
+kfc:Equipment-Industrial-11 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "11" ;
+    skos:prefLabel "산업용 용광로/가마"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-11 .
+kfc:Equipment-Industrial-12 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "12" ;
+    skos:prefLabel "주조/주형/단조장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-12 .
+kfc:Equipment-Industrial-13 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "13" ;
+    skos:prefLabel "증류/반응/교반기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-13 .
+kfc:Equipment-Industrial-14 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "14" ;
+    skos:prefLabel "컨베이어 벨트"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-14 .
+kfc:Equipment-Industrial-15 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "15" ;
+    skos:prefLabel "동력전달장치/PTO"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-15 .
+kfc:Equipment-Industrial-16 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "16" ;
+    skos:prefLabel "모터, 인쇄기, 집진기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-16 .
+kfc:Equipment-Industrial-17 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "17" ;
+    skos:prefLabel "보일러"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-17 .
+kfc:Equipment-Industrial-18 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "18" ;
+    skos:prefLabel "내연기관/엔진"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-18 .
+kfc:Equipment-Industrial-19 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "19" ;
+    skos:prefLabel "열교환기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-19 .
+kfc:Equipment-Industrial-20 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "20" ;
+    skos:prefLabel "히터/히터봉/가열장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-20 .
+kfc:Equipment-Industrial-21 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "21" ;
+    skos:prefLabel "온도제어기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-21 .
+kfc:Equipment-Industrial-22 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "22" ;
+    skos:prefLabel "열풍기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-22 .
+kfc:Equipment-Industrial-23 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "23" ;
+    skos:prefLabel "가스버너, 주유기, 도장기계(부스)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-23 .
+kfc:Equipment-Industrial-24 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "24" ;
+    skos:prefLabel "사출성형기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-24 .
+kfc:Equipment-Industrial-25 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "25" ;
+    skos:prefLabel "탈유기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-25 .
+kfc:Equipment-Industrial-26 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "26" ;
+    skos:prefLabel "방직기계/담금질기계"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-26 .
+kfc:Equipment-Industrial-27 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "27" ;
+    skos:prefLabel "방역기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-27 .
+kfc:Equipment-Industrial-28 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "28" ;
+    skos:prefLabel "교환기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-28 .
+kfc:Equipment-Industrial-29 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "29" ;
+    skos:prefLabel "실험실 장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-29 .
+kfc:Equipment-Industrial-30 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "30" ;
+    skos:prefLabel "통신장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-30 .
+kfc:Equipment-Industrial-31 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "31" ;
+    skos:prefLabel "산업용 로봇"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-31 .
+kfc:Equipment-Industrial-32 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Industrial ; skos:notation "32" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Industrial skos:narrower kfc:Equipment-Industrial-32 .
+
+kfc:Equipment-Agricultural a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "농업장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Agricultural .
+kfc:Equipment-Agricultural-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Agricultural ; skos:notation "1" ;
+    skos:prefLabel "파쇄기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Agricultural skos:narrower kfc:Equipment-Agricultural-01 .
+kfc:Equipment-Agricultural-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Agricultural ; skos:notation "2" ;
+    skos:prefLabel "양수기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Agricultural skos:narrower kfc:Equipment-Agricultural-02 .
+kfc:Equipment-Agricultural-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Agricultural ; skos:notation "3" ;
+    skos:prefLabel "발효기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Agricultural skos:narrower kfc:Equipment-Agricultural-03 .
+kfc:Equipment-Agricultural-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Agricultural ; skos:notation "4" ;
+    skos:prefLabel "수확/탈곡기/정미기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Agricultural skos:narrower kfc:Equipment-Agricultural-04 .
+kfc:Equipment-Agricultural-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Agricultural ; skos:notation "5" ;
+    skos:prefLabel "농업용 로봇"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Agricultural skos:narrower kfc:Equipment-Agricultural-05 .
+kfc:Equipment-Agricultural-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Agricultural ; skos:notation "6" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.61" .
+kfc:Equipment-Agricultural skos:narrower kfc:Equipment-Agricultural-06 .
+
+kfc:Equipment-Medical a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "의료장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Medical .
+kfc:Equipment-Medical-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Medical ; skos:notation "1" ;
+    skos:prefLabel "의료용 전동의자"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Medical skos:narrower kfc:Equipment-Medical-01 .
+kfc:Equipment-Medical-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Medical ; skos:notation "2" ;
+    skos:prefLabel "의료용 화상장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Medical skos:narrower kfc:Equipment-Medical-02 .
+kfc:Equipment-Medical-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Medical ; skos:notation "3" ;
+    skos:prefLabel "산소장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Medical skos:narrower kfc:Equipment-Medical-03 .
+kfc:Equipment-Medical-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Medical ; skos:notation "4" ;
+    skos:prefLabel "방사성 장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Medical skos:narrower kfc:Equipment-Medical-04 .
+kfc:Equipment-Medical-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Medical ; skos:notation "5" ;
+    skos:prefLabel "의료용 매트"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Medical skos:narrower kfc:Equipment-Medical-05 .
+kfc:Equipment-Medical-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Medical ; skos:notation "6" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Medical skos:narrower kfc:Equipment-Medical-06 .
+
+kfc:Equipment-Commercial a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "상업장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Commercial .
+kfc:Equipment-Commercial-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Commercial ; skos:notation "1" ;
+    skos:prefLabel "스튜디오장비"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Commercial skos:narrower kfc:Equipment-Commercial-01 .
+kfc:Equipment-Commercial-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Commercial ; skos:notation "2" ;
+    skos:prefLabel "놀이기구"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Commercial skos:narrower kfc:Equipment-Commercial-02 .
+kfc:Equipment-Commercial-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Commercial ; skos:notation "3" ;
+    skos:prefLabel "자동판매기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Commercial skos:narrower kfc:Equipment-Commercial-03 .
+kfc:Equipment-Commercial-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Commercial ; skos:notation "4" ;
+    skos:prefLabel "전자오락기기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Commercial skos:narrower kfc:Equipment-Commercial-04 .
+kfc:Equipment-Commercial-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Commercial ; skos:notation "5" ;
+    skos:prefLabel "노래방기기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Commercial skos:narrower kfc:Equipment-Commercial-05 .
+kfc:Equipment-Commercial-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Commercial ; skos:notation "6" ;
+    skos:prefLabel "사진현상/인화기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Commercial skos:narrower kfc:Equipment-Commercial-06 .
+kfc:Equipment-Commercial-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Commercial ; skos:notation "7" ;
+    skos:prefLabel "가스온수기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Commercial skos:narrower kfc:Equipment-Commercial-07 .
+kfc:Equipment-Commercial-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Commercial ; skos:notation "8" ;
+    skos:prefLabel "상업용 로봇"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Commercial skos:narrower kfc:Equipment-Commercial-08 .
+kfc:Equipment-Commercial-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Commercial ; skos:notation "9" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Commercial skos:narrower kfc:Equipment-Commercial-09 .
+
+kfc:Equipment-VehicleParts a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "차량, 선박부품"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-VehicleParts .
+kfc:Equipment-VehicleParts-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "1" ;
+    skos:prefLabel "배터리"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-01 .
+kfc:Equipment-VehicleParts-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "2" ;
+    skos:prefLabel "충전장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-02 .
+kfc:Equipment-VehicleParts-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "3" ;
+    skos:prefLabel "라이트장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-03 .
+kfc:Equipment-VehicleParts-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "4" ;
+    skos:prefLabel "배전기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-04 .
+kfc:Equipment-VehicleParts-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "5" ;
+    skos:prefLabel "기동장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-05 .
+kfc:Equipment-VehicleParts-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "6" ;
+    skos:prefLabel "배선"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-06 .
+kfc:Equipment-VehicleParts-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "7" ;
+    skos:prefLabel "점화장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-07 .
+kfc:Equipment-VehicleParts-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "8" ;
+    skos:prefLabel "연료탱크"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-08 .
+kfc:Equipment-VehicleParts-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "9" ;
+    skos:prefLabel "연료분사장치/카브레터"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-09 .
+kfc:Equipment-VehicleParts-10 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "10" ;
+    skos:prefLabel "연료파이프"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-10 .
+kfc:Equipment-VehicleParts-11 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "11" ;
+    skos:prefLabel "LPG기화기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-11 .
+kfc:Equipment-VehicleParts-12 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "12" ;
+    skos:prefLabel "오일필터"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-12 .
+kfc:Equipment-VehicleParts-13 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "13" ;
+    skos:prefLabel "엔진본체"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-13 .
+kfc:Equipment-VehicleParts-14 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "14" ;
+    skos:prefLabel "라디에이터"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-14 .
+kfc:Equipment-VehicleParts-15 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "15" ;
+    skos:prefLabel "워터펌프"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-15 .
+kfc:Equipment-VehicleParts-16 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "16" ;
+    skos:prefLabel "냉각팬"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-16 .
+kfc:Equipment-VehicleParts-17 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "17" ;
+    skos:prefLabel "팬벨트"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-17 .
+kfc:Equipment-VehicleParts-18 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "18" ;
+    skos:prefLabel "차축베어링"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-18 .
+kfc:Equipment-VehicleParts-19 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "19" ;
+    skos:prefLabel "브레이크장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-19 .
+kfc:Equipment-VehicleParts-20 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "20" ;
+    skos:prefLabel "소음기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-20 .
+kfc:Equipment-VehicleParts-21 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "21" ;
+    skos:prefLabel "배기가스매니홀드"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-21 .
+kfc:Equipment-VehicleParts-22 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "22" ;
+    skos:prefLabel "촉매장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-22 .
+kfc:Equipment-VehicleParts-23 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "23" ;
+    skos:prefLabel "배기관"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-23 .
+kfc:Equipment-VehicleParts-24 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-VehicleParts ; skos:notation "24" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-VehicleParts skos:narrower kfc:Equipment-VehicleParts-24 .
+
+kfc:Equipment-Drone a skos:Concept ; skos:inScheme kfc:Equipment ; skos:topConceptOf kfc:Equipment ;
+    skos:prefLabel "드론"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment skos:hasTopConcept kfc:Equipment-Drone .
+kfc:Equipment-Drone-01 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "1" ;
+    skos:prefLabel "전자전용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-01 .
+kfc:Equipment-Drone-02 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "2" ;
+    skos:prefLabel "정찰용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-02 .
+kfc:Equipment-Drone-03 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "3" ;
+    skos:prefLabel "전투용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-03 .
+kfc:Equipment-Drone-04 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "4" ;
+    skos:prefLabel "통신중계용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-04 .
+kfc:Equipment-Drone-05 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "5" ;
+    skos:prefLabel "상업용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-05 .
+kfc:Equipment-Drone-06 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "6" ;
+    skos:prefLabel "취미레져용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-06 .
+kfc:Equipment-Drone-07 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "7" ;
+    skos:prefLabel "농업용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-07 .
+kfc:Equipment-Drone-08 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "8" ;
+    skos:prefLabel "방송용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-08 .
+kfc:Equipment-Drone-09 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "9" ;
+    skos:prefLabel "수상용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-09 .
+kfc:Equipment-Drone-10 a skos:Concept ; skos:inScheme kfc:Equipment ; skos:broader kfc:Equipment-Drone ; skos:notation "10" ;
+    skos:prefLabel "물류용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.62" .
+kfc:Equipment-Drone skos:narrower kfc:Equipment-Drone-10 .
+
+
+# ── [K5] 동력원 (equipment power source) — 대분류 5 · 소분류 25
+#  매뉴얼 제1편 제2장 2.5 (p.63). "발화관련 기기나 제품을 작동 또는 연소시킬 때 사용되어지는 연료 또는 에너지".
+kfc:PowerSource a skos:ConceptScheme ;
+    dcterms:isPartOf efi:KoreaFireReportClassification ;
+    skos:prefLabel "동력원 (국가화재분류체계)"@ko ;
+    skos:definition "발화관련 기기나 제품을 작동 또는 연소시킬 때 사용되어지는 연료 또는 에너지"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) 제1편 제2장 2.5 동력원, p.63" .
+
+
+kfc:PowerSource-Electric a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:topConceptOf kfc:PowerSource ;
+    skos:prefLabel "전기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource skos:hasTopConcept kfc:PowerSource-Electric .
+kfc:PowerSource-Electric-01 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Electric ; skos:notation "1" ;
+    skos:prefLabel "22.9kV 이상 전원"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Electric skos:narrower kfc:PowerSource-Electric-01 .
+kfc:PowerSource-Electric-02 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Electric ; skos:notation "2" ;
+    skos:prefLabel "3,300V 이상 상용전원"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Electric skos:narrower kfc:PowerSource-Electric-02 .
+kfc:PowerSource-Electric-03 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Electric ; skos:notation "3" ;
+    skos:prefLabel "440V 이상 상용전원"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Electric skos:narrower kfc:PowerSource-Electric-03 .
+kfc:PowerSource-Electric-04 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Electric ; skos:notation "4" ;
+    skos:prefLabel "380/220V 이상 상용전원"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Electric skos:narrower kfc:PowerSource-Electric-04 .
+kfc:PowerSource-Electric-05 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Electric ; skos:notation "5" ;
+    skos:prefLabel "110V 이하 상용전원"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Electric skos:narrower kfc:PowerSource-Electric-05 .
+kfc:PowerSource-Electric-06 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Electric ; skos:notation "6" ;
+    skos:prefLabel "직류 24V 이상(배터리) 전원"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Electric skos:narrower kfc:PowerSource-Electric-06 .
+kfc:PowerSource-Electric-07 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Electric ; skos:notation "7" ;
+    skos:prefLabel "직류 12V 이하(배터리) 전원"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Electric skos:narrower kfc:PowerSource-Electric-07 .
+kfc:PowerSource-Electric-08 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Electric ; skos:notation "8" ;
+    skos:prefLabel "ESS장치"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Electric skos:narrower kfc:PowerSource-Electric-08 .
+kfc:PowerSource-Electric-09 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Electric ; skos:notation "9" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Electric skos:narrower kfc:PowerSource-Electric-09 .
+
+kfc:PowerSource-Gas a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:topConceptOf kfc:PowerSource ;
+    skos:prefLabel "가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource skos:hasTopConcept kfc:PowerSource-Gas .
+kfc:PowerSource-Gas-01 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Gas ; skos:notation "1" ;
+    skos:prefLabel "액화천연가스(LNG)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Gas skos:narrower kfc:PowerSource-Gas-01 .
+kfc:PowerSource-Gas-02 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Gas ; skos:notation "2" ;
+    skos:prefLabel "액화석유가스(LPG)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Gas skos:narrower kfc:PowerSource-Gas-02 .
+kfc:PowerSource-Gas-03 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Gas ; skos:notation "3" ;
+    skos:prefLabel "부탄가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Gas skos:narrower kfc:PowerSource-Gas-03 .
+kfc:PowerSource-Gas-04 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Gas ; skos:notation "4" ;
+    skos:prefLabel "기타 가연성가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Gas skos:narrower kfc:PowerSource-Gas-04 .
+
+kfc:PowerSource-Oil a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:topConceptOf kfc:PowerSource ;
+    skos:prefLabel "유류"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource skos:hasTopConcept kfc:PowerSource-Oil .
+kfc:PowerSource-Oil-01 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Oil ; skos:notation "1" ;
+    skos:prefLabel "가솔린"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Oil skos:narrower kfc:PowerSource-Oil-01 .
+kfc:PowerSource-Oil-02 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Oil ; skos:notation "2" ;
+    skos:prefLabel "등유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Oil skos:narrower kfc:PowerSource-Oil-02 .
+kfc:PowerSource-Oil-03 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Oil ; skos:notation "3" ;
+    skos:prefLabel "경유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Oil skos:narrower kfc:PowerSource-Oil-03 .
+kfc:PowerSource-Oil-04 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Oil ; skos:notation "4" ;
+    skos:prefLabel "중유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Oil skos:narrower kfc:PowerSource-Oil-04 .
+kfc:PowerSource-Oil-05 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Oil ; skos:notation "5" ;
+    skos:prefLabel "알코올"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Oil skos:narrower kfc:PowerSource-Oil-05 .
+kfc:PowerSource-Oil-06 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Oil ; skos:notation "6" ;
+    skos:prefLabel "기타 액체연료"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Oil skos:narrower kfc:PowerSource-Oil-06 .
+
+kfc:PowerSource-Solid a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:topConceptOf kfc:PowerSource ;
+    skos:prefLabel "고체"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource skos:hasTopConcept kfc:PowerSource-Solid .
+kfc:PowerSource-Solid-01 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Solid ; skos:notation "1" ;
+    skos:prefLabel "나무"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Solid skos:narrower kfc:PowerSource-Solid-01 .
+kfc:PowerSource-Solid-02 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Solid ; skos:notation "2" ;
+    skos:prefLabel "종이"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Solid skos:narrower kfc:PowerSource-Solid-02 .
+kfc:PowerSource-Solid-03 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Solid ; skos:notation "3" ;
+    skos:prefLabel "석탄"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Solid skos:narrower kfc:PowerSource-Solid-03 .
+kfc:PowerSource-Solid-04 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Solid ; skos:notation "4" ;
+    skos:prefLabel "목탄"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Solid skos:narrower kfc:PowerSource-Solid-04 .
+kfc:PowerSource-Solid-05 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Solid ; skos:notation "5" ;
+    skos:prefLabel "화학연료"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Solid skos:narrower kfc:PowerSource-Solid-05 .
+kfc:PowerSource-Solid-06 a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:broader kfc:PowerSource-Solid ; skos:notation "6" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource-Solid skos:narrower kfc:PowerSource-Solid-06 .
+
+kfc:PowerSource-Other a skos:Concept ; skos:inScheme kfc:PowerSource ; skos:topConceptOf kfc:PowerSource ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.63" .
+kfc:PowerSource skos:hasTopConcept kfc:PowerSource-Other .

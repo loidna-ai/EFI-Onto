@@ -36,7 +36,7 @@ make clean
 ```
 ontology/efi_tbox.ttl        추론 어휘 — 4축·가설·사슬·지표·판정 도형 (규모는 make status)
 ontology/efi_investigation.ttl 조사 기록 층 (T01~T16). 기록의 완비만 본다. 점수·사슬·형성에 닿지 않는다
-ontology/efi_classification.ttl 참조 분류 층 — 국가화재분류체계(2019)를 SKOS 로. 접두어 kfc:. 도형 없음, 판정에 닿지 않는다
+ontology/efi_classification.ttl 참조 분류 층 — 국가화재분류체계(2019) 다섯 축(발화요인·발화열원·최초착화물·발화관련 기기·동력원)을 SKOS 로. 접두어 kfc:. 도형 없음, 판정에 닿지 않는다
 src/efi_schema.py            Pydantic 파이프라인. 점수 산출과 질의 선택
 src/investigation.py         계통·시간·연료·비교·검토의 출처 있는 입력과 RDF 직렬화. 결론 제약은 TTL에 둔다
 scripts/investigate.py        조사 JSON → SHACL 검증·경로/시간/비교/검토 질문
