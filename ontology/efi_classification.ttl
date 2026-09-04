@@ -510,3 +510,426 @@ kfc:HeatSource-Unknown a skos:Concept ; skos:inScheme kfc:HeatSource ; skos:topC
     skos:definition "별지 4 의 발화열원 대분류 (매뉴얼 p.21 분류체계도에는 없다)"@ko ;
     dcterms:source "「화재조사 및 보고규정」(소방청훈령 제449호) 별지 4 화재현황조사서" .
 kfc:HeatSource skos:hasTopConcept kfc:HeatSource-Unknown .
+
+
+# ── [K3] 최초착화물 (item first ignited) — 대분류 11 · 소분류 89
+#  매뉴얼 제1편 제2장 2.3 (p.52~56). 매뉴얼은 소분류의 정의를 주지 않고 목록과 코드만 준다.
+#  재질·물건 기준의 목록이다. 우리 착화물 6종은 '증거물 자체인가 주변 가연물인가'의 위치 기준이라 틀이 다르다 —
+#  그래서 짝은 대부분 '넓게 포함된다'(efi_tbox.ttl 48.6). 연소확대물(2.6)은 같은 분류표를 쓴다.
+kfc:FirstItem a skos:ConceptScheme ;
+    dcterms:isPartOf efi:KoreaFireReportClassification ;
+    skos:prefLabel "최초착화물 (국가화재분류체계)"@ko ;
+    skos:definition "발화열원에 의해 최초로 불이 붙은 물질. 이 물질을 통해 화재가 제어하기 어려운 상태로 발전한다"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) 제1편 제2장 2.3 최초 착화물, p.52 분류체계도" .
+
+
+kfc:FirstItem-Furniture a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "가구"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-Furniture .
+kfc:FirstItem-Furniture-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Furniture ; skos:notation "1" ;
+    skos:prefLabel "침대, 매트리스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Furniture skos:narrower kfc:FirstItem-Furniture-01 .
+kfc:FirstItem-Furniture-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Furniture ; skos:notation "2" ;
+    skos:prefLabel "테이블, 의자"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Furniture skos:narrower kfc:FirstItem-Furniture-02 .
+kfc:FirstItem-Furniture-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Furniture ; skos:notation "3" ;
+    skos:prefLabel "옷장, 책장 등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Furniture skos:narrower kfc:FirstItem-Furniture-03 .
+kfc:FirstItem-Furniture-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Furniture ; skos:notation "4" ;
+    skos:prefLabel "소파"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Furniture skos:narrower kfc:FirstItem-Furniture-04 .
+kfc:FirstItem-Furniture-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Furniture ; skos:notation "5" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Furniture skos:narrower kfc:FirstItem-Furniture-05 .
+
+kfc:FirstItem-Textile a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "침구, 직물류"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-Textile .
+kfc:FirstItem-Textile-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Textile ; skos:notation "1" ;
+    skos:prefLabel "이불(베개, 시트)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Textile skos:narrower kfc:FirstItem-Textile-01 .
+kfc:FirstItem-Textile-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Textile ; skos:notation "2" ;
+    skos:prefLabel "카펫"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Textile skos:narrower kfc:FirstItem-Textile-02 .
+kfc:FirstItem-Textile-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Textile ; skos:notation "3" ;
+    skos:prefLabel "의류"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Textile skos:narrower kfc:FirstItem-Textile-03 .
+kfc:FirstItem-Textile-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Textile ; skos:notation "4" ;
+    skos:prefLabel "행주, 기름걸레"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Textile skos:narrower kfc:FirstItem-Textile-04 .
+kfc:FirstItem-Textile-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Textile ; skos:notation "5" ;
+    skos:prefLabel "부직포"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Textile skos:narrower kfc:FirstItem-Textile-05 .
+kfc:FirstItem-Textile-06 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Textile ; skos:notation "6" ;
+    skos:prefLabel "커튼"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Textile skos:narrower kfc:FirstItem-Textile-06 .
+kfc:FirstItem-Textile-07 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Textile ; skos:notation "7" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Textile skos:narrower kfc:FirstItem-Textile-07 .
+
+kfc:FirstItem-PaperWood a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "종이, 목재, 건초 등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-PaperWood .
+kfc:FirstItem-PaperWood-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-PaperWood ; skos:notation "1" ;
+    skos:prefLabel "종이"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-PaperWood skos:narrower kfc:FirstItem-PaperWood-01 .
+kfc:FirstItem-PaperWood-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-PaperWood ; skos:notation "2" ;
+    skos:prefLabel "풀, 나뭇잎"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-PaperWood skos:narrower kfc:FirstItem-PaperWood-02 .
+kfc:FirstItem-PaperWood-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-PaperWood ; skos:notation "3" ;
+    skos:prefLabel "잔디"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-PaperWood skos:narrower kfc:FirstItem-PaperWood-03 .
+kfc:FirstItem-PaperWood-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-PaperWood ; skos:notation "4" ;
+    skos:prefLabel "나무"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-PaperWood skos:narrower kfc:FirstItem-PaperWood-04 .
+kfc:FirstItem-PaperWood-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-PaperWood ; skos:notation "5" ;
+    skos:prefLabel "건초"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-PaperWood skos:narrower kfc:FirstItem-PaperWood-05 .
+kfc:FirstItem-PaperWood-06 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-PaperWood ; skos:notation "6" ;
+    skos:prefLabel "목재, 합판"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-PaperWood skos:narrower kfc:FirstItem-PaperWood-06 .
+kfc:FirstItem-PaperWood-07 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-PaperWood ; skos:notation "7" ;
+    skos:prefLabel "톱밥"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-PaperWood skos:narrower kfc:FirstItem-PaperWood-07 .
+kfc:FirstItem-PaperWood-08 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-PaperWood ; skos:notation "8" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-PaperWood skos:narrower kfc:FirstItem-PaperWood-08 .
+
+kfc:FirstItem-Plastics a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "합성수지"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-Plastics .
+kfc:FirstItem-Plastics-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Plastics ; skos:notation "1" ;
+    skos:prefLabel "플라스틱, PVC, 비닐, 장판"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Plastics skos:narrower kfc:FirstItem-Plastics-01 .
+kfc:FirstItem-Plastics-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Plastics ; skos:notation "2" ;
+    skos:prefLabel "합성고무(타이어)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Plastics skos:narrower kfc:FirstItem-Plastics-02 .
+kfc:FirstItem-Plastics-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Plastics ; skos:notation "3" ;
+    skos:prefLabel "발포폴리스티렌"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Plastics skos:narrower kfc:FirstItem-Plastics-03 .
+kfc:FirstItem-Plastics-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Plastics ; skos:notation "4" ;
+    skos:prefLabel "아크릴 수지"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Plastics skos:narrower kfc:FirstItem-Plastics-04 .
+kfc:FirstItem-Plastics-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Plastics ; skos:notation "5" ;
+    skos:prefLabel "우레탄"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Plastics skos:narrower kfc:FirstItem-Plastics-05 .
+kfc:FirstItem-Plastics-06 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Plastics ; skos:notation "6" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Plastics skos:narrower kfc:FirstItem-Plastics-06 .
+
+kfc:FirstItem-Signage a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "간판, 차양막 등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-Signage .
+kfc:FirstItem-Signage-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Signage ; skos:notation "1" ;
+    skos:prefLabel "광고판"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Signage skos:narrower kfc:FirstItem-Signage-01 .
+kfc:FirstItem-Signage-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Signage ; skos:notation "2" ;
+    skos:prefLabel "차양막"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Signage skos:narrower kfc:FirstItem-Signage-02 .
+kfc:FirstItem-Signage-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Signage ; skos:notation "3" ;
+    skos:prefLabel "플래카드"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Signage skos:narrower kfc:FirstItem-Signage-03 .
+kfc:FirstItem-Signage-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Signage ; skos:notation "4" ;
+    skos:prefLabel "네온사인"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Signage skos:narrower kfc:FirstItem-Signage-04 .
+kfc:FirstItem-Signage-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Signage ; skos:notation "5" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.54" .
+kfc:FirstItem-Signage skos:narrower kfc:FirstItem-Signage-05 .
+
+kfc:FirstItem-Food a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "식품"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-Food .
+kfc:FirstItem-Food-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Food ; skos:notation "1" ;
+    skos:prefLabel "음식물"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Food skos:narrower kfc:FirstItem-Food-01 .
+kfc:FirstItem-Food-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Food ; skos:notation "2" ;
+    skos:prefLabel "튀김유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Food skos:narrower kfc:FirstItem-Food-02 .
+kfc:FirstItem-Food-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Food ; skos:notation "3" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Food skos:narrower kfc:FirstItem-Food-03 .
+
+kfc:FirstItem-Electrical a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "전기, 전자"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-Electrical .
+kfc:FirstItem-Electrical-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Electrical ; skos:notation "1" ;
+    skos:prefLabel "전선피복"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Electrical skos:narrower kfc:FirstItem-Electrical-01 .
+kfc:FirstItem-Electrical-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Electrical ; skos:notation "2" ;
+    skos:prefLabel "전기, 전자기기 절연유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Electrical skos:narrower kfc:FirstItem-Electrical-02 .
+kfc:FirstItem-Electrical-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Electrical ; skos:notation "3" ;
+    skos:prefLabel "전기, 전자기기 케이스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Electrical skos:narrower kfc:FirstItem-Electrical-03 .
+kfc:FirstItem-Electrical-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Electrical ; skos:notation "4" ;
+    skos:prefLabel "전기, 전자기기 기판"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Electrical skos:narrower kfc:FirstItem-Electrical-04 .
+kfc:FirstItem-Electrical-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Electrical ; skos:notation "5" ;
+    skos:prefLabel "전기, 전자기기 부속품"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Electrical skos:narrower kfc:FirstItem-Electrical-05 .
+kfc:FirstItem-Electrical-06 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Electrical ; skos:notation "6" ;
+    skos:prefLabel "콘센트(접속장치), 스위치류"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Electrical skos:narrower kfc:FirstItem-Electrical-06 .
+kfc:FirstItem-Electrical-07 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Electrical ; skos:notation "7" ;
+    skos:prefLabel "전기, 전자기기 내부배선"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Electrical skos:narrower kfc:FirstItem-Electrical-07 .
+kfc:FirstItem-Electrical-08 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Electrical ; skos:notation "8" ;
+    skos:prefLabel "작동장치(모터, 히터, 램프 등)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Electrical skos:narrower kfc:FirstItem-Electrical-08 .
+kfc:FirstItem-Electrical-09 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Electrical ; skos:notation "9" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-Electrical skos:narrower kfc:FirstItem-Electrical-09 .
+
+kfc:FirstItem-HazMat a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "위험물 등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-HazMat .
+kfc:FirstItem-HazMat-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "1" ;
+    skos:prefLabel "가솔린"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-01 .
+kfc:FirstItem-HazMat-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "2" ;
+    skos:prefLabel "등유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-02 .
+kfc:FirstItem-HazMat-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "3" ;
+    skos:prefLabel "경유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-03 .
+kfc:FirstItem-HazMat-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "4" ;
+    skos:prefLabel "기계유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-04 .
+kfc:FirstItem-HazMat-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "5" ;
+    skos:prefLabel "시너"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-05 .
+kfc:FirstItem-HazMat-06 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "6" ;
+    skos:prefLabel "도료류"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-06 .
+kfc:FirstItem-HazMat-07 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "7" ;
+    skos:prefLabel "광택제, 파라핀, 왁스 등"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-07 .
+kfc:FirstItem-HazMat-08 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "8" ;
+    skos:prefLabel "접착제, 레진, 타르"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-08 .
+kfc:FirstItem-HazMat-09 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "9" ;
+    skos:prefLabel "제1류 위험물"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-09 .
+kfc:FirstItem-HazMat-10 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "10" ;
+    skos:prefLabel "제2류 위험물"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-10 .
+kfc:FirstItem-HazMat-11 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "11" ;
+    skos:prefLabel "제3류 위험물"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-11 .
+kfc:FirstItem-HazMat-12 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "12" ;
+    skos:prefLabel "기타 제4류 위험물"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-12 .
+kfc:FirstItem-HazMat-13 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "13" ;
+    skos:prefLabel "제5류 위험물"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-13 .
+kfc:FirstItem-HazMat-14 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "14" ;
+    skos:prefLabel "제6류 위험물"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-14 .
+kfc:FirstItem-HazMat-15 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "15" ;
+    skos:prefLabel "특수가연물"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-15 .
+kfc:FirstItem-HazMat-16 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "16" ;
+    skos:prefLabel "폭발물질"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-16 .
+kfc:FirstItem-HazMat-17 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-HazMat ; skos:notation "17" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-HazMat skos:narrower kfc:FirstItem-HazMat-17 .
+
+kfc:FirstItem-FlammableGas a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "가연성 가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-FlammableGas .
+kfc:FirstItem-FlammableGas-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-FlammableGas ; skos:notation "1" ;
+    skos:prefLabel "천연가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-FlammableGas skos:narrower kfc:FirstItem-FlammableGas-01 .
+kfc:FirstItem-FlammableGas-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-FlammableGas ; skos:notation "2" ;
+    skos:prefLabel "프로판가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-FlammableGas skos:narrower kfc:FirstItem-FlammableGas-02 .
+kfc:FirstItem-FlammableGas-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-FlammableGas ; skos:notation "3" ;
+    skos:prefLabel "부탄가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-FlammableGas skos:narrower kfc:FirstItem-FlammableGas-03 .
+kfc:FirstItem-FlammableGas-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-FlammableGas ; skos:notation "4" ;
+    skos:prefLabel "아세틸렌가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-FlammableGas skos:narrower kfc:FirstItem-FlammableGas-04 .
+kfc:FirstItem-FlammableGas-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-FlammableGas ; skos:notation "5" ;
+    skos:prefLabel "메탄가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-FlammableGas skos:narrower kfc:FirstItem-FlammableGas-05 .
+kfc:FirstItem-FlammableGas-06 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-FlammableGas ; skos:notation "6" ;
+    skos:prefLabel "수소가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-FlammableGas skos:narrower kfc:FirstItem-FlammableGas-06 .
+kfc:FirstItem-FlammableGas-07 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-FlammableGas ; skos:notation "7" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.55" .
+kfc:FirstItem-FlammableGas skos:narrower kfc:FirstItem-FlammableGas-07 .
+
+kfc:FirstItem-Vehicle a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "자동차, 철도차량, 선박, 항공기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-Vehicle .
+kfc:FirstItem-Vehicle-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "1" ;
+    skos:prefLabel "전기배선"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-01 .
+kfc:FirstItem-Vehicle-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "2" ;
+    skos:prefLabel "타이어"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-02 .
+kfc:FirstItem-Vehicle-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "3" ;
+    skos:prefLabel "좌석시트"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-03 .
+kfc:FirstItem-Vehicle-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "4" ;
+    skos:prefLabel "카펫"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-04 .
+kfc:FirstItem-Vehicle-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "5" ;
+    skos:prefLabel "범퍼"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-05 .
+kfc:FirstItem-Vehicle-06 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "6" ;
+    skos:prefLabel "화물"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-06 .
+kfc:FirstItem-Vehicle-07 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "7" ;
+    skos:prefLabel "벨트"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-07 .
+kfc:FirstItem-Vehicle-08 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "8" ;
+    skos:prefLabel "배관"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-08 .
+kfc:FirstItem-Vehicle-09 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "9" ;
+    skos:prefLabel "방음재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-09 .
+kfc:FirstItem-Vehicle-10 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "10" ;
+    skos:prefLabel "부품"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-10 .
+kfc:FirstItem-Vehicle-11 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "11" ;
+    skos:prefLabel "휘발유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-11 .
+kfc:FirstItem-Vehicle-12 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "12" ;
+    skos:prefLabel "경유"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-12 .
+kfc:FirstItem-Vehicle-13 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "13" ;
+    skos:prefLabel "천연가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-13 .
+kfc:FirstItem-Vehicle-14 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "14" ;
+    skos:prefLabel "프로판가스"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-14 .
+kfc:FirstItem-Vehicle-15 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "15" ;
+    skos:prefLabel "오일류"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-15 .
+kfc:FirstItem-Vehicle-16 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Vehicle ; skos:notation "16" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Vehicle skos:narrower kfc:FirstItem-Vehicle-16 .
+
+kfc:FirstItem-Waste a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:topConceptOf kfc:FirstItem ;
+    skos:prefLabel "쓰레기류"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem skos:hasTopConcept kfc:FirstItem-Waste .
+kfc:FirstItem-Waste-01 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Waste ; skos:notation "1" ;
+    skos:prefLabel "쓰레기"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Waste skos:narrower kfc:FirstItem-Waste-01 .
+kfc:FirstItem-Waste-02 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Waste ; skos:notation "2" ;
+    skos:prefLabel "분진"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Waste skos:narrower kfc:FirstItem-Waste-02 .
+kfc:FirstItem-Waste-03 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Waste ; skos:notation "3" ;
+    skos:prefLabel "폐타이어"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Waste skos:narrower kfc:FirstItem-Waste-03 .
+kfc:FirstItem-Waste-04 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Waste ; skos:notation "4" ;
+    skos:prefLabel "폐목재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Waste skos:narrower kfc:FirstItem-Waste-04 .
+kfc:FirstItem-Waste-05 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Waste ; skos:notation "5" ;
+    skos:prefLabel "재활용"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Waste skos:narrower kfc:FirstItem-Waste-05 .
+kfc:FirstItem-Waste-06 a skos:Concept ; skos:inScheme kfc:FirstItem ; skos:broader kfc:FirstItem-Waste ; skos:notation "6" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.56" .
+kfc:FirstItem-Waste skos:narrower kfc:FirstItem-Waste-06 .

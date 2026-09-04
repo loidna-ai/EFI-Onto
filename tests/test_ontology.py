@@ -1753,3 +1753,31 @@ def test_every_electrical_mechanism_has_a_heat_source_match(g):
     assert not list(g.objects(EFI.ExternalFlameExposure, EFI.mappedHeatSourceExact | EFI.mappedHeatSourceRelated))
     leaves26 = [s for s in g.subjects(SKOS.inScheme, KFC.HeatSource) if (s, SKOS.broader, None) in g]
     assert len(leaves26) == 26 and len(list(g.subjects(SKOS.topConceptOf, KFC.HeatSource))) == 9
+
+
+def test_every_first_fuel_class_has_a_first_item_match(g):
+    """K3 — 잎 착화물마다 최초착화물 짝이 있다(상속 포함). 정확히 같은 것은 둘(피복재→전선피복, 분진→분진)이고 나머지는
+    '넓게 포함된다'다. 대분류 11·소분류 89 — 다른 문서의 57 은 오류."""
+    from rdflib import Namespace
+    from rdflib.namespace import SKOS
+    KFC = Namespace("https://w3id.org/efi-onto/kfc#")
+    leaves = [c for c in g.transitive_subjects(RDFS.subClassOf, EFI.FirstFuelIgnited)
+              if c != EFI.FirstFuelIgnited and not list(g.subjects(RDFS.subClassOf, c))]
+    assert leaves
+    def inherited(m, p):
+        for c in [m] + [a for a in g.transitive_objects(m, RDFS.subClassOf) if a != m]:
+            v = list(g.objects(c, p))
+            if v:
+                return v
+        return []
+    exact_owners = set()
+    for f in leaves:
+        exact = inherited(f, EFI.mappedFirstItemExact); broad = inherited(f, EFI.mappedFirstItemBroad)
+        assert exact or broad, q(f)
+        for c in exact + broad:
+            assert (c, SKOS.inScheme, KFC.FirstItem) in g, f"{q(f)} → {c}"
+        if exact:
+            exact_owners.add(q(f))
+    assert exact_owners == {"InsulationMaterialFuel", "AccumulatedDustFuel"}, exact_owners
+    leaves89 = [s for s in g.subjects(SKOS.inScheme, KFC.FirstItem) if (s, SKOS.broader, None) in g]
+    assert len(leaves89) == 89 and len(list(g.subjects(SKOS.topConceptOf, KFC.FirstItem))) == 11

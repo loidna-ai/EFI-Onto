@@ -121,7 +121,7 @@
 - 분류 근거: silmu 후보 ①에 기록된 서식 우선 보류다. 한 극과 소선 한쪽의 의미도 원문별로 구분한다.
 - 선행 작업: T01
 - 원문 행: `silmu:S:2.2`, `silmu:L:2.2/사4①`, `silmu:L:2.2/사4⑦㉰`, `silmu:L:2.2/사4⑧`
-- 코드·기록: [efi:ConnectionPoint](V:/Projects/efi-onto/ontology/efi_tbox.ttl:458) · [용융 극](V:/Projects/efi-onto/docs/인계.md:518)
+- 코드·기록: [efi:ConnectionPoint](V:/Projects/efi-onto/ontology/efi_tbox.ttl:458) · [용융 극](V:/Projects/efi-onto/docs/인계.md:522)
 
 #### T10 · 탄화부 도통·저항의 계측 (우선순위 2)
 
@@ -131,7 +131,7 @@
 - 완료/재개 조건: 값·단위·출처·측정 조건이 있는 관찰이 확인된 도전로 근거로 연결된다. 미측정을 부도통으로 해석하지 않는다.
 - 분류 근거: silmu 후보 ③의 기존 서식 우선 보류. 여러 기기의 같은 계측을 한 작업으로 합쳤다.
 - 원문 행: `silmu:S:3.3.9`, `silmu:L:3.3.3/다1`, `silmu:L:3.3.5/나2가`
-- 코드·기록: [efi:CarbonizedConductivePath](V:/Projects/efi-onto/ontology/efi_tbox.ttl:254) · [efi:InsulationResistanceObservation](V:/Projects/efi-onto/ontology/efi_tbox.ttl:61) · [탄화부 저항](V:/Projects/efi-onto/docs/인계.md:518)
+- 코드·기록: [efi:CarbonizedConductivePath](V:/Projects/efi-onto/ontology/efi_tbox.ttl:254) · [efi:InsulationResistanceObservation](V:/Projects/efi-onto/ontology/efi_tbox.ttl:61) · [탄화부 저항](V:/Projects/efi-onto/docs/인계.md:522)
 
 #### T11 · 플러그·칼날받이·필라멘트의 통전 입증 (우선순위 2)
 
@@ -141,7 +141,7 @@
 - 완료/재개 조건: 각 관찰의 대상·시점·화재 후 변형을 대조하여 통전 근거를 표현하고 확인 불가를 보존한다.
 - 분류 근거: silmu 후보 ⑦는 C-57 부분만 완료다. 나머지를 전체 완료로 세지 않는다.
 - 원문 행: `silmu:S:2.1`, `silmu:S:3.2.1`, `silmu:L:2.1/가`, `silmu:L:2.1/나`, `silmu:L:3.2.1/나`, `babrauskas:S:14.7`, `babrauskas:L:14.7/a`
-- 코드·기록: [efi:EnergizedRequiredShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2950) · [efi:EnergizedState](V:/Projects/efi-onto/ontology/efi_tbox.ttl:830) · [칼날 광택](V:/Projects/efi-onto/docs/인계.md:514)
+- 코드·기록: [efi:EnergizedRequiredShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2950) · [efi:EnergizedState](V:/Projects/efi-onto/ontology/efi_tbox.ttl:830) · [칼날 광택](V:/Projects/efi-onto/docs/인계.md:518)
 
 #### T13 · 열적 열화에서 시작하는 트래킹 경로 (우선순위 3)
 
@@ -152,7 +152,7 @@
 - 분류 근거: 인계 5.0b ③에 사용자 결정으로 보류했다고 기록되어 있다. 이번 목록 정리에서 그 결정을 변경하지 않는다.
 - 선행 작업: T03
 - 원문 행: `babrauskas:L:14.9/h`, `babrauskas:L:14.12/c`, `silmu:L:3.1.5/바`
-- 코드·기록: [efi:TrackingScenario](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1693) · [사용자 결정: 지금은 넣지 않는다.](V:/Projects/efi-onto/docs/인계.md:548)
+- 코드·기록: [efi:TrackingScenario](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1693) · [사용자 결정: 지금은 넣지 않는다.](V:/Projects/efi-onto/docs/인계.md:552)
 
 #### T27 · 중성선 단선 과전압의 독립 가설 확장 (우선순위 3)
 
@@ -172,7 +172,7 @@
 - 완료/재개 조건: 열선 종류와 고장 모드를 식별할 자료 또는 보류 재검토가 있으면 모델을 추가한다.
 - 분류 근거: 인계의 사례 우선 보류다. '3건 미만'은 당시 운영 기준이며 과학적 최소 표본수로 일반화하지 않는다.
 - 원문 행: `babrauskas:S:14.19`
-- 코드·기록: [efi:CordMidspanSite](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1194) · [열선(동파방지) 고장 모드](V:/Projects/efi-onto/docs/인계.md:559)
+- 코드·기록: [efi:CordMidspanSite](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1194) · [열선(동파방지) 고장 모드](V:/Projects/efi-onto/docs/인계.md:563)
 
 ### 자료대기
 
@@ -204,7 +204,7 @@
 - 완료/재개 조건: 적용 한계가 확인되기 전에는 결정적 반증 규칙을 추가하지 않는다. 보강 관찰 또는 제외로 정하면 이유를 남긴다.
 - 분류 근거: 기존 후순위 후보를 자료 검증 대상으로 정리했다. 다른 히터 고장 서술은 이 온도 주장의 검증 근거가 아니다.
 - 원문 행: `silmu:S:3.3.8`, `silmu:L:3.3.8/가2라`
-- 코드·기록: [efi:IgnitionCompetenceRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2304) · [니크롬선 용융](V:/Projects/efi-onto/docs/인계.md:506)
+- 코드·기록: [efi:IgnitionCompetenceRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2304) · [니크롬선 용융](V:/Projects/efi-onto/docs/인계.md:510)
 
 #### T29 · 퓨즈 열화·반복 과부하의 법과학 근거 (우선순위 3)
 
@@ -223,7 +223,7 @@
 - 다음 조치: 추가로 확보되면 기존 구현의 조건을 보강한다.
 - 완료/재개 조건: 확보 전에도 T01~T06 등은 진행한다. 이미 구현된 본문 범위를 다시 미구현으로 되돌리지 않는다.
 - 분류 근거: 사용자에게 A.9.7.4가 없다는 현재 제약을 보존한다. 필수 선행 자료가 아니다.
-- 코드·기록: [A.9.7.4는 사용자 보유 자료에 없어](V:/Projects/efi-onto/docs/인계.md:602) · [연구 논문 자체의 독립 대조](V:/Projects/efi-onto/docs/NFPA_추가자료_대조.md:111)
+- 코드·기록: [A.9.7.4는 사용자 보유 자료에 없어](V:/Projects/efi-onto/docs/인계.md:606) · [연구 논문 자체의 독립 대조](V:/Projects/efi-onto/docs/NFPA_추가자료_대조.md:111)
 
 #### T35 · 실무Ⅳ 전기장판 감식사례의 원문 오류 확인 (우선순위 3)
 
@@ -319,7 +319,7 @@
 - 완료/재개 조건: 착화물 미확인 후보는 남길 수 있지만 연료 근거가 빠진 확정은 검출한다. 온도 한 값만으로 열 충분성을 확정하지 않는다.
 - 분류 근거: 2026-09-03 T01→T02→T03→T04 구현. 세부 설계·검증은 docs/T01_T04_구현.md. ScenarioShape는 hasFirstFuel에 maxCount만 둔다. 모든 후보에 무조건 연료를 강제하면 후보 수립과 판단보류를 해친다.
 - 원문 행: `nfpa:S:9.9`, `nfpa:L:9.9.1`, `nfpa:L:19.5.3`
-- 코드·기록: [efi:ConclusionFirstFuelEvidenceShape a sh:NodeShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3954) · [class InvestigationData](V:/Projects/efi-onto/src/investigation.py:404) · [def test_candidate_keeps_missing_fuel](V:/Projects/efi-onto/tests/test_investigation.py:171)
+- 코드·기록: [efi:ConclusionFirstFuelEvidenceShape a sh:NodeShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:4003) · [class InvestigationData](V:/Projects/efi-onto/src/investigation.py:404) · [def test_candidate_keeps_missing_fuel](V:/Projects/efi-onto/tests/test_investigation.py:171)
 
 #### T05 · 과열 접속부·분전반의 비교 관찰 (우선순위 2)
 
@@ -398,13 +398,13 @@
 
 #### T20 · 보고용 외부 분류 체계와 코드 대응 (우선순위 2)
 
-- 현재: T20: 보고용 원인 분류의 채택 체계를 하나로 확정했다 — 국가화재분류체계 발화요인 소분류의 전기적 요인 열 항목, 코드 1~10(소방청 『국가화재분류체계 매뉴얼』 2019, p.33·p.37; KoreaFireReportClassification). 발화요인 축 전체(대분류 11·소분류 43)를 efi_classification.ttl 에 SKOS 로 옮기고(kfc:Factor) 코드·원문 정의를 달았으며 전기 가설 여덟을 reportedAs 로 대응시켰다. D-20 이 결론 뒤(sh:order 7)에 분류 개체를 만들고 C-9·C-10·C-62 가 읽는다. 외부화염은 전기적 요인이 아니라 대응 없음. NFPA 참조 체계 여섯은 코드 목록 없이 참조 개체로만 남긴다.
+- 현재: T20: 보고용 원인 분류의 채택 체계를 하나로 확정했다 — 국가화재분류체계 발화요인 소분류의 전기적 요인 열 항목, 코드 1~10(소방청 『국가화재분류체계 매뉴얼』 2019, p.33·p.37; KoreaFireReportClassification). 발화요인 축 전체(대분류 11·소분류 43)를 efi_classification.ttl 에 SKOS 로 옮기고(kfc:Factor) 코드·원문 정의를 달았으며 전기 가설 여덟을 reportedAs 로 대응시켰다. D-20 이 결론 뒤(sh:order 7)에 분류 개체를 만들고 C-9·C-10·C-62 가 읽는다. 외부화염은 전기적 요인이 아니라 대응 없음. NFPA 참조 체계 여섯은 코드 목록 없이 참조 개체로만 남긴다. 발화열원 축(kfc:HeatSource, 대분류 9·소분류 26)도 넣고 메커니즘 짝을 정확/관련으로 나눠 적었다 — 규칙은 읽지 않는다. 최초착화물 축(kfc:FirstItem, 대분류 11·소분류 89)도 넣고 착화물 6종의 짝을 정확(둘)/넓게 포함(나머지)으로 적었다.
 - 남은 것: 현행 「화재조사 및 보고규정」은 소방청훈령 제449호(2025. 12. 4.)인데 별지 4 는 대분류 11개만 두고 소분류는 NFDS 코드로 채운다 — 2019년 매뉴얼의 소분류가 2025년에도 그대로인지 미확인. '이물 혼입'(D-19)은 매뉴얼에 낱말이 없어 코드를 달지 않았다. 실무Ⅱ 보고서 예시의 라벨 '전기적 요인 - 절연열화'는 매뉴얼 표기 '절연열화에 의한 단락'과 다르다. 매뉴얼의 발화열원 축은 넣지 않기로 했다.
 - 다음 조치: NFDS 소분류 코드표(2025년 이후)를 받으면 2019년 매뉴얼과 대조한다. 보고규정 라벨이 붙은 사례를 받으면 D-20 의 대응이 현장 분류와 맞는지 잰다.
 - 완료/재개 조건: 사용 체계·판본·항목의 출처와 가설 대응이 TTL 48.6 절에 명시됐다. NFPA 921 에 없는 통합 목록을 만들지 않았다 — 여섯 참조 체계에 코드를 이식하지 않았다.
 - 분류 근거: 2026-09-04 사용자 결정으로 열었고 같은 날 매뉴얼(자료_목록 5-8)을 직접 읽어 코드·정의를 붙였다. §19.8.2 는 목록을 외부 체계로 넘기므로 NFPA 범주 목록은 '미확보'가 아니라 '없음'이다. 판정은 달라지지 않는다 — 분류는 결론 뒤다.
 - 원문 행: `nfpa:S:19.8`, `nfpa:L:19.8.2`
-- 코드·기록: [kfc:Factor-Electrical-02](V:/Projects/efi-onto/ontology/efi_classification.ttl:62) · [efi:ReportClassificationDerivationRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3871) · [efi:ReportCategoryBelongsToSystemShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3888) · [efi:KoreaFireReportClassification](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3799) · [D-20](V:/Projects/efi-onto/docs/T20_구현.md:41)
+- 코드·기록: [kfc:Factor-Electrical-02](V:/Projects/efi-onto/ontology/efi_classification.ttl:62) · [efi:ReportClassificationDerivationRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3920) · [efi:ReportCategoryBelongsToSystemShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3937) · [efi:KoreaFireReportClassification](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3799) · [D-20](V:/Projects/efi-onto/docs/T20_구현.md:41)
 
 #### T30 · 밀폐형 컴프레서 내부 고장과 외부 착화 (우선순위 2)
 

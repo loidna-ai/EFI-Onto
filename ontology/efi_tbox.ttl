@@ -3857,6 +3857,13 @@ efi:mappedHeatSourceRelated a owl:ObjectProperty ; rdfs:subPropertyOf skos:relat
     rdfs:range skos:Concept ;
     rdfs:label "발화열원 짝 — 관련 있다"@ko ; skos:prefLabel "발화열원 짝 — 관련 있다"@ko ;
     rdfs:comment "매뉴얼에 그 메커니즘의 소분류가 없어 둘 이상이 걸릴 때. 규칙이 읽지 않는다 — 쓰는 쪽이 고른다"@ko .
+efi:mappedFirstItemExact a owl:ObjectProperty ; rdfs:subPropertyOf skos:exactMatch ;
+    rdfs:range skos:Concept ;
+    rdfs:label "최초착화물 짝 — 정확히 같다"@ko ; skos:prefLabel "최초착화물 짝 — 정확히 같다"@ko .
+efi:mappedFirstItemBroad a owl:ObjectProperty ; rdfs:subPropertyOf skos:broadMatch ;
+    rdfs:range skos:Concept ;
+    rdfs:label "최초착화물 짝 — 넓게 포함된다"@ko ; skos:prefLabel "최초착화물 짝 — 넓게 포함된다"@ko ;
+    rdfs:comment "우리 착화물 한 종이 매뉴얼 소분류(또는 대분류) 여럿에 걸친다. 규칙이 읽지 않는다 — 쓰는 쪽이 고른다"@ko .
 efi:hasReportCategory a owl:ObjectProperty ;
     rdfs:domain efi:FireCauseClassification ; rdfs:range skos:Concept ;
     rdfs:label "분류 항목"@ko ; skos:prefLabel "분류 항목"@ko .
@@ -3893,6 +3900,18 @@ efi:InterTurnShortCircuit efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEq
 efi:OpenNeutralOvervoltage efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
 efi:SustainedFaulting efi:mappedHeatSourceRelated kfc:HeatSource-OperatingEquipment-01 , kfc:HeatSource-OperatingEquipment-03 .
 # ExternalFlameExposure — 짝 없음.
+
+#  최초착화물 짝 — 착화물 클래스 → kfc:FirstItem. 우리 6종은 위치 기준(증거물 자체 / 주변), 매뉴얼은 재질 기준이라
+#  '정확히 같다'는 둘뿐이고 나머지는 '넓게 포함된다'로 후보 집합을 가리킨다. 규칙은 읽지 않는다 — 쓰는 쪽이 고른다.
+#  우리 6종을 매뉴얼에 맞춰 고치지 않는다 — 착화 역량(F-3)이 위치·성향 기준을 쓴다.
+efi:InsulationMaterialFuel efi:mappedFirstItemExact kfc:FirstItem-Electrical-01 .
+efi:InsulationMaterialFuel efi:mappedFirstItemBroad kfc:FirstItem-Vehicle-01 .
+efi:AccumulatedDustFuel efi:mappedFirstItemExact kfc:FirstItem-Waste-02 .
+efi:EnclosureMaterialFuel efi:mappedFirstItemBroad kfc:FirstItem-Electrical-03 , kfc:FirstItem-Electrical-05 , kfc:FirstItem-Electrical-06 , kfc:FirstItem-Plastics-01 .
+efi:PaperTextileFuel efi:mappedFirstItemBroad kfc:FirstItem-PaperWood-01 , kfc:FirstItem-Textile .
+efi:WoodStructuralFuel efi:mappedFirstItemBroad kfc:FirstItem-PaperWood-04 , kfc:FirstItem-PaperWood-06 , kfc:FirstItem-Furniture-02 , kfc:FirstItem-Furniture-03 .
+efi:ThermalInsulationFuel efi:mappedFirstItemBroad kfc:FirstItem-Plastics-03 , kfc:FirstItem-Plastics-05 .
+efi:FlammableVaporFuel efi:mappedFirstItemBroad kfc:FirstItem-HazMat , kfc:FirstItem-FlammableGas .
 
 # [D-20] 확정된 결론의 가설이 대응 항목을 가지면 보고용 원인 분류 개체를 만든다 (§19.8.2).
 #  판정 뒤에 돈다(sh:order 7). 만든 개체는 C-9(결론을 가리킴)·C-10(체계 명시)·C-62(항목의 개념 체계가 그 체계에 속함)가 읽는다.
