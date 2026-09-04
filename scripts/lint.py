@@ -69,7 +69,7 @@ def _linked(g, name, pairs, side):
 # CONSTRUCT 산출 중 SHACL 이 아니라 시험·보고가 읽거나, 같은 규칙이 만든 사실 노드 옆의 부수 표지인 것.
 DERIVED_OUTPUT = {"derivedManifestation", "discriminates", "evidentiallyAmbiguousWith",
                   "morphologicallyAmbiguousWith", "sharedByScenarioCount", "sharedMorphologyCount",
-                  "outcomeUnidentifiedShortCircuit", "loadExceedsRating"}
+                  "outcomeUnidentifiedShortCircuit", "outcomeForeignConductorIntrusion", "loadExceedsRating"}
 
 # 도출은 됐으나 소비자를 정할 원문 근거가 확률 서술뿐인 것. 지어내지 않고 보류로 둔다.
 DERIVED_PENDING = set()   # 비어 있어야 정상. trueArcSiteLikely 는 C-61 이 권고로 읽는다 (2026-09-04)
@@ -111,7 +111,7 @@ def checks(g):
     # 현행 9가설에서 독립 가설로 확장하지 않은 메커니즘이다.
     # OverloadHeating은 이미 OverloadScenario가 선언하므로 제외 목록에서 뺀다.
     # 새 독립 가설은 가설 집합·배타 공리·변별력 공식의 N을 함께 검토해야 한다.
-    SLOTS = {"OpenNeutralOvervoltage", "SustainedFaulting"}
+    SLOTS = {"OpenNeutralOvervoltage", "SustainedFaulting", "ForeignConductorBridgingArc"}   # 이물 혼입은 분류(D-19)로만
     out.append(("어떤 가설도 쓰지 않는 발열 메커니즘 (확장 슬롯 제외)",
                 sorted(m for m in mech if not _abstract(g, m) and m not in SLOTS
                        and not _linked(g, m, declared, 1)),

@@ -78,8 +78,9 @@ BRANCHES = [
      "인적 요인. 발화 메커니즘 판정이 아니라 책임 판단에 가깝다"),
     ("사용방법 부적절", "가연물과의 위치·관리", "조명·전열기구에 가연물 접촉", PART,
      "HeatDissipationImpairment 갈래와 C-35 이격 거리로 일부 담았다"),
-    ("사용방법 부적절", "이물 혼입", "금속물·도전성 액체 혼입", PART,
-     "ConductiveSolutionInCrack 으로 도전성 용액만 담았다. 금속물 혼입은 없다"),
+    ("사용방법 부적절", "이물 혼입", "금속물·도전성 액체 혼입", DONE,
+     "ForeignConductorInEquipment → ForeignConductorBridgingArc(확장 슬롯), ConductiveLiquidIngress ⊑ MoistureExposure. "
+     "판정에는 D-19 가 국내 분류 '이물 혼입'으로 닿는다(미확인 단락과 같은 층). 감식 단서가 원문에 없어 가설은 세우지 않았다 (T32)"),
 ]
 
 

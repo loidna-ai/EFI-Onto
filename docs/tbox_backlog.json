@@ -1029,17 +1029,17 @@
     },
     {
       "id": "T32",
-      "state": "설계검토",
+      "state": "구현완료",
       "priority": 2,
       "title": "금속물 혼입과 도전성 액체의 구분",
       "refs": [
         "domestic:B:24"
       ],
-      "current": "도전성 용액과 지락 경로는 있다.",
-      "gap": "금속물 혼입의 관찰·접촉 대상·발생 시점이 구체적으로 연결되지 않는다.",
-      "next": "실제 접촉 경로와 선후 근거가 있는 금속물 관찰을 어떻게 기존 단락·지락 가설에 연결할지 정한다.",
-      "done_when": "금속물 존재만으로 단락·지락을 확정하지 않으며 사후 혼입을 선행 조건으로 읽지 않는 설계가 마련된다.",
-      "basis": "독립 원인 가설이 필요한지와 기존 가설의 관찰 항목인지를 먼저 구분한다.",
+      "current": "T32: 표 2-1 '이물 혼입' 두 줄을 선행 조건 둘(기기 내 도전물 혼입, 기기 내 도전성 액체 유입)로 두고, 금속물은 어떤 가설도 선언하지 않는 확장 슬롯 메커니즘(도전물 브리지 단락 아크)에, 액체는 습기 노출 하위로 이었다. 판정에는 D-19 가 원인미상+단락흔+통전+혼입 확인 → 국내 분류 '이물 혼입'으로 닿는다.",
+      "gap": "원문(분류표)에 감식 단서가 없어 가설로 세우지 않았다. 사례·단서가 생기면 열 번째 가설로 올릴 수 있다.",
+      "next": "사후 혼입(소화수·낙하물)과 발화 전 혼입을 확인 상태·시점으로 가르는 기록이 조사서에 있는지 서식 항목 R 로 본다.",
+      "done_when": "금속물 존재만으로 단락·지락을 확정하지 않고(가설 없음, 점수 없음), 사후 혼입을 선행 조건으로 읽지 않으며(확인 상태 요구), 혼입이 확인된 판단보류가 미확인 단락이 아니라 이물 혼입으로 분류된다. 두 엔진이 같다.",
+      "basis": "2026-09-04 실무Ⅳ p.127 표 2-1·p.317 대조. 표 2-1 은 보고규정 분류표라 미확인 단락(D-14)과 같은 층에 둔다. 사례 150건에 0건.",
       "depends_on": [
         "T01",
         "T03"
@@ -1047,11 +1047,23 @@
       "evidence": [
         {
           "file": "ontology/efi_tbox.ttl",
-          "anchor": "efi:ConductiveSolutionInCrack"
+          "anchor": "efi:ForeignConductorIntrusionDerivationRuleShape"
         },
         {
           "file": "ontology/efi_tbox.ttl",
-          "anchor": "efi:GroundPath"
+          "anchor": "efi:ForeignConductorInEquipment"
+        },
+        {
+          "file": "ontology/efi_tbox.ttl",
+          "anchor": "efi:ConductiveLiquidIngress"
+        },
+        {
+          "file": "tests/test_ontology.py",
+          "anchor": "def test_foreign_conductor_intrusion_matches_in_both_engines"
+        },
+        {
+          "file": "docs/T32_구현.md",
+          "anchor": "## 원문 대조"
         }
       ]
     },

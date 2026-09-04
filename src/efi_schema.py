@@ -484,6 +484,7 @@ class Session(BaseModel):
     #  분류지 결론이 아니다(§19.8.2). SHACL D-14 와 같아야 한다.
     UNDETERMINED: ClassVar[str] = "Undetermined"
     UNIDENTIFIED_SHORT: ClassVar[str] = "UnidentifiedShortCircuit"
+    FOREIGN_CONDUCTOR: ClassVar[str] = "ForeignConductorIntrusion"   # 표 2-1 '이물 혼입'. 가설이 아니라 분류 (D-19)
 
     def outcome(self, o: Ontology) -> str:
         # 승자 후보: 형성됐고(D-15) 기각되지 않았고 자료가 지지하는(D-16, 50점 초과) 가설
@@ -495,7 +496,10 @@ class Session(BaseModel):
                 return best[0].scenario.value
         arc = any(f.status is Status.CONFIRMED and o.matches(f.cls, "ArcMeltMark") for f in self.facts)
         live_ = any(f.status is Status.CONFIRMED and o.matches(f.cls, "EnergizedState") for f in self.facts)
-        return self.UNIDENTIFIED_SHORT if arc and live_ else self.UNDETERMINED     # 통전 기준은 C-57 과 같다
+        if not (arc and live_):
+            return self.UNDETERMINED                                              # 통전 기준은 C-57 과 같다
+        foreign = any(f.status is Status.CONFIRMED and o.matches(f.cls, "ForeignConductorInEquipment") for f in self.facts)
+        return self.FOREIGN_CONDUCTOR if foreign else self.UNIDENTIFIED_SHORT     # SHACL D-19·D-14 와 같아야 한다
 
     # ---- CQ3: 상위 두 가설을 가르는 미확인 지표 (동적 질의 후보) ----
     def discriminating_slots(self, o: Ontology) -> list[tuple[str, Scenario, int]]:

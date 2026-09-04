@@ -180,7 +180,7 @@ def main():
                 for c in cases:
                     s, _ = run(c, onto, ko); out, top, pr = conclude(s, onto)
                     if out == c["actual_scenario"]: hit += 1; closed += not pr
-                    elif out in ("Undetermined", "UnidentifiedShortCircuit"): held += 1
+                    elif out in ("Undetermined", "UnidentifiedShortCircuit", "ForeignConductorIntrusion"): held += 1
                     else: wrong += 1
                 print(f"{pol:19s} cap {cap:2d}: 일치 {hit:3d} (확정 조건 충족 {closed:3d}) · 보류 {held:2d} · 오판 {wrong:2d}")
         return
@@ -190,7 +190,7 @@ def main():
             s, _ = run(c, onto, ko); out, *_ = conclude(s, onto)
             q[s.query_count] += 1; per[c["actual_scenario"]][1] += 1
             if out == c["actual_scenario"]: hit += 1; per[c["actual_scenario"]][0] += 1
-            elif out in ("Undetermined", "UnidentifiedShortCircuit"): held += 1
+            elif out in ("Undetermined", "UnidentifiedShortCircuit", "ForeignConductorIntrusion"): held += 1
             else: wrong += 1
         n = len(cases)
         print(f"대화 루프 150건 — 일치 {hit} ({hit/n*100:.1f}%) · 판단보류 {held} · 오판 {wrong} · 최대 질의 {MAX_QUERIES}")

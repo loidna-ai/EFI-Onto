@@ -31,10 +31,10 @@ KO = {"PoorContactScenario": "접촉불량", "CrushDamageScenario": "압착손�
       "PartialDisconnectionScenario": "반단선", "InsulationDegradationScenario": "절연열화",
       "TrackingScenario": "트래킹", "ExternalFlameScenario": "외부화염",
       "OverloadScenario": "과부하", "GroundFaultScenario": "누전지락", "InterTurnShortScenario": "층간단락",
-      "Undetermined": "원인미상", "UnidentifiedShortCircuit": "미확인단락"}
+      "Undetermined": "원인미상", "UnidentifiedShortCircuit": "미확인단락", "ForeignConductorIntrusion": "이물혼입"}
 
 
-HELD = {"Undetermined", "UnidentifiedShortCircuit"}     # 전체 정확도의 정답에는 제외하되, 오판과 별도 집계
+HELD = {"Undetermined", "UnidentifiedShortCircuit", "ForeignConductorIntrusion"}     # 전체 정확도의 정답에는 제외하되, 오판과 별도 집계
 
 
 def predict(sess, onto):

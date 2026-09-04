@@ -344,6 +344,16 @@ efi:SustainedFaulting a owl:Class ; rdfs:subClassOf efi:ElectricalHeatingMechani
     rdfs:comment "과전류 보호가 없는 구간에서 단락·지락이 끊기지 않고 이어져 가연물을 착화시킨다 (§9.3.4)"@ko .
 efi:SustainedFaulting efi:producesDamage efi:LargeMeltMark , efi:ArcMeltMark , efi:Spatter .
 
+# 실무Ⅳ 표 2-1(p.127) '이물 혼입 — 금속물의 혼입: 전기기기 내에 도전물 혼입'. p.317 "심선이 …
+# 다른 금속물(도체)과 접촉하여 단락상태에 이르게 되면 스파크가 생겨 그 개소에는 용흔이 생긴다".
+# 표 2-1 은 보고규정의 분류표라 감식 기준(단서)이 없다. 그래서 가설로 올리지 않고 확장 슬롯으로 둔다 —
+# 어떤 가설도 이 메커니즘을 선언하지 않으므로 compatibility 가 압착·반단선으로 새지 않는다.
+# 판정 결과에는 D-19 가 국내 분류 '이물 혼입'으로 닿는다 (미확인 단락 D-14 와 같은 층).
+efi:ForeignConductorBridgingArc a owl:Class ; rdfs:subClassOf efi:ShortCircuitArc ;
+    rdfs:label "도전물 브리지 단락 아크"@ko ; skos:prefLabel "도전물 브리지 단락 아크"@ko ;
+    rdfs:comment "기기 안에 들어간 금속물 등 도전물이 극간을 잇거나 심선에 닿아 생기는 단락 아크 (실무Ⅳ p.127 표 2-1, p.317). 가설은 사례·단서가 생기면 세운다"@ko .
+efi:ForeignConductorBridgingArc efi:producesDamage efi:ArcMeltMark , efi:ArcBead .
+efi:ForeignConductorBridgingArc efi:ignites efi:InsulationMaterialFuel , efi:EnclosureMaterialFuel .
 efi:PartialDisconnectionInducedArc a owl:Class ; rdfs:subClassOf efi:ShortCircuitArc ;
     rdfs:label "반단선 유발 단락 아크"@ko ; skos:prefLabel "반단선 유발 단락 아크"@ko ;
     rdfs:comment "반단선부 접촉저항 발열이 피복을 절연 파괴해 이르는 선간 단락"@ko .
@@ -1221,6 +1231,16 @@ efi:ContaminatedContactSurface efi:enables efi:PoorContactHeating , efi:GlowingC
 efi:DeformedPlugOrSwitch a owl:Class ; rdfs:subClassOf efi:ConnectionCondition ;
     rdfs:label "플러그·개폐부 변형"@ko ; skos:prefLabel "플러그·개폐부 변형"@ko .
 efi:DeformedPlugOrSwitch efi:enables efi:PoorContactHeating , efi:GlowingConnection .
+# 표 2-1 '이물 혼입' 두 줄. 금속물은 브리지 단락 아크로, 도전성 액체는 습기 노출의 하위로 잇는다.
+# 액체는 기존 사슬(습기 → 누설·트래킹)을 물려받는다 — §9.11.3 의 균열 내 도전성 용액과 같은 결이다.
+# 사후 혼입(화재 중 낙하·소화수)을 선행 조건으로 읽지 않는다 — 확인 상태와 발생 시점은 사실이 든다.
+efi:ForeignConductorInEquipment a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ;
+    rdfs:label "기기 내 도전물 혼입"@ko ; skos:prefLabel "기기 내 도전물 혼입"@ko ;
+    rdfs:comment "전기기기 안에 금속물 등 도전물이 들어가 충전부에 닿을 수 있는 상태 (실무Ⅳ p.127 표 2-1 '금속물의 혼입'). 발화 전 존재가 확인된 것만 — 사후 혼입은 아니다"@ko .
+efi:ForeignConductorInEquipment efi:enables efi:ForeignConductorBridgingArc .
+efi:ConductiveLiquidIngress a owl:Class ; rdfs:subClassOf efi:MoistureExposure ;
+    rdfs:label "기기 내 도전성 액체 유입"@ko ; skos:prefLabel "기기 내 도전성 액체 유입"@ko ;
+    rdfs:comment "전기기기 안으로 도전성 액체가 떨어져 들어간 것 (실무Ⅳ p.127 표 2-1 '액체물 적하'). 습기 노출의 하위이며 누설·트래킹 사슬을 물려받는다"@ko .
 efi:GroundPath a owl:Class ; rdfs:subClassOf efi:AntecedentCondition ;
     rdfs:label "지락 경로"@ko ; skos:prefLabel "지락 경로"@ko ;
     rdfs:comment "충전부와 대지 사이를 잇는 도전성 물질 — 금속제 외함·프레임·건물 구조물·지붕·배관·사이딩. 지락의 필요조건이다 (실무Ⅳ p.156, 표 2-1 건물·구조물 등의 금속부에 접촉, Babrauskas p.781)"@ko .
@@ -1634,6 +1654,9 @@ efi:materialSpecificArcAssessment a owl:DatatypeProperty ; rdfs:domain efi:Condu
 efi:tendencyOnly a owl:AnnotationProperty ;
     rdfs:label "경향 진술로만 성립"@ko ; skos:prefLabel "경향 진술로만 성립"@ko ;
     rdfs:comment "'~인 것이 많다'로 적힌 양상. 있으면 보강이 되지만 없다고 반대를 뜻하지는 않는다. 그 역을 쓰면 화재열이 지운 것을 없었던 것으로 읽게 된다"@ko .
+efi:outcomeForeignConductorIntrusion a owl:DatatypeProperty ; rdfs:domain efi:InvestigationSession ; rdfs:range xsd:boolean ;
+    rdfs:label "이물 혼입(국내 분류) 결과"@ko ; skos:prefLabel "이물 혼입(국내 분류) 결과"@ko ;
+    rdfs:comment "원인미상 + 단락흔 + 통전 + 기기 내 도전물 혼입 확인. 판단보류 안의 국내 분류 이름이지 가설이 아니다 (D-19)"@ko .
 efi:outcomeUnidentifiedShortCircuit a owl:DatatypeProperty ; rdfs:domain efi:InvestigationSession ; rdfs:range xsd:boolean ;
     rdfs:label "미확인 단락 처리"@ko ; skos:prefLabel "미확인 단락 처리"@ko ;
     rdfs:comment "원인미상인데 단락흔과 통전이 확인됐으면 국내 분류의 '미확인 단락'이다. 결론이 아니라 분류다 (§19.8.2, 통전 기준은 C-57 과 같다)"@ko .
@@ -3769,8 +3792,26 @@ efi:KoreaFireReportClassification a owl:NamedIndividual , efi:ClassificationSyst
     rdfs:label "화재조사 및 보고규정 발화요인 세부분류"@ko ; skos:prefLabel "화재조사 및 보고규정 발화요인 세부분류"@ko ;
     rdfs:comment "전기적 요인 세부: 누전·지락, 접촉불량에 의한 단락, 절연열화에 의한 단락, 과부하·과전류, 압착·손상에 의한 단락, 층간단락, 반단선, 미확인 단락, 트래킹에 의한 단락, 기타"@ko .
 
+# [D-19] 원인미상 + 단락흔 + 통전 + 기기 내 도전물 혼입 확인 → 국내 분류 '이물 혼입' (표 2-1)
+#  미확인 단락(D-14)과 같은 층이다 — 가설이 아니라 판단보류 안의 국내 분류 이름. D-14 의 출력에
+#  기대지 않고 전제를 직접 읽는다: 같은 sh:order 의 도형끼리는 실행 순서가 정해지지 않는다.
+#  efi_schema.Session.outcome() 과 같아야 한다. 확인 불가·사후 혼입은 확인이 아니다 (P4).
+efi:ForeignConductorIntrusionDerivationRuleShape a sh:NodeShape ; sh:order 6 ; sh:targetClass efi:InvestigationSession ;
+    dcterms:references "NFPA 921 (2024) §19.6.5.1 Cause Undetermined, §19.8.2 Fire Cause Classification for Reports" ;
+    rdfs:comment "소방청 화재조사실무Ⅳ (2025) p.127 표 2-1 사용방법 부적절 — 이물 혼입"@ko ;
+    sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 6 ;
+        sh:construct """
+        CONSTRUCT { $this efi:outcomeForeignConductorIntrusion true . }
+        WHERE {
+          $this efi:outcomeUndetermined true .
+          $this efi:hasFact ?f . ?f rdf:type/rdfs:subClassOf* efi:ArcMeltMark ; efi:confirmationStatus efi:Confirmed .
+          $this efi:hasFact ?e . ?e rdf:type/rdfs:subClassOf* efi:EnergizedState ; efi:confirmationStatus efi:Confirmed .
+          $this efi:hasFact ?o . ?o rdf:type/rdfs:subClassOf* efi:ForeignConductorInEquipment ; efi:confirmationStatus efi:Confirmed .
+        }""" ] .
+
 # [D-14] 원인미상 + 단락흔 확인 + 통전 확인 → 미확인 단락 (§19.6.5.1 안의 국내 분류)
 #  D-7·D-8(sh:order 5) 뒤에 돈다. efi_schema.Session.outcome() 과 같아야 한다.
+#  도전물 혼입까지 확인되면 D-19 가 '이물 혼입'도 함께 표시한다 — 둘 다 판단보류 안의 분류다.
 efi:UnidentifiedShortCircuitDerivationRuleShape a sh:NodeShape ; sh:order 6 ; sh:targetClass efi:InvestigationSession ;
     dcterms:references "NFPA 921 (2024) §19.6.5.1 Cause Undetermined, §19.8.2 Fire Cause Classification for Reports" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 6 ;

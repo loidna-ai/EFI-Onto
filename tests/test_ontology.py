@@ -1591,3 +1591,29 @@ def test_arc_site_corroboration_is_a_warning_not_a_bar():
     assert corroborate not in _msg(two)
     one = ARC_MAP + LOCALIZED + "efi:cdA a efi:CorrespondingDamageArea . efi:pO2 efi:hasCorrespondingDamage efi:cdA ."
     assert corroborate in _msg(one), "하나로는 확률이 오르지 않는다 (둘 이상)"
+
+
+
+def test_foreign_conductor_intrusion_matches_in_both_engines(onto):
+    """D-19 — 원인미상 + 단락흔 + 통전 + 기기 내 도전물 혼입 확인이면 국내 분류 '이물 혼입'. 두 엔진이 같아야 한다.
+    가설이 아니라 분류다 — 혼입이 확인돼도 어떤 가설도 서거나 점수를 받지 않는다. 확인 불가는 확인이 아니다."""
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, DEFAULT_MECHANISM
+    def sess(facts, status=Status.CONFIRMED):
+        s = Session(case_id="FC", query_count=2,
+                    hypotheses=[Hypothesis(scenario=Scenario(k), mechanism=Mechanism(v)) for k, v in DEFAULT_MECHANISM.items()],
+                    facts=[Fact(cls=c, status=(status if c == "ForeignConductorInEquipment" else Status.CONFIRMED),
+                                agent=Agent.INVESTIGATOR) for c in facts])
+        return s.apply(onto)
+    s = sess(["ArcMeltMark", "EnergizedState", "ForeignConductorInEquipment"])
+    assert s.outcome(onto) == "ForeignConductorIntrusion"
+    assert all(h.support_score <= 50 for h in s.hypotheses), "혼입이 어떤 가설에 점수를 줬다"
+    assert not any(h.formed for h in s.hypotheses if h.scenario is not Scenario.EXTERNAL_FLAME), "혼입이 가설을 세웠다"
+    gr = run(s.to_turtle(include_derived=False))
+    assert (EFI.session_FC, EFI.outcomeForeignConductorIntrusion, None) in gr
+    assert (EFI.session_FC, EFI.outcomeUnidentifiedShortCircuit, None) in gr, "이물 혼입은 미확인 단락 안의 분류다"
+    s = sess(["ArcMeltMark", "EnergizedState"])
+    assert s.outcome(onto) == "UnidentifiedShortCircuit"
+    assert (EFI.session_FC, EFI.outcomeForeignConductorIntrusion, None) not in run(s.to_turtle(include_derived=False))
+    s = sess(["ArcMeltMark", "EnergizedState", "ForeignConductorInEquipment"], status=Status.UNVERIFIABLE)
+    assert s.outcome(onto) == "UnidentifiedShortCircuit", "확인 불가 혼입을 확인으로 읽었다"
+    assert (EFI.session_FC, EFI.outcomeForeignConductorIntrusion, None) not in run(s.to_turtle(include_derived=False))
