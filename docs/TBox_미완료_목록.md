@@ -65,7 +65,7 @@
 - 분류 근거: 클래스 존재를 측정 판정 완료로 세지 않는다.
 - 선행 작업: T01
 - 원문 행: `nfpa:L:9.5.1.1`
-- 코드·기록: [efi:BondingPath](V:/Projects/efi-onto/ontology/efi_tbox.ttl:570)
+- 코드·기록: [efi:BondingPath](V:/Projects/efi-onto/ontology/efi_tbox.ttl:565)
 
 #### T20 · 보고용 외부 분류 체계와 코드 대응 (우선순위 2)
 
@@ -75,7 +75,7 @@
 - 완료/재개 조건: 사용 체계·판본·코드의 출처와 매핑이 명시된다. NFPA 921 자체에 없는 통합 분류 목록을 만들지 않는다.
 - 분류 근거: 부족한 것은 외부 코드 통합 범위다. 원문 미확보와 구조 미구현을 섞지 않는다.
 - 원문 행: `nfpa:S:19.8`, `nfpa:L:19.8.2`
-- 코드·기록: [efi:ClassificationSystem](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1454) · [efi:KoreaFireReportClassification](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3665) · [efi:UnidentifiedShortCircuit](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3671)
+- 코드·기록: [efi:ClassificationSystem](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1416) · [efi:KoreaFireReportClassification](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3612) · [efi:UnidentifiedShortCircuit](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3618)
 
 #### T22 · 제품 내부 고장·사용 조건의 이식 경계 (우선순위 2)
 
@@ -85,7 +85,7 @@
 - 완료/재개 조건: 남기는 관찰·관계와 제외하는 고장/사용 시나리오를 각각 명시한다.
 - 분류 근거: 옛 범위 설명을 자동으로 삭제하거나 확대하지 않고 설계 검토로 남긴다.
 - 원문 행: `silmu:S:3.3.5`, `silmu:L:3.2.2/나`, `babrauskas:S:14.2`, `babrauskas:S:14.4`, `babrauskas:S:14.20`, `domestic:B:23`
-- 코드·기록: [efi:CoveredHeatingDevice](V:/Projects/efi-onto/ontology/efi_tbox.ttl:952) · [efi:HeatDissipationImpairment](V:/Projects/efi-onto/ontology/efi_tbox.ttl:944) · [발화 구역 특정 이후](V:/Projects/efi-onto/docs/EFI-Onto_TBox_설계계획서.md:127)
+- 코드·기록: [efi:CoveredHeatingDevice](V:/Projects/efi-onto/ontology/efi_tbox.ttl:930) · [efi:HeatDissipationImpairment](V:/Projects/efi-onto/ontology/efi_tbox.ttl:922) · [발화 구역 특정 이후](V:/Projects/efi-onto/docs/EFI-Onto_TBox_설계계획서.md:127)
 
 #### T28 · 보호장치의 주변 온도와 동작 조건 (우선순위 2)
 
@@ -96,7 +96,7 @@
 - 분류 근거: 서술된 한 시험의 배수를 모든 차단기의 문턱으로 사용할 수 없다.
 - 선행 작업: T02
 - 원문 행: `babrauskas:L:14.5/d`
-- 코드·기록: [efi:ProtectiveDevice](V:/Projects/efi-onto/ontology/efi_tbox.ttl:430) · [efi:ratedTripTime_min](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1626)
+- 코드·기록: [efi:ProtectiveDevice](V:/Projects/efi-onto/ontology/efi_tbox.ttl:425) · [efi:ratedTripTime_min](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1582)
 
 #### T30 · 밀폐형 컴프레서 내부 고장과 외부 착화 (우선순위 2)
 
@@ -107,7 +107,7 @@
 - 분류 근거: 어느 한 자료의 표현만으로 기존 권선 가설을 없애거나 모든 컴프레서 화재를 배제하지 않는다.
 - 선행 작업: T04
 - 원문 행: `babrauskas:S:14.8`
-- 코드·기록: [efi:WindingSite](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1107) · [efi:InterTurnShortCircuit](V:/Projects/efi-onto/ontology/efi_tbox.ttl:174)
+- 코드·기록: [efi:WindingSite](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1079) · [efi:InterTurnShortCircuit](V:/Projects/efi-onto/ontology/efi_tbox.ttl:174)
 
 #### T32 · 금속물 혼입과 도전성 액체의 구분 (우선순위 2)
 
@@ -118,7 +118,7 @@
 - 분류 근거: 독립 원인 가설이 필요한지와 기존 가설의 관찰 항목인지를 먼저 구분한다.
 - 선행 작업: T01, T03
 - 원문 행: `domestic:B:24`
-- 코드·기록: [efi:ConductiveSolutionInCrack](V:/Projects/efi-onto/ontology/efi_tbox.ttl:963) · [efi:GroundPath](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1245)
+- 코드·기록: [efi:ConductiveSolutionInCrack](V:/Projects/efi-onto/ontology/efi_tbox.ttl:941) · [efi:GroundPath](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1207)
 
 #### T34 · 대조하지 않은 원문의 범위와 인용만 한 세부 경로 (우선순위 2)
 
@@ -138,7 +138,7 @@
 - 분류 근거: 두 계측은 원문 대상과 메커니즘이 다르므로 T10과 별도 작업이다.
 - 선행 작업: T07
 - 원문 행: `silmu:S:3.3.2`, `silmu:L:3.3.2/나5`, `babrauskas:L:11.6/a`
-- 코드·기록: [efi:ReducedContactArea](V:/Projects/efi-onto/ontology/efi_tbox.ttl:370) · [efi:IntermittentContactSeparation](V:/Projects/efi-onto/ontology/efi_tbox.ttl:373)
+- 코드·기록: [efi:ReducedContactArea](V:/Projects/efi-onto/ontology/efi_tbox.ttl:365) · [efi:IntermittentContactSeparation](V:/Projects/efi-onto/ontology/efi_tbox.ttl:368)
 
 ### 기존보류
 
@@ -151,7 +151,7 @@
 - 분류 근거: silmu 후보 ②와 인계 5.3에서 사례·서식을 먼저 확보하기로 기록했다. 현재 사례의 '납땜하지 않음'을 균열 사례로 세지 않는다.
 - 선행 작업: T07
 - 원문 행: `silmu:S:3.3.1`, `silmu:L:2.2/사4⑧`, `silmu:L:3.2.2/다`, `silmu:L:3.3.1/다5`
-- 코드·기록: [efi:ConnectionCondition](V:/Projects/efi-onto/ontology/efi_tbox.ttl:848) · [접속 방식](V:/Projects/efi-onto/docs/인계.md:55)
+- 코드·기록: [efi:ConnectionCondition](V:/Projects/efi-onto/ontology/efi_tbox.ttl:823) · [접속 방식](V:/Projects/efi-onto/docs/인계.md:55)
 
 #### T09 · 극별 용융 위치 (우선순위 2)
 
@@ -162,7 +162,7 @@
 - 분류 근거: silmu 후보 ①에 기록된 서식 우선 보류다. 한 극과 소선 한쪽의 의미도 원문별로 구분한다.
 - 선행 작업: T01
 - 원문 행: `silmu:S:2.2`, `silmu:L:2.2/사4①`, `silmu:L:2.2/사4⑦㉰`, `silmu:L:2.2/사4⑧`
-- 코드·기록: [efi:ConnectionPoint](V:/Projects/efi-onto/ontology/efi_tbox.ttl:427) · [용융 극](V:/Projects/efi-onto/docs/인계.md:384)
+- 코드·기록: [efi:ConnectionPoint](V:/Projects/efi-onto/ontology/efi_tbox.ttl:422) · [용융 극](V:/Projects/efi-onto/docs/인계.md:384)
 
 #### T10 · 탄화부 도통·저항의 계측 (우선순위 2)
 
@@ -182,7 +182,7 @@
 - 완료/재개 조건: 각 관찰의 대상·시점·화재 후 변형을 대조하여 통전 근거를 표현하고 확인 불가를 보존한다.
 - 분류 근거: silmu 후보 ⑦는 C-57 부분만 완료다. 나머지를 전체 완료로 세지 않는다.
 - 원문 행: `silmu:S:2.1`, `silmu:S:3.2.1`, `silmu:L:2.1/가`, `silmu:L:2.1/나`, `silmu:L:3.2.1/나`, `babrauskas:S:14.7`, `babrauskas:L:14.7/a`
-- 코드·기록: [efi:EnergizedRequiredShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2904) · [efi:EnergizedState](V:/Projects/efi-onto/ontology/efi_tbox.ttl:839) · [칼날 광택](V:/Projects/efi-onto/docs/인계.md:380)
+- 코드·기록: [efi:EnergizedRequiredShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2852) · [efi:EnergizedState](V:/Projects/efi-onto/ontology/efi_tbox.ttl:814) · [칼날 광택](V:/Projects/efi-onto/docs/인계.md:380)
 
 #### T13 · 열적 열화에서 시작하는 트래킹 경로 (우선순위 3)
 
@@ -193,7 +193,7 @@
 - 분류 근거: 인계 5.0b ③에 사용자 결정으로 보류했다고 기록되어 있다. 이번 목록 정리에서 그 결정을 변경하지 않는다.
 - 선행 작업: T03
 - 원문 행: `babrauskas:L:14.9/h`, `babrauskas:L:14.12/c`, `silmu:L:3.1.5/바`
-- 코드·기록: [efi:TrackingScenario](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1697) · [사용자 결정: 지금은 넣지 않는다.](V:/Projects/efi-onto/docs/인계.md:414)
+- 코드·기록: [efi:TrackingScenario](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1650) · [사용자 결정: 지금은 넣지 않는다.](V:/Projects/efi-onto/docs/인계.md:414)
 
 #### T27 · 중성선 단선 과전압의 독립 가설 확장 (우선순위 3)
 
@@ -203,7 +203,7 @@
 - 완료/재개 조건: 가설 범위 변경 시 배타 공리·가감점 유도·데이터 분류까지 함께 검증한다.
 - 분류 근거: 기존의 가설 확장 보류다. 과부하는 이미 가설이므로 같은 확장 슬롯 목록에 계속 넣으면 안 된다.
 - 원문 행: `silmu:L:3.1.2/나다③`, `silmu:L:3.3.5/나2나`, `domestic:B:2`
-- 코드·기록: [efi:OpenNeutralOvervoltage](V:/Projects/efi-onto/ontology/efi_tbox.ttl:224) · [efi:OpenNeutralInferenceShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2858) · [SLOTS =](V:/Projects/efi-onto/scripts/lint.py:106)
+- 코드·기록: [efi:OpenNeutralOvervoltage](V:/Projects/efi-onto/ontology/efi_tbox.ttl:224) · [efi:OpenNeutralInferenceShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2806) · [SLOTS =](V:/Projects/efi-onto/scripts/lint.py:106)
 
 #### T31 · 동파방지 열선의 고장 모드 (우선순위 3)
 
@@ -213,7 +213,7 @@
 - 완료/재개 조건: 열선 종류와 고장 모드를 식별할 자료 또는 보류 재검토가 있으면 모델을 추가한다.
 - 분류 근거: 인계의 사례 우선 보류다. '3건 미만'은 당시 운영 기준이며 과학적 최소 표본수로 일반화하지 않는다.
 - 원문 행: `babrauskas:S:14.19`
-- 코드·기록: [efi:CordMidspanSite](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1111) · [열선(동파방지) 고장 모드](V:/Projects/efi-onto/docs/인계.md:425)
+- 코드·기록: [efi:CordMidspanSite](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1083) · [열선(동파방지) 고장 모드](V:/Projects/efi-onto/docs/인계.md:425)
 
 ### 자료대기
 
@@ -225,7 +225,7 @@
 - 완료/재개 조건: 관찰 항목과 적용 한계가 확인되면 구현한다. 추가 연구에 기준이 없으면 전문가 분석 결과만 입력받는 범위로 정한다.
 - 분류 근거: 논문 서지 자체도 자료 목록에 확인 필요로 표시되어 있다. 확보되지 않은 미세 기준을 추정하지 않는다.
 - 원문 행: `nfpa:L:9.10.5`, `silmu:L:2.1/라b`
-- 코드·기록: [efi:MechanicalGouge](V:/Projects/efi-onto/ontology/efi_tbox.ttl:603) · [efi:Tension](V:/Projects/efi-onto/ontology/efi_tbox.ttl:856) · [Arc marks and gouges](V:/Projects/efi-onto/docs/자료_목록.md:32)
+- 코드·기록: [efi:MechanicalGouge](V:/Projects/efi-onto/ontology/efi_tbox.ttl:598) · [efi:Tension](V:/Projects/efi-onto/ontology/efi_tbox.ttl:831) · [Arc marks and gouges](V:/Projects/efi-onto/docs/자료_목록.md:32)
 
 #### T19 · 금속조직·혼입물 분석의 관찰 기준 (우선순위 3)
 
@@ -235,7 +235,7 @@
 - 완료/재개 조건: 아크 여부 판단과 원인/피해 구분을 분리하고 출처·불확실성을 유지하는 입력 사양이 마련된다.
 - 분류 근거: 서로 겹치는 조직 경향에서 임계값을 만들어 항목을 닫지 않는다.
 - 원문 행: `nfpa:L:9.13.1.3`, `silmu:L:3.4.2/라자`
-- 코드·기록: [efi:MaterialsAnalyst](V:/Projects/efi-onto/ontology/efi_tbox.ttl:118) · [efi:MetallographyAloneShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3458) · [efi:voidFraction](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1353)
+- 코드·기록: [efi:MaterialsAnalyst](V:/Projects/efi-onto/ontology/efi_tbox.ttl:118) · [efi:MetallographyAloneShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3408) · [efi:voidFraction](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1315)
 
 #### T21 · 니크롬 용융을 외부화염 반증으로 쓰는 조건 (우선순위 3)
 
@@ -245,7 +245,7 @@
 - 완료/재개 조건: 적용 한계가 확인되기 전에는 결정적 반증 규칙을 추가하지 않는다. 보강 관찰 또는 제외로 정하면 이유를 남긴다.
 - 분류 근거: 기존 후순위 후보를 자료 검증 대상으로 정리했다. 다른 히터 고장 서술은 이 온도 주장의 검증 근거가 아니다.
 - 원문 행: `silmu:S:3.3.8`, `silmu:L:3.3.8/가2라`
-- 코드·기록: [efi:IgnitionCompetenceRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2254) · [니크롬선 용융](V:/Projects/efi-onto/docs/인계.md:372)
+- 코드·기록: [efi:IgnitionCompetenceRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2204) · [니크롬선 용융](V:/Projects/efi-onto/docs/인계.md:372)
 
 #### T29 · 퓨즈 열화·반복 과부하의 법과학 근거 (우선순위 3)
 
@@ -255,7 +255,7 @@
 - 완료/재개 조건: 관찰로 구분 가능한 조건과 화재 후 변화의 한계가 확보되면 기존 형태와 대조한다.
 - 분류 근거: Babrauskas 14.5a의 추가 자료 필요 기록. '퓨즈는 fail-safe'라는 문구만으로 기각 규칙을 만들지 않는다.
 - 원문 행: `babrauskas:L:14.5/a`
-- 코드·기록: [efi:FuseMeltPattern](V:/Projects/efi-onto/ontology/efi_tbox.ttl:291) · [Twibell & Christie](V:/Projects/efi-onto/scripts/babrauskas.py:139)
+- 코드·기록: [efi:FuseMeltPattern](V:/Projects/efi-onto/ontology/efi_tbox.ttl:289) · [Twibell & Christie](V:/Projects/efi-onto/scripts/babrauskas.py:139)
 
 #### T33 · 선택 보강 자료: A.9.7.4와 TIA 소개 논문 (우선순위 3)
 
@@ -286,7 +286,7 @@
 - 완료/재개 조건: 현행 범위를 유지하는 동안 신규 판정 규칙을 요구하지 않는다. 범위가 바뀌면 재개한다.
 - 분류 근거: 설계계획서 범위 경계 및 원문 대조표의 기존 사유. 회수 불가 발화원의 존재를 근거 없이 도출하는 규칙은 만들 수 없다.
 - 원문 행: `nfpa:S:4.1`, `nfpa:S:4.7`, `nfpa:L:4.5.0`, `nfpa:L:19.5.2`, `silmu:L:2.2/사4⑦㉮`, `silmu:S:4.3`
-- 코드·기록: [efi:InvestigationReport](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1488) · [efi:NonRecoverableIgnitionSource](V:/Projects/efi-onto/ontology/efi_tbox.ttl:577) · [efi:InsulationResistanceDerivationRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3428) · [§4.1 발화 지점 특정](V:/Projects/efi-onto/docs/EFI-Onto_TBox_설계계획서.md:858)
+- 코드·기록: [efi:InvestigationReport](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1450) · [efi:NonRecoverableIgnitionSource](V:/Projects/efi-onto/ontology/efi_tbox.ttl:572) · [efi:InsulationResistanceDerivationRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3378) · [§4.1 발화 지점 특정](V:/Projects/efi-onto/docs/EFI-Onto_TBox_설계계획서.md:858)
 
 #### T24 · 재료·열 실험의 수치를 보편 임계값으로 이식 (우선순위 3)
 
@@ -296,7 +296,7 @@
 - 완료/재개 조건: 일반화 근거가 생겨 범위를 바꾸기 전까지 임계 규칙은 만들지 않는다. 연료 존재·열전달 근거의 T04는 계속 진행한다.
 - 분류 근거: 설계계획서 C.4 및 각 대조표의 명시적 참조 지식/범위 제외 기록. 이 분류로 이식률 분모를 줄이지 않는다.
 - 원문 행: `nfpa:L:9.9.1.3`, `silmu:S:1.6`, `silmu:L:1.3/카`, `babrauskas:S:11.5`, `babrauskas:L:11.6/d`, `babrauskas:L:11.6/g`, `babrauskas:L:11.6/h`, `nfpa:S:9.9`
-- 코드·기록: [efi:IgnitionCompetenceRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2254) · [열전달 지속 시간은 잔해에서 관측되지 않는다](V:/Projects/efi-onto/docs/EFI-Onto_TBox_설계계획서.md:855)
+- 코드·기록: [efi:IgnitionCompetenceRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2204) · [열전달 지속 시간은 잔해에서 관측되지 않는다](V:/Projects/efi-onto/docs/EFI-Onto_TBox_설계계획서.md:855)
 
 #### T25 · 고압 보이드·공기 절연·고조파와 부품 내부 파괴 (우선순위 3)
 
@@ -306,7 +306,7 @@
 - 완료/재개 조건: 현행 범위를 확장할 경우에만 조건·사례와 함께 재개한다.
 - 분류 근거: 기존 제외 사유를 보존한다. '5대 요인' 표현이 낡았다는 이유만으로 고압 설비를 이번 작업에 새로 포함하지 않는다.
 - 원문 행: `nfpa:S:9.7`, `nfpa:L:9.7.5.1`, `silmu:L:1.7/마`, `silmu:L:3.3.2/나8`, `babrauskas:S:11.3`, `domestic:B:16`
-- 코드·기록: [efi:DendriticTreePath](V:/Projects/efi-onto/ontology/efi_tbox.ttl:331) · [efi:InsulationBreakdownArc](V:/Projects/efi-onto/ontology/efi_tbox.ttl:161) · [고압 설비](V:/Projects/efi-onto/scripts/domestic.py:64)
+- 코드·기록: [efi:DendriticTreePath](V:/Projects/efi-onto/ontology/efi_tbox.ttl:329) · [efi:InsulationBreakdownArc](V:/Projects/efi-onto/ontology/efi_tbox.ttl:161) · [고압 설비](V:/Projects/efi-onto/scripts/domestic.py:64)
 
 #### T26 · 흑연화를 별도 확정 가설로 분리 (우선순위 3)
 
@@ -316,7 +316,7 @@
 - 완료/재개 조건: 원문에서 검증 가능한 분리 조건이 확보되고 범위 결정을 바꿀 때 재개한다.
 - 분류 근거: 실무Ⅳ p.149의 관례적 경계와 CLAUDE.md의 기존 설계. 클래스 하나를 더 만들어 완료로 세지 않는다.
 - 원문 행: `silmu:L:1.7/나`, `domestic:B:15`
-- 코드·기록: [efi:TrackingScenario](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1697) · [관례](V:/Projects/efi-onto/docs/인계.md:162)
+- 코드·기록: [efi:TrackingScenario](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1650) · [관례](V:/Projects/efi-onto/docs/인계.md:162)
 
 ### 구현완료
 
@@ -360,7 +360,7 @@
 - 완료/재개 조건: 착화물 미확인 후보는 남길 수 있지만 연료 근거가 빠진 확정은 검출한다. 온도 한 값만으로 열 충분성을 확정하지 않는다.
 - 분류 근거: 2026-09-03 T01→T02→T03→T04 구현. 세부 설계·검증은 docs/T01_T04_구현.md. ScenarioShape는 hasFirstFuel에 maxCount만 둔다. 모든 후보에 무조건 연료를 강제하면 후보 수립과 판단보류를 해친다.
 - 원문 행: `nfpa:S:9.9`, `nfpa:L:9.9.1`, `nfpa:L:19.5.3`
-- 코드·기록: [efi:ConclusionFirstFuelEvidenceShape a sh:NodeShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3740) · [class InvestigationData](V:/Projects/efi-onto/src/investigation.py:403) · [def test_candidate_keeps_missing_fuel](V:/Projects/efi-onto/tests/test_investigation.py:171)
+- 코드·기록: [efi:ConclusionFirstFuelEvidenceShape a sh:NodeShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:3687) · [class InvestigationData](V:/Projects/efi-onto/src/investigation.py:403) · [def test_candidate_keeps_missing_fuel](V:/Projects/efi-onto/tests/test_investigation.py:171)
 
 #### T05 · 과열 접속부·분전반의 비교 관찰 (우선순위 2)
 
@@ -447,7 +447,7 @@
 - 완료/재개 조건: 현행 사슬을 유지하며 회귀로 보호한다.
 - 분류 근거: TTL 직접 대조. 이번에는 이미 있던 구현을 확인했으며 사슬을 새로 바꾸지 않았다.
 - 원문 행: `silmu:L:3.3.6/나5`, `babrauskas:L:14.12/r`, `babrauskas:L:14.12/v`
-- 코드·기록: [efi:RodentGnawing efi:enables](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1041) · [efi:R_PD_sup11](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1839) · [efi:R_TR_sup10](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1942)
+- 코드·기록: [efi:RodentGnawing efi:enables](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1016) · [efi:R_PD_sup11](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1792) · [efi:R_TR_sup10](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1892)
 
 #### C02 · 차단기 미트립을 압착의 반증으로 쓰던 오류 (우선순위 1)
 
@@ -457,7 +457,7 @@
 - 완료/재개 조건: 후보 수정 완료와 보호장치 기록 전체 완료를 구별한다.
 - 분류 근거: 기존 대조표 설명과 실제 규칙이 이미 일치한다.
 - 원문 행: `silmu:L:3.3.6/나4`, `babrauskas:L:14.12/a`
-- 코드·기록: [efi:R_CD_ref3](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1780)
+- 코드·기록: [efi:R_CD_ref3](V:/Projects/efi-onto/ontology/efi_tbox.ttl:1733)
 
 #### C03 · 과전류 용단 망울의 형태 (우선순위 1)
 
@@ -467,7 +467,7 @@
 - 완료/재개 조건: 관찰 정의의 존재를 확인했으며 별도 미세 박리 분류기를 구현했다고 주장하지 않는다.
 - 분류 근거: TTL 과부하 절 `[7.7]` 직접 대조.
 - 원문 행: `silmu:S:3.4.4`
-- 코드·기록: [efi:OvercurrentFusedBead](V:/Projects/efi-onto/ontology/efi_tbox.ttl:390) · [efi:R_OL_sup5](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2073)
+- 코드·기록: [efi:OvercurrentFusedBead](V:/Projects/efi-onto/ontology/efi_tbox.ttl:385) · [efi:R_OL_sup5](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2020)
 
 #### C04 · 접점 융착의 화재 공유 (우선순위 1)
 
@@ -477,7 +477,7 @@
 - 완료/재개 조건: 사례 검증 필요성은 유지하며 동일한 사슬 수정을 다시 작업으로 세지 않는다.
 - 분류 근거: TTL·audit.py 직접 대조.
 - 원문 행: `babrauskas:L:14.9/n`
-- 코드·기록: [efi:ExternalFlameExposure efi:producesDamage efi:ContactWelding](V:/Projects/efi-onto/ontology/efi_tbox.ttl:389)
+- 코드·기록: [efi:ExternalFlameExposure efi:producesDamage efi:ContactWelding](V:/Projects/efi-onto/ontology/efi_tbox.ttl:384)
 
 #### C05 · 아산화동·부식·순알루미늄·TIA 추가 본문 (우선순위 1)
 
@@ -487,7 +487,7 @@
 - 완료/재개 조건: 본문 일부 완료를 §9.7·§9.12 전체 완료로 확대하지 않는다.
 - 분류 근거: 직전 구현 및 tests/test_nfpa_inputs.py의 경계 검증.
 - 원문 행: `nfpa:L:9.7.3.2`, `nfpa:L:9.7.4.1`, `nfpa:L:9.7.5.2`, `nfpa:L:9.10.2.1`
-- 코드·기록: [efi:CuprousOxideDerivationRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2487) · [efi:CorrosionObservationRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2512) · [efi:PureAluminumConductor](V:/Projects/efi-onto/ontology/efi_tbox.ttl:745)
+- 코드·기록: [efi:CuprousOxideDerivationRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2435) · [efi:CorrosionObservationRuleShape](V:/Projects/efi-onto/ontology/efi_tbox.ttl:2460) · [efi:PureAluminumConductor](V:/Projects/efi-onto/ontology/efi_tbox.ttl:723)
 
 ## 원문 행별 추적표
 
