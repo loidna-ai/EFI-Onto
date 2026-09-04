@@ -1617,3 +1617,21 @@ def test_foreign_conductor_intrusion_matches_in_both_engines(onto):
     s = sess(["ArcMeltMark", "EnergizedState", "ForeignConductorInEquipment"], status=Status.UNVERIFIABLE)
     assert s.outcome(onto) == "UnidentifiedShortCircuit", "확인 불가 혼입을 확인으로 읽었다"
     assert (EFI.session_FC, EFI.outcomeForeignConductorIntrusion, None) not in run(s.to_turtle(include_derived=False))
+
+
+
+def test_liquid_ingress_forms_tracking_but_metal_object_forms_nothing(onto):
+    """표 2-1 '이물 혼입'의 세 갈래 — 도전성 액체는 트래킹으로 가고(오염 환경의 하위), 금속 물체는 즉시 단락이라
+    어떤 가설도 세우지 않는다. 물체를 트래킹에 이으면 오염 환경 없이 트래킹이 서서 C-5 가 뒤집힌다."""
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, DEFAULT_MECHANISM
+    def one(cls):
+        s = Session(case_id="IN", query_count=2,
+                    hypotheses=[Hypothesis(scenario=Scenario(k), mechanism=Mechanism(v)) for k, v in DEFAULT_MECHANISM.items()],
+                    facts=[Fact(cls=cls, status=Status.CONFIRMED, agent=Agent.INVESTIGATOR)])
+        s.apply(onto)
+        return {h.scenario: h for h in s.hypotheses}
+    liquid = one("ConductiveLiquidIngress")
+    assert liquid[Scenario.TRACKING].formed and liquid[Scenario.TRACKING].support_score > 50, "도전성 액체가 트래킹을 세우지 않는다"
+    metal = one("ForeignConductorInEquipment")
+    assert not metal[Scenario.TRACKING].formed and metal[Scenario.TRACKING].support_score == 50, "금속 물체가 트래킹을 세웠다"
+    assert all(h.support_score == 50 for h in metal.values()), "금속 물체가 어떤 가설에 점수를 줬다"
