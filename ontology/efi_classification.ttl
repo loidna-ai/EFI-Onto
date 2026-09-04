@@ -1,0 +1,321 @@
+@prefix kfc:     <https://w3id.org/efi-onto/kfc#> .
+@prefix efi:     <https://w3id.org/efi-onto#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+# ==========================================================================
+# EFI-Onto 참조 분류 층 — 국가화재분류체계 (소방청, 2019)
+#
+#  이 파일은 공식 분류표를 SKOS 로 옮긴 것이다. 판정 어휘가 아니다 — 점수·사슬·형성·결론에
+#  닿는 도형은 하나도 없다. 그래프가 하는 일은 "고를 수 있는 목록을 정확한 코드로 제공"까지다.
+#  우리 개념(가설·메커니즘·착화물)과의 짝은 efi_tbox.ttl 쪽에서 강도를 나눠 적는다
+#  (reportedAs = 정확히 같다, skos:relatedMatch = 관련 있다, skos:broadMatch = 넓게 포함된다).
+#
+#  원문: 소방청 『국가화재분류체계 매뉴얼』 2019. 12. (docs/references/5-8_*.pdf). 근거는 제1편만 든다 —
+#  제2편 예시에는 코드 오식이 있다(docs/국가화재분류체계_대조.md). 쪽수는 인쇄 쪽.
+#  현행 「화재조사 및 보고규정」은 소방청훈령 제449호(2025. 12. 4.)이며 별지 4 는 대분류만 둔다 —
+#  소분류는 국가화재정보시스템(NFDS) 코드로 채우고 그 원문이 이 매뉴얼이다. 2019→2025 변경 여부 미확인.
+#
+#  접두어 kfc: 는 우리 어휘(efi:)와 따로 둔다 — 공식 체계의 이름은 우리가 정의한 것이 아니다.
+#  같은 라벨('기타', '역화', '돋보기 효과')이 축을 건너 되풀이되는 것이 공식 체계의 사실이다.
+# ==========================================================================
+
+# SKOS 어휘의 OWL 선언 — HermiT 가 DL 안에서 읽도록 한다
+skos:Concept        a owl:Class .
+skos:ConceptScheme  a owl:Class .
+skos:inScheme       a owl:ObjectProperty .
+skos:topConceptOf   a owl:ObjectProperty .
+skos:hasTopConcept  a owl:ObjectProperty .
+skos:broader        a owl:ObjectProperty .
+skos:narrower       a owl:ObjectProperty .
+skos:relatedMatch   a owl:ObjectProperty .
+skos:broadMatch     a owl:ObjectProperty .
+skos:exactMatch     a owl:ObjectProperty .
+skos:notation       a owl:DatatypeProperty .
+skos:definition     a owl:AnnotationProperty .
+skos:scopeNote      a owl:AnnotationProperty .
+dcterms:isPartOf    a owl:ObjectProperty .
+dcterms:source      a owl:AnnotationProperty .
+
+# ── [K1] 발화요인 (ignition factor) — 대분류 11 · 소분류 43
+#  매뉴얼 제1편 제2장 2.2 (p.33~51) 의 여덟 대분류 + 별지 4 의 방화·기타·미상.
+kfc:Factor a skos:ConceptScheme ;
+    dcterms:isPartOf efi:KoreaFireReportClassification ;
+    skos:prefLabel "발화요인 (국가화재분류체계)"@ko ;
+    skos:definition "발화열원과 최초 착화물이 결합하여 화재가 발생하게 된 요인. 방화와 미상인 경우를 제외하고 화재의 원인을 인적(부주의), 물적(전기, 기계, 화학적 원인 등), 자연적 요인에 따라 설명한다"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) 제1편 제2장 2.2 발화요인, p.33 분류체계도" .
+
+
+kfc:Factor-Electrical a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "전기적 요인"@ko ;
+    skos:definition "전기기기에서 발생한 누전, 단락, 접촉불량 등에 의해 일어난 전기적 스파크가 발화요인인 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.34" .
+kfc:Factor skos:hasTopConcept kfc:Factor-Electrical .
+kfc:Factor-Electrical-01 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "1" ;
+    skos:prefLabel "누전·지락"@ko ;
+    skos:definition "전류가 비정상적으로 흘러 누전경로를 형성하여, 취약한 곳을 발열시키는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.34" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-01 .
+kfc:Factor-Electrical-02 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "2" ;
+    skos:prefLabel "접촉불량에 의한 단락"@ko ;
+    skos:definition "전선과 전선, 전선과 접속단자의 전기적인 접촉상태가 불완전할 때 접속부의 저항 및 온도가 증가하여 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.34" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-02 .
+kfc:Factor-Electrical-03 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "3" ;
+    skos:prefLabel "절연열화에 의한 단락"@ko ;
+    skos:definition "절연재료의 절연성능 저하 및 탄화진행으로 단락이 생겨 발생된 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.34" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-03 .
+kfc:Factor-Electrical-04 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "4" ;
+    skos:prefLabel "과부하·과전류"@ko ;
+    skos:definition "정격용량을 초과하는 부하설비를 사용하거나, 정격전류를 초과하는 전류가 흐르는 현상"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.35" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-04 .
+kfc:Factor-Electrical-05 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "5" ;
+    skos:prefLabel "압착·손상에 의한 단락"@ko ;
+    skos:definition "전선, 회로, 단자, 접속부의 과도한 압착이나 손상에 의하여 단락이 발생된 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.35" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-05 .
+kfc:Factor-Electrical-06 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "6" ;
+    skos:prefLabel "층간단락"@ko ;
+    skos:definition "변압기, 전동기 코일 및 콘덴서 권선층간에서 절연이 파괴되어 단락되는 현상"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.36" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-06 .
+kfc:Factor-Electrical-07 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "7" ;
+    skos:prefLabel "트래킹에 의한 단락"@ko ;
+    skos:definition "전기제품 등의 절연체에 먼지나 습기 등의 영향으로 양극사이에서 불티방전이 일어나 절연체 표면에서 도전통로(Track)가 형성되어 발열, 단락되는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.36" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-07 .
+kfc:Factor-Electrical-08 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "8" ;
+    skos:prefLabel "반단선"@ko ;
+    skos:definition "전선이 절연피복내에서 단선되어 그 부분에서 단선과 이어짐을 되풀이하는 상태로 저항값이 집중적으로 높아져 발열하다가 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.37" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-08 .
+kfc:Factor-Electrical-09 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "9" ;
+    skos:prefLabel "미확인 단락"@ko ;
+    skos:definition "전기적인 단락인 것은 확인이 되었으나 어떠한 원인에 의해 단락이 형성되었는지 알 수 없는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.37" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-09 .
+kfc:Factor-Electrical-10 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Electrical ; skos:notation "10" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.37" .
+kfc:Factor-Electrical skos:narrower kfc:Factor-Electrical-10 .
+
+kfc:Factor-Mechanical a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "기계적 요인"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.37" .
+kfc:Factor skos:hasTopConcept kfc:Factor-Mechanical .
+kfc:Factor-Mechanical-01 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Mechanical ; skos:notation "1" ;
+    skos:prefLabel "과열, 과부하"@ko ;
+    skos:definition "기계, 장치 등에서 다룰 수 있는 정상치를 넘은 과부하나 그로 인한 과열에 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.37" .
+kfc:Factor-Mechanical skos:narrower kfc:Factor-Mechanical-01 .
+kfc:Factor-Mechanical-02 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Mechanical ; skos:notation "2" ;
+    skos:prefLabel "오일·연료 누설"@ko ;
+    skos:definition "차량·석유난로·보일러로부터 새어나온 오일이나 연료 등이 원인이 되어 화재가 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.38" .
+kfc:Factor-Mechanical skos:narrower kfc:Factor-Mechanical-02 .
+kfc:Factor-Mechanical-03 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Mechanical ; skos:notation "3" ;
+    skos:prefLabel "자동제어 실패"@ko ;
+    skos:definition "자동제어로 작동하는 장치나 기계·기구 등에서 자동제어 기능의 고장으로 화재가 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.38" .
+kfc:Factor-Mechanical skos:narrower kfc:Factor-Mechanical-03 .
+kfc:Factor-Mechanical-04 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Mechanical ; skos:notation "4" ;
+    skos:prefLabel "수동제어 실패"@ko ;
+    skos:definition "수동으로 작동하는 장치·기계·기구 등에서 수동제어 실패가 화재원인인 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.38" .
+kfc:Factor-Mechanical skos:narrower kfc:Factor-Mechanical-04 .
+kfc:Factor-Mechanical-05 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Mechanical ; skos:notation "5" ;
+    skos:prefLabel "정비불량"@ko ;
+    skos:definition "기기의 정비 불량으로 기기 내에 낀 먼지, 습기, 이물질 등이 발화의 원인이 되는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.39" .
+kfc:Factor-Mechanical skos:narrower kfc:Factor-Mechanical-05 .
+kfc:Factor-Mechanical-06 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Mechanical ; skos:notation "6" ;
+    skos:prefLabel "노후"@ko ;
+    skos:definition "기기의 노후에서 비롯된 균열·손상 등이 원인이 되어 화재가 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.39" .
+kfc:Factor-Mechanical skos:narrower kfc:Factor-Mechanical-06 .
+kfc:Factor-Mechanical-07 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Mechanical ; skos:notation "7" ;
+    skos:prefLabel "역화"@ko ;
+    skos:definition "차량, 보일러, 가스렌지, 용접기 등에서 불꽃이 역류하여 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.39" .
+kfc:Factor-Mechanical skos:narrower kfc:Factor-Mechanical-07 .
+
+kfc:Factor-ProductDefect a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "제품결함"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.40" .
+kfc:Factor skos:hasTopConcept kfc:Factor-ProductDefect .
+kfc:Factor-ProductDefect-01 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-ProductDefect ; skos:notation "1" ;
+    skos:prefLabel "설계상결함"@ko ;
+    skos:definition "기기 등 제품의 설계상 결함으로 인하여 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.40" .
+kfc:Factor-ProductDefect skos:narrower kfc:Factor-ProductDefect-01 .
+kfc:Factor-ProductDefect-02 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-ProductDefect ; skos:notation "2" ;
+    skos:prefLabel "제조상결함"@ko ;
+    skos:definition "기기 등 제품의 제조상 결함으로 인하여 화재가 발생하는 경우 (원문 p.40 의 정의와 [Code] 블록은 '설계상결함'·'제조상결함'을 잘못 적었다 — 분류체계도 p.33 을 따른다)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.40" .
+kfc:Factor-ProductDefect skos:narrower kfc:Factor-ProductDefect-02 .
+
+kfc:Factor-GasLeak a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "가스누출(폭발)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.41" .
+kfc:Factor skos:hasTopConcept kfc:Factor-GasLeak .
+kfc:Factor-GasLeak-01 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-GasLeak ; skos:notation "1" ;
+    skos:prefLabel "가스누출(폭발)"@ko ;
+    skos:definition "천연가스, LP가스, 고압가스 등 가연성 가스가 누출된 것이 원인이 되어 화재가 발생한 경우. 가스누출에 의한 폭발을 포함한다"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.41" .
+kfc:Factor-GasLeak skos:narrower kfc:Factor-GasLeak-01 .
+
+kfc:Factor-Chemical a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "화학적 요인"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.42" .
+kfc:Factor skos:hasTopConcept kfc:Factor-Chemical .
+kfc:Factor-Chemical-01 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Chemical ; skos:notation "1" ;
+    skos:prefLabel "화학적 폭발"@ko ;
+    skos:definition "화학반응에 의해 아주 짧은 시간 내에 급격한 압력 상승을 수반할 때 압력의 급격한 방출로 인해 일어나는 폭발형태"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.42" .
+kfc:Factor-Chemical skos:narrower kfc:Factor-Chemical-01 .
+kfc:Factor-Chemical-02 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Chemical ; skos:notation "2" ;
+    skos:prefLabel "금수성물질의 물과 접촉"@ko ;
+    skos:definition "물에 닿으면 물과 반응하면서 수소가스가 생성되고 이 반응열로 인해 폭발적인 반응이 발생하여 화재가 발생하는 현상"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.42" .
+kfc:Factor-Chemical skos:narrower kfc:Factor-Chemical-02 .
+kfc:Factor-Chemical-03 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Chemical ; skos:notation "3" ;
+    skos:prefLabel "화학적 발화(유증기 확산)"@ko ;
+    skos:definition "가연성 액체의 온도가 상승하여 유증기가 발생·확산되어 공기와 혼합된 상태에서 스파크나 불꽃 등의 발화열원에 의해 연소가 일어나는 현상"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.43" .
+kfc:Factor-Chemical skos:narrower kfc:Factor-Chemical-03 .
+kfc:Factor-Chemical-04 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Chemical ; skos:notation "4" ;
+    skos:prefLabel "자연발화"@ko ;
+    skos:definition "물질이 상온에서 저절로 발열하고 그 반응열이 축적되어 발화, 연소하는 현상"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.44" .
+kfc:Factor-Chemical skos:narrower kfc:Factor-Chemical-04 .
+kfc:Factor-Chemical-05 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Chemical ; skos:notation "5" ;
+    skos:prefLabel "혼촉발화"@ko ;
+    skos:definition "2가지 이상의 화학물질의 혼합에 의해 산화, 흡착, 분해, 중합 등을 통해 화학적 반응이 진행되어 열이 발생함에 따라 발화가 진행된 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.44" .
+kfc:Factor-Chemical skos:narrower kfc:Factor-Chemical-05 .
+kfc:Factor-Chemical-06 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Chemical ; skos:notation "6" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.45" .
+kfc:Factor-Chemical skos:narrower kfc:Factor-Chemical-06 .
+
+kfc:Factor-TrafficAccident a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "교통사고"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.45" .
+kfc:Factor skos:hasTopConcept kfc:Factor-TrafficAccident .
+kfc:Factor-TrafficAccident-01 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-TrafficAccident ; skos:notation "1" ;
+    skos:prefLabel "교통사고"@ko ;
+    skos:definition "차량의 충돌이나 전복 등의 교통사고가 원인이 되어 화재가 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.45" .
+kfc:Factor-TrafficAccident skos:narrower kfc:Factor-TrafficAccident-01 .
+
+kfc:Factor-Carelessness a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "부주의"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.45" .
+kfc:Factor skos:hasTopConcept kfc:Factor-Carelessness .
+kfc:Factor-Carelessness-01 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "1" ;
+    skos:prefLabel "담배꽁초"@ko ;
+    skos:definition "담배꽁초를 가연물이 있는 쓰레기통이나 장소에 버림으로써 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.46" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-01 .
+kfc:Factor-Carelessness-02 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "2" ;
+    skos:prefLabel "음식물 조리중"@ko ;
+    skos:definition "음식물 조리중의 부주의나 음식물 조리중 망각에 의해 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.46" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-02 .
+kfc:Factor-Carelessness-03 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "3" ;
+    skos:prefLabel "불장난"@ko ;
+    skos:definition "어린이나 정신지체자가 불을 가지고 놀거나 호기심에 의해 불을 붙이는 등의 장난을 하다가 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.46" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-03 .
+kfc:Factor-Carelessness-04 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "4" ;
+    skos:prefLabel "용접, 절단, 연마"@ko ;
+    skos:definition "용접, 절단, 연마 작업 중 발생한 불꽃·불티 등이 주변 가연물에 닿아 화재가 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.47" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-04 .
+kfc:Factor-Carelessness-05 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "5" ;
+    skos:prefLabel "불씨, 불꽃, 화원방치"@ko ;
+    skos:definition "화기나 발화열원을 방치한 것이 화재발생의 원인이 되는 경우 (쓰레기 소각은 제외)"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.47" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-05 .
+kfc:Factor-Carelessness-06 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "6" ;
+    skos:prefLabel "쓰레기 소각"@ko ;
+    skos:definition "쓰레기 소각중의 불꽃이나 불티가 원인이 되어 화재가 발생하는 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.47" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-06 .
+kfc:Factor-Carelessness-07 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "7" ;
+    skos:prefLabel "빨래삶기"@ko ;
+    skos:definition "빨래, 걸레 등을 삶던 중 수분의 증발 및 내용물이 탄화되어 화재가 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.48" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-07 .
+kfc:Factor-Carelessness-08 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "8" ;
+    skos:prefLabel "가연물 근접방치"@ko ;
+    skos:definition "가연물을 화기나 열원 등에 너무 근접하게 놓은 것이 화재발생 원인인 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.48" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-08 .
+kfc:Factor-Carelessness-09 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "9" ;
+    skos:prefLabel "논, 임야 태우기"@ko ;
+    skos:definition "경작을 목적으로 논이나 임야를 태우던 중 이를 적절히 제어하지 못해 화재로 확대된 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.48" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-09 .
+kfc:Factor-Carelessness-10 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "10" ;
+    skos:prefLabel "유류취급 중"@ko ;
+    skos:definition "유류를 취급하던 중 흘리거나 엎지른 것이 원인이 되어 화재가 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.49" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-10 .
+kfc:Factor-Carelessness-11 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "11" ;
+    skos:prefLabel "폭죽놀이"@ko ;
+    skos:definition "폭죽놀이를 하던 중 불티가 가연물에 착화되어 화재가 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.49" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-11 .
+kfc:Factor-Carelessness-12 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "12" ;
+    skos:prefLabel "기기(전기, 기계 등) 사용·설치부주의"@ko ;
+    skos:definition "사용자가 기기사용 및 설치부주의로 주변가연물에 착화되어 화재가 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.50" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-12 .
+kfc:Factor-Carelessness-13 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Carelessness ; skos:notation "13" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.50" .
+kfc:Factor-Carelessness skos:narrower kfc:Factor-Carelessness-13 .
+
+kfc:Factor-Natural a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "자연적 요인"@ko ;
+    skos:definition "화재가 지진, 태풍, 홍수 등의 자연재해의 영향이나 햇볕에 의해 발생한 경우"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.50" .
+kfc:Factor skos:hasTopConcept kfc:Factor-Natural .
+kfc:Factor-Natural-01 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Natural ; skos:notation "1" ;
+    skos:prefLabel "자연적 재해"@ko ;
+    skos:definition "태풍, 홍수, 호우, 폭풍, 해일, 폭설, 가뭄, 지진 및 기타 이에 준하는 자연현상으로 인하여 발생하는 화재"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.50" .
+kfc:Factor-Natural skos:narrower kfc:Factor-Natural-01 .
+kfc:Factor-Natural-02 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Natural ; skos:notation "2" ;
+    skos:prefLabel "돋보기 효과"@ko ;
+    skos:definition "투명용기, 물이 담긴 페트병, 유리병 등과 같이 렌즈역할을 할 수 있는 물질이 태양광선에 굴절·반사 및 수렴에 의한 열에너지가 발생하여 발화"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.51" .
+kfc:Factor-Natural skos:narrower kfc:Factor-Natural-02 .
+kfc:Factor-Natural-03 a skos:Concept ; skos:inScheme kfc:Factor ; skos:broader kfc:Factor-Natural ; skos:notation "3" ;
+    skos:prefLabel "기타"@ko ;
+    dcterms:source "소방청 『국가화재분류체계 매뉴얼』(2019. 12.) p.51" .
+kfc:Factor-Natural skos:narrower kfc:Factor-Natural-03 .
+
+kfc:Factor-Arson a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "방화"@ko ;
+    skos:definition "별지 4 의 발화요인 대분류. 매뉴얼 제2장 2.2 는 방화를 제외하고 설명한다(p.33)"@ko ;
+    dcterms:source "「화재조사 및 보고규정」(소방청훈령 제449호) 별지 4 화재현황조사서" .
+kfc:Factor skos:hasTopConcept kfc:Factor-Arson .
+
+kfc:Factor-Other a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "기타"@ko ;
+    skos:definition "별지 4 의 발화요인 대분류"@ko ;
+    dcterms:source "「화재조사 및 보고규정」(소방청훈령 제449호) 별지 4 화재현황조사서" .
+kfc:Factor skos:hasTopConcept kfc:Factor-Other .
+
+kfc:Factor-Unknown a skos:Concept ; skos:inScheme kfc:Factor ; skos:topConceptOf kfc:Factor ;
+    skos:prefLabel "미상"@ko ;
+    skos:definition "별지 4 의 발화요인 대분류. 매뉴얼 제2장 2.2 는 미상을 제외하고 설명한다(p.33)"@ko ;
+    dcterms:source "「화재조사 및 보고규정」(소방청훈령 제449호) 별지 4 화재현황조사서" .
+kfc:Factor skos:hasTopConcept kfc:Factor-Unknown .

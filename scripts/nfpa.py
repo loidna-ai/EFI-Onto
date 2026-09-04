@@ -210,7 +210,7 @@ SUBSECTIONS = [
     ("19.6.5.1", "모두 기각되거나 둘 이상 남으면 원인미상",    DONE, "D-7, D-8 UndeterminedByTieRuleShape(최고점 동점), D-16 지지 없는 가설뿐이면 원인미상. D-14 는 그 안에서 단락흔+통전이면 국내 분류 미확인 단락"),
     ("19.6.5.2", "발화원과 착화물을 짚은 것은 원인이 아니다",   DONE, "C-30 CauseNotJustSourceShape"),
     ("19.8.1",   "통계 목적 사건 분류 — 외부 체계 참조",      DONE, "C-10 ClassificationSystemShape, ClassificationSystem 6종"),
-    ("19.8.2",   "보고서용 원인 분류 — 판정 이후에 온다",     DONE, "C-9 순서, C-11 분리. 채택 체계는 국내 보고규정 세부분류(KoreaFireReportClassification) 하나 — 전기 가설 여덟이 항목에 대응하고 D-20 이 결론 뒤에 분류 개체를 만든다(sh:order 7). 미확인 단락은 D-14 세션 표지. NFPA 921 자체에는 범주 목록이 없다(T20)"),
+    ("19.8.2",   "보고서용 원인 분류 — 판정 이후에 온다",     DONE, "C-9 순서, C-11 분리. 채택 체계는 국가화재분류체계(KoreaFireReportClassification, 발화요인 축 kfc:Factor SKOS) 하나 — 전기 가설 여덟이 소분류에 대응하고 D-20 이 결론 뒤에 분류 개체를 만든다(sh:order 7). 미확인 단락은 D-14 세션 표지. NFPA 921 자체에는 범주 목록이 없다(T20)"),
 ]
 
 # 방법론 층에만 붙인다. 단서 규칙(Table 2)은 국내 실무 출처이므로 제외.

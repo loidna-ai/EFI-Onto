@@ -36,6 +36,7 @@ make clean
 ```
 ontology/efi_tbox.ttl        추론 어휘 — 4축·가설·사슬·지표·판정 도형 (규모는 make status)
 ontology/efi_investigation.ttl 조사 기록 층 (T01~T16). 기록의 완비만 본다. 점수·사슬·형성에 닿지 않는다
+ontology/efi_classification.ttl 참조 분류 층 — 국가화재분류체계(2019)를 SKOS 로. 접두어 kfc:. 도형 없음, 판정에 닿지 않는다
 src/efi_schema.py            Pydantic 파이프라인. 점수 산출과 질의 선택
 src/investigation.py         계통·시간·연료·비교·검토의 출처 있는 입력과 RDF 직렬화. 결론 제약은 TTL에 둔다
 scripts/investigate.py        조사 JSON → SHACL 검증·경로/시간/비교/검토 질문
@@ -124,9 +125,13 @@ TTL 의 절은 주제로 묶여 있고 앵커는 `# [7.3]` 꼴이다. 번호는 
 - **`scoreDelta` 를 TTL 에서 직접 고치지 않는다.** `python scripts/score.py --write` 로 다시 만든다.
   손으로 고치면 `test_score_deltas_are_derived` 가 잡는다.
 - TTL 을 고치면 `make test` 를 돌린다. M-3 불일치가 0이 아니면 커밋하지 않는다.
-- **온톨로지는 파일이 둘이고 그래프는 하나다.** 파일 목록의 단일 진실 원천은
+- **온톨로지는 파일이 셋이고 그래프는 하나다.** 파일 목록의 단일 진실 원천은
   `efi_schema.ontology_files()` 다. `Graph().parse("efi_tbox.ttl")` 를 새로 적지 않는다 —
   기록 층이 통째로 빠진 채 시험이 전부 통과한다. `load_graph()` · `ontology_text()` 를 쓴다.
+- **참조 분류 층(efi_classification.ttl)은 공식 분류표를 SKOS 로 옮긴 것이다.** 접두어 `kfc:` 는 우리 어휘가 아니라
+  소방청 국가화재분류체계의 이름이다. 우리 개념과의 짝은 `efi_tbox.ttl` 에서 강도를 나눠 적는다 — `reportedAs` 는
+  '정확히 같다'일 때만, 애매하면 `skos:relatedMatch`·`skos:broadMatch`. 짝을 상하 관계나 동치로 적지 않고, 원문이 주지
+  않는 짝을 규칙으로 정하지 않는다. `test_classification_layer_is_reference_only` 가 도형·efi 선언이 없는지 잡는다.
 - **기록 층은 판정에 닿지 않는다.** 기록의 완비는 원인 판정이 아니다. 점수·사슬·형성·결론에
   닿아야 하는 도형은 `efi_tbox.ttl` 에 둔다. `test_investigation_layer_never_touches_scoring` 이 잡는다.
 - **TTL 을 옮기거나 나누면 `make iso` 가 동형이어야 한다.** 재편은 의미를 바꾸지 않는다.

@@ -37,7 +37,8 @@ def _subs(g, name):
 
 
 def _named(g, t):
-    return {ln(s) for s in g.subjects(RDF.type, t) if isinstance(s, URIRef)}
+    """우리 어휘(efi:)만. SKOS·dcterms 의 OWL 선언(efi_classification.ttl)은 참조 층의 것이라 사슬에 붙지 않는 게 정상이다."""
+    return {ln(s) for s in g.subjects(RDF.type, t) if isinstance(s, URIRef) and str(s).startswith(str(E))}
 
 
 def _abstract(g, name):

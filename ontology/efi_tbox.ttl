@@ -13,6 +13,7 @@
 #  판정은 안 바뀐다(재편 0단계에서 증명). 옮겼으면 make iso 로 동형을 확인한다.
 # ==========================================================================
 @prefix efi:     <https://w3id.org/efi-onto#> .
+@prefix kfc:     <https://w3id.org/efi-onto/kfc#> .
 @prefix obo:     <http://purl.obolibrary.org/obo/> .
 @prefix sosa:    <http://www.w3.org/ns/sosa/> .
 @prefix ssn:     <http://www.w3.org/ns/ssn/> .
@@ -40,7 +41,9 @@
                [ sh:prefix "rdf"  ; sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ] ,
                [ sh:prefix "rdfs" ; sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ] ,
                [ sh:prefix "time" ; sh:namespace "http://www.w3.org/2006/time#"^^xsd:anyURI ] ,
-               [ sh:prefix "skos" ; sh:namespace "http://www.w3.org/2004/02/skos/core#"^^xsd:anyURI ] .
+               [ sh:prefix "skos" ; sh:namespace "http://www.w3.org/2004/02/skos/core#"^^xsd:anyURI ] ,
+               [ sh:prefix "kfc"  ; sh:namespace "https://w3id.org/efi-onto/kfc#"^^xsd:anyURI ] ,
+               [ sh:prefix "dcterms" ; sh:namespace "http://purl.org/dc/terms/"^^xsd:anyURI ] .
 
 # '착화 역량'은 F-3·C-31 이 발열원에 쓰는 말(competence)이다. 연료의 성향과 섞지 않는다
 # ==========================================================================
@@ -3794,8 +3797,8 @@ efi:RcdHealthyNoTrip a owl:Class ; rdfs:subClassOf efi:SceneEvidence ;
 #  단락흔이 없으면 그냥 원인미상이다. 통전이 확인되지 않았으면 전기적 요인이라 분류할 수 없다 —
 #  C-57 이 전기적 결론에 요구하는 것과 같은 기준이다. '비통전 확인 없음'은 모르는 것이지 통전이 아니다(P4).
 efi:KoreaFireReportClassification a owl:NamedIndividual , efi:ClassificationSystem ;
-    rdfs:label "화재조사 및 보고규정 발화요인 세부분류"@ko ; skos:prefLabel "화재조사 및 보고규정 발화요인 세부분류"@ko ;
-    rdfs:comment "전기적 요인 세부: 누전·지락, 접촉불량에 의한 단락, 절연열화에 의한 단락, 과부하·과전류, 압착·손상에 의한 단락, 층간단락, 반단선, 미확인 단락, 트래킹에 의한 단락, 기타. 이 온톨로지가 보고용 원인 분류로 채택한 유일한 체계다 — 항목 개체와 가설 대응은 48.6 절(T20). 판본은 실무Ⅱ(2025) p.11 각주가 인용하는 소방청 훈령 제149호(2020. 4. 13. 시행). 현행 여부와 별표의 항목 표기는 미확인"@ko .
+    rdfs:label "국가화재분류체계"@ko ; skos:prefLabel "국가화재분류체계"@ko ;
+    rdfs:comment "소방청 국가화재분류체계 매뉴얼(2019)이 정의하는 보고·통계용 분류 체계. 발화요인·발화열원·최초착화물 등 축마다 SKOS 개념 체계 하나가 efi_classification.ttl 에 있고 dcterms:isPartOf 로 여기에 속한다. 이 온톨로지가 보고용 원인 분류로 채택한 유일한 체계다 — 가설 대응은 48.6 절(T20). 현행 「화재조사 및 보고규정」은 소방청훈령 제449호(2025. 12. 4.)이며 별지 4 는 대분류만 두고 소분류는 NFDS 코드로 채운다 — 소분류의 원문이 매뉴얼이다"@ko .
 
 # [D-19] 원인미상 + 단락흔 + 통전 + 기기 내 도전물 혼입 확인 → 국내 분류 '이물 혼입' (표 2-1)
 #  미확인 단락(D-14)과 같은 층이다 — 가설이 아니라 판단보류 안의 국내 분류 이름. D-14 의 출력에
@@ -3830,79 +3833,41 @@ efi:UnidentifiedShortCircuitDerivationRuleShape a sh:NodeShape ; sh:order 6 ; sh
           ?e rdf:type/rdfs:subClassOf* efi:EnergizedState ; efi:confirmationStatus efi:Confirmed .
         }""" ] .
 
-# ── 48.6 보고용 원인 분류 — 채택 체계·판본·대응 (T20)
+# ── 48.6 보고용 원인 분류 — 채택 체계와 대응 (T20)
 #  §19.8.2 는 분류 목록을 주지 않고 외부 체계로 넘긴다. 이 온톨로지가 보고용 원인 분류로 채택하는
-#  체계는 하나다 — 국가화재분류체계의 발화요인 소분류 '전기적 요인' 열 항목(코드 1~10).
+#  체계는 하나다 — 국가화재분류체계(efi:KoreaFireReportClassification). 그 축마다의 분류표는
+#  efi_classification.ttl 의 SKOS 개념 체계(kfc:Factor 발화요인 …)다. 여기에는 우리 개념과의 짝만 적는다.
 #  NFIRS·NFPA 901 등 여섯 체계(§19.8.1)는 참조 개체로만 두고 코드 목록을 이식하지 않는다 —
 #  NFPA 921 자체에 통합 목록이 없으므로 '미확보'가 아니라 '없음'이다.
 #
-#  판본: 소방청 『국가화재분류체계 매뉴얼』(2019. 12.) 제1편 제2장 2.2 발화요인, 인쇄 p.33 분류체계도·p.37 [Code] 블록.
-#  항목 이름·번호·정의는 거기서 그대로 옮겼다. 현행 「화재조사 및 보고규정」은 소방청훈령 제449호(2025. 12. 4. 시행)인데
-#  그 별지 4 는 발화요인 대분류 11개만 두고 소분류는 국가화재정보시스템(NFDS) 코드로 채운다 — 소분류의 원문은 매뉴얼이다.
-#  2019년판 매뉴얼과 2025년 훈령 사이의 소분류 변경 여부는 미확인(자료_목록 5-7·5-8). 매뉴얼 제2편 예시에는
-#  코드 오식이 있어 근거는 제1편만 든다(docs/국가화재분류체계_대조.md).
-#  대응: 전기 가설 여덟은 각각 한 항목에 닿는다. 외부화염은 전기적 요인이 아니라 이 목록 밖이다.
-#  판단보류의 '미확인 단락'은 결론이 없으므로 분류 개체를 만들지 않고 세션 표지(D-14)로 남긴다.
-#  '이물 혼입'(D-19)은 실무Ⅳ 표 2-1 의 갈래이지 이 열 항목에 없다 — 매뉴얼 전문에 낱말이 0회. 흡수처(10 기타)는 추정이라 코드를 달지 않는다.
-efi:ReportCauseCategory a owl:Class ; rdfs:subClassOf obo:IAO_0000030 ;
-    rdfs:label "보고용 원인 분류 항목"@ko ; skos:prefLabel "보고용 원인 분류 항목"@ko ;
-    rdfs:comment "외부 분류 체계가 정의한 항목 하나. categoryLabel 이 체계의 원문 라벨이고 D-20 이 그것을 분류 범주로 옮겨 적는다 (§19.8.1)"@ko .
-efi:categoryLabel a owl:DatatypeProperty ;
-    rdfs:domain efi:ReportCauseCategory ; rdfs:range xsd:string ;
-    rdfs:label "체계의 원문 라벨"@ko ; skos:prefLabel "체계의 원문 라벨"@ko ;
-    rdfs:comment "분류 체계가 쓰는 낱말 그대로. prefLabel 은 가설 라벨과 갈라 두려고 (보고 분류) 를 붙인다"@ko .
-efi:categoryCode a owl:DatatypeProperty ;
-    rdfs:domain efi:ReportCauseCategory ; rdfs:range xsd:integer ;
-    rdfs:label "체계의 코드 번호"@ko ; skos:prefLabel "체계의 코드 번호"@ko ;
-    rdfs:comment "국가화재분류체계 매뉴얼(2019) p.37 [Code] 블록의 번호. 제2편 예시의 번호는 오식이 있어 쓰지 않는다"@ko .
-efi:categoryOf a owl:ObjectProperty ;
-    rdfs:domain efi:ReportCauseCategory ; rdfs:range efi:ClassificationSystem ;
-    rdfs:label "속한 분류 체계"@ko ; skos:prefLabel "속한 분류 체계"@ko .
+#  짝의 강도: reportedAs 는 '정확히 같다'만 쓴다 — 전기 가설 여덟 ↔ 발화요인 소분류 코드 1~8.
+#  외부화염은 전기적 요인이 아니다 — 매뉴얼은 정전기·낙뢰·사용 부주의를 각각 발화열원 축·자연적 요인·부주의로
+#  보낸다(p.33). 외부 화염의 발화요인은 그 화염을 낸 것의 요인이므로 짝이 없다.
+#  판단보류의 '미확인 단락'(kfc:Factor-Electrical-09)은 결론이 없으므로 분류 개체를 만들지 않고 세션 표지(D-14)로 남긴다.
+#  '이물 혼입'(D-19)은 실무Ⅳ 표 2-1 의 갈래이지 소분류에 없다 — 매뉴얼 전문에 낱말이 0회. 흡수처(10 기타)는 추정이라 짝을 적지 않는다.
 efi:reportedAs a owl:ObjectProperty ;
-    rdfs:range efi:ReportCauseCategory ;
+    rdfs:range skos:Concept ;
     rdfs:label "보고 시 분류 항목"@ko ; skos:prefLabel "보고 시 분류 항목"@ko ;
-    rdfs:comment "가설 클래스가 결론이 됐을 때 붙는 보고용 항목. 판정에 닿지 않는다 — 분류는 판정 뒤다 (§19.8.2)"@ko .
+    rdfs:comment "가설 클래스가 결론이 됐을 때 붙는 보고용 소분류 — '정확히 같다'일 때만 적는다. 판정에 닿지 않는다 (§19.8.2)"@ko .
 efi:hasReportCategory a owl:ObjectProperty ;
-    rdfs:domain efi:FireCauseClassification ; rdfs:range efi:ReportCauseCategory ;
+    rdfs:domain efi:FireCauseClassification ; rdfs:range skos:Concept ;
     rdfs:label "분류 항목"@ko ; skos:prefLabel "분류 항목"@ko .
 
-efi:KFR_GroundFault a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 1 ; skos:prefLabel "누전·지락 (보고 분류)"@ko ; efi:categoryLabel "누전·지락" ;
-    rdfs:comment "매뉴얼 p.34: 전류가 비정상적으로 흘러 누전경로를 형성하여, 취약한 곳을 발열시키는 화재"@ko .
-efi:KFR_PoorContactShort a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 2 ; skos:prefLabel "접촉불량에 의한 단락 (보고 분류)"@ko ; efi:categoryLabel "접촉불량에 의한 단락" ;
-    rdfs:comment "매뉴얼 p.34: 전선과 전선, 전선과 접속단자의 전기적인 접촉상태가 불완전할 때 접속부의 저항 및 온도가 증가하여 화재가 발생하는 경우"@ko .
-efi:KFR_InsulationDegradationShort a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 3 ; skos:prefLabel "절연열화에 의한 단락 (보고 분류)"@ko ; efi:categoryLabel "절연열화에 의한 단락" ;
-    rdfs:comment "매뉴얼 p.35: 절연재료의 절연성능 저하 및 탄화진행으로 단락이 생겨 발생된 화재"@ko .
-efi:KFR_Overcurrent a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 4 ; skos:prefLabel "과부하·과전류 (보고 분류)"@ko ; efi:categoryLabel "과부하·과전류" ;
-    rdfs:comment "매뉴얼 p.35: 정격용량을 초과하는 부하설비를 사용하거나, 정격전류를 초과하는 전류가 흐르는 현상"@ko .
-efi:KFR_CrushDamageShort a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 5 ; skos:prefLabel "압착·손상에 의한 단락 (보고 분류)"@ko ; efi:categoryLabel "압착·손상에 의한 단락" ;
-    rdfs:comment "매뉴얼 p.36: 전선, 회로, 단자, 접속부의 과도한 압착이나 손상에 의하여 단락이 발생된 화재"@ko .
-efi:KFR_InterTurnShort a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 6 ; skos:prefLabel "층간단락 (보고 분류)"@ko ; efi:categoryLabel "층간단락" ;
-    rdfs:comment "매뉴얼 p.36: 변압기, 전동기 코일 및 콘덴서 권선층간에서 절연이 파괴되어 단락되는 현상"@ko .
-efi:KFR_PartialDisconnection a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 8 ; skos:prefLabel "반단선 (보고 분류)"@ko ; efi:categoryLabel "반단선" ;
-    rdfs:comment "매뉴얼 p.37: 전선이 절연피복내에서 단선되어 그 부분에서 단선과 이어짐을 되풀이하는 상태로 저항값이 집중적으로 높아져 발열하다가 화재가 발생하는 경우"@ko .
-efi:KFR_UnidentifiedShort a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 9 ; skos:prefLabel "미확인 단락 (보고 분류)"@ko ; efi:categoryLabel "미확인 단락" ;
-    rdfs:comment "매뉴얼 p.37: 전기적인 단락인 것은 확인이 되었으나 어떠한 원인에 의해 단락이 형성되었는지 알 수 없는 경우"@ko ;
-    rdfs:comment "결론이 아니라 판단보류의 이름. D-14 의 세션 표지 outcomeUnidentifiedShortCircuit 가 이 항목이다"@ko .
-efi:KFR_TrackingShort a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 7 ; skos:prefLabel "트래킹에 의한 단락 (보고 분류)"@ko ; efi:categoryLabel "트래킹에 의한 단락" ;
-    rdfs:comment "매뉴얼 p.36: 전기제품 등의 절연체에 먼지나 습기 등의 영향으로 양극사이에서 불티방전이 일어나 절연체 표면에서 도전통로(Track)가 형성되어 발열, 단락되는 경우"@ko .
-efi:KFR_Other a owl:NamedIndividual , efi:ReportCauseCategory ; efi:categoryOf efi:KoreaFireReportClassification ; efi:categoryCode 10 ; skos:prefLabel "기타 (보고 분류)"@ko ; efi:categoryLabel "기타" ;
-    rdfs:comment "어떤 가설도 여기로 보내지 않는다. 열거된 항목에 들지 않는 전기적 요인을 조사관이 적는 자리다"@ko .
-
-efi:PoorContactScenario efi:reportedAs efi:KFR_PoorContactShort .
-efi:CrushDamageScenario efi:reportedAs efi:KFR_CrushDamageShort .
-efi:PartialDisconnectionScenario efi:reportedAs efi:KFR_PartialDisconnection .
-efi:InsulationDegradationScenario efi:reportedAs efi:KFR_InsulationDegradationShort .
-efi:TrackingScenario efi:reportedAs efi:KFR_TrackingShort .
-efi:OverloadScenario efi:reportedAs efi:KFR_Overcurrent .
-efi:GroundFaultScenario efi:reportedAs efi:KFR_GroundFault .
-efi:InterTurnShortScenario efi:reportedAs efi:KFR_InterTurnShort .
-# ExternalFlameScenario — 전기적 요인이 아니다. 매뉴얼은 정전기·낙뢰·사용 부주의를 각각 발화열원 축·자연적 요인·부주의로
-#  보낸다(p.33 분류체계도). 외부 화염의 발화요인은 그 화염을 낸 것의 요인이지 전기적 요인이 아니므로 이 목록에 대응이 없다.
+efi:GroundFaultScenario efi:reportedAs kfc:Factor-Electrical-01 .
+efi:PoorContactScenario efi:reportedAs kfc:Factor-Electrical-02 .
+efi:InsulationDegradationScenario efi:reportedAs kfc:Factor-Electrical-03 .
+efi:OverloadScenario efi:reportedAs kfc:Factor-Electrical-04 .
+efi:CrushDamageScenario efi:reportedAs kfc:Factor-Electrical-05 .
+efi:InterTurnShortScenario efi:reportedAs kfc:Factor-Electrical-06 .
+efi:TrackingScenario efi:reportedAs kfc:Factor-Electrical-07 .
+efi:PartialDisconnectionScenario efi:reportedAs kfc:Factor-Electrical-08 .
+efi:outcomeUnidentifiedShortCircuit rdfs:seeAlso kfc:Factor-Electrical-09 .
+# ExternalFlameScenario — 짝 없음 (위 머리말).
 
 # [D-20] 확정된 결론의 가설이 대응 항목을 가지면 보고용 원인 분류 개체를 만든다 (§19.8.2).
-#  판정 뒤에 돈다(sh:order 7). 만든 개체는 C-9(결론을 가리킴)·C-10(체계 명시)·C-62(항목이 그 체계의 것)가 읽는다.
+#  판정 뒤에 돈다(sh:order 7). 만든 개체는 C-9(결론을 가리킴)·C-10(체계 명시)·C-62(항목의 개념 체계가 그 체계에 속함)가 읽는다.
 #  결론이 없는 판단보류에는 만들지 않는다 — C-9 가 가리킬 결론이 없다.
-#  코드 번호는 hasReportCategory 가 가리키는 항목의 categoryCode 로 닿는다 — 두 번 적지 않는다.
+#  코드 번호는 hasReportCategory 가 가리키는 개념의 skos:notation 으로 닿는다 — 두 번 적지 않는다.
 efi:ReportClassificationDerivationRuleShape a sh:NodeShape ; sh:order 7 ; sh:targetClass efi:Conclusion ;
     dcterms:references "NFPA 921 (2024) §19.8.2 Fire Cause Classification for Reports" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 7 ;
@@ -3913,7 +3878,8 @@ efi:ReportClassificationDerivationRuleShape a sh:NodeShape ; sh:order 7 ; sh:tar
         }
         WHERE {
           $this efi:concludes ?h . ?h rdf:type ?cls . ?cls efi:reportedAs ?cat .
-          ?cat efi:categoryOf ?sys ; efi:categoryLabel ?label .
+          ?cat skos:inScheme ?scheme ; skos:prefLabel ?pl . ?scheme dcterms:isPartOf ?sys .
+          BIND ( STR(?pl) AS ?label )
           BIND ( IRI(CONCAT(STR($this), "_classification")) AS ?k )
         }""" ] .
 
@@ -3926,7 +3892,7 @@ efi:ReportCategoryBelongsToSystemShape a sh:NodeShape ; sh:targetClass efi:FireC
         sh:select """
         SELECT $this WHERE {
           $this efi:hasReportCategory ?cat ; efi:usesClassificationSystem ?sys .
-          FILTER NOT EXISTS { ?cat efi:categoryOf ?sys }
+          FILTER NOT EXISTS { ?cat skos:inScheme ?scheme . ?scheme dcterms:isPartOf ?sys }
         }""" ] .
 
 # [D-15] 필요조건이 확인된 가설만 형성된다 (§19.4.1). D-7·D-8(sh:order 5) 앞에 돈다.

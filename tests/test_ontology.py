@@ -1641,6 +1641,7 @@ def test_liquid_ingress_forms_tracking_but_metal_object_forms_nothing(onto):
 def test_every_electrical_scenario_reports_to_one_korean_category(g):
     """T20 — 전기 가설 여덟은 화재조사 및 보고규정 세부분류의 항목 하나에 대응한다. 외부화염은 전기적 요인이
     아니라 대응이 없다. 항목은 채택 체계(KoreaFireReportClassification)의 것이어야 한다."""
+    from rdflib.namespace import SKOS, DCTERMS
     sys.path.insert(0, str(ROOT / "scripts"))
     import score
     for sc in score._scenarios():
@@ -1649,7 +1650,8 @@ def test_every_electrical_scenario_reports_to_one_korean_category(g):
             assert not cats, "외부화염이 전기적 요인 항목에 대응됐다"
             continue
         assert len(cats) == 1, f"{sc}: 대응 항목 {len(cats)}개"
-        assert (cats[0], EFI.categoryOf, EFI.KoreaFireReportClassification) in g, f"{sc}: 채택 체계 밖의 항목"
+        scheme = g.value(cats[0], SKOS.inScheme)
+        assert (scheme, DCTERMS.isPartOf, EFI.KoreaFireReportClassification) in g, f"{sc}: 채택 체계 밖의 항목"
 
 
 def test_conclusion_derives_report_classification():
@@ -1682,16 +1684,44 @@ def test_report_category_must_belong_to_declared_system():
     efi:hN a efi:TrackingScenario ; efi:supportScore 75 .
     efi:cN a efi:Conclusion ; efi:concludes efi:hN .
     efi:kN a efi:FireCauseClassification ; efi:classifiesCause efi:cN ;
-           efi:usesClassificationSystem efi:NFIRS ; efi:hasReportCategory efi:KFR_TrackingShort ;
+           efi:usesClassificationSystem efi:NFIRS ; efi:hasReportCategory kfc:Factor-Electrical-07 ;
            efi:classificationCategory "트래킹에 의한 단락" .
     """)
 
 
 def test_report_categories_carry_manual_codes_one_to_ten(g):
     """T20 — 채택 체계의 열 항목은 국가화재분류체계 매뉴얼(2019) p.37 의 코드 1~10 을 하나씩, 중복 없이 갖는다."""
-    from rdflib import Literal
-    cats = list(g.subjects(EFI.categoryOf, EFI.KoreaFireReportClassification))
-    codes = sorted(int(g.value(c, EFI.categoryCode)) for c in cats)
+    from rdflib import Namespace
+    from rdflib.namespace import SKOS
+    KFC = Namespace("https://w3id.org/efi-onto/kfc#")
+    cats = list(g.subjects(SKOS.broader, KFC["Factor-Electrical"]))
+    codes = sorted(int(g.value(c, SKOS.notation)) for c in cats)
     assert codes == list(range(1, 11)), codes
-    assert int(g.value(EFI.KFR_PoorContactShort, EFI.categoryCode)) == 2, "접촉불량은 2 다 — 제2편 예시의 5 는 오식"
-    assert int(g.value(EFI.KFR_UnidentifiedShort, EFI.categoryCode)) == 9
+    assert str(g.value(KFC["Factor-Electrical-02"], SKOS.prefLabel)) == "접촉불량에 의한 단락", "접촉불량은 2 다 — 제2편 예시의 5 는 오식"
+    assert str(g.value(KFC["Factor-Electrical-09"], SKOS.prefLabel)) == "미확인 단락"
+
+
+def test_classification_layer_is_reference_only():
+    """efi_classification.ttl 은 공식 분류표(SKOS)만 담는다 — 도형·규칙·efi: 어휘 선언이 없어야 한다.
+    판정 어휘와 섞이면 보고 분류가 판정에 스며든다. 발화요인은 대분류 11·소분류 43 이다(매뉴얼 p.33~51 + 별지 4)."""
+    from rdflib import Namespace
+    from rdflib.namespace import SKOS
+    g = Graph().parse(ROOT / "ontology" / "efi_classification.ttl", format="turtle")
+    KFC = Namespace("https://w3id.org/efi-onto/kfc#")
+    SH = Namespace("http://www.w3.org/ns/shacl#")
+    assert not list(g.subjects(RDF.type, SH.NodeShape)), "분류 층에 도형이 있다"
+    assert not [s for s in g.subjects(RDF.type, None) if str(s).startswith(str(EFI))], "분류 층이 efi: 어휘를 선언한다"
+    tops = list(g.subjects(SKOS.topConceptOf, KFC.Factor))
+    leaves = [s for s in g.subjects(SKOS.inScheme, KFC.Factor) if (s, SKOS.broader, None) in g]
+    assert len(tops) == 11 and len(leaves) == 43, (len(tops), len(leaves))
+    for s in g.subjects(SKOS.inScheme, KFC.Factor):
+        assert (s, SKOS.prefLabel, None) in g and (s, DCTERMS_source(), None) in g, s
+    # 같은 대분류 안에서 코드는 하나씩
+    for top in tops:
+        codes = [str(g.value(c, SKOS.notation)) for c in g.subjects(SKOS.broader, top)]
+        assert len(codes) == len(set(codes)), top
+
+
+def DCTERMS_source():
+    from rdflib.namespace import DCTERMS
+    return DCTERMS.source
