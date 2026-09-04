@@ -1244,3 +1244,22 @@ def test_one_korean_pref_label_per_resource(g):
         if len(pref) > 1 or (lab and lab != pref):
             bad.append((q(s), sorted(pref), sorted(lab)))
     assert not bad, f"한글 이름이 갈린 자원: {bad[:10]}"
+
+
+def test_no_redundant_named_superclass(g):
+    """명명 부모 둘 중 하나가 다른 하나에 포섭되면 넓은 쪽은 군더더기다.
+
+    정의 줄에 넓은 부모를 적어 두고 나중에 좁은 부모를 한 줄 덧붙이는 식으로
+    22개가 생겼다. 상위 정렬(BFO·SOSA·PROV)처럼 서로 포섭하지 않는 다중 부모는 둔다.
+    """
+    from rdflib import OWL
+    bad = []
+    for c in g.subjects(RDF.type, OWL.Class):
+        if not isinstance(c, type(EFI.x)) or not str(c).startswith(str(EFI)):
+            continue
+        ps = [p for p in g.objects(c, RDFS.subClassOf) if isinstance(p, type(c))]
+        for p in ps:
+            for r in ps:
+                if p != r and p in set(g.transitive_objects(r, RDFS.subClassOf)):
+                    bad.append((q(c), q(p), q(r)))
+    assert not bad, f"군더더기 부모: {sorted(set(bad))[:10]}"
