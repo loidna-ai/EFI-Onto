@@ -537,17 +537,24 @@ class Session(BaseModel):
                 cur = formation.get(ask)
                 formation[ask] = (h.scenario, (cur[1] if cur else 0) + 1)   # 여러 가설을 세우는 조건이 앞
         out: list[tuple[str, Scenario, int, int]] = [(k, s, n * 100, 1) for k, (s, n) in formation.items()]
+        # 변별은 규칙이 아니라 **지표** 단위다. 같은 지표를 두 후보의 규칙이 다 가리키면(스테이플 →
+        # 접촉불량 sup7·트래킹 sup10) 그 지표는 둘을 가르지 못한다. 규칙마다 따로 보면 '한쪽만 가리킨다'로
+        # 잘못 세어 헛질문이 된다 — CQ3 의 정의는 '한쪽만 예측·반증하는 항목'이다(설계계획서 1.3).
+        touched: dict[str, dict[Scenario, int]] = {}
         for r in o.rules:
             if r.scenario == ELECTRICAL_SUPER or self._slot_status(r.indicator, o) is not Status.MISSING:
                 continue
-            hit = [h for h in cands if r.targets(h.scenario)]
-            if not hit or len(hit) == len(cands):                 # 전부 또는 아무도 가리키지 않으면 못 가른다
+            for h in cands:
+                if r.targets(h.scenario):
+                    d = touched.setdefault(r.indicator, {})
+                    d[h.scenario] = max(d.get(h.scenario, 0), abs(r.delta))
+        for ind, by in touched.items():
+            if len(by) == len(cands):                             # 전부 가리키면 못 가른다
                 continue
-            w = abs(r.delta)
-            if o.is_damage(r.indicator):                          # 형태학적 지표는 변별력으로 감쇠
-                w = int(round(w / max(1, o.shared_by.get(r.indicator, 1))))
-            target = hit[0].scenario
-            out.append((r.indicator, target, w, 0))
+            target, w = max(by.items(), key=lambda kv: kv[1])
+            if o.is_damage(ind):                                  # 형태학적 지표는 변별력으로 감쇠
+                w = int(round(w / max(1, o.shared_by.get(ind, 1))))
+            out.append((ind, target, w, 0))
         out.sort(key=lambda x: (x[3], x[2]), reverse=True)
         seen: set[str] = set()
         return [(i, s, w) for i, s, w, _ in out if not (i in seen or seen.add(i))]

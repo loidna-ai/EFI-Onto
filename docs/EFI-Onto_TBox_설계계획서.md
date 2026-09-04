@@ -790,6 +790,26 @@ s = Session(case_id="A", query_count=2,
 | 트래킹 | CarbonizedConductivePath | LeakageCurrentHeating(표면 미세 전류), 흑연화 | ContaminatedEnvironment | CarbonizedConductivePath, IntermittentRcdTripping | NormalInsulationResistance |
 | 외부화염 | Sagging, GeneralMelting | ThermalGradientFlow, 아크 흔적 부재 | NoArcOrSpatter | GeneralMelting, Sagging | MultipleArcBeadsAtOrigin |
 
+## 부록 A′. 부록 A 와 현재 TBox 의 차이 (2026-09-04 대조)
+
+부록 A 는 v0.1 설계 시점의 대응이다. 원문 대조와 사례 검증을 거치며 여섯 곳이 달라졌고, 전부 이유가 있다.
+부록 A 는 고치지 않고 여기 차이만 적는다 — 설계가 어디서 출발했는지가 남아야 한다.
+현재 상태의 단일 진실 원천은 TTL 의 `IndicatorRule` 인스턴스이며, `scripts/status.py` 와 `make review` 가 그것을 낸다.
+
+| 부록 A | 현재 | 왜 |
+|---|---|---|
+| 압착손상 핵심 = `ImmediateTripAfterExternalForce` | 보강. 핵심은 필요조건 `MechanicalDamageAntecedent` | 핵심 단서란 '없으면 성립하지 않는 것'(D-15)이다. 외력 직후 트립은 정황이지 필요조건이 아니다 |
+| 압착손상 반증 = `NoTripDespiteExternalForce` | 삭제 | 차단기는 어떤 단락에서도 동작하고 미트립은 압착의 반증이 못 된다(실무Ⅳ 3.3.6/나4, Babrauskas 14.12/a). 미완료 목록 C02 |
+| 반단선 핵심 = `StrandFractureAtStressPoint` | 보강. 핵심은 필요조건 `LongTermRepeatedStress`(굴곡·진동·인장의 상위) | 응력 부위 파단은 조사서가 150건에서 0건 적는 합성 개념이었다. 실무Ⅳ p.149 의 정의(소선 10% 이상 단선)는 별도 규칙(R_PD_sup9) |
+| 반단선 보강 = `LongTermRepeatedStress` | 핵심(확인) + 반증(부재 확인) | 필요조건이므로 핵심이고, 부재가 확인되면 가설이 서지 않는다(38절 반증 경로) |
+| 절연열화 핵심 = `ReducedInsulationResistance` | 보강. 핵심은 `InsulationDeterioration`(노후·열적 열화의 상위) | 절연저항은 D-9 가 계측에서 관계 비교로 도출하는 사실이고, 조사서가 거의 안 적는다. 필요조건은 절연 열화 자체다 |
+| 트래킹 반증 = `NormalInsulationResistance` | 삭제. 기록만 남는다 | 건조한 탄화 경로는 고저항으로 읽힌다(Babrauskas p.753). 절연저항 정상은 트래킹의 반증이 아니다 |
+
+`CrossSection` 은 데이터 속성 `conductorCrossSection_mm2` 로 있다. 접촉불량 핵심 `LooseConnection` 과 절연열화
+핵심 `AgedInsulation` 은 상위(`ConnectionCondition`·`InsulationDeterioration`) 수준의 규칙이 포섭으로 덮는다.
+공통 규칙으로 옮긴 것(`AbnormalTemperatureOrVoltageDrop`, 47절 '발열 징후는 특정 요인의 것이 아니다')은
+가설별 표에서 빠진다.
+
 ## 부록 B. 참고 표준
 
 | 표준 | 용도 |

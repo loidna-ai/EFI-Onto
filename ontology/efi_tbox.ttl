@@ -2648,6 +2648,7 @@ efi:ArcMeltAloneShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
         }""" ] .
 
 # [D-4] 전위가 다른 쪽에 대응 손상이 둘 이상 확인되면 진성 아크 지점일 확률이 오른다.
+#  결과는 C-61 이 읽는다 — 결론이 발화지점 근거로 든 단락흔의 지점에 이것이 없으면 권고(위반 아님).
 efi:CorrespondingDamageRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:ArcMapPoint ;
     dcterms:references "NFPA 921 (2024) §9.13.4.2 Documenting the Damage" ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
@@ -3693,6 +3694,22 @@ efi:SealedDeviceExitPathShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
                efi:enclosureExitBasis ?b .
             FILTER ( STRLEN(REPLACE(STR(?b), " ", "")) > 0 )
           }
+        }""" ] .
+
+# [C-61] 발화지점 근거로 든 단락흔의 지점에 대응 손상 확인이 없으면 권고한다 (§9.13.4.2).
+#  §9.13.4.2 는 전위가 다른 쪽에 대응 손상이 둘 이상이면 진성 아크 지점일 '확률이 오른다'고
+#  적는다. 확률 서술이라 문턱으로 쓰면 원문보다 세게 말하는 것이다 — 그래서 위반이 아니라 권고다.
+#  D-4 가 세우는 trueArcSiteLikely 를 여기서 읽는다. 전에는 아무 규칙도 읽지 않았다.
+#  기계적 홈·눌림(§9.10.5)이나 화재 용융과 구별한 근거를 적으라는 뜻이지, 없으면 틀렸다는 뜻이 아니다.
+efi:ArcSiteCorroborationShape a sh:NodeShape ; sh:targetClass efi:Conclusion ;
+    sh:severity sh:Warning ;   # 권고 — 원문이 확률로 쓴 요건
+    dcterms:references "NFPA 921 (2024) §9.13.4.2 Documenting the Damage, §9.10.5 기계적 홈과 아크흔의 구별" ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:prefixes <https://w3id.org/efi-onto> ;
+        sh:message "발화지점 근거로 든 단락흔의 지점에 전위가 다른 쪽의 대응 손상이 둘 이상 확인되지 않았다. 진성 아크 지점일 확률을 뒷받침하는 근거(대응 손상, 또는 기계적 홈·화재 용융과 구별한 관찰)를 적을 것 (§9.13.4.2·§9.10.5)"@ko ;
+        sh:select """
+        SELECT $this WHERE {
+          $this efi:originEvidence ?m . ?m efi:locatedInOriginArea ?p .
+          FILTER NOT EXISTS { ?p efi:trueArcSiteLikely true }
         }""" ] .
 
 # [C-59] 발화지점 근거로 든 단락흔은 지시력이 서야 한다 (§9.13.2.1·§9.13.2.2).

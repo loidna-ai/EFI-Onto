@@ -1574,3 +1574,20 @@ def test_python_enums_exist_in_ttl(g):
     names = {q(s) for s in g.subjects(None, None) if isinstance(s, URIRef)}
     missing = [(e.__name__, v.value) for e in (Scenario, Mechanism, Antecedent, Damage, SceneEvidence, Fuel) for v in e if v.value not in names]
     assert not missing, missing
+
+
+
+def test_arc_site_corroboration_is_a_warning_not_a_bar():
+    """C-61 — 발화지점 근거 단락흔의 지점에 대응 손상 확인이 없으면 권고한다. D-4 가 둘 이상을 세우면 침묵.
+    원문(§9.13.4.2)이 '확률이 오른다'는 서술이라 위반이 아니라 권고다."""
+    corroborate = "대응 손상이 둘 이상 확인되지 않았다"
+    assert corroborate in _msg(ARC_MAP + LOCALIZED)
+    two = ARC_MAP + LOCALIZED + """
+    efi:cdA a efi:CorrespondingDamageArea . efi:cdB a efi:CorrespondingDamageArea .
+    efi:pO2 efi:hasCorrespondingDamage efi:cdA , efi:cdB .
+    """
+    gr = run(two)
+    assert (EFI.pO2, EFI.trueArcSiteLikely, None) in gr, "D-4 가 발동하지 않았다"
+    assert corroborate not in _msg(two)
+    one = ARC_MAP + LOCALIZED + "efi:cdA a efi:CorrespondingDamageArea . efi:pO2 efi:hasCorrespondingDamage efi:cdA ."
+    assert corroborate in _msg(one), "하나로는 확률이 오르지 않는다 (둘 이상)"

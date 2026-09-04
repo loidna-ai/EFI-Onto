@@ -72,7 +72,7 @@ DERIVED_OUTPUT = {"derivedManifestation", "discriminates", "evidentiallyAmbiguou
                   "outcomeUnidentifiedShortCircuit", "loadExceedsRating"}
 
 # 도출은 됐으나 소비자를 정할 원문 근거가 확률 서술뿐인 것. 지어내지 않고 보류로 둔다.
-DERIVED_PENDING = {"trueArcSiteLikely"}   # §9.13.4.2 '진성 아크 지점일 확률이 오른다' — 문턱이 아니다
+DERIVED_PENDING = set()   # 비어 있어야 정상. trueArcSiteLikely 는 C-61 이 권고로 읽는다 (2026-09-04)
 
 NO_CRITERION = {
     "beadDiameter_mm":        "비드 지름과 온도의 대응이 원문에 없다 (실무Ⅳ p.307 은 '추정할 수 있다'까지만)",
