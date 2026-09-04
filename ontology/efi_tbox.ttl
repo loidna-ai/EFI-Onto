@@ -3375,6 +3375,7 @@ efi:TrackingSiteDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass
           $this efi:hasFact ?c . ?c rdf:type/rdfs:subClassOf* efi:ContaminatedEnvironment ; efi:confirmationStatus efi:Confirmed .
         }""" ] .
 
+# [D-9] 절연저항 저하 도출 — 임계값이 아니라 관계 비교
 efi:InsulationResistanceDerivationRuleShape a sh:NodeShape ; sh:order 0 ; sh:targetClass efi:Insulation ;
     sh:rule [ a sh:SPARQLRule ; sh:prefixes <https://w3id.org/efi-onto> ; sh:order 0 ;
         sh:construct """
