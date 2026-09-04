@@ -1,4 +1,4 @@
-.PHONY: install test build status backlog reason lint review graph export clean calibrate cause-audit readers refute domestic silmu babrauskas iso iso-freeze
+.PHONY: install test build status backlog reason lint review graph export clean calibrate cause-audit readers refute domestic silmu babrauskas iso iso-freeze run-case run-all
 
 PY := python
 export PYTHONIOENCODING := utf-8
@@ -65,6 +65,12 @@ silmu:
 
 babrauskas:
 	python scripts/babrauskas.py
+
+run-case:
+	@$(PY) scripts/run_case.py $(CASE)
+
+run-all:
+	@$(PY) scripts/run_case.py --all
 
 iso:
 	@$(PY) scripts/isomorphic.py

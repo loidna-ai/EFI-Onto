@@ -24,6 +24,8 @@ make backlog   # 원문 이식 미완료 목록·근거·누락 검사
 
 `ontology/` 의 TTL 둘은 Protégé, WebVOWL, GraphDB 에서 그대로 열린다. `efi_tbox.ttl` 이 추론 어휘, `efi_investigation.ttl` 이 조사 기록 층이며 함께 읽으면 한 그래프다.
 
+연동 흐름(판독→질의→재평가→확정→보고서)을 한 사례로 돌려 보려면 `python scripts/run_case.py UIJEONGBU_2025_055`. 150건 대화 루프 요약은 `--all`. 발견 사항은 [연동 흐름 실행](docs/연동_흐름_실행.md).
+
 전원·보호장치·시간선·최초 착화물 입력은 [T01~T04 구현 안내](docs/T01_T04_구현.md)를 참조한다.
 합성 입력을 실행하려면 `python scripts/investigate.py examples/investigation_t01_t04.json`.
 

@@ -497,22 +497,75 @@ class Session(BaseModel):
 
     # ---- CQ3: 상위 두 가설을 가르는 미확인 지표 (동적 질의 후보) ----
     def discriminating_slots(self, o: Ontology) -> list[tuple[str, Scenario, int]]:
+        """상위 가설들을 가르는 미확인 지표, 변별력 순.
+
+        **동점이면 동점 전부가 후보다.** 사진만으로 아홉이 50점이면 '상위 둘'은 목록 순서상
+        앞의 둘(접촉불량·압착손상)이라, 접속 상태·아산화동을 147회 묻고 대부분 결측으로
+        끝났다 — 150건 대화 루프에서 정답 가설이 형성조차 안 된 것이 74건. 연동 흐름을
+        처음 끝까지 돌렸을 때 드러났다.
+
+        **형성되지 않은 가설의 필요조건을 먼저 묻는다.** D-15 는 필요조건이 자료에 있어야
+        가설을 세운다(§19.4.1). 세워지지 않은 가설은 이기지도 동점을 만들지도 못하므로
+        그것을 세울지 가를 질문이 점수 차보다 먼저다.
+        """
         live = sorted((h for h in self.hypotheses if h.verdict is not Verdict.REFUTED),
-                      key=lambda h: h.support_score, reverse=True)[:2]
+                      key=lambda h: h.support_score, reverse=True)
         if len(live) < 2:
             return []
-        h1, h2 = live
-        out: list[tuple[str, Scenario, int]] = []
+        top = live[0].support_score
+        tied = [h for h in live if h.support_score == top]
+        cands = tied if len(tied) >= 2 else live[:2]
+        unformed = {h.scenario for h in cands if not h.formed}
+        # 형성 질의는 필요조건이 선언된 수준에서 한 번에 묻는다. 반단선의 필요조건은
+        # 굴곡|진동|인장의 합집합인데 잎마다 따로 물으면 세 번이고, 조사서가 '반복 굴곡'을
+        # 적어도 "인장?" 에는 결측으로 답한다. 공통 상위(장기 반복 응력)를 물으면 어떤 하위로
+        # 답해도 포섭으로 잡힌다. 150건에서 24건이 '물었는데도 미형성'이던 이유다.
+        formation: dict[str, tuple[Scenario, int]] = {}
+        for h in cands:
+            if h.scenario not in unformed:
+                continue
+            need = o.needs.get(h.scenario.value, set())
+            if not need:
+                continue
+            ask = self._common_need(need, o)
+            if self._slot_status(ask, o) is Status.MISSING:
+                cur = formation.get(ask)
+                formation[ask] = (h.scenario, (cur[1] if cur else 0) + 1)   # 여러 가설을 세우는 조건이 앞
+        out: list[tuple[str, Scenario, int, int]] = [(k, s, n * 100, 1) for k, (s, n) in formation.items()]
         for r in o.rules:
             if r.scenario == ELECTRICAL_SUPER or self._slot_status(r.indicator, o) is not Status.MISSING:
                 continue
-            t1, t2 = r.targets(h1.scenario), r.targets(h2.scenario)
-            if t1 != t2:                                          # 한쪽만 예측·반증하는 지표
-                w = abs(r.delta)
-                if o.is_damage(r.indicator):                      # 형태학적 지표는 변별력으로 감쇠
-                    w = int(round(w / max(1, o.shared_by.get(r.indicator, 1))))
-                out.append((r.indicator, h1.scenario if t1 else h2.scenario, w))
-        return sorted(out, key=lambda x: x[2], reverse=True)
+            hit = [h for h in cands if r.targets(h.scenario)]
+            if not hit or len(hit) == len(cands):                 # 전부 또는 아무도 가리키지 않으면 못 가른다
+                continue
+            w = abs(r.delta)
+            if o.is_damage(r.indicator):                          # 형태학적 지표는 변별력으로 감쇠
+                w = int(round(w / max(1, o.shared_by.get(r.indicator, 1))))
+            target = hit[0].scenario
+            out.append((r.indicator, target, w, 0))
+        out.sort(key=lambda x: (x[3], x[2]), reverse=True)
+        seen: set[str] = set()
+        return [(i, s, w) for i, s, w, _ in out if not (i in seen or seen.add(i))]
+
+    @staticmethod
+    def _common_need(need: set[str], o: Ontology) -> str:
+        """필요조건 합집합의 가장 구체적인 공통 상위. 하나면 그 자신, 공통이 없으면 첫째."""
+        members = sorted(need)
+        if len(members) == 1:
+            return members[0]
+        common = set.intersection(*[o.ancestors.get(m, set()) | {m} for m in members])
+        common -= {"AntecedentCondition", "EnvironmentalCondition", "InsulationCondition", "ElectricalState", "SceneEvidence"}
+        if not common:
+            return members[0]
+        return max(common, key=lambda c: len(o.ancestors.get(c, set())))   # 조상이 많을수록 구체적
+
+    # ---- 확정의 전제: 변별력이 0 이라 질의 후보에 오르지 않지만 없으면 결론이 서지 않는 것 ----
+    #  C-57 통전 확인. 대화 루프 150건에서 조사서에 있는데도 70건을 끝내 안 물었다 —
+    #  모든 전기적 가설이 같이 요구하므로 어떤 가설도 가르지 않기 때문이다.
+    CLOSURE_PREREQUISITES: ClassVar[tuple[str, ...]] = ("EnergizedState",)
+
+    def prerequisite_slots(self, o: Ontology) -> list[str]:
+        return [c for c in self.CLOSURE_PREREQUISITES if self._slot_status(c, o) is Status.MISSING]
 
     # ---- 확정 조건 / negative corpus 방지 ----
     def conclusion_check(self, h: Hypothesis, o: Ontology | None = None) -> list[str]:

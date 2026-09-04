@@ -1369,3 +1369,67 @@ def test_unverifiable_exit_path_is_not_a_path():
     """확인 불가는 확인이 아니다 (P4)."""
     unv = EXIT_PATH.replace("efi:Confirmed", "efi:Unverifiable")
     assert NO_EXIT in _msg(SEALED + unv)
+
+
+
+# ── 연동 흐름을 처음 끝까지 돌렸을 때 드러난 두 엔진의 갈림 ─────────────────────
+def test_duplicate_facts_count_once_in_both_engines():
+    """같은 클래스의 사실이 둘이어도 규칙은 한 번만 센다. F-4 가 (규칙, 사실) 쌍마다 더해
+    Python 과 15점씩 갈렸다 — 실제 사례 19건에 그런 중복(헐거움 13건)이 있다."""
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, Ontology
+    onto = Ontology.load()
+    s = Session(case_id="D", query_count=2,
+                hypotheses=[Hypothesis(scenario=Scenario.POOR_CONTACT, mechanism=Mechanism.POOR_CONTACT_HEATING)],
+                facts=[Fact(cls="LooseConnection", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR),
+                       Fact(cls="LooseConnection", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR)])
+    s.apply(onto)
+    gr = run("""
+    efi:sD a efi:InvestigationSession ; efi:queryCount 2 .
+    efi:invD a efi:InvestigatorAgent .
+    efi:d1 a efi:LooseConnection ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invD .
+    efi:d2 a efi:LooseConnection ; efi:confirmationStatus efi:Confirmed ; prov:wasAttributedTo efi:invD .
+    efi:sD efi:hasFact efi:d1 , efi:d2 .
+    efi:hD a efi:PoorContactScenario ; efi:inSession efi:sD .
+    """)
+    py, sh = s.hypotheses[0].support_score, int(next(gr.objects(EFI.hD, EFI.supportScore)))
+    assert py == sh, f"두 엔진이 갈렸다: python {py}, shacl {sh}"
+    assert {q(f) for f in gr.objects(EFI.hD, EFI.supportedBy)} == {"d1", "d2"}, "F-4 가 지지 근거를 남기지 않았다"
+
+
+def test_shacl_derives_supported_by_like_python():
+    """결론 제약 열 개가 supportedBy 를 읽는데 아무 규칙도 만들지 않았다 — 실제 세션에서는
+    전부 빈 목록을 봤다. F-4 가 Python 의 supported_by 와 같은 사실을 남겨야 한다."""
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, Ontology
+    from rdflib import Graph
+    from pyshacl import validate
+    onto = Ontology.load()
+    s = Session(case_id="S", query_count=2,
+                hypotheses=[Hypothesis(scenario=Scenario.TRACKING, mechanism=Mechanism.ARC_TRACKING)],
+                facts=[Fact(cls="MoistureExposure", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR),
+                       Fact(cls="CarbonizedConductivePath", status=Status.CONFIRMED, agent=Agent.AI_VLM),
+                       Fact(cls="LooseConnection", status=Status.CONFIRMED, agent=Agent.INVESTIGATOR)])
+    s.apply(onto)
+    gr = Graph().parse(data=ontology_text() + s.to_turtle(include_derived=False), format="turtle")
+    validate(gr, advanced=True, inplace=True, allow_infos=True, allow_warnings=True)
+    got = {q(next(gr.objects(f, RDF.type))) for f in gr.objects(EFI.S_TrackingScenario, EFI.supportedBy)}
+    assert got == set(s.hypotheses[0].supported_by), f"python {sorted(set(s.hypotheses[0].supported_by))} vs shacl {sorted(got)}"
+
+
+
+def test_query_selection_forms_hypotheses_before_scoring_them():
+    """아홉이 50점 동점이면 동점 전부가 후보이고, 세워지지 않은 가설의 필요조건을 먼저 묻는다.
+    전에는 목록 순서상 앞의 둘(접촉불량·압착손상)만 가르려 들어 150건에서 정답이 형성조차 안 된 것이 74건이었다."""
+    from efi_schema import Session, Hypothesis, Fact, Scenario, Mechanism, Status, Agent, Ontology, DEFAULT_MECHANISM
+    onto = Ontology.load()
+    s = Session(case_id="Q", query_count=0,
+                hypotheses=[Hypothesis(scenario=Scenario(k), mechanism=Mechanism(v)) for k, v in DEFAULT_MECHANISM.items()],
+                facts=[Fact(cls="ArcMeltMark", status=Status.CONFIRMED, agent=Agent.AI_VLM)])
+    s.apply(onto)
+    slots = s.discriminating_slots(onto)
+    assert slots, "동점인데 질의 후보가 없다"
+    first, target, _ = slots[0]
+    need = onto.needs.get(target.value, set())
+    assert any(onto.matches(first, n) or onto.matches(n, first) for n in need),         f"첫 질의 {first} 가 {target} 의 필요조건이 아니다 — 형성보다 점수를 먼저 물었다"
+    targets = {t for _, t, _ in slots}
+    assert len(targets) > 2, f"동점 전부가 아니라 둘만 가르려 든다: {targets}"
+    assert s.prerequisite_slots(onto) == ["EnergizedState"]

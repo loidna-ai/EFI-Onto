@@ -18,6 +18,8 @@ make status      # 현재 규모·이식률·래칫을 한 화면에
 make reason      # OWL 2 DL 일관성 검사 (HermiT). Java 필요
 make lint        # 구조 점검 — 사슬에 붙지 않은 어휘 찾기. 기록 전용 어휘는 따로 센다
 make iso         # 그래프가 기준선과 같은지 — 절을 옮기거나 파일을 나눌 때
+make run-case CASE=UIJEONGBU_2025_055   # 연동 흐름을 한 사례로 끝까지 — 보고서 build/run_<case>.md
+make run-all     # 150건 대화 루프 — 질의로 판정을 얼마나 회수하는가
 make calibrate   # 유도 가감점을 사례로 검증 (보정하지 않는다)
 make readers     # 사전 판독 vs LLM 판독 — 판독의 한계를 온톨로지의 한계와 가른다
 make refute      # 반증 규칙을 사례로 검증 — 정답 라벨에서 발동하면 반례다
@@ -198,6 +200,14 @@ TTL 의 절은 주제로 묶여 있고 앵커는 `# [7.3]` 꼴이다. 번호는 
 - **밀폐형 기기의 내부 고장은 용기 밖 경로가 있어야 결론이 된다 (C-60, T30).** `HermeticCompressorWindingSite` 가
   확인된 층간단락 결론에 열전달 검토의 `enclosureExitBasis` 를 요구한다. Babrauskas p.755 와 실무Ⅳ p.284 는
   경로를 적으면 양립한다. 없으면 기각이 아니라 미확정 — 낮은 확률은 반증 근거가 아니다.
+- **F-4 는 규칙당 한 번 센다.** 같은 클래스의 사실이 둘이어도 (규칙, 사실) 쌍마다 더하지 않는다 — 실제 사례
+  19건에 그런 중복이 있고 Python 과 15점씩 갈렸었다. **F-4 가 `supportedBy` 를 남긴다** (F-1 이 `refutedBy` 를
+  남기듯). 결론 제약 열 개가 그것을 읽는데 아무 규칙도 만들지 않아 실제 세션에서 검증이 죽어 있었다.
+  `test_duplicate_facts_count_once_in_both_engines` · `test_shacl_derives_supported_by_like_python`.
+- **질의는 세우는 것부터 묻는다.** 동점이면 동점 전부가 후보이고, 세워지지 않은 가설의 필요조건을 그것이
+  선언된 수준(공통 상위)에서 먼저 묻는다(§19.4.1). 잎 단위로 물으면 '반복 굴곡'을 적은 조사서에 "인장?" 이
+  결측으로 답한다. 확정 전제(통전, C-57)는 변별력이 0 이라 `prerequisite_slots()` 가 따로 묻는다.
+  `scripts/run_case.py --all` 이 150건 대화 루프로 잰다 — 6회 안에 122/150.
 - **가설의 메커니즘이 내는 흔적은 가설의 canManifest 에도 적는다.** M-3 은 반대 방향만 본다.
   빠지면 공유 수가 적게 세어져 점수가 부푼다. `test_declared_manifestations_cover_mechanisms` 가 잡는다.
 - **반증 단서(Refuting)는 기각이 아니라 감점이다.** 기각은 결정적 반증(DecisiveRefuting)만.
