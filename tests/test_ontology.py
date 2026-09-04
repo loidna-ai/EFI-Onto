@@ -1225,3 +1225,22 @@ def test_indicator_rule_lives_in_its_hypothesis_section(g):
 def test_every_section_anchor_is_present():
     """절 앵커가 다 있어야 문서·backlog 가 가리킬 자리가 있다."""
     assert set(_sections()) == {"1", "2", "3", "4", "5", "6", "7", "8"} | set(SECTION_OF.values())
+
+
+def test_one_korean_pref_label_per_resource(g):
+    """자원마다 한글 prefLabel 은 하나다. rdfs:label 이 있으면 그것과 같다.
+
+    라벨을 나중에 한 번 더 붙이는 통에 58개 자원이 이름을 둘씩 가졌고, 검토표는
+    그중 둘째를 보여 줬다. '2차 단락흔'이 '2차 수열흔'으로 나갔다 — 표 4-9 에서
+    열흔은 통전 없는 흔적이라 다른 것이다. 둘째 이름은 altLabel 로 내리거나 지웠다.
+    """
+    SKOS = Namespace("http://www.w3.org/2004/02/skos/core#")
+    ko = lambda s, p: {str(o) for o in g.objects(s, p) if getattr(o, "language", None) == "ko"}
+    bad = []
+    for s in set(g.subjects(SKOS.prefLabel, None)):
+        if not str(s).startswith(str(EFI)):
+            continue
+        pref, lab = ko(s, SKOS.prefLabel), ko(s, RDFS.label)
+        if len(pref) > 1 or (lab and lab != pref):
+            bad.append((q(s), sorted(pref), sorted(lab)))
+    assert not bad, f"한글 이름이 갈린 자원: {bad[:10]}"

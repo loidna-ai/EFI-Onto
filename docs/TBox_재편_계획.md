@@ -91,6 +91,20 @@ ontology/efi_investigation.ttl   조사 기록 층 (T01~T16). 1503줄, 블록 37
 
 **끝난 것.** `backlog.py --write` 로 줄 번호를 다시 만들었고 앵커 오류 0. `CLAUDE.md` · `docs/인계.md` · `tbox_backlog.json` 의 '48절' '6절' '32·33절' 같은 표현을 `[7.7]` `[2]` 꼴 앵커나 어휘 이름으로 바꿨다. 재편 전 절 제목은 `docs/TBox_절_이력.md` 로 옮겼다.
 
+### 3-a · 한글 이름이 둘인 자원 58개 — 완료 2026-09-04
+
+중복을 합치기 전에 먼저 드러난 어긋남이다. 라벨을 나중에 한 번 더 붙이는 통에("부가 모듈 A") 자원 58개가 `skos:prefLabel` 을 둘씩 가졌고, 검토표·구조도(`build`)는 `rdfs:label` 을 읽어 **둘째 이름을 조사관에게 보여 줬다.** 판독기는 자체 사전을 쓰므로 판정에는 영향이 없었다(150건 평가 동일).
+
+원칙: **정의 줄의 원래 prefLabel 을 남기고 둘째 이름은 altLabel 로 내린다. 뜻이 다르면 altLabel 도 아니고 지운다.** 지운 셋 —
+
+| 자원 | 지운 이름 | 왜 |
+|---|---|---|
+| `SecondaryArcMark` | 2차 수열흔 | 열흔은 통전 없는 흔적이다(실무Ⅰ 표 4-9). 단락흔(`ArcMeltMark`) 하위에 붙을 이름이 아니다 |
+| `ElectricalState` | 통전 상태 | 비통전(`DeEnergizedState`)도 하위다 |
+| `Ignitability` | 착화 역량 | F-3·C-31 이 발열원에 쓰는 말(competence). 연료의 성향과 섞인다 |
+
+그래프 차이는 라벨 트리플뿐임을 술어별로 셌다(사라짐 label 58·prefLabel 58, 생김 label 58·altLabel 55). `test_one_korean_pref_label_per_resource` 가 되돌아가지 않게 막는다.
+
 **남은 것 — 중복 203개를 합친다.** 목록이 `docs/TBox_절_이력.md` 에 있다. 이제부터는 동형이 아니어도 되지만 **한 주어에 한 커밋**으로 하고 각각 `make test` 를 통과해야 한다. 순서는 블록 수가 많은 것부터다.
 
 | 주어 | 블록 |
