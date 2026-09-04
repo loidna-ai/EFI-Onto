@@ -63,8 +63,8 @@ SECTIONS = [
     ("19.5", "Developing Cause Hypotheses",          DONE, "C-29 발열 기기 목록, C-46 경합 발화원 미특정 공개"),
     ("19.6", "Testing the Hypothesis for Validity",  DONE, "F-1~F-4, C-28·C-30·C-31, D-7·D-8. 하위 절 표 참조"),
     ("19.7", "Selecting the Final Hypothesis",       DONE, "Conclusion, C-2, 확정 조건"),
-    ("19.8", "Fire Incident and Cause Classification", PART, "분류 구조는 구현(C-9~C-11). 범주 목록은 "
-                                                             "이 온톨로지가 정하지 않고 외부 체계를 참조한다"),
+    ("19.8", "Fire Incident and Cause Classification", DONE, "분류 구조는 구현(C-9~C-11·C-62). 보고용 원인 분류의 채택 체계는 "
+                                                             "국내 보고규정 세부분류 하나이며 가설 대응과 도출은 D-20(T20). NFPA 참조 체계 여섯은 코드 목록 없이 참조 개체로만"),
 ]
 
 # 9.13 하위 절. 원문 확인 후 좁힌 것. 나머지 절도 이 수준까지 내려가야 한다.
@@ -210,7 +210,7 @@ SUBSECTIONS = [
     ("19.6.5.1", "모두 기각되거나 둘 이상 남으면 원인미상",    DONE, "D-7, D-8 UndeterminedByTieRuleShape(최고점 동점), D-16 지지 없는 가설뿐이면 원인미상. D-14 는 그 안에서 단락흔+통전이면 국내 분류 미확인 단락"),
     ("19.6.5.2", "발화원과 착화물을 짚은 것은 원인이 아니다",   DONE, "C-30 CauseNotJustSourceShape"),
     ("19.8.1",   "통계 목적 사건 분류 — 외부 체계 참조",      DONE, "C-10 ClassificationSystemShape, ClassificationSystem 6종"),
-    ("19.8.2",   "보고서용 원인 분류 — 판정 이후에 온다",     PART, "C-9 순서, C-11 분리는 구현. 국내 보고규정 분류(KoreaFireReportClassification)의 미확인 단락은 D-14 로 판정 뒤에 붙는다. NFPA 범주 목록 미확보"),
+    ("19.8.2",   "보고서용 원인 분류 — 판정 이후에 온다",     DONE, "C-9 순서, C-11 분리. 채택 체계는 국내 보고규정 세부분류(KoreaFireReportClassification) 하나 — 전기 가설 여덟이 항목에 대응하고 D-20 이 결론 뒤에 분류 개체를 만든다(sh:order 7). 미확인 단락은 D-14 세션 표지. NFPA 921 자체에는 범주 목록이 없다(T20)"),
 ]
 
 # 방법론 층에만 붙인다. 단서 규칙(Table 2)은 국내 실무 출처이므로 제외.
@@ -244,6 +244,8 @@ SHAPE_REFS = {
     "CauseClassificationOrderShape":     ["19.8"],
     "ClassificationSystemShape":         ["19.8"],
     "ConclusionNotClassifiedShape":      ["19.8"],
+    "ReportClassificationDerivationRuleShape": ["19.8"],
+    "ReportCategoryBelongsToSystemShape": ["19.8"],
     "EqualLikelihoodShape":              ["4.5"],
     "SuspectedNotOpinionShape":          ["4.5"],
     "CertaintyStatedShape":              ["4.5"],

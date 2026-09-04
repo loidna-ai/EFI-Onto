@@ -1635,3 +1635,63 @@ def test_liquid_ingress_forms_tracking_but_metal_object_forms_nothing(onto):
     metal = one("ForeignConductorInEquipment")
     assert not metal[Scenario.TRACKING].formed and metal[Scenario.TRACKING].support_score == 50, "금속 물체가 트래킹을 세웠다"
     assert all(h.support_score == 50 for h in metal.values()), "금속 물체가 어떤 가설에 점수를 줬다"
+
+
+# ── §19.8.2 보고용 원인 분류 (T20) ─────────────────────────────────────
+def test_every_electrical_scenario_reports_to_one_korean_category(g):
+    """T20 — 전기 가설 여덟은 화재조사 및 보고규정 세부분류의 항목 하나에 대응한다. 외부화염은 전기적 요인이
+    아니라 대응이 없다. 항목은 채택 체계(KoreaFireReportClassification)의 것이어야 한다."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import score
+    for sc in score._scenarios():
+        cats = list(g.objects(EFI[sc], EFI.reportedAs))
+        if sc == "ExternalFlameScenario":
+            assert not cats, "외부화염이 전기적 요인 항목에 대응됐다"
+            continue
+        assert len(cats) == 1, f"{sc}: 대응 항목 {len(cats)}개"
+        assert (cats[0], EFI.categoryOf, EFI.KoreaFireReportClassification) in g, f"{sc}: 채택 체계 밖의 항목"
+
+
+def test_conclusion_derives_report_classification():
+    """D-20 — 결론이 서면 보고용 분류 개체가 판정 뒤에 만들어지고 C-9·C-10·C-62 를 통과한다.
+    결론이 외부화염이면 만들지 않는다. 분류가 결론에 범주를 직접 달지 않는다(C-11)."""
+    from rdflib.namespace import SKOS
+    gr = run("""
+    efi:hT a efi:TrackingScenario ; efi:supportScore 75 .
+    efi:cT a efi:Conclusion ; efi:concludes efi:hT .
+    """)
+    k = gr.value(None, EFI.classifiesCause, EFI.cT)
+    assert k is not None, "결론에서 분류 개체가 나오지 않았다"
+    assert (k, EFI.usesClassificationSystem, EFI.KoreaFireReportClassification) in gr
+    assert str(gr.value(k, EFI.classificationCategory)) == "트래킹에 의한 단락"
+    assert (EFI.cT, EFI.classificationCategory, None) not in gr, "결론에 범주가 직접 붙었다 (C-11)"
+    assert "분류" not in _msg("""
+    efi:hT a efi:TrackingScenario ; efi:supportScore 75 .
+    efi:cT a efi:Conclusion ; efi:concludes efi:hT .
+    """)
+    gr = run("""
+    efi:hX a efi:ExternalFlameScenario ; efi:supportScore 75 .
+    efi:cX a efi:Conclusion ; efi:concludes efi:hX .
+    """)
+    assert gr.value(None, EFI.classifiesCause, EFI.cX) is None, "외부화염 결론에 전기 분류가 붙었다"
+
+
+def test_report_category_must_belong_to_declared_system():
+    """C-62 — 항목은 분류가 밝힌 체계의 것이어야 한다. 다른 체계의 항목을 빌리면 라벨만 같고 뜻이 다르다."""
+    assert "체계의 것이 아니다" in _msg("""
+    efi:hN a efi:TrackingScenario ; efi:supportScore 75 .
+    efi:cN a efi:Conclusion ; efi:concludes efi:hN .
+    efi:kN a efi:FireCauseClassification ; efi:classifiesCause efi:cN ;
+           efi:usesClassificationSystem efi:NFIRS ; efi:hasReportCategory efi:KFR_TrackingShort ;
+           efi:classificationCategory "트래킹에 의한 단락" .
+    """)
+
+
+def test_report_categories_carry_manual_codes_one_to_ten(g):
+    """T20 — 채택 체계의 열 항목은 국가화재분류체계 매뉴얼(2019) p.37 의 코드 1~10 을 하나씩, 중복 없이 갖는다."""
+    from rdflib import Literal
+    cats = list(g.subjects(EFI.categoryOf, EFI.KoreaFireReportClassification))
+    codes = sorted(int(g.value(c, EFI.categoryCode)) for c in cats)
+    assert codes == list(range(1, 11)), codes
+    assert int(g.value(EFI.KFR_PoorContactShort, EFI.categoryCode)) == 2, "접촉불량은 2 다 — 제2편 예시의 5 는 오식"
+    assert int(g.value(EFI.KFR_UnidentifiedShort, EFI.categoryCode)) == 9

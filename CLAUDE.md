@@ -42,7 +42,7 @@ scripts/investigate.py        조사 JSON → SHACL 검증·경로/시간/비교
 scripts/score.py             가감점 산출. 가중치의 단일 진실 원천
 scripts/nfpa.py              NFPA 921 절 대조표. 이식률의 분모
 scripts/domestic.py          실무Ⅳ 표 2-1 갈래 대조표. 국내 실무 층의 분모
-scripts/silmu.py             실무Ⅳ 제2편 절 대조표. CANDIDATES는 완료·보류를 포함한 과거 기록
+scripts/silmu.py             실무Ⅳ 제2편 절 대조표 + 실무Ⅰ·Ⅱ·Ⅴ 편 단위 범위 판정(T34). CANDIDATES는 완료·보류를 포함한 과거 기록
 scripts/babrauskas.py        Ignition Handbook 전기 절 대조표. 국내 교재와의 일치/상충/보강 열이 있다
 scripts/backlog.py           원문 미완료 행·작업·근거 연결 검사와 목록 생성 (make backlog)
 docs/tbox_backlog.json       원문 이식 작업의 상태·근거·완료 조건
